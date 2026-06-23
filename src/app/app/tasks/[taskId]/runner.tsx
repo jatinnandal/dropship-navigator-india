@@ -2,13 +2,24 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { ExternalLink, Lightbulb } from "lucide-react";
 import { ProfitCalculator } from "@/components/profit-calculator";
+import { MentorStepContent } from "@/components/mentor-step-content";
+import { JargonText } from "@/components/jargon-text";
+import { RtoRealitySlider } from "@/components/simulators/rto-reality-slider";
+import { CashflowTimeline } from "@/components/simulators/cashflow-timeline";
+import { NdrCallerSimulator } from "@/components/simulators/ndr-caller-simulator";
+import { ProductSwipeGame } from "@/components/simulators/product-swipe-game";
 import type { OnboardingProfile } from "@/lib/mvp-data";
 import { buildTask } from "@/lib/tasks";
 import type { TaskStep } from "@/lib/tasks/types";
+import { fireMilestoneConfetti } from "@/lib/confetti";
 import { workspaceRecapItems, type Workspace } from "@/lib/workspace";
-import { persistCalculatorResult, persistTaskState, persistWorkspaceField } from "./actions";
+import {
+  persistCalculatorResult,
+  persistSimulatorComplete,
+  persistTaskState,
+  persistWorkspaceField,
+} from "./actions";
 
 type Props = {
   taskId: string;
@@ -117,6 +128,9 @@ export function TaskRunner({
     nextCompleted.add(stepId);
     setCompleted(nextCompleted);
     persist(nextCompleted, answers);
+    if (nextCompleted.size === steps.length) {
+      fireMilestoneConfetti("module-complete");
+    }
     advanceFrom(stepId, nextCompleted, steps);
   }
 
@@ -148,6 +162,19 @@ export function TaskRunner({
         Array.from(completed),
       );
       setWorkspace(updated);
+      const nextCompleted = new Set(completed);
+      nextCompleted.add(step.id);
+      setCompleted(nextCompleted);
+      if (step.input?.workspaceKey === "gstin") {
+        fireMilestoneConfetti("gstin-saved");
+      }
+      advanceFrom(step.id, nextCompleted, steps);
+    });
+  }
+
+  function applySimulator(step: TaskStep) {
+    startSaving(async () => {
+      await persistSimulatorComplete(taskId, step.id, answers, Array.from(completed));
       const nextCompleted = new Set(completed);
       nextCompleted.add(step.id);
       setCompleted(nextCompleted);
@@ -300,9 +327,6 @@ export function TaskRunner({
           ) : currentStep ? (
             <article className="glass-panel rounded-xl p-6">
               <div className="flex items-center justify-between gap-3">
-                <p className="eyebrow inline-block">
-                  Step {currentIndex + 1} of {steps.length}
-                </p>
                 {completed.has(currentStep.id) ? (
                   <span className="inline-flex items-center gap-1 rounded-md border border-emerald-400/60 px-3 py-1 text-xs text-emerald-300">
                     <CheckIcon /> Done
@@ -310,75 +334,9 @@ export function TaskRunner({
                 ) : null}
               </div>
 
-              <h2 className="mt-2 text-2xl font-bold text-slate-100">{currentStep.title}</h2>
-
-              {currentStep.mentorNote ? (
-                <div className="mt-4 flex gap-3 rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-4">
-                  <Lightbulb className="mt-0.5 h-4 w-4 flex-none text-cyan-300" aria-hidden="true" />
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-cyan-200">Mentor tip</p>
-                    <p className="mt-1 text-sm leading-6 text-slate-200">{currentStep.mentorNote}</p>
-                  </div>
-                </div>
-              ) : null}
-
-              <div className="mt-4 rounded-lg border border-amber-300/30 bg-amber-300/5 p-4">
-                <p className="text-xs uppercase tracking-wide text-amber-200">Why this matters</p>
-                <p className="mt-1 text-sm leading-6 text-slate-200">{currentStep.why}</p>
+              <div className="mt-2">
+                <MentorStepContent step={currentStep} stepIndex={currentIndex} totalSteps={steps.length} />
               </div>
-
-              {currentStep.needs && currentStep.needs.length > 0 ? (
-                <div className="mt-5">
-                  <h3 className="text-sm font-semibold text-slate-100">Have these ready</h3>
-                  <ul className="text-muted mt-2 list-disc space-y-1 pl-5 text-sm">
-                    {currentStep.needs.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-
-              <div className="mt-5">
-                <h3 className="text-sm font-semibold text-slate-100">Do this now</h3>
-                <ol className="mt-2 space-y-2">
-                  {currentStep.how.map((item, index) => (
-                    <li key={item} className="flex gap-3 text-sm leading-6 text-slate-200">
-                      <span className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-slate-700/60 text-[11px] text-amber-200">
-                        {index + 1}
-                      </span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ol>
-              </div>
-
-              {currentStep.trap ? (
-                <div className="mt-5 rounded-lg border border-rose-400/30 bg-rose-400/5 p-4">
-                  <p className="text-xs uppercase tracking-wide text-rose-300">The trap that fails people here</p>
-                  <p className="mt-1 text-sm leading-6 text-slate-200">{currentStep.trap}</p>
-                </div>
-              ) : null}
-
-              {currentStep.tools && currentStep.tools.length > 0 ? (
-                <div className="mt-5">
-                  <h3 className="text-sm font-semibold text-slate-100">Recommended tools (when you need help)</h3>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    {currentStep.tools.map((tool) => (
-                      <article
-                        key={tool.name}
-                        className="surface-hover rounded-lg border border-slate-700/60 p-4"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <h4 className="font-semibold text-slate-100">{tool.name}</h4>
-                          <ExternalLink className="h-3.5 w-3.5 flex-none text-muted" aria-hidden="true" />
-                        </div>
-                        <p className="text-muted mt-2 text-xs">{tool.whenToUse}</p>
-                        <p className="mt-2 text-sm text-slate-200">{tool.why}</p>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
 
               {currentStep.input ? (
                 <div className="mt-6 rounded-lg border border-slate-700/60 p-4">
@@ -420,6 +378,34 @@ export function TaskRunner({
                 </div>
               ) : null}
 
+              {currentStep.simulator?.kind === "rto_reality" ? (
+                <div className="mt-6">
+                  <RtoRealitySlider
+                    channel={profile.primaryChannel}
+                    sellingPrice={workspace.targetSellingPrice ?? 999}
+                    onComplete={() => applySimulator(currentStep)}
+                  />
+                </div>
+              ) : null}
+
+              {currentStep.simulator?.kind === "cashflow_timeline" ? (
+                <div className="mt-6">
+                  <CashflowTimeline onComplete={() => applySimulator(currentStep)} />
+                </div>
+              ) : null}
+
+              {currentStep.simulator?.kind === "ndr_caller" ? (
+                <div className="mt-6">
+                  <NdrCallerSimulator onComplete={() => applySimulator(currentStep)} />
+                </div>
+              ) : null}
+
+              {currentStep.simulator?.kind === "product_swipe" ? (
+                <div className="mt-6">
+                  <ProductSwipeGame onComplete={() => applySimulator(currentStep)} />
+                </div>
+              ) : null}
+
               {currentStep.calculator ? (
                 <ProfitCalculator
                   kind={currentStep.calculator.kind}
@@ -435,7 +421,9 @@ export function TaskRunner({
 
               {currentStep.question ? (
                 <div className="mt-6 rounded-lg border border-slate-700/60 p-4">
-                  <p className="text-sm font-semibold text-slate-100">{currentStep.question.prompt}</p>
+                  <p className="text-sm font-semibold text-slate-100">
+                    <JargonText text={currentStep.question.prompt} />
+                  </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
                     {currentStep.question.options.map((option) => {
                       const selected = answers[currentStep.question!.id] === option.value;
@@ -452,7 +440,7 @@ export function TaskRunner({
                               : "border-slate-700/60 text-slate-200"
                           }`}
                         >
-                          {option.label}
+                          <JargonText text={option.label} />
                         </button>
                       );
                     })}
@@ -478,9 +466,7 @@ export function TaskRunner({
                       </ul>
                     ) : (
                       <p className="text-muted text-sm leading-6">
-                        Re-read the trap above first — it covers the most common blocker. If the official
-                        portal looks different from these steps, it usually means a sync delay. Wait a few
-                        hours and retry before changing anything.
+                        <JargonText text="Re-read the trap above first — it covers the most common blocker. If the official portal looks different from these steps, it usually means a sync delay. Wait a few hours and retry before changing anything." />
                       </p>
                     )}
                   </div>
@@ -506,6 +492,8 @@ export function TaskRunner({
                   <span className="text-muted text-xs">
                     Run the calculator and save results, or mark done if already calculated elsewhere.
                   </span>
+                ) : currentStep.simulator ? (
+                  <span className="text-muted text-xs">Complete the interactive exercise above to continue.</span>
                 ) : (
                   <button
                     type="button"
@@ -523,6 +511,16 @@ export function TaskRunner({
                     className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold"
                   >
                     Skip calculator · mark done
+                  </button>
+                ) : null}
+
+                {currentStep.simulator && !completed.has(currentStep.id) ? (
+                  <button
+                    type="button"
+                    onClick={() => markDone(currentStep.id)}
+                    className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold"
+                  >
+                    Skip simulator · mark done
                   </button>
                 ) : null}
               </div>

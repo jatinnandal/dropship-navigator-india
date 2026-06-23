@@ -40,11 +40,17 @@ export type InputSpec = {
 
 export type CalculatorKind = "margin" | "breakeven_roas" | "rto_impact";
 
+export type SimulatorKind = "rto_reality" | "cashflow_timeline" | "ndr_caller" | "product_swipe";
+
 export type CalculatorSpec = {
   kind: CalculatorKind;
 };
 
-export type StepKind = "info" | "question" | "input" | "calculator";
+export type SimulatorSpec = {
+  kind: SimulatorKind;
+};
+
+export type StepKind = "info" | "question" | "input" | "calculator" | "simulator";
 
 export type TaskStep = {
   id: string;
@@ -60,6 +66,7 @@ export type TaskStep = {
   kind?: StepKind;
   input?: InputSpec;
   calculator?: CalculatorSpec;
+  simulator?: SimulatorSpec;
 };
 
 export type Task = {

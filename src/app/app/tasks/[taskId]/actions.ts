@@ -46,7 +46,9 @@ export async function persistWorkspaceField(
   } else if (workspaceKey === "legalBusinessName") {
     patch.legalBusinessName = String(value);
   } else if (workspaceKey === "gstin") {
+    const currentWorkspace = await getWorkspaceForCurrentVisitor();
     patch.gstin = String(value);
+    patch.subTasks = { ...(currentWorkspace.subTasks ?? {}), "gstin-active": true };
   } else if (workspaceKey === "bankAccountName") {
     patch.bankAccountName = String(value);
   } else if (workspaceKey === "pickupState") {
@@ -104,4 +106,21 @@ export async function persistCalculatorResult(
   });
 
   return workspace;
+}
+
+export async function persistSimulatorComplete(
+  taskId: string,
+  stepId: string,
+  existingAnswers: Record<string, string>,
+  existingCompleted: string[],
+) {
+  const nextCompleted = new Set(existingCompleted);
+  nextCompleted.add(stepId);
+
+  await setTaskState(taskId, {
+    completed: Array.from(nextCompleted),
+    answers: existingAnswers,
+  });
+
+  return getWorkspaceForCurrentVisitor();
 }

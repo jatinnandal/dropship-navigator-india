@@ -157,6 +157,15 @@ export function buildAdsTask(
   }
 
   steps.push({
+    id: "cashflow-deadzone",
+    title: "See the cashflow dead zone",
+    why: "Meta bills today. COD cash arrives day 5-7. Most beginners run out of ad budget in week 1 — not because ads failed, but because cash timing killed them.",
+    how: ["Set your starting budget and watch the 14-day timeline."],
+    kind: "simulator",
+    simulator: { kind: "cashflow_timeline" },
+  });
+
+  steps.push({
     id: "cod-rto-ads",
     title: "Cut RTO before scaling ads (COD confirmation)",
     why: "COD orders return at ~26% nationally. Every RTO eats forward + reverse shipping. COD confirmation within 30 min cuts RTO to 12-18%.",
@@ -176,6 +185,15 @@ export function buildAdsTask(
         why: "Cuts fake COD orders by 20-30% — pays for itself within first week of ads.",
       },
     ],
+  });
+
+  steps.push({
+    id: "ndr-practice",
+    title: "Practice COD confirmation & NDR calls",
+    why: "Calling customers scares beginners — but it is the only way to survive COD in India.",
+    how: ["Walk through 2 scenarios. Pick the best response each time."],
+    kind: "simulator",
+    simulator: { kind: "ndr_caller" },
   });
 
   steps.push({

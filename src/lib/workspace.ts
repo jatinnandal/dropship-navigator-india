@@ -19,6 +19,8 @@ export type Workspace = {
   breakEvenRoas?: number;
   estimatedRtoRate?: number;
   calculatorSnapshot?: Record<string, number>;
+  subTasks?: Record<string, boolean>;
+  completedMilestones?: string[];
 };
 
 export const emptyWorkspace: Workspace = {};
@@ -55,6 +57,13 @@ export function parseWorkspace(raw: string | undefined): Workspace {
         parsed.calculatorSnapshot && typeof parsed.calculatorSnapshot === "object"
           ? (parsed.calculatorSnapshot as Record<string, number>)
           : undefined,
+      subTasks:
+        parsed.subTasks && typeof parsed.subTasks === "object"
+          ? (parsed.subTasks as Record<string, boolean>)
+          : undefined,
+      completedMilestones: Array.isArray(parsed.completedMilestones)
+        ? parsed.completedMilestones.filter((m): m is string => typeof m === "string")
+        : undefined,
     };
   } catch {
     return { ...emptyWorkspace };

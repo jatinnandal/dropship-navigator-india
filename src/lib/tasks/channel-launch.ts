@@ -171,6 +171,83 @@ export function buildChannelLaunchTask(
     });
   }
 
+  if (profile.primaryChannel === "shopify") {
+    steps.push({
+      id: "pg-check",
+      title: "Payment gateway status (Razorpay / Cashfree)",
+      why: "Indian PGs are rejecting many new dropshipping accounts in 2025-26. If yours is not approved, you need a Plan B — not weeks of waiting.",
+      how: ["Be honest about where you stand so I can route you correctly."],
+      question: {
+        id: "pg-approved",
+        prompt: "Is your Razorpay or Cashfree account approved for live payments?",
+        options: [
+          { value: "yes", label: "Yes — PG is live" },
+          { value: "no", label: "No — rejected or still pending" },
+          { value: "not-applied", label: "Haven't applied yet" },
+        ],
+      },
+    });
+
+    if (answers["pg-approved"] === "no" || answers["pg-approved"] === "not-applied") {
+      steps.push(
+        {
+          id: "zero-pg-intro",
+          title: "Zero-PG launch strategy (your first 10 orders)",
+          why: "Getting a PG is hard right now. You can still start selling — do not wait weeks and quit.",
+          how: [
+            "This is normal. Many beginners launch without a PG first.",
+            "Follow the COD-only + UPI QR path below for your first orders.",
+          ],
+          mentorNote: "The mentor move: sell on Meesho (zero PG needed) OR run COD-only on Shopify while PG pending.",
+        },
+        {
+          id: "zero-pg-cod",
+          title: "Enable COD-only checkout",
+          why: "COD does not need Razorpay/Cashfree. Customer pays the courier — you skip PG entirely.",
+          how: [
+            "In Shopify: Settings → Payments → enable manual/COD payment method.",
+            "Set clear COD fee or minimum order if needed.",
+            "Add WhatsApp COD confirmation before dispatch (cuts RTO).",
+          ],
+          trap: "COD-only still needs GSTIN, return policy, and trust signals on your store.",
+        },
+        {
+          id: "zero-pg-upi",
+          title: "Add UPI QR on thank-you page for prepaid discount",
+          why: "Offer 5% off for UPI prepaid — some buyers will pay instantly without a PG integration.",
+          how: [
+            "Generate a static UPI QR from your business bank app.",
+            "Add to order confirmation page: 'Pay via UPI for 5% instant discount.'",
+            "Manually verify payment screenshot before faster dispatch.",
+          ],
+          trap: "This is manual — fine for first 10-20 orders, not for scale.",
+        },
+        {
+          id: "zero-pg-marketplace",
+          title: "Parallel path: sell on Meesho while PG pending",
+          why: "Meesho handles payments and logistics — no PG needed. You can test products while PG application processes.",
+          how: [
+            "Complete Meesho supplier onboarding (reuse your GSTIN + docs).",
+            "List 3 SKUs from your shortlist.",
+            "Use Meesho sales to fund PG re-application and ad tests later.",
+          ],
+        },
+        {
+          id: "zero-pg-reapply",
+          title: "What to submit when re-applying to PG",
+          why: "Second applications fail for the same reason as first — fix the root cause.",
+          how: [
+            "Live website with return policy, privacy policy, contact page, GSTIN in footer.",
+            "3+ real product listings with clear images (not empty store).",
+            "Sample invoices or marketplace seller screenshot if available.",
+            "Business bank account matching GST legal name.",
+          ],
+          trap: "Re-applying with an empty Shopify store gets rejected again. Make store look real first.",
+        },
+      );
+    }
+  }
+
   steps.push(...channelOnboardingSteps(profile.primaryChannel));
 
   steps.push(
@@ -230,6 +307,15 @@ export function buildChannelLaunchTask(
       trap: "Starting ads before listings are approved wastes budget. Wait for live listings.",
     });
   }
+
+  steps.push({
+    id: "cod-calls-launch",
+    title: "Practice COD confirmation before your first order",
+    why: "One bad COD order costs 2× shipping. Learn the call/WhatsApp script before you go live.",
+    how: ["Complete 2 quick scenarios — pick the best response each time."],
+    kind: "simulator",
+    simulator: { kind: "ndr_caller" },
+  });
 
   steps.push({
     id: "launch-checklist",

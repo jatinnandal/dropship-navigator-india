@@ -30,6 +30,7 @@ Research-backed barriers and how Dropship Navigator solves them. Sources: Shopif
 | RTO-heavy categories | Fashion 30-40% RTO on COD | product-risk screener + conservative RTO default |
 | Bulk before sample | Order inventory before testing | sample-commit step (non-negotiable) |
 | 3x markup ignored | Thin margin + ads = guaranteed loss | markup-gate question + fix branch |
+| Abstract RTO risk | Can't feel margin erosion | product swipe game + RTO reality slider simulators |
 
 ## 3. compliance-by-product
 
@@ -59,6 +60,8 @@ Research-backed barriers and how Dropship Navigator solves them. Sources: Shopif
 | KYC mismatch repeat | Same name issues as GST | Reuse workspace; nameMismatchWarning at launch |
 | Weak listings | Generic titles, bad images | listing-quality checklist |
 | 50 listings at once | 50 compliance issues at once | first 3-5 listings gate |
+| PG rejected (Shopify) | Razorpay/Cashfree reject new dropship stores | Zero-PG branch: COD-only, UPI QR, Meesho parallel, PG re-apply checklist |
+| COD without practice | First RTO from bad confirmation call | NDR caller simulator in launch + ads modules |
 
 ## 6. ads-growth
 
@@ -69,6 +72,8 @@ Research-backed barriers and how Dropship Navigator solves them. Sources: Shopif
 | Meta personal profile bans | Ads from personal FB = high ban rate | meta-setup for Shopify path |
 | New account big spend | ₹50K/day day 1 = suspicious activity flag | gradual budget guidance |
 | RTO while scaling ads | Paying to generate returns | cod-rto-ads + rto_impact calculator |
+| Cashflow dead zone | Ad spend today, COD cash day 5-7 | cashflow_timeline simulator |
+| NDR fear | Won't call customers to confirm COD | ndr_caller simulator + WhatsApp templates |
 
 ## 7. tracking-analytics
 
@@ -79,6 +84,17 @@ Research-backed barriers and how Dropship Navigator solves them. Sources: Shopif
 | Settlement mismatch | 2-5% silent underpayment | settlement-reconciliation weekly ritual |
 | TCS not recovered | 1% left on table every sale | tcs-recovery step |
 | RTO reasons ignored | Same pincodes/products repeat | rto-tracking + fix root causes |
+| Cash timing blind spot | Profitable on paper, broke in bank | cashflow-review simulator in tracking module |
+
+## UX audit additions (journey map)
+
+| Theme | Implementation |
+|-------|----------------|
+| Non-linear skill tree | `journey-graph.ts` + `JourneyMap` with prerequisite locks on ads |
+| Simulators | RTO slider, cashflow timeline, NDR caller, product swipe game |
+| Jargon help | Global `JargonProvider` + dashed underline terms |
+| Zero-PG Shopify | COD-only + UPI QR + Meesho parallel in channel-launch task |
+| Gamification | `TaskToggle` sub-tasks, milestone confetti, product re-pick loop |
 
 ## Tool recommendations (vendor-neutral)
 

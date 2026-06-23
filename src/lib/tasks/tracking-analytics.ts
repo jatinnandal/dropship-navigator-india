@@ -48,6 +48,14 @@ export function buildTrackingTask(
       ],
     },
     {
+      id: "cashflow-review",
+      title: "Plan for the cashflow dead zone",
+      why: "Even profitable sellers go broke in month 1 because ad cash leaves today but COD remittance arrives next week.",
+      how: ["Model your starting budget against a 14-day timeline."],
+      kind: "simulator",
+      simulator: { kind: "cashflow_timeline" },
+    },
+    {
       id: "settlement-reconciliation",
       title: "Reconcile marketplace settlements weekly",
       why: "Marketplaces sometimes short-pay, miss TCS credits, or deduct wrong fees. Without reconciliation, you lose 2-5% silently.",

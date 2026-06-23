@@ -46,6 +46,14 @@ export function buildProductSelectionTask(
       ],
     },
     {
+      id: "product-swipe-game",
+      title: "Quick game: spot the winning product",
+      why: "Learn what makes a good India COD product in 2 minutes — swipe like you are vetting real SKUs.",
+      how: ["Swipe right on products that are good for beginners. Left on traps."],
+      kind: "simulator",
+      simulator: { kind: "product_swipe" },
+    },
+    {
       id: "rto-screen",
       title: "Screen out RTO-heavy products",
       why: "COD Return-to-Origin at ~26% nationally is the #1 profit killer. Fashion (40%+ RTO), fragile items, and heavy products destroy margins.",
@@ -124,6 +132,14 @@ export function buildProductSelectionTask(
         hint: "We'll save your top picks for later steps.",
       },
       mentorNote: "Three products. Not ten. Not fifty. Three.",
+    },
+    {
+      id: "rto-reality",
+      title: "Feel the RTO Reality",
+      why: "Slide RTO up and watch profit disappear — this is the #1 reason Indian dropshippers think they profit while losing money.",
+      how: ["Adjust the sliders and see net profit change in real time."],
+      kind: "simulator",
+      simulator: { kind: "rto_reality" },
     },
     {
       id: "margin-calc",

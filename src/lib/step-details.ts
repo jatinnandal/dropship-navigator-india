@@ -466,6 +466,12 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
         decisionFlow: [
           "If onboarding is pending, do not upload large catalog yet.",
           "If listing quality is weak, improve content before scaling ads.",
+          ...(profile.primaryChannel === "shopify"
+            ? [
+                "If Razorpay/Cashfree is rejected or pending: launch COD-only + UPI QR first; sell on Meesho in parallel.",
+                "Re-apply to PG only after live store, policies, and sample listings look real.",
+              ]
+            : []),
         ],
         executionPlan: [
           {
@@ -474,23 +480,40 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
             tasks: [
               "Submit identity, GST, bank, and pickup details with exact match.",
               "Resolve all pending verification tasks before listing push.",
+              ...(profile.primaryChannel === "shopify"
+                ? [
+                    "If PG not approved: enable COD-only checkout and add UPI QR on thank-you page.",
+                    "List on Meesho while PG application processes.",
+                  ]
+                : []),
             ],
           },
         ],
         doneCriteria: [
           "Channel account is fully active and payout setup is verified.",
           "First 3-5 listings are live with complete media and metadata.",
+          ...(profile.primaryChannel === "shopify"
+            ? ["If PG pending: COD path live OR parallel Meesho listings generating orders."]
+            : []),
         ],
         actionChecklist: [
           `Complete ${channelName} onboarding checklist fully before listing work.`,
           "Prepare title, bullet points, image set, and pricing strategy for each SKU.",
           "Verify tax/category mapping and shipping settings.",
           "Publish 3-5 starter listings and track first 7 days closely.",
+          ...(profile.primaryChannel === "shopify"
+            ? [
+                "Shopify without PG: enable COD, add UPI QR for prepaid discount, practice COD confirmation calls.",
+              ]
+            : []),
         ],
         mistakesToAvoid: [
           "Trying all channels at once on day 1.",
           "Uploading weak images and generic descriptions.",
           "Ignoring early customer Q&A and ratings signals.",
+          ...(profile.primaryChannel === "shopify"
+            ? ["Waiting weeks for PG approval before making any sale.", "Re-applying to PG with an empty store."]
+            : []),
         ],
         partnerOptions: [
           {
