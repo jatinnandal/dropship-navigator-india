@@ -33,6 +33,12 @@ export async function getStoredProfile(userId: string): Promise<OnboardingProfil
     budgetBand: data.budget_band,
     primaryChannel: data.primary_channel,
     hasGstin: data.has_gstin,
+    operatingState: "Maharashtra",
+    productType: "general",
+    businessType: "proprietorship",
+    salesModel: "marketplace_only",
+    importsProducts: false,
+    sellsPrepackagedGoods: true,
   };
 }
 

@@ -1,25 +1,19 @@
 import Link from "next/link";
 import { ArrowRight, ChartSpline, CircleDollarSign, FileCheck } from "lucide-react";
-import { defaultProfile } from "@/lib/mvp-data";
 import { buildPersonalizedJourney } from "@/lib/mvp-data";
-import { getCompletedModuleIds, getStoredProfile } from "@/lib/profile-store";
-import { requireUser } from "@/lib/supauth";
+import { getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 
 export default async function DashboardPage() {
-  const user = await requireUser();
-  if (!user) {
-    return null;
-  }
-
   const [profile, completed] = await Promise.all([
-    getStoredProfile(user.id),
-    getCompletedModuleIds(user.id),
+    getStoredProfileForCurrentVisitor(),
+    getCompletedModuleIdsForCurrentVisitor(),
   ]);
 
-  const effectiveProfile = profile ?? defaultProfile;
+  const effectiveProfile = profile;
   const completionCount = completed.size;
   const totalModules = buildPersonalizedJourney(effectiveProfile).length;
   const completionPercent = Math.max(5, Math.round((completionCount / totalModules) * 100));
+  const gstReady = effectiveProfile.hasGstin || completed.has("common-documentation");
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
@@ -57,7 +51,7 @@ export default async function DashboardPage() {
             GST status
           </div>
           <p className="mt-2 text-2xl font-semibold">
-            {effectiveProfile.hasGstin ? "Configured" : "Pending"}
+            {gstReady ? "Configured" : "Pending"}
           </p>
         </article>
         <article className="glass-panel surface-hover rounded-lg p-5">

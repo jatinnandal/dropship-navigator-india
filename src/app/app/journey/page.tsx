@@ -1,18 +1,12 @@
 import Link from "next/link";
 import { CheckCircle2, Sparkles } from "lucide-react";
-import { buildPersonalizedJourney, defaultProfile } from "@/lib/mvp-data";
-import { getCompletedModuleIds, getStoredProfile } from "@/lib/profile-store";
-import { requireUser } from "@/lib/supauth";
+import { buildPersonalizedJourney } from "@/lib/mvp-data";
+import { getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { updateModuleCompletion } from "@/app/app/journey/actions";
 
 export default async function JourneyPage() {
-  const user = await requireUser();
-  if (!user) {
-    return null;
-  }
-
-  const profile = (await getStoredProfile(user.id)) ?? defaultProfile;
-  const completed = await getCompletedModuleIds(user.id);
+  const profile = await getStoredProfileForCurrentVisitor();
+  const completed = await getCompletedModuleIdsForCurrentVisitor();
   const modules = buildPersonalizedJourney(profile);
   const completedCount = modules.filter((module) => completed.has(module.id)).length;
   const completionPercent = Math.max(5, Math.round((completedCount / modules.length) * 100));
@@ -93,10 +87,26 @@ export default async function JourneyPage() {
                 </div>
               </div>
 
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link
+                  href={`/app/journey/${module.id}`}
+                  className="inline-flex items-center rounded-md border border-cyan-300/30 bg-cyan-500/10 px-3 py-1.5 text-sm font-medium text-cyan-100 transition hover:bg-cyan-500/20"
+                >
+                  Open detailed guide
+                </Link>
+                <Link
+                  href={`/app/tasks/${module.id}`}
+                  className="inline-flex items-center gap-1.5 rounded-md border border-amber-300/40 bg-amber-300/10 px-3 py-1.5 text-sm font-medium text-amber-100 transition hover:bg-amber-300/20"
+                >
+                  <Sparkles className="h-3.5 w-3.5" />
+                  Start guided walkthrough
+                </Link>
+              </div>
+
               {isCompleted ? (
                 <div className="mt-4 flex items-center gap-2 text-sm text-emerald-200">
                   <CheckCircle2 className="h-4 w-4" />
-                  Completed in your account.
+                  Completed and saved.
                 </div>
               ) : (
                 <div className="text-muted mt-4 flex items-center gap-2 text-sm">

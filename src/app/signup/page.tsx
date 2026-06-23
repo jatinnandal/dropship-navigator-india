@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-
-export default function LoginPage() {
+export default function SignupPage() {
   redirect("/app");
 }

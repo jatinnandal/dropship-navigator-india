@@ -8,9 +8,14 @@ export default function Home() {
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-16 px-6 py-14 md:px-10">
         <div className="page-reveal flex items-center justify-between">
           <AppLogo href="/" subtitle="Seller operating system for India" />
-          <Link href="/login" className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
-            Login
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/app" className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
+              Open app
+            </Link>
+            <Link href="/onboarding" className="btn-primary rounded-md px-4 py-2 text-sm font-semibold">
+              Start onboarding
+            </Link>
+          </div>
         </div>
         <div className="pointer-events-none absolute left-6 top-28 h-24 w-24 rounded-full bg-cyan-400/20 blur-2xl ambient-orb" />
         <div className="pointer-events-none absolute right-16 top-44 h-20 w-20 rounded-full bg-amber-400/20 blur-2xl ambient-orb" />
@@ -26,17 +31,17 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              href="/login"
+              href="/onboarding"
               className="btn-emerald inline-flex items-center gap-2 rounded-md px-5 py-3 font-semibold"
             >
-              Start with login
+              Start onboarding
               <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               href="/app"
               className="btn-ghost rounded-md px-5 py-3 font-semibold"
             >
-              Open app dashboard
+              Open dashboard
             </Link>
           </div>
         </section>
