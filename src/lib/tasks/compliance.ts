@@ -139,6 +139,23 @@ export function buildComplianceTask(
     });
   }
 
+  if (profile.productType === "fashion") {
+    steps.push({
+      id: "fashion-compliance",
+      title: "Fashion listing compliance",
+      why: "Fashion has lighter regulatory burden than food/electronics, but marketplaces enforce brand authorization and return policies strictly.",
+      how: [
+        "Brand authorization: if selling branded goods, get authorization letter or sell own-label/unbranded.",
+        "Size chart mandatory on listing — reduces 'wrong size' returns.",
+        "Return/exchange policy visible on listing and store page.",
+        "Accurate color and fabric description — 'not as described' is top return reason after size.",
+        "7-day return window is standard; shorter windows reduce trust on unknown stores.",
+      ],
+      trap: "Using celebrity/influencer photos without rights = IP complaint and listing removal.",
+      mentorNote: "Fashion compliance is mostly about accurate listings and return clarity — not certificates.",
+    });
+  }
+
   if (profile.sellsPrepackagedGoods) {
     steps.push({
       id: "legal-metrology",
@@ -203,7 +220,9 @@ export function buildComplianceTask(
         ? "Electronics may need BIS + GST + category approval."
         : profile.productType === "beauty"
           ? "Beauty needs proper labeling + GST + category checks."
-          : "General merchandise follows GST + marketplace category rules.";
+          : profile.productType === "fashion"
+            ? "Fashion needs size charts, return policy, and brand authorization if branded."
+            : "General merchandise follows GST + marketplace category rules.";
 
   return {
     id: "compliance-by-product",

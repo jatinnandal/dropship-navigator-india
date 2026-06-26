@@ -13,7 +13,9 @@ export default async function JourneyPage() {
   const nodes = getJourneyNodes({
     completedModules: completed,
     subTasks: workspace.subTasks,
+    completedSimulators: workspace.completedSimulators,
     hasGstin: profile.hasGstin || !!workspace.gstin,
+    profile,
   });
   const completedCount = nodes.filter((n) => n.status === "done").length;
   const completionPercent = Math.max(5, Math.round((completedCount / nodes.length) * 100));
@@ -23,9 +25,9 @@ export default async function JourneyPage() {
       <header className="glass-panel rounded-xl p-6 text-slate-100">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="headline-gradient text-3xl font-bold">Your skill tree</h1>
+            <h1 className="headline-gradient text-3xl font-bold">Your launch plan</h1>
             <p className="text-muted mt-2 text-sm">
-              Jump to any module — work in parallel. Only sub-tasks with real prerequisites stay locked.
+              Work modules in parallel where it makes sense. One hard lock: ads need live listings. Dashed paths are recommended order.
             </p>
           </div>
           <div className="rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3">

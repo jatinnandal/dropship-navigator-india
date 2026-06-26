@@ -21,6 +21,7 @@ export type Workspace = {
   calculatorSnapshot?: Record<string, number>;
   subTasks?: Record<string, boolean>;
   completedMilestones?: string[];
+  completedSimulators?: Record<string, boolean>;
 };
 
 export const emptyWorkspace: Workspace = {};
@@ -64,6 +65,10 @@ export function parseWorkspace(raw: string | undefined): Workspace {
       completedMilestones: Array.isArray(parsed.completedMilestones)
         ? parsed.completedMilestones.filter((m): m is string => typeof m === "string")
         : undefined,
+      completedSimulators:
+        parsed.completedSimulators && typeof parsed.completedSimulators === "object"
+          ? (parsed.completedSimulators as Record<string, boolean>)
+          : undefined,
     };
   } catch {
     return { ...emptyWorkspace };

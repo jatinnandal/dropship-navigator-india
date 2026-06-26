@@ -54,6 +54,22 @@ export function buildProductSelectionTask(
       simulator: { kind: "product_swipe" },
     },
     {
+      id: "returns-vs-rto",
+      title: "Returns vs RTO — know the difference",
+      why: "Beginners confuse these. RTO means customer never paid. Returns mean they paid, then wanted refund — different cost, different fix.",
+      how: [
+        "RTO (Return to Origin): courier could not deliver COD order. You lose forward + reverse shipping (~₹60–90). National COD RTO ~20–26%.",
+        "Returns (post-delivery): customer received product, then returned. You refund + pay reverse logistics. Fashion: 24–40% return rates.",
+        "Overall e-commerce returns: ~10–18% depending on category.",
+        "Price with a return buffer: fashion sellers often add 8–12% to selling price for expected returns.",
+      ],
+      trap: "Celebrating low RTO while ignoring high return rates still bleeds profit — track both separately.",
+      mentorNote:
+        profile.productType === "fashion"
+          ? "Fashion is hit twice: high RTO on COD AND high post-delivery returns. Budget for both."
+          : undefined,
+    },
+    {
       id: "rto-screen",
       title: "Screen out RTO-heavy products",
       why: "COD Return-to-Origin at ~26% nationally is the #1 profit killer. Fashion (40%+ RTO), fragile items, and heavy products destroy margins.",
@@ -113,6 +129,53 @@ export function buildProductSelectionTask(
     });
   }
 
+  if (profile.productType === "fashion") {
+    steps.push(
+      {
+        id: "fashion-size-chart",
+        title: "Size chart template (fashion mandatory)",
+        why: "Wrong size is the #1 return reason in fashion. A clear size chart cuts returns 15–25%.",
+        how: [
+          "Measure 3 samples per size — chest, length, shoulder, sleeve.",
+          "Add cm AND inches columns.",
+          "Note if product runs small/large.",
+          "Include model height + size worn in listing photos.",
+        ],
+        trap: "Listing fashion without a size chart = 30–40% combined RTO + returns.",
+      },
+      {
+        id: "fashion-photos",
+        title: "Fashion photo checklist",
+        why: "Bad photos drive 'not as described' returns — worse than RTO because customer already paid.",
+        how: [
+          "Minimum 5 images: white BG front, back, lifestyle, fabric close-up, size chart infographic.",
+          "Show product on a model matching your target buyer.",
+          "Never use supplier watermarked photos without permission.",
+        ],
+      },
+      {
+        id: "fashion-return-policy",
+        title: "Return policy wording",
+        why: "Clear return policy builds trust AND sets expectations. Vague policy = disputes.",
+        how: [
+          "7-day return window from delivery.",
+          "Unworn, tags attached, original packaging.",
+          "Exchange for size within 7 days (customer pays return shipping).",
+        ],
+      },
+      {
+        id: "fashion-return-buffer",
+        title: "Price with a return buffer",
+        why: "At 30% fashion returns, your effective revenue is 70% of listed price. Price accordingly.",
+        how: [
+          "Add 8–12% to your target selling price for expected returns.",
+          "Re-run margin calculator with 35% RTO + 10% return assumption.",
+          "If margin still below 15%, raise price or pick different product.",
+        ],
+      },
+    );
+  }
+
   steps.push(
     {
       id: "shortlist",
@@ -135,7 +198,7 @@ export function buildProductSelectionTask(
     },
     {
       id: "rto-reality",
-      title: "Feel the RTO Reality",
+      title: "Will I Survive? — RTO Reality Slider",
       why: "Slide RTO up and watch profit disappear — this is the #1 reason Indian dropshippers think they profit while losing money.",
       how: ["Adjust the sliders and see net profit change in real time."],
       kind: "simulator",

@@ -73,6 +73,22 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
     term: "BIS",
     short: "Bureau of Indian Standards certification — required for many electronics.",
   },
+  {
+    term: "GSTR-8",
+    short: "Monthly return filed by e-commerce operators showing TCS collected on your sales. Match with your GSTR-2A.",
+  },
+  {
+    term: "wardrobing",
+    short: "Buying clothes, wearing them once with tags, then returning. A major fashion return fraud pattern.",
+  },
+  {
+    term: "reserve hold",
+    short: "Marketplace holds part of your payout as security against returns or policy risk. Common for new sellers.",
+  },
+  {
+    term: "AliExpress",
+    short: "China cross-border marketplace. 2–4 week shipping — impractical for India COD dropshipping.",
+  },
 ];
 
 const SORTED_TERMS = [...JARGON_DICTIONARY].sort((a, b) => b.term.length - a.term.length);

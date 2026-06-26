@@ -9,9 +9,24 @@ import { RtoRealitySlider } from "@/components/simulators/rto-reality-slider";
 import { CashflowTimeline } from "@/components/simulators/cashflow-timeline";
 import { NdrCallerSimulator } from "@/components/simulators/ndr-caller-simulator";
 import { ProductSwipeGame } from "@/components/simulators/product-swipe-game";
+import { SourcingSwipeGame } from "@/components/simulators/sourcing-swipe-game";
+import { CodPrepaidMix } from "@/components/simulators/cod-prepaid-mix";
+import { PincodePilotPlanner } from "@/components/simulators/pincode-pilot-planner";
+import { CopyTemplate } from "@/components/copy-template";
+import { SettlementBreakdown } from "@/components/settlement-breakdown";
 import type { OnboardingProfile } from "@/lib/mvp-data";
 import { buildTask } from "@/lib/tasks";
 import type { TaskStep } from "@/lib/tasks/types";
+import { defaultRtoForProductType } from "@/lib/profit-math";
+import {
+  COURIER_BENCHMARK_CHECKLIST,
+  ESCALATION_LETTER,
+  MARKETPLACE_APPEAL_TICKET,
+  PAOS_APPEAL_TEMPLATE,
+  RETURN_POLICY_SNIPPET,
+  SIZE_CHART_CHECKLIST,
+  SUPPLIER_SLA_TEMPLATE,
+} from "@/lib/mentor-templates";
 import { fireMilestoneConfetti } from "@/lib/confetti";
 import { workspaceRecapItems, type Workspace } from "@/lib/workspace";
 import {
@@ -19,6 +34,7 @@ import {
   persistSimulatorComplete,
   persistTaskState,
   persistWorkspaceField,
+  markSubTaskForStep,
 } from "./actions";
 
 type Props = {
@@ -128,6 +144,9 @@ export function TaskRunner({
     nextCompleted.add(stepId);
     setCompleted(nextCompleted);
     persist(nextCompleted, answers);
+    startSaving(() => {
+      void markSubTaskForStep(stepId);
+    });
     if (nextCompleted.size === steps.length) {
       fireMilestoneConfetti("module-complete");
     }
@@ -173,8 +192,17 @@ export function TaskRunner({
   }
 
   function applySimulator(step: TaskStep) {
+    const kind = step.simulator?.kind;
+    if (!kind) return;
     startSaving(async () => {
-      await persistSimulatorComplete(taskId, step.id, answers, Array.from(completed));
+      const updated = await persistSimulatorComplete(
+        kind,
+        taskId,
+        step.id,
+        answers,
+        Array.from(completed),
+      );
+      setWorkspace(updated);
       const nextCompleted = new Set(completed);
       nextCompleted.add(step.id);
       setCompleted(nextCompleted);
@@ -383,6 +411,9 @@ export function TaskRunner({
                   <RtoRealitySlider
                     channel={profile.primaryChannel}
                     sellingPrice={workspace.targetSellingPrice ?? 999}
+                    defaultRtoPercent={
+                      workspace.estimatedRtoRate ?? defaultRtoForProductType(profile.productType)
+                    }
                     onComplete={() => applySimulator(currentStep)}
                   />
                 </div>
@@ -404,6 +435,57 @@ export function TaskRunner({
                 <div className="mt-6">
                   <ProductSwipeGame onComplete={() => applySimulator(currentStep)} />
                 </div>
+              ) : null}
+
+              {currentStep.simulator?.kind === "sourcing_swipe" ? (
+                <div className="mt-6">
+                  <SourcingSwipeGame onComplete={() => applySimulator(currentStep)} />
+                </div>
+              ) : null}
+
+              {currentStep.simulator?.kind === "cod_prepaid_mix" ? (
+                <div className="mt-6">
+                  <CodPrepaidMix
+                    channel={profile.primaryChannel}
+                    sellingPrice={workspace.targetSellingPrice ?? 899}
+                    onComplete={() => applySimulator(currentStep)}
+                  />
+                </div>
+              ) : null}
+
+              {currentStep.simulator?.kind === "pincode_pilot" ? (
+                <div className="mt-6">
+                  <PincodePilotPlanner
+                    defaultState={profile.operatingState}
+                    defaultOrderTarget={profile.budgetBand === "under_20k" ? 50 : 100}
+                    onComplete={() => applySimulator(currentStep)}
+                  />
+                </div>
+              ) : null}
+
+              {currentStep.id === "fashion-size-chart" ? (
+                <CopyTemplate title="Size chart template" text={SIZE_CHART_CHECKLIST} className="mt-4" />
+              ) : null}
+              {currentStep.id === "fashion-return-policy" ? (
+                <CopyTemplate title="Return policy snippet" text={RETURN_POLICY_SNIPPET} className="mt-4" />
+              ) : null}
+              {currentStep.id === "negotiate-terms" ? (
+                <CopyTemplate title="Supplier SLA template" text={SUPPLIER_SLA_TEMPLATE} className="mt-4" />
+              ) : null}
+              {currentStep.id === "courier-benchmark" ? (
+                <CopyTemplate title="Courier benchmark template" text={COURIER_BENCHMARK_CHECKLIST} className="mt-4" />
+              ) : null}
+              {currentStep.id === "appeal-pack" ? (
+                <div className="mt-4 space-y-4">
+                  <CopyTemplate title="Marketplace support ticket" text={MARKETPLACE_APPEAL_TICKET} />
+                  <CopyTemplate title="Formal escalation letter" text={ESCALATION_LETTER} />
+                </div>
+              ) : null}
+              {currentStep.id === "paos-appeal" ? (
+                <CopyTemplate title="Plan of Action (POA) template" text={PAOS_APPEAL_TEMPLATE} className="mt-4" />
+              ) : null}
+              {currentStep.id === "tcs-recovery" || currentStep.id === "settlement-reconciliation" ? (
+                <SettlementBreakdown channel={profile.primaryChannel} />
               ) : null}
 
               {currentStep.calculator ? (

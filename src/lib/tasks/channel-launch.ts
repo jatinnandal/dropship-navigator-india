@@ -117,6 +117,61 @@ function channelOnboardingSteps(channel: OnboardingProfile["primaryChannel"]): T
   }
 }
 
+function logisticsStepsForChannel(channel: OnboardingProfile["primaryChannel"]): string[] {
+  switch (channel) {
+    case "meesho":
+      return [
+        "Meesho Valmo / platform logistics — default for most suppliers.",
+        "Confirm pickup pincode is serviceable in supplier panel.",
+        "Compare self-ship only if you have negotiated courier rates below platform.",
+      ];
+    case "amazon":
+      return [
+        "Easy Ship: Amazon-arranged pickup — good for beginners.",
+        "Self Ship: your courier — only if rates beat Easy Ship after RTO reverse charges.",
+        "Check serviceability for your pickup pincode before listing.",
+      ];
+    case "flipkart":
+      return [
+        "Ekart (Flipkart logistics) vs self-ship — compare all-in cost including RTO.",
+        "Self-ship needs pre-approved courier list in Seller Hub.",
+        "Late Ekart pickup counts against dispatch SLA.",
+      ];
+    default:
+      return [
+        "Compare Shiprocket vs Delhivery vs Xpressbees for your pickup pincode.",
+        "Run courier benchmark (5 test shipments) before committing volume.",
+        "Check COD remittance cycle — 7 vs 14 days affects cashflow.",
+      ];
+  }
+}
+
+function shippingSlaForChannel(channel: OnboardingProfile["primaryChannel"]): string[] {
+  switch (channel) {
+    case "amazon":
+      return [
+        "Easy Ship: dispatch within 2 business days of order.",
+        "Self Ship: confirm by midnight, ship next business day.",
+        "Late dispatch >4% triggers account health warning.",
+      ];
+    case "flipkart":
+      return [
+        "Dispatch within 24–48 hours depending on listing promise.",
+        "Handover to Ekart within SLA window — late handover = cancellation.",
+      ];
+    case "meesho":
+      return [
+        "Dispatch within 48 hours for most categories.",
+        "Valmo pickup scheduled day after order — keep inventory ready.",
+      ];
+    default:
+      return [
+        "Set realistic dispatch timeline on store (2–3 days if supplier needs time).",
+        "Update inventory to zero rather than accepting orders you cannot ship.",
+      ];
+  }
+}
+
 export function buildChannelLaunchTask(
   profile: OnboardingProfile,
   answers: Record<string, string>,
@@ -172,6 +227,31 @@ export function buildChannelLaunchTask(
   }
 
   if (profile.primaryChannel === "shopify") {
+    const isIndividual =
+      profile.businessType === "individual" ||
+      answers["registered-business"] === "no";
+
+    steps.push({
+      id: "business-entity-check",
+      title: "Registered business status",
+      why: "Razorpay and Cashfree frequently reject individuals without a registered business entity (proprietorship, LLP, Pvt Ltd). Know this before applying.",
+      how: [
+        `Your profile says: ${profile.businessType.replace(/_/g, " ")}.`,
+        "Confirm whether you have a registered business suitable for PG approval.",
+      ],
+      mentorNote: isIndividual
+        ? "Individuals face higher PG rejection rates. Plan B (COD-only) is realistic — not a failure."
+        : undefined,
+      question: {
+        id: "registered-business",
+        prompt: "Do you have a registered business entity (proprietorship, partnership, LLP, or company)?",
+        options: [
+          { value: "yes", label: "Yes — registered business with GSTIN" },
+          { value: "no", label: "No — individual / not registered yet" },
+        ],
+      },
+    });
+
     steps.push({
       id: "pg-check",
       title: "Payment gateway status (Razorpay / Cashfree)",
@@ -188,17 +268,37 @@ export function buildChannelLaunchTask(
       },
     });
 
-    if (answers["pg-approved"] === "no" || answers["pg-approved"] === "not-applied") {
+    if (
+      answers["pg-approved"] === "no" ||
+      answers["pg-approved"] === "not-applied" ||
+      answers["registered-business"] === "no"
+    ) {
       steps.push(
         {
           id: "zero-pg-intro",
           title: "Zero-PG launch strategy (your first 10 orders)",
-          why: "Getting a PG is hard right now. You can still start selling — do not wait weeks and quit.",
+          why: "Getting a PG is hard right now — especially for individuals. You can still start selling.",
           how: [
             "This is normal. Many beginners launch without a PG first.",
             "Follow the COD-only + UPI QR path below for your first orders.",
           ],
-          mentorNote: "The mentor move: sell on Meesho (zero PG needed) OR run COD-only on Shopify while PG pending.",
+          mentorNote:
+            answers["registered-business"] === "no"
+              ? "Register a proprietorship + GSTIN before re-applying to PG. Meanwhile, COD-only works."
+              : "Sell on Meesho (zero PG needed) OR run COD-only on Shopify while PG pending.",
+        },
+        {
+          id: "zero-pg-mobile-checkout",
+          title: "Mobile-first checkout setup",
+          why: "90%+ India buyers are on mobile. Checkout must capture phone number first — for COD confirmation.",
+          how: [
+            "Shopify: customize checkout to prioritize phone number field.",
+            "Disable card/online payment methods until PG approved.",
+            "Enable COD as default payment method.",
+            "Add order confirmation SMS/WhatsApp trigger (manual or app).",
+            "Thank-you page: UPI QR for prepaid discount.",
+          ],
+          trap: "Desktop-first checkout with card payment as default confuses COD buyers.",
         },
         {
           id: "zero-pg-cod",
@@ -312,10 +412,101 @@ export function buildChannelLaunchTask(
     id: "cod-calls-launch",
     title: "Practice COD confirmation before your first order",
     why: "One bad COD order costs 2× shipping. Learn the call/WhatsApp script before you go live.",
-    how: ["Complete 2 quick scenarios — pick the best response each time."],
+    how: [
+      "Complete 2 quick scenarios — pick the best response each time.",
+      "NDR callback within 24 hours is mandatory — missed window = automatic RTO charge.",
+    ],
     kind: "simulator",
     simulator: { kind: "ndr_caller" },
   });
+
+  steps.push(
+    {
+      id: "logistics-selection",
+      title: "Choose your logistics partner",
+      why: "Wrong logistics = high RTO reverse charges and late dispatch penalties that trigger account suspension.",
+      how: logisticsStepsForChannel(profile.primaryChannel),
+      trap: "Choosing courier on forward price alone ignores RTO reverse charges that can exceed shipping revenue.",
+    },
+    {
+      id: "protect-your-account",
+      title: "Protect your seller account from suspension",
+      why: `${channelLabel(profile.primaryChannel)} suspends accounts for metrics, not bad luck. Know the triggers before your first order.`,
+      how: [
+        "Late dispatch rate: ship within SLA or update inventory to avoid cancellations.",
+        "Cancellation rate: never cancel customer orders — pause listing instead.",
+        "IP complaints: no counterfeit keywords, no copied brand images.",
+        "Return abuse: respond to buyer messages within 24h.",
+      ],
+      trap: "Three late dispatches in a week can trigger listing suppression on Amazon/Flipkart.",
+    },
+    {
+      id: "shipping-sla-targets",
+      title: "Hit channel dispatch SLAs",
+      why: "Dispatch SLA is the #1 suspension trigger for new sellers.",
+      how: shippingSlaForChannel(profile.primaryChannel),
+      trap: "Promising 1-day dispatch when supplier needs 3 days = guaranteed SLA breach.",
+    },
+    {
+      id: "invoice-compliance",
+      title: "GST invoice compliance on every order",
+      why: "Marketplaces audit invoices during disputes and GST scrutiny.",
+      how: [
+        "Every invoice: GSTIN, HSN, buyer state code, taxable value, GST rate.",
+        "Invoice number series must be sequential — no gaps.",
+        "B2C invoices under ₹200 can be consolidated daily on some channels — check channel rules.",
+      ],
+      trap: "Missing HSN on invoice blocks input credit claims and triggers buyer disputes.",
+    },
+    {
+      id: "brand-ip-checklist",
+      title: "Brand & IP checklist before listing",
+      why: "IP complaints are the fastest path to account suspension — even for unintentional violations.",
+      how: [
+        "No brand names in title unless you have authorization letter.",
+        "Use your own product photos — never copy competitor listing images.",
+        "Check trademark on ipindia.gov.in for brand-heavy categories.",
+        "Keep supplier authorization on file for branded goods.",
+      ],
+      trap: "Using 'Nike-style' or 'Apple-like' in title triggers automated IP bots.",
+    },
+    {
+      id: "paos-appeal",
+      title: "Plan of Action (POA) if suspended",
+      why: "When suspended, speed and structure matter. A generic apology gets rejected.",
+      how: [
+        "Identify root cause: dispatch, IP, quality, or policy violation.",
+        "Document corrective actions already taken (not planned).",
+        "Attach evidence: updated listings, supplier SLA, dispatch logs.",
+        "Use the POA template below — customize every section.",
+      ],
+      trap: "Submitting POA without fixing root cause leads to permanent suspension on second offense.",
+    },
+    {
+      id: "prepaid-incentive-tactics",
+      title: "Push prepaid to cut RTO",
+      why: "Every prepaid order skips RTO risk entirely. Even 10% prepaid shift improves unit economics.",
+      how: [
+        "Offer ₹30–50 UPI discount at checkout for prepaid.",
+        "Thank-you page: static UPI QR with 'Pay now, dispatch today'.",
+        "Partial prepay token: ₹99 to confirm COD order (refundable on delivery).",
+        "WhatsApp: 'Pay via UPI for same-day dispatch' after order placed.",
+      ],
+      trap: "Heavy COD discounting without confirmation script — you pay shipping twice on RTO.",
+    },
+    {
+      id: "pincode-blacklist-strategy",
+      title: "Pincode blacklist strategy",
+      why: "Some pincodes have 50%+ RTO. Blocking them early saves margin.",
+      how: [
+        "Run pincode pilot (50–100 orders) before national shipping.",
+        "Blacklist pincodes with >40% RTO after 20+ orders.",
+        "Use courier NDR data — refused + incomplete address clusters by pincode.",
+        "Link to pincode pilot planner in supplier-sourcing walkthrough.",
+      ],
+      trap: "Shipping all-India on day 1 with COD — ads amplify RTO losses before you learn patterns.",
+    },
+  );
 
   steps.push({
     id: "launch-checklist",

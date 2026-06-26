@@ -63,6 +63,21 @@ export function buildAdsTask(
   });
 
   steps.push({
+    id: "cod-prepaid-mix",
+    title: "Model your COD vs prepaid mix",
+    why: "COD RTO ~20–26%. Prepaid returns <2%. Your payment mix is a core unit-economics driver — especially on Shopify and Meesho.",
+    how: ["Adjust COD % and see how blended margin changes vs 100% prepaid."],
+    kind: "simulator",
+    simulator: { kind: "cod_prepaid_mix" },
+    mentorNote:
+      profile.primaryChannel === "meesho"
+        ? "Meesho is COD-heavy by default — focus on RTO reduction, not forcing prepaid."
+        : profile.primaryChannel === "shopify"
+          ? "Push UPI prepaid discount on thank-you page to shift mix toward prepaid."
+          : undefined,
+  });
+
+  steps.push({
     id: "markup-gate-ads",
     title: "The 3x markup rule for paid traffic",
     why: "Practitioners require 3x markup on landed cost (product + shipping) before running paid ads. Thin margins cannot survive ad costs.",

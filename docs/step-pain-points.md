@@ -96,6 +96,42 @@ Research-backed barriers and how Dropship Navigator solves them. Sources: Shopif
 | Zero-PG Shopify | COD-only + UPI QR + Meesho parallel in channel-launch task |
 | Gamification | `TaskToggle` sub-tasks, milestone confetti, product re-pick loop |
 
+## Mentor maturity pass (Jun 2026)
+
+| Problem | Solution in app |
+|---------|-----------------|
+| Fake COD / incomplete address | NDR sim: incomplete address scenario, ₹60–90 loss animation, address-verify template |
+| RTO at realistic defaults | Will I Survive? slider — fashion 35%, general 25%, selling price slider |
+| COD vs prepaid mix | `cod_prepaid_mix` simulator in ads-growth |
+| AliExpress / China sourcing trap | `sourcing_swipe` game in supplier-sourcing |
+| Returns ≠ RTO (fashion) | `returns-vs-rto` lesson + fashion profile branches (size chart, return buffer) |
+| Pincode pilot / courier SLA | `pincode_pilot` planner + courier benchmark + SLA templates |
+| Payout holds / appeals | `payout-holds`, `appeal-pack` steps + copy-paste escalation templates |
+| GSTR-8 reconciliation | `gstr8-reconcile` step alongside TCS recovery |
+| PG rejection (individuals) | Business-entity check + mobile-first Zero-PG checkout on Shopify |
+| Soft gates | Journey map amber warnings (simulators recommended, not hard-locked) |
+
+## Critical audit fix pass (Jun 2026 — 16 issues)
+
+| # | Issue | Fix in app |
+|---|-------|------------|
+| 01 | Onboarding form dump | `onboarding-steps.ts` + `OnboardingWizard` — one question per screen |
+| 02 | Dashboard no next action | `next-action.ts` + pinned "Do this now" hero on `/app` |
+| 03 | RTO/COD depth | Prepaid incentive + pincode blacklist steps in channel-launch; NDR 24h callout |
+| 04 | Account suspension | protect-account, shipping-sla, invoice/IP steps + `PAOS_APPEAL_TEMPLATE` |
+| 05 | GST filing calendar | `gst-filing-calendar` step + dashboard banner via `getGstFilingBanner()` |
+| 06 | Margin calculator | Monthly projections + break-even orders in `profit-calculator.tsx` |
+| 07 | Passive module voice | `mentor-voice.ts` on journey module pages |
+| 08 | Skill tree label | `JourneyGraphView` SVG + "Your launch plan" copy |
+| 09 | Sub-task how-to | `subtask-guides.ts` + expandable `TaskToggle` |
+| 10 | Settlement depth | Channel payment timelines in `settlement-reconciliation` |
+| 11 | Logistics selection | `logistics-selection` step (channel-aware) |
+| 12 | Festival seasonality | `india-commerce-calendar.ts` + `SeasonNotice` on dashboard |
+| 13 | TCS/TDS explainer | `SettlementBreakdown` component (₹1000 → payout example) |
+| 14 | Too few locks | Extended soft warnings in `journey-graph.ts` (HSN, GSTIN, supplier, ROAS) |
+| 15 | Supplier failures | OOS, price hike, quality playbook steps |
+| 16 | Mobile optimization | 44px touch targets, mobile timeline, `AppMobileNav` bottom bar |
+
 ## Tool recommendations (vendor-neutral)
 
 Recommend only when the step genuinely needs external help:

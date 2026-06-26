@@ -3,6 +3,31 @@ import type { Workspace } from "@/lib/workspace";
 import { channelLabel } from "@/lib/tasks/shared";
 import type { Task, TaskStep } from "@/lib/tasks/types";
 
+function settlementTimelineForChannel(channel: OnboardingProfile["primaryChannel"]): string[] {
+  switch (channel) {
+    case "amazon":
+      return [
+        "Amazon payment cycle: typically T+7 to T+14 from order delivery (varies by category/account age).",
+        "New seller reserve: first 7–14 days may have hold on portion of settlement.",
+      ];
+    case "flipkart":
+      return [
+        "Flipkart settlement: usually weekly cycle, 7–10 business days after order completion.",
+        "Check 'Payment' tab for next settlement date and hold reasons.",
+      ];
+    case "meesho":
+      return [
+        "Meesho payment cycle: typically 7–15 days after delivery confirmation.",
+        "COD remittance may lag prepaid — track both separately.",
+      ];
+    default:
+      return [
+        "Shopify/own store: PG settlement T+2 to T+3 (Razorpay/Cashfree).",
+        "COD via courier: remittance cycle 7–14 days depending on aggregator.",
+      ];
+  }
+}
+
 export function buildTrackingTask(
   profile: OnboardingProfile,
   answers: Record<string, string>,
@@ -65,8 +90,56 @@ export function buildTrackingTask(
         "Check for: missing orders, wrong commission, unprocessed returns, TCS deductions.",
         "If mismatch > ₹100: raise a support ticket with order IDs and expected vs actual.",
         "Track ticket status until resolved.",
+        ...settlementTimelineForChannel(profile.primaryChannel),
+        "Common deduction glossary: commission, fixed closing fee, shipping chargeback, TCS 1%, pick-pack fee, storage (FBA), ad spend offset.",
+        "Raise reconciliation claim: attach settlement CSV + bank statement + order-wise expected calc. One ticket with all order IDs — not one per order.",
       ],
       trap: "Assuming marketplace payouts are always correct. 2-5% error rate is common, especially in first 3 months.",
+    },
+    {
+      id: "payout-holds",
+      title: "Understand payout holds and reserves",
+      why: "New sellers often face held settlements, performance reserves, or return deductions. This can be existential for micro-sellers.",
+      how: [
+        `Download settlement ledger from ${channelLabel(profile.primaryChannel)} — line by line.`,
+        "Identify: reserve hold, new-seller hold, return deduction, TCS line, commission line.",
+        "New seller hold: often 7–14 days on first payouts — plan cashflow accordingly.",
+        "Performance hold: triggered by high returns/RTO or policy violations.",
+        "Compare expected vs actual weekly — ticket if mismatch > ₹100.",
+      ],
+      trap: "Panicking and creating duplicate tickets slows resolution. One detailed ticket with order IDs works better.",
+    },
+    {
+      id: "appeal-pack",
+      title: "Build your appeal pack (keep ready)",
+      why: "When account is suspended or payout held, speed matters. Having docs ready cuts resolution from weeks to days.",
+      how: [
+        "Folder with: GST certificate, PAN, bank proof (name = GST legal name), return policy screenshot.",
+        "Sample invoices or order screenshots showing fulfillment.",
+        "Settlement reports for disputed period.",
+        "Use escalation letter template — copy from mentor resources.",
+        "Mark done when folder is assembled.",
+      ],
+    },
+    {
+      id: "gstr8-reconcile",
+      title: "GSTR-8 and TCS reconciliation",
+      why: "E-commerce operators file GSTR-8 monthly with TCS collected on your sales. Mismatches block credits and cash.",
+      how: [
+        "GSTR-8: operator's monthly statement of TCS collected on your behalf.",
+        "Your job: match operator TCS in GSTR-2A vs marketplace TCS report.",
+        "Claim in GSTR-3B monthly. Excess TCS → refundable via ITR.",
+        "Monthly calendar: settlement report → TCS report → GSTR-2A check → GSTR-3B file.",
+        "Involve CA if 2A vs marketplace mismatch persists 2+ months.",
+      ],
+      trap: "Ignoring GSTR-8 mismatches means you overpay tax and lose input credit — silent 1%+ bleed.",
+      tools: [
+        {
+          name: "eCominess",
+          whenToUse: "To auto-generate GSTR-1 from marketplace reports.",
+          why: "Reduces manual errors in TCS reconciliation.",
+        },
+      ],
     },
     {
       id: "tcs-recovery",
@@ -89,13 +162,15 @@ export function buildTrackingTask(
       title: "Track RTO reasons and fix root causes",
       why: "RTO is not random. Patterns emerge: certain pincodes, product types, price points, or courier partners cause most returns.",
       how: [
-        "Create an RTO log: date, order ID, product, reason (refused/wrong address/quality/cash unavailable).",
-        "Weekly: calculate RTO rate = RTO orders / total COD orders.",
-        "Target: below 15% for general products, below 25% for fashion.",
-        "Fix top 3 reasons: address validation, COD confirmation, product description accuracy.",
+        "Create an RTO/returns log with separate columns:",
+        "RTO reason: refused / wrong address / cash unavailable / quality (never paid).",
+        "Return reason: wrong size / not as described / changed mind / defect (paid then returned).",
+        "Weekly: RTO rate = RTO orders / total COD orders. Return rate = returns / delivered orders.",
+        "Target: RTO below 15% general, below 25% fashion. Returns below 15% general, below 30% fashion.",
+        "Fix top 3 reasons per column — different fixes for RTO vs returns.",
       ],
-      kind: "calculator",
-      calculator: { kind: "rto_impact" },
+      kind: "simulator",
+      simulator: { kind: "pincode_pilot" },
       trap: "Treating all returns the same. 'Customer refused' on a ₹200 product vs ₹2000 product needs different fixes.",
     },
     {

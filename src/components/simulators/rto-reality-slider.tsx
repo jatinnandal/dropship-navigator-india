@@ -7,13 +7,20 @@ import { calculateProfit } from "@/lib/profit-math";
 type Props = {
   channel: PrimaryChannel;
   sellingPrice?: number;
+  defaultRtoPercent?: number;
   onComplete?: (result: { netProfit: number; rtoRate: number }) => void;
 };
 
-export function RtoRealitySlider({ channel, sellingPrice = 999, onComplete }: Props) {
+export function RtoRealitySlider({
+  channel,
+  sellingPrice: initialPrice = 999,
+  defaultRtoPercent = 35,
+  onComplete,
+}: Props) {
+  const [sellingPrice, setSellingPrice] = useState(initialPrice);
   const [productCost, setProductCost] = useState(350);
   const [adCost, setAdCost] = useState(80);
-  const [rtoRate, setRtoRate] = useState(15);
+  const [rtoRate, setRtoRate] = useState(defaultRtoPercent);
 
   const result = useMemo(
     () =>
@@ -37,10 +44,23 @@ export function RtoRealitySlider({ channel, sellingPrice = 999, onComplete }: Pr
 
   return (
     <div className="mt-4 space-y-5 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
-      <p className="text-sm font-semibold text-slate-100">RTO Reality Slider</p>
+      <p className="text-sm font-semibold text-slate-100">Will I Survive? — RTO Reality Slider</p>
       <p className="text-muted text-xs">
-        Drag RTO up and watch profit die — this is why Indian COD dropshipping is brutal.
+        Default RTO is set to a realistic India COD rate ({defaultRtoPercent}%). Drag it up and watch profit die.
       </p>
+
+      <label className="block text-sm">
+        <span className="text-muted">Selling price (₹): {sellingPrice}</span>
+        <input
+          type="range"
+          min={299}
+          max={2999}
+          step={50}
+          value={sellingPrice}
+          onChange={(e) => setSellingPrice(Number(e.target.value))}
+          className="mt-2 w-full accent-cyan-400"
+        />
+      </label>
 
       <label className="block text-sm">
         <span className="text-muted">Product cost (₹): {productCost}</span>
@@ -78,7 +98,7 @@ export function RtoRealitySlider({ channel, sellingPrice = 999, onComplete }: Pr
         />
       </label>
 
-      <div className={`rounded-lg border border-slate-600/50 bg-slate-900/50 p-4 text-center transition-colors`}>
+      <div className="rounded-lg border border-slate-600/50 bg-slate-900/50 p-4 text-center transition-colors">
         <p className="text-xs uppercase tracking-wide text-muted">Net profit per order</p>
         <p className={`text-4xl font-bold transition-colors ${profitClass}`}>
           ₹{result.netProfit.toFixed(0)}

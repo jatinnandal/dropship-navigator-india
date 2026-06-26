@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { PrimaryChannel } from "@/lib/mvp-data";
-import { calculateProfit, rtoImpactSummary } from "@/lib/profit-math";
+import { calculateProfit, calculateMonthlyProjections, rtoImpactSummary } from "@/lib/profit-math";
 import type { CalculatorKind } from "@/lib/tasks/types";
 
 type Props = {
@@ -64,6 +64,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
   const [adCost, setAdCost] = useState(String(initialValues?.adCostPerOrder ?? 80));
   const [rtoRate, setRtoRate] = useState(String(initialValues?.rtoRatePercent ?? 18));
   const [ordersPerMonth, setOrdersPerMonth] = useState("100");
+  const [monthlyFixed, setMonthlyFixed] = useState("5000");
 
   const result = useMemo(() => {
     return calculateProfit({
@@ -75,6 +76,20 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       channel,
     });
   }, [sellingPrice, productCost, shippingCost, adCost, rtoRate, channel]);
+
+  const projections = useMemo(() => {
+    return calculateMonthlyProjections(
+      {
+        sellingPrice: Number(sellingPrice) || 0,
+        productCost: Number(productCost) || 0,
+        shippingCost: Number(shippingCost) || 0,
+        adCostPerOrder: Number(adCost) || 0,
+        rtoRatePercent: Number(rtoRate) || 0,
+        channel,
+      },
+      Number(monthlyFixed) || 0,
+    );
+  }, [sellingPrice, productCost, shippingCost, adCost, rtoRate, channel, monthlyFixed]);
 
   const rtoImpact = useMemo(() => {
     const base = Number(rtoRate) || 26;
@@ -198,6 +213,17 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
           />
         </label>
+        {kind === "margin" ? (
+          <label className="block text-sm sm:col-span-2">
+            <span className="text-muted">Monthly fixed costs (₹) — optional</span>
+            <input
+              type="number"
+              value={monthlyFixed}
+              onChange={(e) => setMonthlyFixed(e.target.value)}
+              className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            />
+          </label>
+        ) : null}
       </div>
 
       <div className={`mt-4 rounded-lg border p-4 ${verdictClass(result.verdict)}`}>
@@ -223,17 +249,39 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       </div>
 
       {showFullBreakdown ? (
-        <details className="mt-3">
-          <summary className="cursor-pointer text-sm text-amber-200">Show cost breakdown</summary>
-          <ul className="text-muted mt-2 space-y-1 text-xs">
-            <li>Marketplace commission: ₹{result.marketplaceCommission.toFixed(0)}</li>
-            <li>Payment fee (2%): ₹{result.paymentFee.toFixed(0)}</li>
-            <li>GST on fees (18%): ₹{result.gstOnFees.toFixed(0)}</li>
-            <li>TCS (1%): ₹{result.tcs.toFixed(0)}</li>
-            <li>RTO loss (weighted): ₹{result.rtoLoss.toFixed(0)}</li>
-            <li>Ad cost: ₹{result.adCost.toFixed(0)}</li>
-          </ul>
-        </details>
+        <>
+          <details className="mt-3">
+            <summary className="cursor-pointer text-sm text-amber-200">Show cost breakdown</summary>
+            <ul className="text-muted mt-2 space-y-1 text-xs">
+              <li>Marketplace commission: ₹{result.marketplaceCommission.toFixed(0)}</li>
+              <li>Payment fee (2%): ₹{result.paymentFee.toFixed(0)}</li>
+              <li>GST on fees (18%): ₹{result.gstOnFees.toFixed(0)}</li>
+              <li>TCS (1%): ₹{result.tcs.toFixed(0)}</li>
+              <li>RTO loss (weighted): ₹{result.rtoLoss.toFixed(0)}</li>
+              <li>Ad cost: ₹{result.adCost.toFixed(0)}</li>
+            </ul>
+          </details>
+          {kind === "margin" ? (
+            <div className="mt-4 grid gap-2 sm:grid-cols-2">
+              <div className="meta-tile">
+                <p className="text-xs text-muted">Break-even orders / month</p>
+                <p className="text-lg font-semibold text-amber-200">
+                  {Number.isFinite(projections.breakEvenOrders)
+                    ? projections.breakEvenOrders
+                    : "N/A (negative margin)"}
+                </p>
+              </div>
+              {projections.projections.map((p) => (
+                <div key={p.orders} className="meta-tile">
+                  <p className="text-xs text-muted">{p.orders} orders / month</p>
+                  <p className={`text-lg font-semibold ${p.monthlyProfit >= 0 ? "text-emerald-200" : "text-rose-200"}`}>
+                    ₹{p.monthlyProfit.toFixed(0)} profit
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </>
       ) : null}
 
       {onApply ? (

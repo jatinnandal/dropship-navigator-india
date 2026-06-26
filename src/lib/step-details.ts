@@ -617,6 +617,8 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
         decisionFlow: [
           "If SKU-level margin is negative for 2+ cycles, pause or reprice.",
           "If settlement mismatch repeats, open claims and track closure SLA.",
+          "Monthly: match marketplace TCS report → GSTR-2A → GSTR-3B; review GSTR-8 operator statement.",
+          "If payout held: assemble appeal pack (GST, bank proof, return policy) before escalating.",
         ],
         executionPlan: [
           {
@@ -625,17 +627,22 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
             tasks: [
               "Collect weekly order, ad, and settlement exports.",
               "Update SKU P&L and flag negative-margin SKUs.",
+              "Read settlement ledger line-by-line for holds and TCS deductions.",
             ],
           },
         ],
         doneCriteria: [
           "Weekly profitability review is running on schedule.",
           "Top loss drivers (returns/ads/fees) are identified and assigned actions.",
+          "GSTR-8 / TCS reconciliation reviewed at least monthly.",
+          "Appeal pack folder ready if marketplace hold occurs.",
         ],
         actionChecklist: [
           "Track SKU-level revenue, fees, ad spend, shipping, and net margin.",
-          "Monitor return and RTO rate by product every week.",
+          "Monitor return and RTO rate by product every week (separate columns).",
           "Reconcile settlement reports vs expected payouts.",
+          "Review GSTR-8 operator TCS statement vs GSTR-2A monthly.",
+          "Keep appeal pack: GST cert, bank proof, return policy screenshot.",
           "Create a weekly action list from data (pause, improve, scale).",
         ],
         mistakesToAvoid: [

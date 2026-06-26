@@ -163,6 +163,31 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       ],
       trap: "Wrong HSN/GST rate causes compliance issues later even if onboarding succeeds. Get the mapping right at listing time, not after sales start.",
     },
+    {
+      id: "gst-filing-calendar",
+      title: "Know your GST filing calendar (GSTR-1 + GSTR-3B)",
+      why: "Missing filings suspends your GSTIN — and marketplaces block suspended GSTINs instantly. This is not optional after registration.",
+      how: [
+        "Monthly filers: GSTR-1 by 11th, GSTR-3B by 20th (next month).",
+        "QRMP (turnover under ₹5 crore): quarterly GSTR-1 + monthly GSTR-3B via challan.",
+        "Set phone reminders 3 days before each due date.",
+        "Consequence chain: missed filing → GSTIN suspended → marketplace listing blocked.",
+      ],
+      trap: "Assuming your CA will remind you. YOU are liable — set your own calendar regardless of who files.",
+      tools: [
+        {
+          name: "ClearTax",
+          whenToUse: "If you want guided GSTR-1/3B filing with marketplace import.",
+          why: "Reduces manual errors — vendor-neutral option alongside any CA.",
+        },
+        {
+          name: "Taxbuddy",
+          whenToUse: "If you want affordable assisted filing for small sellers.",
+          why: "Good for beginners who find the GST portal overwhelming.",
+        },
+      ],
+      mentorNote: "Mark the sub-task 'GST filing calendar understood' on your journey when you've set reminders.",
+    },
   ];
 }
 
@@ -439,6 +464,18 @@ function buildRegistrationTrack(
         why: "Specializes in seller onboarding tax configuration, not just registration.",
       },
     ],
+  });
+
+  steps.push({
+    id: "gst-filing-calendar",
+    title: "Set up your post-registration filing calendar",
+    why: "Your GSTIN is only useful if you keep it active. Filings start the month after registration.",
+    how: [
+      "Mark GSTR-1 and GSTR-3B due dates on your calendar.",
+      "If turnover under ₹5 crore, check QRMP eligibility on gst.gov.in.",
+      "Plan who files: you, ClearTax, or a CA — but YOU stay liable.",
+    ],
+    trap: "New sellers forget first filing and get suspended within 90 days — before they even scale.",
   });
 
   return steps;

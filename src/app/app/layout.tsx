@@ -1,4 +1,5 @@
 import { AppLogo } from "@/components/app-logo";
+import { AppMobileNav } from "@/components/app-mobile-nav";
 import { AppNav } from "@/components/app-nav";
 import { JargonProvider } from "@/components/jargon-provider";
 
@@ -19,7 +20,8 @@ export default async function AppLayout({
             <span className="text-xs text-slate-300">No sign-in required</span>
           </div>
         </header>
-        <div className="page-reveal">{children}</div>
+        <div className="page-reveal pb-20 md:pb-0">{children}</div>
+        <AppMobileNav />
       </div>
     </JargonProvider>
   );

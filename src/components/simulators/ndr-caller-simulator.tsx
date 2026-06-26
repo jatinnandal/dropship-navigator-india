@@ -1,21 +1,54 @@
 "use client";
 
 import { useState } from "react";
+import { Truck } from "lucide-react";
 import { JargonText } from "@/components/jargon-text";
-
-const WHATSAPP_TEMPLATE = `Hi {{name}}, this is {{store}} confirming your COD order #{{order}} for ₹{{amount}}.
-
-Please reply YES to confirm delivery or CANCEL to cancel.
-
-Delivery address: {{address}}`;
+import { CopyTemplate } from "@/components/copy-template";
+import { WHATSAPP_ADDRESS_VERIFY } from "@/lib/mentor-templates";
 
 type Scenario = {
   id: string;
   customerMsg: string;
-  options: { id: string; label: string; correct: boolean; feedback: string }[];
+  templateKey?: "address" | "confirm";
+  requireCopyOnWrong?: boolean;
+  options: {
+    id: string;
+    label: string;
+    correct: boolean;
+    feedback: string;
+    showLossAnimation?: boolean;
+  }[];
 };
 
 const SCENARIOS: Scenario[] = [
+  {
+    id: "incomplete-address",
+    customerMsg:
+      'New COD order: "Rahul, Near Temple, Bihar" — no house number, no pincode. Customer has not responded to messages.',
+    templateKey: "address",
+    requireCopyOnWrong: true,
+    options: [
+      {
+        id: "ship",
+        label: "Ship anyway — any sale is good",
+        correct: false,
+        feedback: "Wrong. Incomplete addresses fail delivery 70%+ of the time.",
+        showLossAnimation: true,
+      },
+      {
+        id: "verify",
+        label: "WhatsApp to verify full address + pincode before dispatch",
+        correct: true,
+        feedback: "Correct. Never ship COD without a complete, confirmed address.",
+      },
+      {
+        id: "fake",
+        label: "Cancel — probably a fake order",
+        correct: false,
+        feedback: "Only cancel after trying to verify. Real customers often give vague addresses.",
+      },
+    ],
+  },
   {
     id: "confirm",
     customerMsg: "Customer placed COD order 12 minutes ago. No response yet.",
@@ -37,6 +70,7 @@ const SCENARIOS: Scenario[] = [
         label: "Ship immediately to beat competition",
         correct: false,
         feedback: "Shipping unconfirmed COD = paying for returns. Confirm first.",
+        showLossAnimation: true,
       },
     ],
   },
@@ -64,6 +98,32 @@ const SCENARIOS: Scenario[] = [
       },
     ],
   },
+  {
+    id: "bulk-fake",
+    customerMsg:
+      "Educational: You got 15 COD orders in 1 hour from the same pincode, all different names, all incomplete addresses.",
+    options: [
+      {
+        id: "celebrate",
+        label: "Amazing! Ship all 15 immediately",
+        correct: false,
+        feedback: "Classic fake-order pattern. Verify each order individually before dispatch.",
+        showLossAnimation: true,
+      },
+      {
+        id: "verify-all",
+        label: "Pause — verify each order via call/WhatsApp before any dispatch",
+        correct: true,
+        feedback: "Correct. Bulk fake COD is common. One verification call saves ₹60–90 per fake order.",
+      },
+      {
+        id: "ignore-pattern",
+        label: "Ignore the pattern — treat as normal",
+        correct: false,
+        feedback: "Same pincode + incomplete addresses = red flag. Verify first.",
+      },
+    ],
+  },
 ];
 
 type Props = {
@@ -73,29 +133,45 @@ type Props = {
 export function NdrCallerSimulator({ onComplete }: Props) {
   const [scenarioIndex, setScenarioIndex] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [showLoss, setShowLoss] = useState(false);
+  const [templateCopied, setTemplateCopied] = useState(false);
   const [done, setDone] = useState(false);
-  const [copied, setCopied] = useState(false);
 
   const scenario = SCENARIOS[scenarioIndex];
+  const needsCopy = scenario.requireCopyOnWrong && showLoss && !templateCopied;
+
+  function advance() {
+    if (scenarioIndex < SCENARIOS.length - 1) {
+      setScenarioIndex((i) => i + 1);
+      setFeedback(null);
+      setShowLoss(false);
+      setTemplateCopied(false);
+    } else {
+      setDone(true);
+    }
+  }
 
   function pick(optionId: string) {
     const opt = scenario.options.find((o) => o.id === optionId);
     if (!opt) return;
     setFeedback(opt.feedback);
-    if (opt.correct && scenarioIndex < SCENARIOS.length - 1) {
-      setTimeout(() => {
-        setScenarioIndex((i) => i + 1);
-        setFeedback(null);
-      }, 1500);
-    } else if (opt.correct) {
-      setDone(true);
+    if (opt.showLossAnimation) setShowLoss(true);
+    if (opt.correct) {
+      setTimeout(advance, 1500);
     }
   }
 
-  function copyTemplate() {
-    void navigator.clipboard.writeText(WHATSAPP_TEMPLATE);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+  function tryAgain() {
+    setFeedback(null);
+    setShowLoss(false);
+    setTemplateCopied(false);
+  }
+
+  function handleTemplateCopied() {
+    setTemplateCopied(true);
+    if (showLoss) {
+      setTimeout(advance, 800);
+    }
   }
 
   return (
@@ -103,7 +179,9 @@ export function NdrCallerSimulator({ onComplete }: Props) {
       <p className="text-sm font-semibold text-slate-100">NDR / COD confirmation practice</p>
 
       <div className="rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3">
-        <p className="text-xs text-cyan-200">Scenario {scenarioIndex + 1} of {SCENARIOS.length}</p>
+        <p className="text-xs text-cyan-200">
+          Scenario {scenarioIndex + 1} of {SCENARIOS.length}
+        </p>
         <p className="mt-2 text-sm text-slate-200">{scenario.customerMsg}</p>
       </div>
 
@@ -113,13 +191,18 @@ export function NdrCallerSimulator({ onComplete }: Props) {
             key={opt.id}
             type="button"
             onClick={() => pick(opt.id)}
-            disabled={!!feedback}
-            className="surface-hover rounded-lg border border-slate-700/60 px-4 py-3 text-left text-sm text-slate-200 disabled:opacity-60"
+            className="surface-hover rounded-lg border border-slate-700/60 px-4 py-3 text-left text-sm text-slate-200"
           >
             {opt.label}
           </button>
         ))}
       </div>
+
+      {feedback && !needsCopy ? (
+        <button type="button" onClick={tryAgain} className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
+          Try again
+        </button>
+      ) : null}
 
       {feedback ? (
         <p className="text-sm text-amber-200">
@@ -127,13 +210,39 @@ export function NdrCallerSimulator({ onComplete }: Props) {
         </p>
       ) : null}
 
-      <div className="rounded-lg border border-slate-700/60 bg-slate-900/40 p-3">
-        <p className="text-xs font-semibold text-slate-200">WhatsApp template (copy-paste)</p>
-        <pre className="text-muted mt-2 whitespace-pre-wrap text-xs">{WHATSAPP_TEMPLATE}</pre>
-        <button type="button" onClick={copyTemplate} className="btn-ghost mt-2 rounded-md px-3 py-1.5 text-xs font-semibold">
-          {copied ? "Copied" : "Copy template"}
+      {showLoss ? (
+        <div
+          className="rounded-lg border border-rose-400/40 bg-rose-400/10 p-4 motion-safe:animate-pulse"
+          role="alert"
+        >
+          <div className="flex items-center gap-3">
+            <Truck className="h-8 w-8 text-rose-300 motion-safe:rotate-180" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-semibold text-rose-200">Delivery failed — RTO charge</p>
+              <p className="text-muted mt-1 text-xs">
+                Forward + reverse shipping: ₹60–90 lost. Product may be damaged. You earned ₹0.
+              </p>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {(scenario.templateKey === "address" || showLoss) && !done ? (
+        <CopyTemplate
+          title="Address verification template — copy before continuing"
+          text={WHATSAPP_ADDRESS_VERIFY}
+        />
+      ) : null}
+
+      {needsCopy ? (
+        <button
+          type="button"
+          onClick={handleTemplateCopied}
+          className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold"
+        >
+          I copied the template — continue
         </button>
-      </div>
+      ) : null}
 
       {done && onComplete ? (
         <button type="button" onClick={onComplete} className="btn-emerald rounded-md px-4 py-2 text-sm font-semibold">

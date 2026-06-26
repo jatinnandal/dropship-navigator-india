@@ -109,18 +109,52 @@ export async function persistCalculatorResult(
 }
 
 export async function persistSimulatorComplete(
+  simulatorKind: string,
   taskId: string,
   stepId: string,
   existingAnswers: Record<string, string>,
   existingCompleted: string[],
 ) {
+  const currentWorkspace = await getWorkspaceForCurrentVisitor();
   const nextCompleted = new Set(existingCompleted);
   nextCompleted.add(stepId);
+
+  const workspace = await patchWorkspaceForCurrentVisitor({
+    completedSimulators: {
+      ...(currentWorkspace.completedSimulators ?? {}),
+      [simulatorKind]: true,
+    },
+  });
 
   await setTaskState(taskId, {
     completed: Array.from(nextCompleted),
     answers: existingAnswers,
   });
 
+  if (simulatorKind === "ndr_caller") {
+    await patchWorkspaceForCurrentVisitor({
+      subTasks: { ...(workspace.subTasks ?? {}), "cod-practice-done": true },
+    });
+  }
+  if (simulatorKind === "sourcing_swipe") {
+    await patchWorkspaceForCurrentVisitor({
+      subTasks: { ...(workspace.subTasks ?? {}), "domestic-supplier-confirmed": true },
+    });
+  }
+
   return getWorkspaceForCurrentVisitor();
+}
+
+const STEP_SUBTASK_MAP: Record<string, string> = {
+  "appeal-pack": "appeal-pack-ready",
+  "gstr8-reconcile": "gstr8-reviewed",
+};
+
+export async function markSubTaskForStep(stepId: string) {
+  const subTaskId = STEP_SUBTASK_MAP[stepId];
+  if (!subTaskId) return;
+  const workspace = await getWorkspaceForCurrentVisitor();
+  await patchWorkspaceForCurrentVisitor({
+    subTasks: { ...(workspace.subTasks ?? {}), [subTaskId]: true },
+  });
 }

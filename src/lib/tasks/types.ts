@@ -40,7 +40,14 @@ export type InputSpec = {
 
 export type CalculatorKind = "margin" | "breakeven_roas" | "rto_impact";
 
-export type SimulatorKind = "rto_reality" | "cashflow_timeline" | "ndr_caller" | "product_swipe";
+export type SimulatorKind =
+  | "rto_reality"
+  | "cashflow_timeline"
+  | "ndr_caller"
+  | "product_swipe"
+  | "sourcing_swipe"
+  | "cod_prepaid_mix"
+  | "pincode_pilot";
 
 export type CalculatorSpec = {
   kind: CalculatorKind;

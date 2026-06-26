@@ -169,16 +169,66 @@ export function buildPersonalizedJourney(profile: OnboardingProfile): JourneyMod
               ? "Shopify"
               : "Meesho";
 
+      const shopifyNote =
+        profile.primaryChannel === "shopify"
+          ? profile.businessType === "individual"
+            ? " PG rejection is common for individuals — Zero-PG COD path included."
+            : " Zero-PG fallback if Razorpay/Cashfree pending."
+          : "";
+
       return {
         ...module,
-        description: `Focus first launch on ${channelLabel} before expanding multi-channel.`,
+        description: `Focus first launch on ${channelLabel} before expanding multi-channel.${shopifyNote}`,
+      };
+    }
+
+    if (module.id === "product-selection") {
+      const fashionNote =
+        profile.productType === "fashion"
+          ? " Fashion path: returns≠RTO lesson, size charts, and 35% RTO defaults."
+          : "";
+      return {
+        ...module,
+        description: `${module.description}${fashionNote}`,
+      };
+    }
+
+    if (module.id === "supplier-sourcing") {
+      return {
+        ...module,
+        description:
+          "Domestic suppliers only for India COD — includes AliExpress trap game and pincode pilot planner.",
+      };
+    }
+
+    if (module.id === "tracking-analytics") {
+      return {
+        ...module,
+        description:
+          "Weekly P&L, settlement reconciliation, GSTR-8/TCS, payout holds, and appeal pack templates.",
       };
     }
 
     if (module.id === "ads-growth" && profile.budgetBand === "under_20k") {
       return {
         ...module,
-        description: "Use low-budget testing with strict daily caps and organic-heavy execution.",
+        description:
+          "Low-budget testing with strict daily caps, COD/prepaid mix simulator, and cashflow dead-zone planning.",
+      };
+    }
+
+    if (module.id === "ads-growth") {
+      const mixNote =
+        profile.primaryChannel === "meesho"
+          ? " Meesho is COD-heavy — focus on RTO reduction over prepaid push."
+          : "";
+      const budgetNote =
+        profile.budgetBand === "under_20k"
+          ? " Low-budget caps and cashflow buffer planning included."
+          : "";
+      return {
+        ...module,
+        description: `Break-even ROAS, controlled ad tests, and payment-mix modeling before scaling.${mixNote}${budgetNote}`,
       };
     }
 
