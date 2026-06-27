@@ -14,7 +14,7 @@ export function buildAdsTask(
       title: "Are you ready for ads? (honest check)",
       why: "Running ads before product-market fit is the #2 money burner after RTO. Most beginners lose their entire ad budget in week 1.",
       how: [
-        "Do you have 3+ live listings with good images and descriptions?",
+        "Do you have at least 1 live listing with good images and a complete description?",
         "Do you know your net margin per order (after ALL costs)?",
         "Have you received at least 5-10 organic orders to validate demand?",
       ],
@@ -125,7 +125,10 @@ export function buildAdsTask(
         "Pause campaigns where ACOS > net margin after 7 days.",
         "Scale winners by 20-30% budget increase per week, not doubling overnight.",
       ],
-      trap: "Killing ads after 2 days because of no sales. The algorithm needs 5-7 days and 15+ clicks to optimize.",
+      trap:
+        profile.budgetBand === "under_20k"
+          ? "₹500/day on a 12% margin product means you need 8x ROAS to break even. Most beginners hit 2x and call it a win while bleeding cash."
+          : "Killing ads after 2 days because of no sales. The algorithm needs 5-7 days and 15+ clicks to optimize.",
       tools: [
         {
           name: "Amazon Ads",
@@ -152,7 +155,10 @@ export function buildAdsTask(
     steps.push({
       id: "meta-budget",
       title: "Start small — build account trust first",
-      why: "New ad accounts spending ₹50,000/day on day 1 get flagged as suspicious. Gradual scaling builds trust.",
+      why:
+        profile.budgetBand === "under_20k"
+          ? "With under ₹20K to work with, a ₹500/day ad burn empties your runway in 40 days — before COD cash cycles back. Start at ₹200–300/day and treat week 1 as tuition, not scale."
+          : "New ad accounts spending ₹50,000/day on day 1 get flagged as suspicious. Gradual scaling builds trust.",
       how: [
         "Week 1: ₹300-500/day on one product, one ad set.",
         "Week 2: if ROAS > break-even, increase to ₹700-1000/day.",

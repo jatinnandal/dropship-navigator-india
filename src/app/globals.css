@@ -36,6 +36,58 @@ body {
   -webkit-backdrop-filter: blur(14px);
 }
 
+.glass-panel-primary {
+  background: rgba(15, 30, 55, 0.82);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.glass-panel-tertiary {
+  background: rgba(8, 16, 32, 0.5);
+  border: 1px solid rgba(100, 130, 180, 0.15);
+}
+
+.banner-deadline {
+  background: rgba(76, 5, 25, 0.45);
+  border: 1px solid rgba(244, 63, 94, 0.55);
+}
+
+.hero-reveal {
+  animation: hero-in 220ms ease-out;
+}
+
+.task-expand-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 220ms ease-out;
+}
+
+.task-expand-grid.task-expand-open {
+  grid-template-rows: 1fr;
+}
+
+.task-checkbox:checked {
+  animation: checkbox-pop 120ms ease-out;
+}
+
+@keyframes checkbox-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .surface-hover {
   transition: transform 180ms ease-out, border-color 180ms ease-out, background-color 180ms ease-out;
 }
@@ -168,7 +220,10 @@ body {
   .surface-hover,
   .progress-fill,
   .ambient-orb,
-  .page-reveal {
+  .page-reveal,
+  .hero-reveal,
+  .task-expand-grid,
+  .task-checkbox:checked {
     transition: none;
     animation: none;
   }

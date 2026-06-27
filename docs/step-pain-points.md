@@ -59,7 +59,7 @@ Research-backed barriers and how Dropship Navigator solves them. Sources: Shopif
 | Multi-channel day 1 | Spread thin across Amazon+Flipkart+Meesho | one-channel focus from profile.primaryChannel |
 | KYC mismatch repeat | Same name issues as GST | Reuse workspace; nameMismatchWarning at launch |
 | Weak listings | Generic titles, bad images | listing-quality checklist |
-| 50 listings at once | 50 compliance issues at once | first 3-5 listings gate |
+| 50 listings at once | 50 compliance issues at once | one hero listing first, expand after validation |
 | PG rejected (Shopify) | Razorpay/Cashfree reject new dropship stores | Zero-PG branch: COD-only, UPI QR, Meesho parallel, PG re-apply checklist |
 | COD without practice | First RTO from bad confirmation call | NDR caller simulator in launch + ads modules |
 
@@ -131,6 +131,24 @@ Research-backed barriers and how Dropship Navigator solves them. Sources: Shopif
 | 14 | Too few locks | Extended soft warnings in `journey-graph.ts` (HSN, GSTIN, supplier, ROAS) |
 | 15 | Supplier failures | OOS, price hike, quality playbook steps |
 | 16 | Mobile optimization | 44px touch targets, mobile timeline, `AppMobileNav` bottom bar |
+
+## PDF v2 design feedback pass (Jun 2026)
+
+| Theme | Implementation |
+|-------|----------------|
+| Per-sub-task dashboard why | `why` on every entry in `subtask-guides.ts`; `getNextAction()` + fresh-start hero copy on `/app` |
+| SVG short labels | `NODE_SHORT_LABELS` in `journey-graph-view.tsx` (Docs/Product/Compliance/etc.) |
+| How-to discoverability | `TaskToggle`: tappable label row + amber "How to do this" link + expand animation |
+| Onboarding mentor voice | `mentorNote` + `ack` on all steps; wizard shows ~mins left + acknowledgement banner |
+| Dashboard progress ring | `ProgressRing` component replaces linear bar as primary progress indicator |
+| Journey next-step callout | Pinned incomplete sub-task + time estimate in `journey-map.tsx` module panel |
+| Glass hierarchy + semantics | `glass-panel-primary/tertiary`, `banner-deadline`, checkbox bounce, expand grid animation |
+| Meesho playbook depth | Meesho branch in `step-details.ts` (Valmo, catalog rank, price control) |
+| Calendar expansion | Holi, Eid, Mother's Day, Independence Day, Meesho Mega Sale in `india-commerce-calendar.ts` |
+| NDR scenario 5 | Open-before-pay COD scenario in `ndr-caller-simulator.tsx` |
+| Sourcing deck depth | 15 cards in `sourcing-swipe-game.tsx` (China traps, GST scams, domestic viable) |
+| Margin calculator UX | Sliders for price/RTO/ads + `<15%` thin-margin warning banner |
+| Mentor copy pass | Module completion messages, lean-budget ads traps, zero-progress dashboard hero |
 
 ## Tool recommendations (vendor-neutral)
 

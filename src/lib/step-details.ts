@@ -444,28 +444,51 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
               ? "Shopify"
               : "Meesho";
 
+      const isMeesho = profile.primaryChannel === "meesho";
+
       return {
-        plainLanguageSummary: `Launch on ${channelName} first. One channel done well is better than weak setup on three channels.`,
+        plainLanguageSummary: isMeesho
+          ? "Launch on Meesho first. Price control, catalog rank, and Valmo dispatch speed decide whether you get orders — not just listing count."
+          : `Launch on ${channelName} first. One channel done well is better than weak setup on three channels.`,
         requiredInputs: [
           {
             factor: "Primary channel",
             value: profile.primaryChannel,
-            impact: "Decides first onboarding and listing checklist.",
+            impact: isMeesho
+              ? "Meesho uses price comparison — your MRP and reseller price must leave room for platform discounts."
+              : "Decides first onboarding and listing checklist.",
           },
           {
             factor: "GST status",
             value: profile.hasGstin ? "available" : "not yet",
             impact: "Can block or delay full channel activation depending on model/category.",
           },
+          ...(isMeesho
+            ? [
+                {
+                  factor: "Category tier",
+                  value: "Tier 2/3 focus",
+                  impact: "Meesho rewards fast-moving, low-ASP categories — avoid oversaturated electronics on day 1.",
+                },
+              ]
+            : []),
         ],
         mustHaveDocuments: [
           "Channel onboarding docs (PAN, GST if applicable, bank proof, pickup address proof)",
           "Brand authorization/trademark proof if listing branded products",
           "Listing media pack (images, titles, bullets, specs, tax category mapping)",
+          ...(isMeesho ? ["Meesho bank proof matching GST legal name exactly", "Valmo pickup pincode coverage check"] : []),
         ],
         decisionFlow: [
           "If onboarding is pending, do not upload large catalog yet.",
           "If listing quality is weak, improve content before scaling ads.",
+          ...(isMeesho
+            ? [
+                "If Meesho shows lower price from another reseller, fix supplier cost or exit the SKU — price wars erase margin.",
+                "If Valmo pickup is slow in your pincode, confirm alternate courier before pushing ads.",
+                "Focus first listings on Tier 2/3 categories where Meesho pushes discovery traffic.",
+              ]
+            : []),
           ...(profile.primaryChannel === "shopify"
             ? [
                 "If Razorpay/Cashfree is rejected or pending: launch COD-only + UPI QR first; sell on Meesho in parallel.",
@@ -475,11 +498,20 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
         ],
         executionPlan: [
           {
-            phase: "Phase 1 - Onboarding Completion",
-            goal: "Get account fully approved without repeated rejections.",
+            phase: isMeesho ? "Phase 1 - Meesho KYC + Valmo" : "Phase 1 - Onboarding Completion",
+            goal: isMeesho
+              ? "Get Meesho seller panel active with Valmo pickup confirmed in your pincode."
+              : "Get account fully approved without repeated rejections.",
             tasks: [
               "Submit identity, GST, bank, and pickup details with exact match.",
               "Resolve all pending verification tasks before listing push.",
+              ...(isMeesho
+                ? [
+                    "Complete Meesho KYC — bank name must match GST certificate character-for-character.",
+                    "Enable Valmo logistics and test pickup SLA from your supplier pincode.",
+                    "Upload 3 hero SKUs in categories Meesho promotes (home, fashion accessories, kitchen).",
+                  ]
+                : []),
               ...(profile.primaryChannel === "shopify"
                 ? [
                     "If PG not approved: enable COD-only checkout and add UPI QR on thank-you page.",
@@ -488,10 +520,24 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
                 : []),
             ],
           },
+          ...(isMeesho
+            ? [
+                {
+                  phase: "Phase 2 - Catalog rank + price control",
+                  goal: "Win Meesho search without racing to the lowest price.",
+                  tasks: [
+                    "Use Meesho price recommendation as ceiling, not target — stay above landed cost + 25%.",
+                    "Refresh listing images weekly; Meesho rank favors CTR and dispatch speed.",
+                    "Respond to customer queries within 4 hours — response rate affects catalog visibility.",
+                  ],
+                },
+              ]
+            : []),
         ],
         doneCriteria: [
           "Channel account is fully active and payout setup is verified.",
-          "First 3-5 listings are live with complete media and metadata.",
+          "First listing is live with complete media and metadata.",
+          ...(isMeesho ? ["Valmo pickup tested with at least one successful dispatch.", "Price set above break-even after Meesho commission."] : []),
           ...(profile.primaryChannel === "shopify"
             ? ["If PG pending: COD path live OR parallel Meesho listings generating orders."]
             : []),
@@ -500,7 +546,14 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
           `Complete ${channelName} onboarding checklist fully before listing work.`,
           "Prepare title, bullet points, image set, and pricing strategy for each SKU.",
           "Verify tax/category mapping and shipping settings.",
-          "Publish 3-5 starter listings and track first 7 days closely.",
+          "Publish 1 hero listing first; add SKUs only after 5–10 real orders teach you what works.",
+          ...(isMeesho
+            ? [
+                "Check Meesho 'lowest price' alert daily — do not auto-match if margin breaks.",
+                "Set catalog rank goal: 3 listings in top 20 search for your niche keyword.",
+                "Practice COD confirmation — Meesho RTO still hits resellers on Valmo.",
+              ]
+            : []),
           ...(profile.primaryChannel === "shopify"
             ? [
                 "Shopify without PG: enable COD, add UPI QR for prepaid discount, practice COD confirmation calls.",
@@ -511,6 +564,13 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
           "Trying all channels at once on day 1.",
           "Uploading weak images and generic descriptions.",
           "Ignoring early customer Q&A and ratings signals.",
+          ...(isMeesho
+            ? [
+                "Matching lowest Meesho price without recalculating margin.",
+                "Listing 50 SKUs before testing Valmo pickup speed.",
+                "Ignoring catalog rank drops after 2-day dispatch delays.",
+              ]
+            : []),
           ...(profile.primaryChannel === "shopify"
             ? ["Waiting weeks for PG approval before making any sale.", "Re-applying to PG with an empty store."]
             : []),

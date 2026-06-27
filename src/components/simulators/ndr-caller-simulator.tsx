@@ -124,6 +124,32 @@ const SCENARIOS: Scenario[] = [
       },
     ],
   },
+  {
+    id: "open-before-pay",
+    customerMsg:
+      "COD delivery attempt: customer refuses to pay until they open and inspect the package on the doorstep.",
+    options: [
+      {
+        id: "allow-open",
+        label: "Let them open — close the sale",
+        correct: false,
+        feedback: "Wrong. Once opened, customers often refuse damaged-looking items or haggle. RTO + product loss likely.",
+        showLossAnimation: true,
+      },
+      {
+        id: "policy-prepaid",
+        label: "Explain COD policy (no opening before payment) + offer 5% prepaid discount for next order",
+        correct: true,
+        feedback: "Correct. Firm policy protects you; prepaid incentive converts high-intent buyers without doorstep haggling.",
+      },
+      {
+        id: "cancel",
+        label: "Cancel order immediately",
+        correct: false,
+        feedback: "Only cancel if customer confirms refusal. Try policy + prepaid offer first.",
+      },
+    ],
+  },
 ];
 
 type Props = {

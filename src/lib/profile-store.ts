@@ -6,6 +6,12 @@ type ProfileRow = {
   budget_band: OnboardingProfile["budgetBand"];
   primary_channel: OnboardingProfile["primaryChannel"];
   has_gstin: boolean;
+  operating_state: string;
+  product_type: OnboardingProfile["productType"];
+  business_type: OnboardingProfile["businessType"];
+  sales_model: OnboardingProfile["salesModel"];
+  imports_products: boolean;
+  sells_prepackaged_goods: boolean;
 };
 
 type ProgressRow = {
@@ -18,11 +24,38 @@ export async function getStoredProfile(userId: string): Promise<OnboardingProfil
     return null;
   }
 
-  const { data } = await supabase
+  const fullSelect =
+    "experience_level,budget_band,primary_channel,has_gstin,operating_state,product_type,business_type,sales_model,imports_products,sells_prepackaged_goods";
+
+  const { data: profileData, error } = await supabase
     .from("profiles")
-    .select("experience_level,budget_band,primary_channel,has_gstin")
+    .select(fullSelect)
     .eq("user_id", userId)
     .maybeSingle<ProfileRow>();
+
+  let data = profileData;
+
+  if (error) {
+    const fallback = await supabase
+      .from("profiles")
+      .select("experience_level,budget_band,primary_channel,has_gstin")
+      .eq("user_id", userId)
+      .maybeSingle<Pick<ProfileRow, "experience_level" | "budget_band" | "primary_channel" | "has_gstin">>();
+
+    if (fallback.error || !fallback.data) {
+      return null;
+    }
+
+    data = {
+      ...fallback.data,
+      operating_state: "Maharashtra",
+      product_type: "general",
+      business_type: "proprietorship",
+      sales_model: "marketplace_only",
+      imports_products: false,
+      sells_prepackaged_goods: true,
+    };
+  }
 
   if (!data) {
     return null;
@@ -33,12 +66,12 @@ export async function getStoredProfile(userId: string): Promise<OnboardingProfil
     budgetBand: data.budget_band,
     primaryChannel: data.primary_channel,
     hasGstin: data.has_gstin,
-    operatingState: "Maharashtra",
-    productType: "general",
-    businessType: "proprietorship",
-    salesModel: "marketplace_only",
-    importsProducts: false,
-    sellsPrepackagedGoods: true,
+    operatingState: data.operating_state,
+    productType: data.product_type,
+    businessType: data.business_type,
+    salesModel: data.sales_model,
+    importsProducts: data.imports_products,
+    sellsPrepackagedGoods: data.sells_prepackaged_goods,
   };
 }
 
@@ -48,13 +81,36 @@ export async function upsertProfile(userId: string, profile: OnboardingProfile) 
     return;
   }
 
-  await supabase.from("profiles").upsert({
+  const fullRow = {
     user_id: userId,
     experience_level: profile.experienceLevel,
     budget_band: profile.budgetBand,
     primary_channel: profile.primaryChannel,
     has_gstin: profile.hasGstin,
-  });
+    operating_state: profile.operatingState,
+    product_type: profile.productType,
+    business_type: profile.businessType,
+    sales_model: profile.salesModel,
+    imports_products: profile.importsProducts,
+    sells_prepackaged_goods: profile.sellsPrepackagedGoods,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase.from("profiles").upsert(fullRow, { onConflict: "user_id" });
+
+  if (error) {
+    await supabase.from("profiles").upsert(
+      {
+        user_id: userId,
+        experience_level: profile.experienceLevel,
+        budget_band: profile.budgetBand,
+        primary_channel: profile.primaryChannel,
+        has_gstin: profile.hasGstin,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id" },
+    );
+  }
 }
 
 export async function getCompletedModuleIds(userId: string): Promise<Set<string>> {
@@ -83,5 +139,6 @@ export async function setModuleCompletion(userId: string, moduleId: string, comp
     user_id: userId,
     module_id: moduleId,
     completed,
+    updated_at: new Date().toISOString(),
   });
 }

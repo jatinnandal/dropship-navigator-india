@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
+import { getPostAuthRedirect } from "@/lib/auth-routing";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET(request: NextRequest) {
@@ -7,7 +8,7 @@ export async function GET(request: NextRequest) {
   const code = url.searchParams.get("code");
   const tokenHash = url.searchParams.get("token_hash");
   const type = url.searchParams.get("type") as EmailOtpType | null;
-  const next = url.searchParams.get("next") ?? "/app";
+  const nextParam = url.searchParams.get("next");
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
@@ -15,27 +16,36 @@ export async function GET(request: NextRequest) {
   }
 
   if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (error) {
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error || !data.user) {
       return NextResponse.redirect(new URL("/login?error=auth_failed", request.url));
     }
-    return NextResponse.redirect(new URL(next, request.url));
+
+    const destination =
+      nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
+        ? nextParam
+        : await getPostAuthRedirect(data.user.id);
+
+    return NextResponse.redirect(new URL(destination, request.url));
   }
 
   if (tokenHash && type) {
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       type,
       token_hash: tokenHash,
     });
 
-    if (error) {
+    if (error || !data.user) {
       return NextResponse.redirect(new URL("/login?error=auth_failed", request.url));
     }
 
-    return NextResponse.redirect(new URL(next, request.url));
+    const destination =
+      nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
+        ? nextParam
+        : await getPostAuthRedirect(data.user.id);
+
+    return NextResponse.redirect(new URL(destination, request.url));
   }
 
-  {
-    return NextResponse.redirect(new URL("/login?error=auth_failed", request.url));
-  }
+  return NextResponse.redirect(new URL("/login?error=auth_failed", request.url));
 }

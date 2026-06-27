@@ -45,13 +45,20 @@ export function getModuleMentorLine(
 
 export function getModuleCompletionMessage(moduleId: TaskModuleId): string {
   const messages: Partial<Record<TaskModuleId, string>> = {
-    "common-documentation": "Foundation set. Marketplaces will ask for these docs again — keep the folder updated.",
-    "product-selection": "Product picked with margin check. Samples next if you haven't ordered yet.",
-    "compliance-by-product": "Compliance mapped. Update HSN if you add new SKUs.",
-    "supplier-sourcing": "Supplier vetted. Keep the backup contact warm.",
-    "channel-launch": "You're live or close. Protect the account — dispatch SLA matters more than ads now.",
-    "ads-growth": "Ad math done. Scale only above break-even ROAS.",
-    "tracking-analytics": "Profit tracking in place. Monday reviews beat month-end surprises.",
+    "common-documentation":
+      "GSTIN and docs folder done — marketplaces will ask for these again. Keep scans updated and names identical everywhere.",
+    "product-selection":
+      "Product picked with margin math. If you haven't ordered samples yet, that's your next real-world action.",
+    "compliance-by-product":
+      "Compliance mapped for your category. Add new SKUs to the checklist before listing — one wrong HSN blocks payouts.",
+    "supplier-sourcing":
+      "Supplier vetted with backup contact saved. One stockout without a backup ends momentum overnight.",
+    "channel-launch":
+      "Channel live or close to it. Protect the account now — dispatch SLA and customer response time matter more than ads.",
+    "ads-growth":
+      "Ad math locked in. Scale only above break-even ROAS — thin margins plus ads equals faster losses, not faster growth.",
+    "tracking-analytics":
+      "Profit tracking ritual set. Monday reconciliation beats month-end surprises every time.",
   };
-  return messages[moduleId] ?? "Nice progress — keep going.";
+  return messages[moduleId] ?? "Solid progress — keep building one sub-task at a time.";
 }

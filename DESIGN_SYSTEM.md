@@ -22,8 +22,11 @@ Defined in `src/app/globals.css`.
   - `--border`: soft blue-gray border
 - **Layout + surfaces**
   - `app-shell-bg`: global ambient background
-  - `glass-panel`: frosted panel surface
+  - `glass-panel`: frosted panel surface (secondary elevation)
+  - `glass-panel-primary`: hero / next-action panels — stronger bg, amber border accent
+  - `glass-panel-tertiary`: sub-task rows, accordions — lighter bg/border
   - `surface-hover`: slight lift + border emphasis
+  - `banner-deadline`: GST filing / hard deadline warnings — rose bg + border (never subtle)
 - **Typography + hierarchy**
   - `headline-gradient`: key hero/section headline accent
   - `eyebrow`: small left-accent uppercase label

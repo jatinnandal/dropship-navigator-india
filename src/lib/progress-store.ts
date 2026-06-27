@@ -1,48 +1,36 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
+import { defaultProfile } from "@/lib/mvp-data";
+import { getCurrentUserId } from "@/lib/current-user";
 import {
-  getGuestCompletedModuleIds,
-  getGuestStoredProfile,
-  setGuestModuleCompletion,
-  upsertGuestProfile,
-} from "@/lib/guest-supabase-store";
-import {
-  getLocalCompletedModuleIds,
-  getLocalProfile,
-  saveLocalProfile,
-  setLocalModuleCompletion,
-} from "@/lib/local-progress-store";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
+  getCompletedModuleIds,
+  getStoredProfile,
+  setModuleCompletion,
+  upsertProfile,
+} from "@/lib/profile-store";
 
 export async function getStoredProfileForCurrentVisitor(): Promise<OnboardingProfile> {
-  if (isSupabaseConfigured()) {
-    const profile = await getGuestStoredProfile();
-    if (profile) {
-      return profile;
-    }
-  }
-  return getLocalProfile();
+  const userId = await getCurrentUserId();
+  const profile = await getStoredProfile(userId);
+  return profile ?? defaultProfile;
 }
 
 export async function upsertProfileForCurrentVisitor(profile: OnboardingProfile) {
-  await saveLocalProfile(profile);
-  if (isSupabaseConfigured()) {
-    await upsertGuestProfile(profile);
-  }
+  const userId = await getCurrentUserId();
+  await upsertProfile(userId, profile);
 }
 
 export async function getCompletedModuleIdsForCurrentVisitor(): Promise<Set<string>> {
-  if (isSupabaseConfigured()) {
-    const supabaseCompleted = await getGuestCompletedModuleIds();
-    if (supabaseCompleted.size > 0) {
-      return supabaseCompleted;
-    }
-  }
-  return getLocalCompletedModuleIds();
+  const userId = await getCurrentUserId();
+  return getCompletedModuleIds(userId);
 }
 
 export async function setModuleCompletionForCurrentVisitor(moduleId: string, completed: boolean) {
-  await setLocalModuleCompletion(moduleId, completed);
-  if (isSupabaseConfigured()) {
-    await setGuestModuleCompletion(moduleId, completed);
-  }
+  const userId = await getCurrentUserId();
+  await setModuleCompletion(userId, moduleId, completed);
+}
+
+export async function hasStoredProfileForCurrentUser(): Promise<boolean> {
+  const userId = await getCurrentUserId();
+  const profile = await getStoredProfile(userId);
+  return profile !== null;
 }

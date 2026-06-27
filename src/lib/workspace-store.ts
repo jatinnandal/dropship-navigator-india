@@ -1,34 +1,21 @@
-import { getGuestWorkspace, patchGuestWorkspace, upsertGuestWorkspace } from "@/lib/guest-workspace-store";
-import {
-  emptyWorkspace,
-  getLocalWorkspace,
-  patchLocalWorkspace,
-  saveLocalWorkspace,
-} from "@/lib/local-workspace-store";
-import { isSupabaseConfigured } from "@/lib/supabase/config";
-import type { Workspace } from "@/lib/workspace";
+import { getCurrentUserId } from "@/lib/current-user";
+import { getUserWorkspace, patchUserWorkspace, upsertUserWorkspace } from "@/lib/user-workspace-store";
+import { emptyWorkspace, type Workspace } from "@/lib/workspace";
 
 export async function getWorkspaceForCurrentVisitor(): Promise<Workspace> {
-  if (isSupabaseConfigured()) {
-    const guest = await getGuestWorkspace();
-    if (guest) return guest;
-  }
-  return getLocalWorkspace();
+  const userId = await getCurrentUserId();
+  const workspace = await getUserWorkspace(userId);
+  return workspace ?? { ...emptyWorkspace };
 }
 
 export async function saveWorkspaceForCurrentVisitor(workspace: Workspace) {
-  await saveLocalWorkspace(workspace);
-  if (isSupabaseConfigured()) {
-    await upsertGuestWorkspace(workspace);
-  }
+  const userId = await getCurrentUserId();
+  await upsertUserWorkspace(userId, workspace);
 }
 
 export async function patchWorkspaceForCurrentVisitor(patch: Partial<Workspace>): Promise<Workspace> {
-  const local = await patchLocalWorkspace(patch);
-  if (isSupabaseConfigured()) {
-    return patchGuestWorkspace(local);
-  }
-  return local;
+  const userId = await getCurrentUserId();
+  return patchUserWorkspace(userId, patch);
 }
 
 export { emptyWorkspace };

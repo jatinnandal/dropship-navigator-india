@@ -113,3 +113,50 @@ create table if not exists public.guest_task_progress (
 
 alter table public.guest_workspace disable row level security;
 alter table public.guest_task_progress disable row level security;
+
+-- Authenticated user profile extensions (run after initial profiles table)
+alter table public.profiles add column if not exists operating_state text not null default 'Maharashtra';
+alter table public.profiles add column if not exists product_type text not null default 'general';
+alter table public.profiles add column if not exists business_type text not null default 'proprietorship';
+alter table public.profiles add column if not exists sales_model text not null default 'marketplace_only';
+alter table public.profiles add column if not exists imports_products boolean not null default false;
+alter table public.profiles add column if not exists sells_prepackaged_goods boolean not null default true;
+
+create table if not exists public.user_workspace (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  data jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.user_task_progress (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  task_id text not null,
+  completed jsonb not null default '[]'::jsonb,
+  answers jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, task_id)
+);
+
+alter table public.user_workspace enable row level security;
+alter table public.user_task_progress enable row level security;
+
+drop policy if exists "user_workspace_select_own" on public.user_workspace;
+drop policy if exists "user_workspace_insert_own" on public.user_workspace;
+drop policy if exists "user_workspace_update_own" on public.user_workspace;
+drop policy if exists "user_task_progress_select_own" on public.user_task_progress;
+drop policy if exists "user_task_progress_insert_own" on public.user_task_progress;
+drop policy if exists "user_task_progress_update_own" on public.user_task_progress;
+
+create policy "user_workspace_select_own"
+  on public.user_workspace for select to authenticated using (auth.uid() = user_id);
+create policy "user_workspace_insert_own"
+  on public.user_workspace for insert to authenticated with check (auth.uid() = user_id);
+create policy "user_workspace_update_own"
+  on public.user_workspace for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+create policy "user_task_progress_select_own"
+  on public.user_task_progress for select to authenticated using (auth.uid() = user_id);
+create policy "user_task_progress_insert_own"
+  on public.user_task_progress for insert to authenticated with check (auth.uid() = user_id);
+create policy "user_task_progress_update_own"
+  on public.user_task_progress for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);

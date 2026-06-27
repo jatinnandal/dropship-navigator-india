@@ -57,6 +57,45 @@ function verdictClass(verdict: ReturnType<typeof calculateProfit>["verdict"]): s
   }
 }
 
+function SliderField({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+  suffix = "",
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (v: number) => void;
+  suffix?: string;
+}) {
+  return (
+    <label className="block text-sm">
+      <span className="text-muted flex items-center justify-between">
+        {label}
+        <span className="font-medium text-slate-100">
+          {value}
+          {suffix}
+        </span>
+      </span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="mt-2 w-full accent-amber-400"
+      />
+    </label>
+  );
+}
+
 export function ProfitCalculator({ kind, channel, initialValues, onApply }: Props) {
   const [sellingPrice, setSellingPrice] = useState(String(initialValues?.sellingPrice ?? 999));
   const [productCost, setProductCost] = useState(String(initialValues?.productCost ?? 350));
@@ -167,16 +206,44 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       </p>
       <p className="text-muted mt-1 text-xs">{CHANNEL_LABELS[channel]} + 18% GST on fees + 1% TCS</p>
 
+      {result.netMarginPercent < 15 && result.netMarginPercent > 0 ? (
+        <div className="banner-deadline mt-4 rounded-lg p-3">
+          <p className="text-sm font-medium text-rose-100">
+            Too thin to survive RTO variance — {result.netMarginPercent.toFixed(1)}% net margin leaves no buffer when
+            returns spike.
+          </p>
+        </div>
+      ) : null}
+
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <SliderField
+          label="Selling price (₹)"
+          value={Number(sellingPrice) || 0}
+          min={199}
+          max={4999}
+          step={10}
+          onChange={(v) => setSellingPrice(String(v))}
+        />
+        <SliderField
+          label="Ad cost per order (₹)"
+          value={Number(adCost) || 0}
+          min={0}
+          max={300}
+          step={5}
+          onChange={(v) => setAdCost(String(v))}
+        />
+        <SliderField
+          label="Expected RTO rate (%)"
+          value={Number(rtoRate) || 0}
+          min={5}
+          max={45}
+          step={1}
+          suffix="%"
+          onChange={(v) => setRtoRate(String(v))}
+        />
+      </div>
+
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <label className="block text-sm">
-          <span className="text-muted">Selling price (₹)</span>
-          <input
-            type="number"
-            value={sellingPrice}
-            onChange={(e) => setSellingPrice(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
-          />
-        </label>
         <label className="block text-sm">
           <span className="text-muted">Product cost (₹)</span>
           <input
@@ -195,23 +262,31 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
           />
         </label>
-        <label className="block text-sm">
-          <span className="text-muted">Ad cost per order (₹)</span>
-          <input
-            type="number"
-            value={adCost}
-            onChange={(e) => setAdCost(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
-          />
-        </label>
         <label className="block text-sm sm:col-span-2">
-          <span className="text-muted">Expected RTO rate (% on COD orders)</span>
-          <input
-            type="number"
-            value={rtoRate}
-            onChange={(e) => setRtoRate(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
-          />
+          <span className="text-muted">Fine-tune: selling price / ad cost / RTO (number input)</span>
+          <div className="mt-2 grid gap-2 sm:grid-cols-3">
+            <input
+              type="number"
+              value={sellingPrice}
+              onChange={(e) => setSellingPrice(e.target.value)}
+              placeholder="Selling ₹"
+              className="w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            />
+            <input
+              type="number"
+              value={adCost}
+              onChange={(e) => setAdCost(e.target.value)}
+              placeholder="Ad ₹"
+              className="w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            />
+            <input
+              type="number"
+              value={rtoRate}
+              onChange={(e) => setRtoRate(e.target.value)}
+              placeholder="RTO %"
+              className="w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            />
+          </div>
         </label>
         {kind === "margin" ? (
           <label className="block text-sm sm:col-span-2">

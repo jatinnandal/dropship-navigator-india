@@ -20,31 +20,40 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-## Current MVP Access Mode
+## Setup (required)
 
 1. Copy `.env.example` to `.env.local`.
 2. Set:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `NEXT_PUBLIC_SITE_URL` (use `http://localhost:3000` for local dev)
-3. Run SQL in `supabase/schema.sql` using Supabase SQL editor.
-4. Restart dev server.
+   - `SUPABASE_SERVICE_ROLE_KEY` (server-only; enables email/password signup to work without confirmation emails)
+3. Run SQL in `supabase/schema.sql` in the Supabase SQL editor (re-run after pulls that change schema).
+4. Enable **Google** auth provider in Supabase (Authentication → Providers → Google) if using Google sign-in.
+5. Add redirect URLs in Supabase (Authentication → URL configuration):
+   - Site URL: `http://localhost:3000`
+   - Redirect URLs: `http://localhost:3000/auth/callback`
+6. **Email/password signup:** With `SUPABASE_SERVICE_ROLE_KEY` set, accounts are confirmed immediately and you go straight to onboarding. Without it, Supabase may require email confirmation (built-in mail is often slow or blocked).
+7. Optional: disable **Confirm email** under Authentication → Providers → Email for simpler local dev.
+8. Restart the dev server.
 
-Notes:
-- Login/signup is intentionally disabled for now.
-- The app runs in guest mode and persists onboarding + journey progress to Supabase using a visitor ID cookie.
-- Browser cookies are still used as local fallback if Supabase is unavailable.
-- You can open the product directly at `/app` and `/onboarding`.
-- Re-run `supabase/schema.sql` after pull to create guest persistence tables.
+## Auth & access
+
+- **Public:** `/` (landing), `/login`, `/signup`
+- **Authenticated only:** `/app`, `/app/journey`, `/app/tasks/*`, `/onboarding`
+- Sign in with **email/password** or **Google OAuth**
+- New users complete onboarding once, then land on the dashboard
+- Sign out returns you to the landing page
 
 ## App Routes
 
-- `/` - public landing
-- `/login` - redirect to app (disabled)
-- `/signup` - redirect to app (disabled)
-- `/app` - guest dashboard
-- `/onboarding` - onboarding profile (drives personalization)
-- `/app/journey` - personalized guided journey
+- `/` — marketing landing page
+- `/login` — sign in
+- `/signup` — create account
+- `/onboarding` — profile quiz (first login)
+- `/app` — dashboard with next-action hero
+- `/app/journey` — personalized guided journey
+- `/app/tasks/[taskId]` — module walkthroughs
 
 ## Tech Stack
 
@@ -52,3 +61,4 @@ Notes:
 - React 19
 - Tailwind CSS 4
 - Supabase (auth + persistence)
+- Framer Motion (landing page motion)

@@ -86,6 +86,13 @@ export function TaskRunner({
     [taskId, profile, answers, workspace],
   );
 
+  const steps = task?.steps ?? [];
+
+  const [currentId, setCurrentId] = useState<string>(() => {
+    const target = firstIncompleteId(steps, new Set(initialCompleted ?? []));
+    return target ?? steps[0]?.id ?? "";
+  });
+
   if (!task) {
     return (
       <main className="mx-auto w-full max-w-6xl px-6 py-8 text-slate-100">
@@ -93,13 +100,6 @@ export function TaskRunner({
       </main>
     );
   }
-
-  const steps = task.steps;
-
-  const [currentId, setCurrentId] = useState<string>(() => {
-    const target = firstIncompleteId(steps, new Set(initialCompleted ?? []));
-    return target ?? steps[0]?.id ?? "";
-  });
 
   const currentIndex = Math.max(0, steps.findIndex((step) => step.id === currentId));
   const currentStep = steps[currentIndex] ?? steps[0];

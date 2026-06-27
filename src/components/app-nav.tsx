@@ -2,23 +2,40 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListChecks, SlidersHorizontal } from "lucide-react";
+import { Home, LayoutDashboard, ListChecks, SlidersHorizontal } from "lucide-react";
 
-const navItems = [
-  { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/onboarding", label: "Onboarding", icon: SlidersHorizontal },
-  { href: "/app/journey", label: "Journey", icon: ListChecks },
-];
+type NavItem = {
+  href: string;
+  label: string;
+  icon: typeof Home;
+};
 
-export function AppNav() {
+type Props = {
+  hasProfile: boolean;
+};
+
+export function AppNav({ hasProfile }: Props) {
   const pathname = usePathname();
 
+  const navItems: NavItem[] = hasProfile
+    ? [
+        { href: "/app", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/app/journey", label: "Journey", icon: ListChecks },
+      ]
+    : [
+        { href: "/app/welcome", label: "Home", icon: Home },
+        { href: "/onboarding", label: "Setup", icon: SlidersHorizontal },
+        { href: "/app/journey", label: "Preview", icon: ListChecks },
+      ];
+
   return (
-    <nav className="flex items-center gap-3 text-sm">
+    <nav className="hidden items-center gap-3 text-sm md:flex">
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive =
-          pathname === item.href || (item.href !== "/app" && pathname.startsWith(item.href));
+          pathname === item.href ||
+          (item.href !== "/app" && item.href !== "/app/welcome" && pathname.startsWith(item.href)) ||
+          (item.href === "/app" && pathname === "/app");
 
         return (
           <Link

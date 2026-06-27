@@ -4,6 +4,16 @@ import type { JourneyNode } from "@/lib/journey-graph";
 import { JOURNEY_EDGES, type JourneyEdgeKind } from "@/lib/journey-graph";
 import type { TaskModuleId } from "@/lib/tasks";
 
+const NODE_SHORT_LABELS: Record<TaskModuleId, string> = {
+  "common-documentation": "Docs",
+  "product-selection": "Product",
+  "compliance-by-product": "Compliance",
+  "supplier-sourcing": "Supplier",
+  "channel-launch": "Launch",
+  "ads-growth": "Ads",
+  "tracking-analytics": "Analytics",
+};
+
 const NODE_POSITIONS: Record<TaskModuleId, { x: number; y: number }> = {
   "common-documentation": { x: 80, y: 40 },
   "product-selection": { x: 240, y: 40 },
@@ -96,15 +106,16 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
                 {warningCount}
               </text>
             ) : null}
+            <title>{node.title}</title>
             <text
               x={24}
               y={58}
               textAnchor="middle"
               fill="#e2e8f0"
-              fontSize={10}
+              fontSize={9}
               className="pointer-events-none select-none"
             >
-              {node.title.split(" ")[0]}
+              {NODE_SHORT_LABELS[node.id]}
             </text>
           </g>
         );

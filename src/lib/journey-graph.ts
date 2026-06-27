@@ -65,7 +65,7 @@ export const MODULE_SUB_TASKS: Record<TaskModuleId, JourneySubTaskDef[]> = {
   ],
   "channel-launch": [
     { id: "seller-account-live", moduleId: "channel-launch", label: "Seller account approved" },
-    { id: "first-listing-live", moduleId: "channel-launch", label: "First 3 listings live" },
+    { id: "first-listing-live", moduleId: "channel-launch", label: "First listing live (1 hero SKU)" },
     { id: "store-linked", moduleId: "channel-launch", label: "Store / channel linked and payout ready" },
     { id: "cod-practice-done", moduleId: "channel-launch", label: "COD confirmation practice completed" },
     { id: "first-payout-received", moduleId: "channel-launch", label: "First payout received in bank" },

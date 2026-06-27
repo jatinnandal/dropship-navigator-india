@@ -2,16 +2,31 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChartSpline, Map, UserRound } from "lucide-react";
+import { Home, LayoutDashboard, ListChecks, SlidersHorizontal } from "lucide-react";
 
-const NAV = [
-  { href: "/app", label: "Dashboard", icon: ChartSpline },
-  { href: "/app/journey", label: "Journey", icon: Map },
-  { href: "/onboarding", label: "Profile", icon: UserRound },
-];
+type NavItem = {
+  href: string;
+  label: string;
+  icon: typeof Home;
+};
 
-export function AppMobileNav() {
+type Props = {
+  hasProfile: boolean;
+};
+
+export function AppMobileNav({ hasProfile }: Props) {
   const pathname = usePathname();
+
+  const navItems: NavItem[] = hasProfile
+    ? [
+        { href: "/app", label: "Dashboard", icon: LayoutDashboard },
+        { href: "/app/journey", label: "Journey", icon: ListChecks },
+      ]
+    : [
+        { href: "/app/welcome", label: "Home", icon: Home },
+        { href: "/onboarding", label: "Setup", icon: SlidersHorizontal },
+        { href: "/app/journey", label: "Preview", icon: ListChecks },
+      ];
 
   return (
     <nav
@@ -19,8 +34,11 @@ export function AppMobileNav() {
       aria-label="Mobile navigation"
     >
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">
-        {NAV.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || (href !== "/app" && pathname.startsWith(href));
+        {navItems.map(({ href, label, icon: Icon }) => {
+          const active =
+            pathname === href ||
+            (href === "/app" && pathname === "/app") ||
+            (href !== "/app" && href !== "/app/welcome" && pathname.startsWith(href));
           return (
             <li key={href} className="flex-1">
               <Link
