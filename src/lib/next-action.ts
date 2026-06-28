@@ -1,6 +1,7 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
 import type { JourneyNode } from "@/lib/journey-graph";
 import type { TaskModuleId } from "@/lib/tasks";
+import { getGstFilingBanner as getGstFilingBannerFromCrisis } from "@/lib/crisis/banners";
 import {
   countSubTasksStarted,
   getSubTaskGuide,
@@ -98,11 +99,7 @@ export function getGstFilingBanner(input: {
   hasGstin: boolean;
   subTasks?: Record<string, boolean>;
 }): { message: string; href: string } | null {
-  if (!input.hasGstin) return null;
-  if (input.subTasks?.["gst-filing-understood"]) return null;
-  return {
-    message:
-      "GST FILING DUE — GSTR-1 and GSTR-3B are monthly or quarterly obligations. Missing filings suspends your GSTIN and blocks marketplaces.",
-    href: "/app/tasks/common-documentation",
-  };
+  const banner = getGstFilingBannerFromCrisis(input);
+  if (!banner) return null;
+  return { message: banner.message, href: banner.href };
 }

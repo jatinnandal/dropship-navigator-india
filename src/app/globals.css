@@ -53,6 +53,11 @@ body {
   border: 1px solid rgba(244, 63, 94, 0.55);
 }
 
+.banner-at-risk {
+  background: rgba(69, 45, 5, 0.45);
+  border: 1px solid rgba(245, 158, 11, 0.45);
+}
+
 .hero-reveal {
   animation: hero-in 220ms ease-out;
 }

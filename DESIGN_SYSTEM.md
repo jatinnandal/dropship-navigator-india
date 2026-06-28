@@ -27,6 +27,7 @@ Defined in `src/app/globals.css`.
   - `glass-panel-tertiary`: sub-task rows, accordions — lighter bg/border
   - `surface-hover`: slight lift + border emphasis
   - `banner-deadline`: GST filing / hard deadline warnings — rose bg + border (never subtle)
+  - `banner-at-risk`: preventive crisis warnings — amber bg + border (distinct from deadline)
 - **Typography + hierarchy**
   - `headline-gradient`: key hero/section headline accent
   - `eyebrow`: small left-accent uppercase label

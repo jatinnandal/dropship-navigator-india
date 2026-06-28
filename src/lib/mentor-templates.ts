@@ -78,6 +78,30 @@ Regards,
 {{legal_name}}
 {{contact}}`;
 
+export const WHATSAPP_SUPPLIER_ETA = `Hi {{supplier_name}},
+
+We have live orders for {{sku}} on {{marketplace}}.
+
+Please confirm in writing:
+1. Current stock available: __ units
+2. Restock ETA if out of stock: __ days
+3. Dispatch timeline for pending orders
+
+We need this today to manage customer orders. Please reply on this thread.
+
+— {{store_name}}`;
+
+export const WHATSAPP_CUSTOMER_DELAY = `Hi {{name}},
+
+Thank you for your order #{{order}} from {{store}}.
+
+We're facing a brief stock delay on {{product}}. Your order is confirmed — we're working with our supplier and expect to ship within {{eta_days}} days.
+
+We'll update you before dispatch. Reply if you'd prefer to cancel.
+
+Sorry for the inconvenience.
+— {{store_name}}`;
+
 export const PAOS_APPEAL_TEMPLATE = `Plan of Action (POA) — Account Suspension Appeal
 
 To: {{marketplace}} Seller Performance Team

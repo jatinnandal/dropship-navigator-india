@@ -3,11 +3,19 @@ import { redirect } from "next/navigation";
 import { ArrowRight, ChartSpline, CircleDollarSign, FileCheck } from "lucide-react";
 import { ProgressRing } from "@/components/progress-ring";
 import { SeasonNotice } from "@/components/season-notice";
+import { RtoScenarioSlider } from "@/components/crisis/rto-scenario-slider";
+import { AtRiskPanel } from "@/components/crisis/at-risk-panel";
+import { CrisisEntryButton } from "@/components/crisis/crisis-entry-button";
+import { CrisisHero } from "@/components/crisis/crisis-hero";
+import { CrisisProtocol } from "@/components/crisis/crisis-protocol";
 import { userHasProfile } from "@/lib/auth-routing";
+import { getDashboardBanners } from "@/lib/crisis/banners";
+import { getDashboardState } from "@/lib/crisis/dashboard-state";
+import { isSubTaskDone } from "@/lib/journey-graph";
 import { getCurrentUserId } from "@/lib/current-user";
 import { buildPersonalizedJourney } from "@/lib/mvp-data";
 import { getJourneyNodes } from "@/lib/journey-graph";
-import { getNextAction, getGstFilingBanner } from "@/lib/next-action";
+import { getNextAction } from "@/lib/next-action";
 import { getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 
@@ -24,6 +32,10 @@ export default async function DashboardPage() {
   ]);
 
   const hasGstin = profile.hasGstin || !!workspace.gstin;
+  const detectorInput = { profile, workspace, hasGstin };
+  const dashboardState = getDashboardState(detectorInput);
+  const banners = getDashboardBanners(detectorInput);
+
   const nodes = getJourneyNodes({
     completedModules: completed,
     subTasks: workspace.subTasks,
@@ -33,7 +45,6 @@ export default async function DashboardPage() {
   });
 
   const nextAction = getNextAction({ profile, nodes, subTasks: workspace.subTasks });
-  const gstBanner = getGstFilingBanner({ hasGstin, subTasks: workspace.subTasks });
   const completionCount = nodes.filter((n) => n.status === "done").length;
   const totalModules = buildPersonalizedJourney(profile).length;
 
@@ -42,9 +53,25 @@ export default async function DashboardPage() {
       ? "Every expert was once exactly here. Let's get your first task done — it takes about 30 minutes and unlocks the rest of the journey."
       : nextAction?.why;
 
+  const showRtoSlider = dashboardState.warnings.some((w) => w.id === "rto-shock");
+  const listingLive = isSubTaskDone(workspace.subTasks, "first-listing-live");
+  const hasSnapshot = Boolean(
+    workspace.calculatorSnapshot && Object.keys(workspace.calculatorSnapshot).length > 0,
+  );
+
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-      {nextAction ? (
+      {dashboardState.mode === "crisis" && workspace.activeCrisis ? (
+        <>
+          <CrisisHero crisis={workspace.activeCrisis} />
+          <CrisisProtocol
+            crisis={workspace.activeCrisis}
+            profile={profile}
+            legalBusinessName={workspace.legalBusinessName}
+            gstin={workspace.gstin}
+          />
+        </>
+      ) : nextAction ? (
         <section className="glass-panel-primary hero-reveal rounded-xl p-6 sm:p-8">
           <p className="eyebrow inline-block">Do this now</p>
           <h1 className="headline-gradient mt-2 text-2xl font-bold sm:text-3xl">{nextAction.title}</h1>
@@ -57,15 +84,48 @@ export default async function DashboardPage() {
             {nextAction.isLocked ? "Complete prerequisite" : "Start this step"}
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
+          <CrisisEntryButton />
         </section>
       ) : null}
 
-      {gstBanner ? (
-        <section className="banner-deadline mt-4 rounded-xl p-4">
-          <p className="text-sm font-medium text-rose-100">{gstBanner.message}</p>
-          <Link href={gstBanner.href} className="mt-2 inline-block text-sm font-medium text-amber-200 underline">
-            View GST filing calendar
-          </Link>
+      {dashboardState.mode === "normal"
+        ? banners.map((banner) => (
+            <section
+              key={banner.id}
+              className={`mt-4 rounded-xl p-4 ${banner.variant === "deadline" ? "banner-deadline" : "banner-at-risk"}`}
+            >
+              <p className="text-sm font-medium text-slate-100">{banner.message}</p>
+              <Link
+                href={banner.href}
+                className="mt-2 inline-block text-sm font-medium text-amber-200 underline"
+              >
+                {banner.ctaLabel}
+              </Link>
+            </section>
+          ))
+        : null}
+
+      {dashboardState.mode === "at_risk" ? (
+        <AtRiskPanel
+          warnings={dashboardState.warnings}
+          profile={profile}
+          showRtoSlider={showRtoSlider}
+          defaultSellingPrice={workspace.targetSellingPrice}
+          defaultProductCost={workspace.productCost}
+          defaultShippingCost={workspace.shippingCost}
+          defaultRtoRate={workspace.estimatedRtoRate}
+        />
+      ) : null}
+
+      {listingLive && dashboardState.mode !== "crisis" && !showRtoSlider && !hasSnapshot ? (
+        <section className="glass-panel mt-4 rounded-xl p-4 sm:p-5">
+          <RtoScenarioSlider
+            profile={profile}
+            defaultSellingPrice={workspace.targetSellingPrice}
+            defaultProductCost={workspace.productCost}
+            defaultShippingCost={workspace.shippingCost}
+            defaultRtoRate={workspace.estimatedRtoRate}
+          />
         </section>
       ) : null}
 
@@ -84,6 +144,11 @@ export default async function DashboardPage() {
                 ? "Your journey map will take shape as you complete steps."
                 : "Keep momentum — one sub-task at a time."}
             </p>
+            {dashboardState.mode === "at_risk" ? (
+              <Link href="/app/journey" className="mt-2 inline-block text-xs text-amber-200 underline">
+                View launch plan — risks also flagged on dashboard
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>

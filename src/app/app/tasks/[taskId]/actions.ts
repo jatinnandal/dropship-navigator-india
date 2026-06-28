@@ -84,6 +84,7 @@ export async function persistCalculatorResult(
   existingAnswers: Record<string, string>,
   existingCompleted: string[],
 ) {
+  const currentWorkspace = await getWorkspaceForCurrentVisitor();
   const workspace = await patchWorkspaceForCurrentVisitor({
     netMarginPercent: result.netMarginPercent,
     breakEvenRoas: result.breakEvenRoas,
@@ -94,6 +95,10 @@ export async function persistCalculatorResult(
       netMarginPercent: result.netMarginPercent,
       breakEvenRoas: result.breakEvenRoas,
       estimatedRtoRate: result.estimatedRtoRate,
+    },
+    subTasks: {
+      ...(currentWorkspace.subTasks ?? {}),
+      "breakeven-roas-known": true,
     },
   });
 

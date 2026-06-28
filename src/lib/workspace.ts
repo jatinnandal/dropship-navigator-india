@@ -5,6 +5,21 @@ export type SkuShortlistItem = {
   netMarginPercent?: number;
 };
 
+export type CrisisType = "account_suspended" | "supplier_oos";
+
+export type ActiveCrisis = {
+  type: CrisisType;
+  startedAt: string;
+  currentStepIndex: number;
+};
+
+export type CrisisLogEntry = {
+  type: CrisisType;
+  startedAt: string;
+  resolvedAt?: string;
+  selfReported: boolean;
+};
+
 export type Workspace = {
   legalBusinessName?: string;
   gstin?: string;
@@ -22,6 +37,9 @@ export type Workspace = {
   subTasks?: Record<string, boolean>;
   completedMilestones?: string[];
   completedSimulators?: Record<string, boolean>;
+  activeCrisis?: ActiveCrisis;
+  crisisLog?: CrisisLogEntry[];
+  dismissedWarnings?: Record<string, string>;
 };
 
 export const emptyWorkspace: Workspace = {};
@@ -68,6 +86,26 @@ export function parseWorkspace(raw: string | undefined): Workspace {
       completedSimulators:
         parsed.completedSimulators && typeof parsed.completedSimulators === "object"
           ? (parsed.completedSimulators as Record<string, boolean>)
+          : undefined,
+      activeCrisis:
+        parsed.activeCrisis &&
+        typeof parsed.activeCrisis === "object" &&
+        typeof (parsed.activeCrisis as ActiveCrisis).type === "string" &&
+        typeof (parsed.activeCrisis as ActiveCrisis).startedAt === "string"
+          ? (parsed.activeCrisis as ActiveCrisis)
+          : undefined,
+      crisisLog: Array.isArray(parsed.crisisLog)
+        ? parsed.crisisLog.filter(
+            (entry): entry is CrisisLogEntry =>
+              typeof entry === "object" &&
+              entry !== null &&
+              typeof (entry as CrisisLogEntry).type === "string" &&
+              typeof (entry as CrisisLogEntry).startedAt === "string",
+          )
+        : undefined,
+      dismissedWarnings:
+        parsed.dismissedWarnings && typeof parsed.dismissedWarnings === "object"
+          ? (parsed.dismissedWarnings as Record<string, string>)
           : undefined,
     };
   } catch {
