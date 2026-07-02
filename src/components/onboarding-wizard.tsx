@@ -3,7 +3,21 @@
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, FileCheck, Package, Rocket } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  FileCheck,
+  Package,
+  Rocket,
+  ShoppingCart,
+  Wallet,
+  FileText,
+  MapPin,
+  Building2,
+  Store,
+  Truck,
+  BoxSelect,
+} from "lucide-react";
 import CountUp from "@/components/CountUp";
 import { OnboardingFinishButton, OnboardingFinishOverlay } from "@/components/onboarding-finish";
 import { Reveal } from "@/components/motion/reveal";
@@ -12,6 +26,7 @@ import {
   getAckForSelection,
   ONBOARDING_STEPS,
   type OnboardingField,
+  type OnboardingStep,
 } from "@/lib/onboarding-steps";
 import type { OnboardingProfile, PrimaryChannel } from "@/lib/mvp-data";
 import { saveOnboardingProfile } from "@/app/onboarding/actions";
@@ -36,6 +51,110 @@ const INTRO_MODULES = [
 
 const WHY_FIELDS = new Set<OnboardingField>(["experienceLevel", "budgetBand", "hasGstin"]);
 
+/** Short labels and icons for each step in the stepper */
+const STEP_META: Record<string, { short: string; icon: typeof FileCheck }> = {
+  experience: { short: "Level", icon: Rocket },
+  budget: { short: "Budget", icon: Wallet },
+  channel: { short: "Channel", icon: ShoppingCart },
+  gstin: { short: "GST", icon: FileText },
+  product: { short: "Product", icon: Package },
+  state: { short: "State", icon: MapPin },
+  "business-type": { short: "Entity", icon: Building2 },
+  "sales-model": { short: "Model", icon: Store },
+  imports: { short: "Import", icon: Truck },
+  prepackaged: { short: "Label", icon: BoxSelect },
+};
+
+/** Binary yes/no fields that get toggle buttons instead of radio cards */
+const BINARY_FIELDS = new Set<OnboardingField>(["hasGstin", "importsProducts", "sellsPrepackagedGoods"]);
+
+/** Channel field gets a 2x2 card grid */
+const CHANNEL_FIELD: OnboardingField = "primaryChannel";
+
+/** Budget field gets a visual scale */
+const BUDGET_FIELD: OnboardingField = "budgetBand";
+
+/** Channel brand colors for the card accents */
+const CHANNEL_COLORS: Record<string, string> = {
+  meesho: "#e91e63",
+  amazon: "#ff9900",
+  flipkart: "#2874f0",
+  shopify: "#96bf48",
+};
+
+function ChannelLogo({ channel, className }: { channel: string; className?: string }) {
+  const color = CHANNEL_COLORS[channel] ?? "#94a3b8";
+  return (
+    <div
+      className={`flex h-10 w-10 items-center justify-center rounded-lg text-xs font-bold text-white ${className ?? ""}`}
+      style={{ backgroundColor: color }}
+      aria-hidden="true"
+    >
+      {channel[0]?.toUpperCase()}
+    </div>
+  );
+}
+
+function BudgetScale({
+  options,
+  selected,
+  onSelect,
+  field,
+}: {
+  options: NonNullable<OnboardingStep["options"]>;
+  selected: string;
+  onSelect: (v: string) => void;
+  field: string;
+}) {
+  return (
+    <div className="mt-5 space-y-2">
+      {options.map((opt, i) => {
+        const isSelected = selected === opt.value;
+        const widthPercent = ((i + 1) / options.length) * 100;
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => onSelect(opt.value)}
+            className={`group relative flex w-full items-center gap-3 rounded-lg border px-4 py-3.5 text-left transition ${
+              isSelected
+                ? "border-amber-400/60 bg-amber-400/10 shadow-[0_0_0_1px_rgba(251,191,36,0.15)]"
+                : "border-slate-700/60 bg-slate-950/40 hover:border-slate-500 hover:bg-slate-900/50"
+            }`}
+            aria-pressed={isSelected}
+          >
+            <input
+              type="radio"
+              name={`wizard-${field}`}
+              checked={isSelected}
+              onChange={() => onSelect(opt.value)}
+              className="sr-only"
+              tabIndex={-1}
+            />
+            <div className="flex-1">
+              <span className="block text-sm font-medium text-slate-100">{opt.label}</span>
+              {opt.description ? (
+                <span className="text-muted mt-0.5 block text-xs leading-5">{opt.description}</span>
+              ) : null}
+            </div>
+            <div className="hidden w-24 sm:block">
+              <div className="h-1.5 w-full rounded-full bg-slate-700/60">
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${widthPercent}%`,
+                    backgroundColor: isSelected ? "#f59e0b" : "#475569",
+                  }}
+                />
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function OnboardingWizard({
   profile,
   mode = "create",
@@ -53,6 +172,7 @@ export function OnboardingWizard({
   const [ackMessage, setAckMessage] = useState<string | null>(null);
   const [channelWarningAcked, setChannelWarningAcked] = useState(false);
   const [profileName, setProfileName] = useState(initialProfileName ?? "");
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [values, setValues] = useState<Record<OnboardingField, string>>(() => {
     const init = {} as Record<OnboardingField, string>;
     for (const step of ONBOARDING_STEPS) {
@@ -92,12 +212,18 @@ export function OnboardingWizard({
     return Boolean(step && values[step.field]?.trim());
   }
 
+  function goBack() {
+    setDirection(-1);
+    setStepIndex((i) => i - 1);
+  }
+
   function advanceStep() {
     const ack = getAckForSelection(step, values[step.field] ?? "");
     if (ack) setAckMessage(ack);
     const prefersReduced =
       typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const delay = ack && !prefersReduced ? 1200 : 0;
+    setDirection(1);
     window.setTimeout(() => setStepIndex((i) => i + 1), delay);
   }
 
@@ -142,6 +268,148 @@ export function OnboardingWizard({
     );
   }
 
+  /** Render the step-specific input UI */
+  function renderStepInput() {
+    if (!step) return null;
+
+    // Text input (state field)
+    if (step.inputType === "text") {
+      return (
+        <input
+          id={step.field}
+          value={values[step.field] ?? ""}
+          onChange={(e) => setField(step.field, e.target.value)}
+          placeholder={step.placeholder}
+          className="auth-input mt-4 w-full min-h-[44px] rounded-md border border-slate-600 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
+        />
+      );
+    }
+
+    const opts = step.options ?? [];
+    const currentValue = values[step.field];
+
+    // Channel selection — 2x2 card grid
+    if (step.field === CHANNEL_FIELD) {
+      return (
+        <div className="channel-card-grid mt-5">
+          {opts.map((opt) => {
+            const selected = currentValue === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setField(step.field, opt.value)}
+                className={`relative flex flex-col items-center gap-2 rounded-xl border p-4 text-center transition ${
+                  selected
+                    ? "border-amber-400/60 bg-amber-400/10 shadow-[0_0_0_1px_rgba(251,191,36,0.15)]"
+                    : "border-slate-700/60 bg-slate-950/40 hover:border-slate-500 hover:bg-slate-900/50"
+                }`}
+                aria-pressed={selected}
+              >
+                <input
+                  type="radio"
+                  name={`wizard-${step.field}`}
+                  checked={selected}
+                  onChange={() => setField(step.field, opt.value)}
+                  className="sr-only"
+                  tabIndex={-1}
+                />
+                <ChannelLogo channel={opt.value} />
+                <span className="text-sm font-medium text-slate-100">{opt.label}</span>
+                {opt.description ? (
+                  <span className="text-muted text-[11px] leading-4">{opt.description}</span>
+                ) : null}
+                {selected ? (
+                  <span className="absolute right-2 top-2">
+                    <Check className="h-4 w-4 text-amber-400" />
+                  </span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Budget — visual scale bars
+    if (step.field === BUDGET_FIELD) {
+      return (
+        <BudgetScale
+          options={opts}
+          selected={currentValue}
+          onSelect={(v) => setField(step.field, v)}
+          field={step.field}
+        />
+      );
+    }
+
+    // Binary yes/no — toggle buttons
+    if (BINARY_FIELDS.has(step.field) && opts.length === 2) {
+      return (
+        <div className="mt-5 flex gap-3">
+          {opts.map((opt) => {
+            const selected = currentValue === opt.value;
+            return (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setField(step.field, opt.value)}
+                className={`toggle-btn ${selected ? "toggle-btn-selected" : ""}`}
+                aria-pressed={selected}
+              >
+                <input
+                  type="radio"
+                  name={`wizard-${step.field}`}
+                  checked={selected}
+                  onChange={() => setField(step.field, opt.value)}
+                  className="sr-only"
+                  tabIndex={-1}
+                />
+                <span className="text-sm font-medium">{opt.label}</span>
+                {opt.description ? (
+                  <span className="hidden text-[11px] opacity-70 sm:inline"> — {opt.description}</span>
+                ) : null}
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    // Default — standard radio cards
+    return (
+      <div className="mt-5 space-y-3">
+        {opts.map((opt) => {
+          const selected = currentValue === opt.value;
+          return (
+            <label
+              key={opt.value}
+              className={`flex min-h-[52px] cursor-pointer items-start gap-3 rounded-lg border px-4 py-3.5 transition ${
+                selected
+                  ? "border-amber-400/60 bg-amber-400/10 shadow-[0_0_0_1px_rgba(251,191,36,0.15)]"
+                  : "border-slate-700/60 bg-slate-950/40 hover:border-slate-500 hover:bg-slate-900/50"
+              }`}
+            >
+              <input
+                type="radio"
+                name={`wizard-${step.field}`}
+                checked={selected}
+                onChange={() => setField(step.field, opt.value)}
+                className="mt-1 accent-amber-400"
+              />
+              <span>
+                <span className="block text-sm font-medium text-slate-100">{opt.label}</span>
+                {opt.description ? (
+                  <span className="text-muted mt-0.5 block text-xs leading-5">{opt.description}</span>
+                ) : null}
+              </span>
+            </label>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-6 lg:grid-cols-5">
       <section className="glass-panel grain rounded-xl p-6 sm:p-8 lg:col-span-3">
@@ -155,6 +423,7 @@ export function OnboardingWizard({
             <input key={s.field} type="hidden" name={s.field} value={values[s.field] ?? ""} />
           ))}
 
+          {/* --- Progress stepper --- */}
           <div className="mb-6">
             <div className="mb-3 flex items-center justify-between text-xs text-muted">
               <span>
@@ -164,20 +433,48 @@ export function OnboardingWizard({
                 <CountUp to={progress} duration={0.6} />% · ~{minsLeft} min left
               </span>
             </div>
-            <div className="mb-3 flex gap-1">
-              {ONBOARDING_STEPS.map((s, i) => (
-                <span
-                  key={s.id}
-                  className={`h-1.5 flex-1 rounded-full transition-colors ${
-                    i <= stepIndex ? "bg-amber-400" : "bg-slate-700/80"
-                  }`}
-                  aria-hidden="true"
-                />
-              ))}
+
+            {/* Connected stepper with icons */}
+            <div className="onboarding-stepper mb-3" role="progressbar" aria-valuenow={stepIndex + 1} aria-valuemin={1} aria-valuemax={ONBOARDING_STEPS.length}>
+              {ONBOARDING_STEPS.map((s, i) => {
+                const meta = STEP_META[s.id];
+                const StepIcon = meta?.icon ?? FileCheck;
+                const isCompleted = i < stepIndex;
+                const isCurrent = i === stepIndex;
+                return (
+                  <div key={s.id} className="flex items-center" style={{ flex: i < ONBOARDING_STEPS.length - 1 ? 1 : "none" }}>
+                    <div
+                      className={`onboarding-step-dot border-2 ${
+                        isCompleted
+                          ? "border-emerald-500 bg-emerald-500/20 text-emerald-400"
+                          : isCurrent
+                            ? "border-amber-400 bg-amber-400/15 text-amber-400"
+                            : "border-slate-600 bg-slate-800/50 text-slate-500"
+                      }`}
+                      title={meta?.short ?? s.id}
+                    >
+                      {isCompleted ? (
+                        <Check className="h-3 w-3" />
+                      ) : (
+                        <StepIcon className="h-3 w-3" />
+                      )}
+                    </div>
+                    {i < ONBOARDING_STEPS.length - 1 ? (
+                      <div
+                        className={`onboarding-step-connector ${
+                          isCompleted ? "bg-emerald-500/50" : "bg-slate-700/60"
+                        }`}
+                      />
+                    ) : null}
+                  </div>
+                );
+              })}
             </div>
-            <div className="progress-track h-1">
-              <div className="progress-fill" style={{ width: `${progress}%` }} />
-            </div>
+
+            {/* Step label */}
+            <p className="text-xs text-muted text-center">
+              {STEP_META[step?.id]?.short ?? step?.id}
+            </p>
           </div>
 
           {ackMessage ? <p className="meta-tile mb-4 text-sm text-emerald-200">{ackMessage}</p> : null}
@@ -199,12 +496,13 @@ export function OnboardingWizard({
             </div>
           ) : null}
 
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={step.id}
-              initial={reduced ? false : { opacity: 0, x: 12 }}
+              custom={direction}
+              initial={reduced ? false : { opacity: 0, x: direction * 20 }}
               animate={{ opacity: 1, x: 0 }}
-              exit={reduced ? undefined : { opacity: 0, x: -12 }}
+              exit={reduced ? undefined : { opacity: 0, x: direction * -20 }}
               transition={{ duration: reduced ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
             >
               {showWhy ? <p className="eyebrow inline-block">Why we&apos;re asking</p> : null}
@@ -213,45 +511,7 @@ export function OnboardingWizard({
               </h1>
               <p className="text-muted mt-2 text-sm leading-6">{step.why}</p>
 
-              {step.inputType === "text" ? (
-                <input
-                  id={step.field}
-                  value={values[step.field] ?? ""}
-                  onChange={(e) => setField(step.field, e.target.value)}
-                  placeholder={step.placeholder}
-                  className="mt-4 w-full min-h-[44px] rounded-md border border-slate-600 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
-                />
-              ) : (
-                <div className="mt-5 space-y-3">
-                  {step.options?.map((opt) => {
-                    const selected = values[step.field] === opt.value;
-                    return (
-                      <label
-                        key={opt.value}
-                        className={`flex min-h-[52px] cursor-pointer items-start gap-3 rounded-lg border px-4 py-3.5 transition ${
-                          selected
-                            ? "border-amber-400/60 bg-amber-400/10 shadow-[0_0_0_1px_rgba(251,191,36,0.15)]"
-                            : "border-slate-700/60 bg-slate-950/40 hover:border-slate-500 hover:bg-slate-900/50"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name={`wizard-${step.field}`}
-                          checked={selected}
-                          onChange={() => setField(step.field, opt.value)}
-                          className="mt-1 accent-amber-400"
-                        />
-                        <span>
-                          <span className="block text-sm font-medium text-slate-100">{opt.label}</span>
-                          {opt.description ? (
-                            <span className="text-muted mt-0.5 block text-xs leading-5">{opt.description}</span>
-                          ) : null}
-                        </span>
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
+              {renderStepInput()}
 
               {isLast && mode === "create" ? (
                 <div className="mt-6">
@@ -263,7 +523,7 @@ export function OnboardingWizard({
                     value={profileName}
                     onChange={(e) => setProfileName(e.target.value)}
                     placeholder="e.g. Meesho fashion"
-                    className="mt-2 w-full min-h-[44px] rounded-md border border-slate-600 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
+                    className="auth-input mt-2 w-full min-h-[44px] rounded-md border border-slate-600 bg-slate-950/80 px-3 py-2 text-sm text-slate-100"
                   />
                 </div>
               ) : null}
@@ -272,7 +532,7 @@ export function OnboardingWizard({
                 {stepIndex > 0 ? (
                   <button
                     type="button"
-                    onClick={() => setStepIndex((i) => i - 1)}
+                    onClick={goBack}
                     className="btn-ghost min-h-[44px] rounded-md px-4 py-2 text-sm font-medium"
                   >
                     Back
@@ -314,8 +574,9 @@ export function OnboardingWizard({
         </form>
       </section>
 
+      {/* Mentor tip sidebar — visible on all breakpoints */}
       {step.mentorNote ? (
-        <aside className="glass-panel hidden rounded-xl p-6 lg:col-span-2 lg:block">
+        <aside className="glass-panel rounded-xl p-5 sm:p-6 lg:col-span-2">
           <p className="text-xs uppercase tracking-wide text-amber-200">Tip</p>
           <p className="text-muted mt-3 text-sm leading-6">{step.mentorNote}</p>
         </aside>

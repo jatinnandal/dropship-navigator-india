@@ -37,18 +37,25 @@ function graphShortLabel(node: JourneyNode): string {
 
 function nodeColors(status: JourneyNode["status"], isSelected: boolean) {
   if (isSelected) {
-    return { fill: "#ffffff", stroke: "#ffffff", labelFill: "#0a0a0a", strokeWidth: 2.5, opacity: 1 };
+    return { fill: "rgba(245,158,11,0.25)", stroke: "#fbbf24", labelFill: "#fbbf24", strokeWidth: 2.5, opacity: 1, cssClass: "" };
   }
   switch (status) {
     case "done":
-      return { fill: "#0a0a0a", stroke: "#ffffff", labelFill: "#fafafa", strokeWidth: 2, opacity: 1 };
+      return { fill: "rgba(52,211,153,0.15)", stroke: "#34d399", labelFill: "#6ee7b7", strokeWidth: 2, opacity: 1, cssClass: "" };
     case "in_progress":
-      return { fill: "#171717", stroke: "#ffffff", labelFill: "#fafafa", strokeWidth: 2, opacity: 1 };
+      return { fill: "rgba(245,158,11,0.15)", stroke: "#f59e0b", labelFill: "#fbbf24", strokeWidth: 2, opacity: 1, cssClass: "pulse-active-node" };
     case "available":
-      return { fill: "#0a0a0a", stroke: "#d4d4d4", labelFill: "#e5e5e5", strokeWidth: 2, opacity: 1 };
+      return { fill: "#0c1829", stroke: "#94a3b8", labelFill: "#e2e8f0", strokeWidth: 2, opacity: 1, cssClass: "pulse-available-node" };
     default:
-      return { fill: "#0a0a0a", stroke: "#525252", labelFill: "#737373", strokeWidth: 1.5, opacity: 0.55 };
+      return { fill: "#1e293b", stroke: "#334155", labelFill: "#64748b", strokeWidth: 1.5, opacity: 0.5, cssClass: "" };
   }
+}
+
+function edgeColor(fromStatus: JourneyNode["status"], toStatus: JourneyNode["status"]): string {
+  if (fromStatus === "done" && toStatus === "done") return "#34d399";
+  if (fromStatus === "done" && (toStatus === "in_progress" || toStatus === "available")) return "#f59e0b";
+  if (fromStatus === "in_progress") return "rgba(245,158,11,0.5)";
+  return "#334155";
 }
 
 type Props = {
@@ -81,17 +88,11 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
         const to = NODE_POSITIONS[edge.to];
         if (!from || !to) return null;
         const d = edgePath(from, to, edge.kind);
-        const touchesSelection = selectedId === edge.from || selectedId === edge.to;
-        const stroke =
-          edge.kind === "prerequisite"
-            ? touchesSelection
-              ? "#ffffff"
-              : "#a3a3a3"
-            : edge.kind === "loop"
-              ? "#737373"
-              : touchesSelection
-                ? "#d4d4d4"
-                : "#404040";
+        const fromNode = nodes.find((n) => n.id === edge.from);
+        const toNode = nodes.find((n) => n.id === edge.to);
+        const fromStatus = fromNode?.status ?? "locked";
+        const toStatus = toNode?.status ?? "locked";
+        const stroke = edge.kind === "loop" ? "#334155" : edgeColor(fromStatus, toStatus);
         const dash = edge.kind === "recommended" ? "6 4" : edge.kind === "loop" ? "4 3" : undefined;
         return (
           <motion.path
@@ -108,16 +109,25 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
         );
       })}
 
+      <style>{`
+        .pulse-available-node { animation: pulse-available 2.5s ease-in-out infinite; }
+        .pulse-active-node { animation: pulse-active 2s ease-in-out infinite; }
+        @keyframes pulse-available { 0%,100% { filter: drop-shadow(0 0 0px rgba(148,163,184,0)); } 50% { filter: drop-shadow(0 0 6px rgba(148,163,184,0.4)); } }
+        @keyframes pulse-active { 0%,100% { filter: drop-shadow(0 0 4px rgba(245,158,11,0.2)); } 50% { filter: drop-shadow(0 0 12px rgba(245,158,11,0.5)); } }
+        @media (prefers-reduced-motion: reduce) { .pulse-available-node, .pulse-active-node { animation: none; } }
+      `}</style>
       {nodes.map((node, index) => {
         const pos = NODE_POSITIONS[node.id];
         if (!pos) return null;
         const isSelected = selectedId === node.id;
         const colors = nodeColors(node.status, isSelected);
         const warningCount = node.softWarnings.length;
+        const isDone = node.status === "done";
 
         return (
           <g key={node.id} transform={`translate(${pos.x - 24}, ${pos.y - 24})`} opacity={colors.opacity}>
             <motion.g
+              className={colors.cssClass}
               initial={reduced ? false : { opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: reduced ? 0 : 0.35, delay: reduced ? 0 : 0.1 + index * 0.04 }}
@@ -137,22 +147,34 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
                   if (e.key === "Enter" || e.key === " ") onSelect(node.id);
                 }}
               />
-              <text
-                x={24}
-                y={28}
-                textAnchor="middle"
-                fill={colors.labelFill}
-                fontSize={11}
-                fontWeight="600"
-                className="pointer-events-none select-none"
-              >
-                {index + 1}
-              </text>
-              {warningCount > 0 && node.status !== "done" ? (
-                <circle cx={40} cy={8} r={8} fill="#ffffff" stroke="#0a0a0a" strokeWidth={1} />
+              {isDone ? (
+                <path
+                  d="M17 24 L22 29 L31 19"
+                  fill="none"
+                  stroke="#34d399"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="pointer-events-none"
+                />
+              ) : (
+                <text
+                  x={24}
+                  y={28}
+                  textAnchor="middle"
+                  fill={colors.labelFill}
+                  fontSize={11}
+                  fontWeight="600"
+                  className="pointer-events-none select-none"
+                >
+                  {index + 1}
+                </text>
+              )}
+              {warningCount > 0 && !isDone ? (
+                <circle cx={40} cy={8} r={8} fill="#f59e0b" stroke="#0c1829" strokeWidth={1} />
               ) : null}
-              {warningCount > 0 && node.status !== "done" ? (
-                <text x={40} y={11} textAnchor="middle" fill="#0a0a0a" fontSize={9} fontWeight="bold">
+              {warningCount > 0 && !isDone ? (
+                <text x={40} y={11} textAnchor="middle" fill="#0c1829" fontSize={9} fontWeight="bold">
                   {warningCount}
                 </text>
               ) : null}
@@ -161,7 +183,7 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
                 x={24}
                 y={58}
                 textAnchor="middle"
-                fill={isSelected ? "#ffffff" : "#a3a3a3"}
+                fill={isDone ? "#6ee7b7" : isSelected ? "#fbbf24" : colors.labelFill}
                 fontSize={9}
                 fontWeight={isSelected ? "600" : "400"}
                 className="pointer-events-none select-none"
@@ -173,8 +195,8 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
         );
       })}
 
-      <text x={8} y={230} fill="#737373" fontSize={9}>
-        Solid white = hard lock · Dashed = recommended · Loop = revisit product
+      <text x={8} y={230} fill="#64748b" fontSize={9}>
+        Emerald = done · Amber = active · Gray = locked · Dashed = recommended
       </text>
     </svg>
   );
@@ -183,12 +205,32 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
 export function JourneyTimelineMobile({ nodes, selectedId, onSelect }: Props) {
   const reduced = useReducedMotion();
 
+  function mobileNodeStyle(status: JourneyNode["status"], isSelected: boolean) {
+    if (isSelected) return { borderColor: "#fbbf24", bg: "rgba(245,158,11,0.2)", color: "#fbbf24" };
+    switch (status) {
+      case "done": return { borderColor: "#34d399", bg: "rgba(52,211,153,0.15)", color: "#6ee7b7" };
+      case "in_progress": return { borderColor: "#f59e0b", bg: "rgba(245,158,11,0.12)", color: "#fbbf24" };
+      case "available": return { borderColor: "#94a3b8", bg: "#0c1829", color: "#e2e8f0" };
+      default: return { borderColor: "#334155", bg: "#1e293b", color: "#64748b" };
+    }
+  }
+
+  function lineColor(status: JourneyNode["status"]) {
+    switch (status) {
+      case "done": return "#34d399";
+      case "in_progress": return "#f59e0b";
+      default: return "#334155";
+    }
+  }
+
   return (
     <ol className="space-y-0 md:hidden">
       {nodes.map((node, index) => {
         const isSelected = selectedId === node.id;
         const isLast = index === nodes.length - 1;
         const colors = nodeColors(node.status, isSelected);
+        const style = mobileNodeStyle(node.status, isSelected);
+        const isDone = node.status === "done";
 
         return (
           <motion.li
@@ -200,24 +242,28 @@ export function JourneyTimelineMobile({ nodes, selectedId, onSelect }: Props) {
             transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : index * 0.04 }}
           >
             {!isLast ? (
-              <span className="absolute left-[15px] top-8 h-[calc(100%-16px)] w-px bg-neutral-700" aria-hidden="true" />
+              <span
+                className="absolute left-[15px] top-8 h-[calc(100%-16px)] w-px"
+                style={{ backgroundColor: lineColor(node.status) }}
+                aria-hidden="true"
+              />
             ) : null}
             <button
               type="button"
               onClick={() => onSelect(node.id)}
-              className={`relative z-10 flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 text-xs font-bold ${
-                isSelected ? "border-white bg-white text-black" : "border-neutral-500 bg-neutral-950 text-neutral-200"
-              }`}
-              style={
-                !isSelected
-                  ? { borderColor: colors.stroke, color: colors.labelFill }
-                  : undefined
-              }
+              className="relative z-10 flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 text-xs font-bold"
+              style={{ borderColor: style.borderColor, backgroundColor: style.bg, color: style.color }}
             >
-              {index + 1}
+              {isDone ? (
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M3 7 L6 10 L11 4" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                index + 1
+              )}
             </button>
             <div className="min-w-0 flex-1 pt-0.5">
-              <p className={`text-sm font-semibold ${isSelected ? "text-white" : "text-neutral-200"}`}>
+              <p className={`text-sm font-semibold ${isDone ? "text-emerald-300" : isSelected ? "text-amber-300" : "text-neutral-200"}`}>
                 {node.title}
               </p>
               <p className="text-muted text-xs capitalize">

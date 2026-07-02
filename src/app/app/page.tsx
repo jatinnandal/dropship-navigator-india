@@ -83,32 +83,46 @@ export default async function DashboardPage() {
           />
         </>
       ) : nextAction ? (
-        <section className="dashboard-hero hero-reveal rounded-xl p-6 sm:p-8">
-          {activeSellerProfile ? (
-            <p className="text-muted mb-3 text-xs">
-              Active plan:{" "}
-              <span className="font-medium text-neutral-200">{activeSellerProfile.name}</span>
-              {" · "}
-              <Link href="/app/profiles" className="underline hover:text-white">
-                Switch plan
-              </Link>
-            </p>
-          ) : null}
-          <p className="eyebrow inline-block">Do this now</p>
-          <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-3xl">
-            {nextAction.title}
-          </h1>
-          <p className="text-muted mt-4 max-w-2xl text-sm leading-6">{heroWhy}</p>
-          <p className="text-mentor mt-3 text-xs">Estimated time: {nextAction.timeEstimate}</p>
-          <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-            <Link
-              href={nextAction.href}
-              className="btn-primary min-h-[44px] gap-2 rounded-md px-5 py-2.5 text-sm font-medium"
-            >
-              {nextAction.isLocked ? "Complete prerequisite" : "Start this step"}
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <CrisisEntryButton className="text-muted text-left text-sm underline hover:text-white sm:py-2" />
+        <section className="dashboard-hero hero-reveal rounded-xl p-6 sm:p-8 md:p-10 md:min-h-[280px]">
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-10">
+            <div className="flex flex-col items-center md:flex-shrink-0">
+              <ProgressRing
+                completed={progressStats.completedSubTasks}
+                total={progressStats.totalSubTasks}
+                size={112}
+              />
+              <p className="text-muted mt-2 text-center text-[11px]">
+                {progressStats.subTaskPercent}% complete
+              </p>
+            </div>
+            <div className="min-w-0 flex-1">
+              {activeSellerProfile ? (
+                <p className="text-muted mb-3 text-xs">
+                  Active plan:{" "}
+                  <span className="font-medium text-neutral-200">{activeSellerProfile.name}</span>
+                  {" · "}
+                  <Link href="/app/profiles" className="underline hover:text-white">
+                    Switch plan
+                  </Link>
+                </p>
+              ) : null}
+              <p className="eyebrow inline-block">Do this now</p>
+              <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-3xl">
+                {nextAction.title}
+              </h1>
+              <p className="text-muted mt-4 max-w-2xl text-sm leading-6">{heroWhy}</p>
+              <p className="text-mentor mt-3 text-xs">Estimated time: {nextAction.timeEstimate}</p>
+              <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+                <Link
+                  href={nextAction.href}
+                  className="btn-primary min-h-[44px] gap-2 rounded-md px-5 py-2.5 text-sm font-medium"
+                >
+                  {nextAction.isLocked ? "Complete prerequisite" : "Start this step"}
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+                <CrisisEntryButton className="text-muted text-left text-sm underline hover:text-white sm:py-2" />
+              </div>
+            </div>
           </div>
         </section>
       ) : null}
@@ -153,21 +167,18 @@ export default async function DashboardPage() {
 
       <SeasonNotice productType={profile.productType} />
 
-      <section className="glass-panel-receded mt-5 rounded-lg p-5">
-        <div className="flex flex-wrap items-center gap-5">
-          <ProgressRing
-            completed={progressStats.completedSubTasks}
-            total={progressStats.totalSubTasks}
-            size={72}
-          />
+      <section className="glass-panel-receded mt-5 rounded-lg px-5 py-4">
+        <div className="flex items-center gap-4">
           <div className="min-w-0 flex-1">
-            <p className="text-muted text-xs uppercase tracking-wide">Overall progress</p>
-            <p className="mt-1 text-base font-semibold text-slate-200">
-              {progressStats.completedSubTasks}/{progressStats.totalSubTasks} steps complete
-            </p>
+            <div className="flex items-center gap-3">
+              <p className="text-muted text-xs uppercase tracking-wide">Progress</p>
+              <p className="text-sm font-semibold text-slate-200">
+                {progressStats.completedSubTasks}/{progressStats.totalSubTasks} steps
+              </p>
+            </div>
             <p className="text-muted mt-1 text-xs leading-5">
               {progressStats.completedSubTasks === 0
-                ? "Your launch plan is personalized to your profile — start with the first required step."
+                ? "Your launch plan is personalized — start with the first step."
                 : `${completionCount}/${totalModules} modules done · ${progressStats.subTaskPercent}% of your plan.`}
             </p>
             {dashboardState.mode === "at_risk" ? (

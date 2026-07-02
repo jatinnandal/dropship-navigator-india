@@ -1,14 +1,18 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, AlertTriangle, Lightbulb } from "lucide-react";
 import { JargonText } from "@/components/jargon-text";
 import type { TaskStep } from "@/lib/tasks/types";
 
 function MentorAvatar() {
   return (
     <div
-      className="flex h-9 w-9 flex-none items-center justify-center rounded-full border border-neutral-600 bg-neutral-900 text-xs font-bold text-neutral-200"
+      className="flex h-12 w-12 flex-none items-center justify-center rounded-full text-sm font-bold text-white"
+      style={{
+        background: "linear-gradient(135deg, #f59e0b, #d97706)",
+        boxShadow: "0 0 16px -4px rgba(245, 158, 11, 0.35), 0 0 0 2px rgba(245, 158, 11, 0.15)",
+      }}
       aria-hidden="true"
     >
       DN
@@ -16,18 +20,26 @@ function MentorAvatar() {
   );
 }
 
-function MentorBubble({ children, tone = "default" }: { children: ReactNode; tone?: "default" | "trap" | "tip" }) {
+type BubbleTone = "default" | "trap" | "tip" | "stuck" | "why";
+
+function MentorBubble({ children, tone = "default" }: { children: ReactNode; tone?: BubbleTone }) {
   const toneClass =
     tone === "trap"
-      ? "border-neutral-600 bg-neutral-950"
+      ? "mentor-bubble-trap"
       : tone === "tip"
-        ? "border-neutral-700 bg-neutral-900"
-        : "border-neutral-800 bg-black";
+        ? "mentor-bubble-tip"
+        : tone === "stuck"
+          ? "mentor-bubble-stuck"
+          : tone === "why"
+            ? "mentor-bubble-why"
+            : "";
+
+  const baseBg = tone === "default" ? "border-neutral-800 bg-black" : "border-transparent";
 
   return (
     <div className="flex gap-3">
       <MentorAvatar />
-      <div className={`max-w-full rounded-xl rounded-tl-sm border px-4 py-3 text-sm leading-6 text-neutral-200 sm:max-w-[92%] ${toneClass}`}>
+      <div className={`max-w-full rounded-xl rounded-tl-sm border px-4 py-3 text-sm leading-6 text-neutral-200 sm:max-w-[92%] ${baseBg} ${toneClass}`}>
         {children}
       </div>
     </div>
@@ -64,13 +76,42 @@ function ProgressiveHow({ items }: { items: string[] }) {
   );
 }
 
+function SkeletonLoader() {
+  return (
+    <div className="space-y-4" aria-label="Loading step content">
+      <div className="skeleton-line w-1/3" />
+      <div className="skeleton-line w-2/3" />
+      <div className="flex gap-3">
+        <div className="h-12 w-12 flex-none rounded-full skeleton-line" style={{ height: 48, width: 48 }} />
+        <div className="flex-1 space-y-2">
+          <div className="skeleton-line w-full" />
+          <div className="skeleton-line w-4/5" />
+          <div className="skeleton-line w-3/5" />
+        </div>
+      </div>
+      <div className="flex gap-3">
+        <div className="h-12 w-12 flex-none rounded-full skeleton-line" style={{ height: 48, width: 48 }} />
+        <div className="flex-1 space-y-2">
+          <div className="skeleton-line w-full" />
+          <div className="skeleton-line w-2/3" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 type Props = {
   step: TaskStep;
   stepIndex: number;
   totalSteps: number;
+  isLoading?: boolean;
 };
 
-export function MentorStepContent({ step, stepIndex, totalSteps }: Props) {
+export function MentorStepContent({ step, stepIndex, totalSteps, isLoading }: Props) {
+  if (isLoading) {
+    return <SkeletonLoader />;
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
@@ -85,16 +126,21 @@ export function MentorStepContent({ step, stepIndex, totalSteps }: Props) {
 
       {step.mentorNote ? (
         <MentorBubble tone="tip">
-          <p className="text-xs uppercase tracking-wide text-neutral-500">Mentor tip</p>
-          <p className="mt-1">
-            <JargonText text={step.mentorNote} />
-          </p>
+          <div className="flex items-start gap-2">
+            <Lightbulb className="mt-0.5 h-4 w-4 flex-none text-cyan-400" aria-hidden="true" />
+            <div>
+              <p className="text-xs uppercase tracking-wide text-cyan-400/80">Mentor tip</p>
+              <p className="mt-1">
+                <JargonText text={step.mentorNote} />
+              </p>
+            </div>
+          </div>
         </MentorBubble>
       ) : null}
 
-      <MentorBubble>
+      <MentorBubble tone="why">
         <p className="text-xs uppercase tracking-wide text-neutral-500">Why this matters</p>
-        <p className="mt-1">
+        <p className="mt-1 italic text-neutral-300/90">
           <JargonText text={step.why} />
         </p>
       </MentorBubble>
@@ -116,30 +162,43 @@ export function MentorStepContent({ step, stepIndex, totalSteps }: Props) {
 
       {step.trap ? (
         <MentorBubble tone="trap">
-          <p className="text-xs uppercase tracking-wide text-neutral-400">The trap that fails people here</p>
-          <p className="mt-1">
-            <JargonText text={step.trap} />
-          </p>
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="mt-0.5 h-4 w-4 flex-none text-rose-400" aria-hidden="true" />
+            <div>
+              <p className="text-xs uppercase tracking-wide text-rose-400/80">The trap that fails people here</p>
+              <p className="mt-1">
+                <JargonText text={step.trap} />
+              </p>
+            </div>
+          </div>
         </MentorBubble>
       ) : null}
 
       {step.tools && step.tools.length > 0 ? (
         <div className="mt-2">
-          <p className="mb-3 text-sm font-semibold text-white">Recommended tools (when you need help)</p>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <p className="mb-3 text-sm font-semibold text-white">Recommended tools</p>
+          <div className="flex flex-wrap gap-2">
             {step.tools.map((tool) => (
-              <article key={tool.name} className="surface-hover rounded-lg border border-neutral-800 p-4">
-                <div className="flex items-start justify-between gap-2">
-                  <h4 className="font-semibold text-white">{tool.name}</h4>
-                  <ExternalLink className="h-3.5 w-3.5 flex-none text-muted" aria-hidden="true" />
-                </div>
-                <p className="text-muted mt-2 text-xs">
+              <div
+                key={tool.name}
+                className="group inline-flex items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-1.5 text-xs font-medium text-neutral-200 transition hover:border-neutral-500 hover:bg-neutral-800"
+              >
+                <span>{tool.name}</span>
+                <ExternalLink className="h-3 w-3 flex-none text-neutral-500 transition group-hover:text-neutral-300" aria-hidden="true" />
+              </div>
+            ))}
+          </div>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            {step.tools.map((tool) => (
+              <div key={tool.name} className="rounded-lg border border-neutral-800 bg-neutral-950 p-3">
+                <p className="text-xs font-semibold text-white">{tool.name}</p>
+                <p className="text-muted mt-1 text-xs">
                   <JargonText text={tool.whenToUse} />
                 </p>
-                <p className="mt-2 text-sm text-neutral-200">
+                <p className="mt-1 text-xs text-neutral-300">
                   <JargonText text={tool.why} />
                 </p>
-              </article>
+              </div>
             ))}
           </div>
         </div>

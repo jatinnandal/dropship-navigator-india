@@ -238,6 +238,150 @@ body {
 .auth-brand-panel {
   background: #0c1829;
   border: 1px solid rgba(148, 180, 214, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-brand-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 80%, rgba(245, 158, 11, 0.06), transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(34, 211, 238, 0.04), transparent 50%);
+  pointer-events: none;
+}
+
+/* Auth input focus states */
+.auth-input {
+  transition: border-color var(--motion-duration-fast) var(--motion-ease-out),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.auth-input:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.12);
+  outline: none;
+}
+
+/* Shimmer effect for auth CTA */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.25),
+    transparent
+  );
+  transition: none;
+  pointer-events: none;
+}
+
+.btn-shimmer:hover::after {
+  animation: shimmer-slide 0.7s ease-out;
+}
+
+@keyframes shimmer-slide {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+/* Password strength bar */
+.pw-strength-track {
+  height: 3px;
+  border-radius: 9999px;
+  background: rgba(64, 64, 64, 0.5);
+  overflow: hidden;
+}
+
+.pw-strength-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 280ms ease-out, background-color 280ms ease-out;
+}
+
+/* Onboarding progress stepper */
+.onboarding-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.onboarding-stepper::-webkit-scrollbar {
+  display: none;
+}
+
+.onboarding-step-dot {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease-out),
+    border-color var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.onboarding-step-connector {
+  flex: 1;
+  height: 2px;
+  min-width: 0.5rem;
+  transition: background-color var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+/* Channel cards grid */
+.channel-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* Toggle button pair for yes/no */
+.toggle-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  background: rgba(15, 23, 42, 0.4);
+  color: #94a3b8;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color var(--motion-duration-fast) var(--motion-ease-out),
+    background-color var(--motion-duration-fast) var(--motion-ease-out),
+    color var(--motion-duration-fast) var(--motion-ease-out),
+    box-shadow var(--motion-duration-fast) var(--motion-ease-out);
+}
+
+.toggle-btn-selected {
+  border-color: rgba(251, 191, 36, 0.5);
+  background: rgba(245, 158, 11, 0.1);
+  color: #fef3c7;
+  box-shadow: 0 0 0 1px rgba(251, 191, 36, 0.15);
+}
+
+.toggle-btn:hover:not(.toggle-btn-selected) {
+  border-color: rgba(148, 163, 184, 0.4);
+  background: rgba(30, 41, 59, 0.5);
 }
 
 .header-scrolled {
@@ -676,6 +820,97 @@ body {
   }
 }
 
+/* Crisis hero — rose palette override */
+.dashboard-hero-crisis {
+  background: rgba(25, 12, 18, 0.95);
+  border: 1px solid rgba(251, 113, 133, 0.3);
+  box-shadow: 0 0 48px -16px rgba(251, 113, 133, 0.2), var(--shadow-3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Pulse animation for available journey nodes */
+@keyframes pulse-available {
+  0%, 100% {
+    filter: drop-shadow(0 0 0px rgba(148, 163, 184, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 6px rgba(148, 163, 184, 0.4));
+  }
+}
+
+/* Amber glow pulse for active/in-progress nodes */
+@keyframes pulse-active {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.5));
+  }
+}
+
+/* Crisis warning pulse */
+@keyframes pulse-crisis {
+  0%, 100% {
+    border-color: rgba(251, 113, 133, 0.3);
+  }
+  50% {
+    border-color: rgba(251, 113, 133, 0.55);
+  }
+}
+
+.crisis-pulse {
+  animation: pulse-crisis 2.5s ease-in-out infinite;
+}
+
+/* Mentor bubble variants */
+.mentor-bubble-trap {
+  border-left: 3px solid #fb7185;
+  background: rgba(251, 113, 133, 0.06);
+}
+
+.mentor-bubble-tip {
+  border-left: 3px solid #22d3ee;
+  background: rgba(34, 211, 238, 0.06);
+}
+
+.mentor-bubble-stuck {
+  border-left: 3px solid #f59e0b;
+  background: rgba(245, 158, 11, 0.06);
+}
+
+.mentor-bubble-why {
+  border-left: 3px solid rgba(148, 180, 214, 0.2);
+  background: rgba(148, 180, 214, 0.04);
+}
+
+/* Skeleton loading pulse */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.25; }
+}
+
+.skeleton-line {
+  height: 0.75rem;
+  border-radius: 0.25rem;
+  background: rgba(148, 180, 214, 0.15);
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+/* Task completion celebration particles */
+@keyframes celebration-float {
+  0% { transform: translateY(0) scale(1); opacity: 0.7; }
+  100% { transform: translateY(-40px) scale(0.4); opacity: 0; }
+}
+
+.celebration-dot {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  animation: celebration-float 2.4s ease-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .btn-primary,
   .btn-emerald,
@@ -692,7 +927,16 @@ body {
   .scroll-atmosphere-grid,
   .app-sidebar,
   .app-main-with-sidebar,
-  .scroll-cue {
+  .scroll-cue,
+  .crisis-pulse,
+  .skeleton-line,
+  .celebration-dot,
+  .btn-shimmer::after,
+  .auth-input,
+  .pw-strength-fill,
+  .onboarding-step-dot,
+  .onboarding-step-connector,
+  .toggle-btn {
     transition: none;
     animation: none;
   }
@@ -701,5 +945,9 @@ body {
   .btn-emerald:hover,
   .surface-hover:hover {
     transform: none;
+  }
+
+  .btn-shimmer:hover::after {
+    animation: none;
   }
 }

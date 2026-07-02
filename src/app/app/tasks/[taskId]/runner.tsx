@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { ProfitCalculator } from "@/components/profit-calculator";
 import { MentorStepContent } from "@/components/mentor-step-content";
 import { JargonText } from "@/components/jargon-text";
@@ -287,7 +288,21 @@ export function TaskRunner({
           ) : null}
 
           <nav className="h-fit rounded-xl border border-neutral-800 bg-neutral-950 p-4 lg:sticky lg:top-6">
-            <p className="px-2 text-xs uppercase tracking-wide text-neutral-500">Your path</p>
+            <div className="flex items-center justify-between px-2">
+              <p className="text-xs uppercase tracking-wide text-neutral-500">Your path</p>
+              <span className="text-xs text-neutral-500">{progressPct}%</span>
+            </div>
+            <div className="progress-track mx-2 mt-2 h-1">
+              <div
+                className="h-full rounded-full transition-all duration-300"
+                style={{
+                  width: `${progressPct}%`,
+                  background: allDone
+                    ? "linear-gradient(90deg, #34d399, #059669)"
+                    : "linear-gradient(90deg, #f59e0b, #d97706)",
+                }}
+              />
+            </div>
             <ol className="mt-3 max-h-[50vh] space-y-1 overflow-y-auto lg:max-h-none">
               {steps.map((step, index) => {
                 const isDone = completed.has(step.id);
@@ -298,21 +313,25 @@ export function TaskRunner({
                       type="button"
                       onClick={() => goTo(step.id)}
                       className={`flex w-full items-start gap-3 rounded-lg px-2 py-2 text-left text-sm transition ${
-                        isCurrent ? "bg-neutral-800 text-white" : "text-muted hover:bg-neutral-900"
+                        isCurrent
+                          ? "bg-neutral-800 text-white"
+                          : isDone
+                            ? "text-emerald-400/70 hover:bg-neutral-900"
+                            : "text-neutral-500 hover:bg-neutral-900 hover:text-neutral-300"
                       }`}
                     >
                       <span
                         className={`mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border text-[11px] ${
                           isDone
-                            ? "border-white bg-white text-black"
+                            ? "border-emerald-500 bg-emerald-500 text-black"
                             : isCurrent
-                              ? "border-white text-white"
+                              ? "border-amber-500 text-amber-500"
                               : "border-neutral-600 text-neutral-500"
                         }`}
                       >
                         {isDone ? <CheckIcon /> : index + 1}
                       </span>
-                      <span className={isDone ? "line-through opacity-70" : ""}>{step.title}</span>
+                      <span className={isDone ? "line-through" : ""}>{step.title}</span>
                     </button>
                   </li>
                 );
@@ -323,17 +342,46 @@ export function TaskRunner({
 
         <section className="order-1 min-w-0 lg:order-2">
           {allDone ? (
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-6 text-center sm:p-8">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white bg-white text-black">
+            <div className="relative overflow-hidden rounded-xl border border-emerald-500/30 bg-neutral-950 p-6 text-center sm:p-8">
+              {/* Celebration particles */}
+              <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+                {[
+                  { left: "15%", top: "20%", bg: "#34d399", delay: "0s" },
+                  { left: "30%", top: "60%", bg: "#f59e0b", delay: "0.4s" },
+                  { left: "50%", top: "30%", bg: "#22d3ee", delay: "0.8s" },
+                  { left: "70%", top: "50%", bg: "#34d399", delay: "1.2s" },
+                  { left: "85%", top: "25%", bg: "#f59e0b", delay: "1.6s" },
+                  { left: "40%", top: "70%", bg: "#22d3ee", delay: "2.0s" },
+                ].map((dot) => (
+                  <span
+                    key={dot.left + dot.delay}
+                    className="celebration-dot"
+                    style={{
+                      left: dot.left,
+                      top: dot.top,
+                      background: dot.bg,
+                      animationDelay: dot.delay,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div
+                className="mx-auto flex h-14 w-14 items-center justify-center rounded-full text-black"
+                style={{ background: "linear-gradient(135deg, #34d399, #059669)" }}
+              >
                 <CheckIcon />
               </div>
-              <h2 className="mt-4 text-2xl font-bold text-white">You finished this walkthrough</h2>
+              <h2 className="mt-4 text-2xl font-bold text-white">Task Complete!</h2>
               <p className="text-muted mx-auto mt-3 max-w-md text-sm leading-6">
                 Every step is saved. Your answers and workspace data carry forward to the next modules.
               </p>
               <div className="mt-6 flex flex-wrap justify-center gap-3">
-                <Link href="/app/journey" className="btn-primary rounded-md px-5 py-2 text-sm font-semibold">
-                  Back to journey
+                <Link
+                  href="/app/journey"
+                  className="btn-emerald inline-flex items-center gap-2 rounded-md px-5 py-2 text-sm font-semibold"
+                >
+                  Continue to next task <ArrowRight className="h-4 w-4" />
                 </Link>
                 <button
                   type="button"
@@ -355,7 +403,7 @@ export function TaskRunner({
             <article className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 sm:p-6">
               <div className="flex items-center justify-between gap-3">
                 {completed.has(currentStep.id) ? (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-neutral-600 px-3 py-1 text-xs text-neutral-200">
+                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-400">
                     <CheckIcon /> Done
                   </span>
                 ) : null}
@@ -538,7 +586,7 @@ export function TaskRunner({
                   {showStuck ? "Hide help" : "I'm stuck on this step"}
                 </button>
                 {showStuck ? (
-                  <div className="mt-3 rounded-lg border border-neutral-800 bg-black p-4">
+                  <div className="mentor-bubble-stuck mt-3 rounded-lg border border-neutral-800 p-4">
                     {currentStep.stuck && currentStep.stuck.length > 0 ? (
                       <ul className="text-muted list-disc space-y-2 pl-5 text-sm">
                         {currentStep.stuck.map((item) => (

@@ -18,7 +18,14 @@ export function ProgressRing({ completed, total, size = 112 }: Props) {
   const targetOffset = circumference * (1 - pct);
 
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+    <div
+      className="relative inline-flex items-center justify-center"
+      style={{
+        width: size,
+        height: size,
+        filter: pct > 0 ? `drop-shadow(0 0 ${Math.round(12 * pct)}px rgba(245, 158, 11, ${0.1 + pct * 0.15}))` : undefined,
+      }}
+    >
       <svg width={size} height={size} className="-rotate-90" aria-hidden="true">
         <circle
           cx={size / 2}
@@ -49,10 +56,10 @@ export function ProgressRing({ completed, total, size = 112 }: Props) {
         </defs>
       </svg>
       <div className="absolute text-center">
-        <p className="font-display text-sm font-bold text-slate-100">
+        <p className="font-display text-base font-bold text-slate-100">
           <CountUp to={completed} duration={0.9} />/{total}
         </p>
-        <p className="text-[10px] text-muted">modules</p>
+        <p className="text-[10px] text-muted">steps</p>
       </div>
       <span className="sr-only">
         {completed} of {total} modules complete

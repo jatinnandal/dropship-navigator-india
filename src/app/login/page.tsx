@@ -8,7 +8,7 @@ import { AuthSetupBanner } from "@/components/auth-setup-banner";
 export default function LoginPage() {
   return (
     <AuthPageShell>
-      <div className="mb-6">
+      <div className="mb-6 lg:block hidden">
         <AppLogo href="/" subtitle="Seller operating system for India" />
       </div>
       <AuthSetupBanner />

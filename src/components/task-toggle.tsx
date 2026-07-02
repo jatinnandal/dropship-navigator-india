@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useTransition } from "react";
-import { ChevronDown } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { toggleSubTask } from "@/app/app/journey/actions";
 
 type Props = {
@@ -48,20 +48,26 @@ export function TaskToggle({
     <div
       className={`rounded-lg border transition ${
         checked
-          ? "border-white/25 bg-neutral-900"
+          ? "border-emerald-500/25 bg-emerald-950/20"
           : expanded
             ? "border-white/15 bg-neutral-950"
-            : "border-neutral-800 bg-black hover:border-neutral-600"
+            : "border-neutral-800 bg-black hover:border-amber-500/30"
       } ${disabled ? "opacity-50" : ""}`}
     >
       <div className="flex items-start gap-2 px-3 py-2.5">
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={handleChange}
+        <button
+          type="button"
+          onClick={handleChange}
           disabled={disabled || isPending}
-          className="task-checkbox mt-2.5 h-5 w-5 flex-none rounded border-neutral-600 accent-white"
-        />
+          aria-label={checked ? `Mark "${label}" incomplete` : `Mark "${label}" complete`}
+          className={`mt-2 flex h-5 w-5 flex-none items-center justify-center rounded border transition ${
+            checked
+              ? "border-emerald-500 bg-emerald-500 text-black"
+              : "border-neutral-600 bg-transparent hover:border-neutral-400"
+          }`}
+        >
+          {checked ? <Check className="h-3.5 w-3.5" strokeWidth={2.5} /> : null}
+        </button>
         <div
           className={`min-w-0 flex-1 py-1 ${hasGuide && !disabled ? "cursor-pointer" : ""}`}
           onClick={toggleExpand}
@@ -75,7 +81,9 @@ export function TaskToggle({
           tabIndex={hasGuide && !disabled ? 0 : undefined}
           aria-expanded={hasGuide ? expanded : undefined}
         >
-          <span className="block text-sm text-white">{label}</span>
+          <span className={`block text-sm ${checked ? "text-emerald-300/80 line-through" : "text-white"}`}>
+            {label}
+          </span>
           {hint ? <span className="text-muted mt-0.5 block text-xs">{hint}</span> : null}
           {hasGuide && !expanded ? (
             <button

@@ -190,20 +190,24 @@ export function JourneyModuleAccordion({ detail, doNowBullets }: Props) {
       {sections.map((section) => {
         const isOpen = openId === section.id;
         return (
-          <section key={section.id} className="glass-panel overflow-hidden rounded-xl">
+          <section
+            key={section.id}
+            className="glass-panel overflow-hidden rounded-xl transition-[border-color] duration-200"
+            style={isOpen ? { borderColor: "rgba(245, 158, 11, 0.25)" } : undefined}
+          >
             <button
               type="button"
               onClick={() => setOpenId(isOpen ? null : section.id)}
               className="flex w-full items-center justify-between gap-3 p-5 text-left"
               aria-expanded={isOpen}
             >
-              <h2 className="text-base font-semibold text-slate-100">{section.title}</h2>
+              <h2 className={`text-base font-semibold ${isOpen ? "text-amber-200" : "text-slate-100"}`}>{section.title}</h2>
               <ChevronDown
-                className={`h-4 w-4 flex-none text-muted transition ${isOpen ? "rotate-180" : ""}`}
+                className={`h-4 w-4 flex-none transition duration-200 ${isOpen ? "rotate-180 text-amber-400" : "text-muted"}`}
                 aria-hidden="true"
               />
             </button>
-            {isOpen ? <div className="border-t border-slate-700/50 px-5 pb-5 pt-4">{section.content}</div> : null}
+            {isOpen ? <div className="border-t border-amber-500/15 px-5 pb-5 pt-4">{section.content}</div> : null}
           </section>
         );
       })}

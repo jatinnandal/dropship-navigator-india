@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { Shield, Sparkles, Zap } from "lucide-react";
 import {
   resendConfirmationEmail,
   signInWithGoogle,
@@ -36,6 +37,17 @@ const INFO_MESSAGES: Record<string, string> = {
   confirmation_resent: "If an account exists for this email, we sent another confirmation link. Check inbox and spam.",
 };
 
+function getPasswordStrength(pw: string): { level: "weak" | "medium" | "strong"; width: string; color: string } {
+  if (!pw || pw.length < 4) return { level: "weak", width: "33%", color: "#fb7185" };
+  const hasUpper = /[A-Z]/.test(pw);
+  const hasNumber = /[0-9]/.test(pw);
+  const hasSpecial = /[^a-zA-Z0-9]/.test(pw);
+  const score = (pw.length >= 8 ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
+  if (score >= 3) return { level: "strong", width: "100%", color: "#34d399" };
+  if (score >= 2) return { level: "medium", width: "66%", color: "#f59e0b" };
+  return { level: "weak", width: "33%", color: "#fb7185" };
+}
+
 type Props = {
   mode: "login" | "signup";
 };
@@ -46,6 +58,7 @@ export function AuthForm({ mode }: Props) {
   const messageCode = searchParams.get("message");
   const emailParam = searchParams.get("email") ?? "";
   const next = searchParams.get("next") ?? "";
+  const [password, setPassword] = useState("");
 
   const errorMessage = errorCode ? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.signup_failed) : null;
 
@@ -66,6 +79,7 @@ export function AuthForm({ mode }: Props) {
     messageCode === "confirmation_resent";
 
   const isLogin = mode === "login";
+  const strength = !isLogin ? getPasswordStrength(password) : null;
 
   return (
     <div>
@@ -75,6 +89,23 @@ export function AuthForm({ mode }: Props) {
           ? "Sign in to access your launch plan and journey progress."
           : "Start your India e-commerce journey with a personalized co-pilot."}
       </p>
+
+      {!isLogin ? (
+        <div className="mt-4 flex items-center gap-4 text-xs text-neutral-400">
+          <span className="inline-flex items-center gap-1">
+            <Sparkles className="h-3.5 w-3.5 text-amber-400" aria-hidden="true" />
+            Free forever
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Shield className="h-3.5 w-3.5 text-cyan-400" aria-hidden="true" />
+            No credit card
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Zap className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
+            5 min setup
+          </span>
+        </div>
+      ) : null}
 
       {infoMessage ? (
         <p className="meta-tile mt-4 rounded-lg px-3 py-2 text-sm text-emerald-200">{infoMessage}</p>
@@ -135,14 +166,41 @@ export function AuthForm({ mode }: Props) {
                 defaultValue={emailParam ? decodeURIComponent(emailParam) : undefined}
               />
               <AuthField label="Password" name="password" type="password" autoComplete="current-password" required />
-              <button type="submit" className="btn-primary min-h-[44px] w-full rounded-md px-4 py-2 text-sm font-medium">
+              <div className="flex justify-end">
+                <button type="button" className="text-xs text-amber-200/70 hover:text-amber-200 transition-colors" tabIndex={-1}>
+                  Forgot password?
+                </button>
+              </div>
+              <button type="submit" className="btn-primary btn-shimmer min-h-[44px] w-full rounded-md px-4 py-2 text-sm font-medium">
                 Sign in
               </button>
             </form>
           ) : messageCode === "confirm_email_required" ? null : (
             <form action={signUpWithPassword} className="space-y-4">
               <AuthField label="Email" name="signup_email" type="email" autoComplete="email" required />
-              <AuthField label="Password" name="signup_password" type="password" autoComplete="new-password" required />
+              <div>
+                <AuthField
+                  label="Password"
+                  name="signup_password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {password.length > 0 && strength ? (
+                  <div className="mt-2">
+                    <div className="pw-strength-track">
+                      <div
+                        className="pw-strength-fill"
+                        style={{ width: strength.width, backgroundColor: strength.color }}
+                      />
+                    </div>
+                    <p className="mt-1 text-xs" style={{ color: strength.color }}>
+                      {strength.level === "weak" ? "Weak" : strength.level === "medium" ? "Medium" : "Strong"}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
               <AuthField
                 label="Confirm password"
                 name="confirm_password"
@@ -150,7 +208,7 @@ export function AuthForm({ mode }: Props) {
                 autoComplete="new-password"
                 required
               />
-              <button type="submit" className="btn-primary min-h-[44px] w-full rounded-md px-4 py-2 text-sm font-medium">
+              <button type="submit" className="btn-primary btn-shimmer min-h-[44px] w-full rounded-md px-4 py-2 text-sm font-medium">
                 Create account
               </button>
             </form>
@@ -186,6 +244,7 @@ function AuthField({
   autoComplete,
   required,
   defaultValue,
+  onChange,
 }: {
   label: string;
   name: string;
@@ -193,6 +252,7 @@ function AuthField({
   autoComplete?: string;
   required?: boolean;
   defaultValue?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <label className="block text-sm">
@@ -203,7 +263,8 @@ function AuthField({
         autoComplete={autoComplete}
         required={required}
         defaultValue={defaultValue}
-        className="mt-1 w-full min-h-[44px] rounded-md border border-slate-600 bg-slate-950/80 px-3 py-2 text-slate-100"
+        onChange={onChange}
+        className="auth-input mt-1 w-full min-h-[44px] rounded-md border border-slate-600 bg-slate-950/80 px-3 py-2 text-slate-100"
       />
     </label>
   );

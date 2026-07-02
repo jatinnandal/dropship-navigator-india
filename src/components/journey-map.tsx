@@ -74,18 +74,32 @@ export function JourneyMap({ nodes, modules = [] }: Props) {
         </p>
       ) : null}
 
-      <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 sm:p-6">
+      <div className="glass-panel rounded-xl p-4 sm:p-6">
         <JourneyGraphView nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
         <JourneyTimelineMobile nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
       </div>
 
-      <article className="rounded-xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
+      <article
+        className="rounded-xl p-5 sm:p-6"
+        style={{
+          background: selected.status === "in_progress" ? "rgba(245,158,11,0.05)" : "rgba(8,18,32,0.75)",
+          border: selected.status === "in_progress"
+            ? "1px solid rgba(245,158,11,0.2)"
+            : selected.status === "done"
+              ? "1px solid rgba(52,211,153,0.2)"
+              : "1px solid rgba(148,180,214,0.1)",
+        }}
+      >
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-white">{selected.title}</h2>
-            <p className="text-muted text-xs capitalize">{selected.status.replace("_", " ")}</p>
+            <h2 className={`text-xl font-bold ${selected.status === "done" ? "text-emerald-300" : selected.status === "in_progress" ? "text-amber-200" : "text-white"}`}>
+              {selected.title}
+            </h2>
+            <p className={`text-xs capitalize ${selected.status === "done" ? "text-emerald-400" : selected.status === "in_progress" ? "text-amber-400" : "text-muted"}`}>
+              {selected.status.replace("_", " ")}
+            </p>
           </div>
-          {isLocked ? <Lock className="h-5 w-5 text-neutral-500" aria-hidden="true" /> : null}
+          {isLocked ? <Lock className="h-5 w-5 text-slate-600" aria-hidden="true" /> : null}
         </div>
 
         {selectedModule?.description ? (
@@ -104,7 +118,15 @@ export function JourneyMap({ nodes, modules = [] }: Props) {
 
         <div className="mt-3">
           <div className="progress-track h-1.5">
-            <div className="progress-fill" style={{ width: `${selected.progressPercent}%` }} />
+            <div
+              className="h-full rounded-full transition-[width] duration-300 ease-out"
+              style={{
+                width: `${selected.progressPercent}%`,
+                background: selected.progressPercent === 100
+                  ? "linear-gradient(90deg, #34d399, #6ee7b7)"
+                  : "linear-gradient(90deg, #f59e0b, #fbbf24)",
+              }}
+            />
           </div>
           <p className="text-muted mt-1 text-xs">{selected.progressPercent}% sub-tasks done</p>
         </div>
