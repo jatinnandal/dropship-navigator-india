@@ -115,9 +115,9 @@ body {
 }
 
 .eyebrow-mono {
-  border-left: 2px solid rgba(255, 255, 255, 0.45);
+  border-left: 2px solid #f59e0b;
   padding-left: 0.65rem;
-  color: var(--landing-muted);
+  color: #fbbf24;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 0.72rem;
@@ -134,14 +134,17 @@ body {
 }
 
 .btn-landing-primary {
-  background: #ffffff;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
   color: #0a0a0a;
-  transition: opacity 180ms ease-out, transform 180ms ease-out;
+  font-weight: 600;
+  transition: opacity 180ms ease-out, transform 180ms ease-out, box-shadow 180ms ease-out;
+  box-shadow: 0 0 24px -6px rgba(245, 158, 11, 0.35);
 }
 
 .btn-landing-primary:hover {
-  opacity: 0.92;
+  opacity: 0.95;
   transform: translateY(-1px);
+  box-shadow: 0 0 32px -4px rgba(245, 158, 11, 0.5);
 }
 
 .btn-landing-primary-on-light {
@@ -156,15 +159,15 @@ body {
 }
 
 .btn-landing-secondary {
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(245, 158, 11, 0.3);
   background: transparent;
-  color: #ffffff;
+  color: #fafafa;
   transition: background-color 180ms ease-out, border-color 180ms ease-out;
 }
 
 .btn-landing-secondary:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.5);
 }
 
 .btn-landing-secondary-on-light {
