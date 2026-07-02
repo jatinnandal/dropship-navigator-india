@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
 import {
   AlertTriangle,
   Banknote,
@@ -9,6 +8,7 @@ import {
   ShieldAlert,
   Truck,
 } from "lucide-react";
+import { Reveal } from "@/components/motion/reveal";
 
 const CHALLENGES = [
   {
@@ -50,42 +50,31 @@ const CHALLENGES = [
 ];
 
 export function LandingChallenges() {
-  const reduced = useReducedMotion();
-
   return (
-    <section>
-      <motion.div
-        initial={reduced ? false : { opacity: 0, y: 12 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-80px" }}
-        transition={{ duration: 0.35 }}
-      >
-        <p className="eyebrow inline-block">Why beginners quit</p>
-        <h2 className="mt-3 text-2xl font-bold md:text-3xl">India e-commerce is not a YouTube tutorial</h2>
-        <p className="text-muted mt-3 max-w-2xl text-sm leading-6 md:text-base">
-          Every step has a consequence if you skip it. Our co-pilot is built around real seller pain — not generic
-          advice.
+    <div className="relative z-10">
+      <Reveal from="left">
+        <p className="eyebrow-light inline-block">Why beginners quit</p>
+        <h2 className="display-lg mt-4 max-w-3xl text-black">
+          India e-commerce is not a YouTube tutorial
+        </h2>
+        <p className="text-muted-light mt-4 max-w-2xl text-base leading-7">
+          Every step has a consequence if you skip it. Our co-pilot is built around real seller pain — not generic advice.
         </p>
-      </motion.div>
+      </Reveal>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {CHALLENGES.map((item, index) => (
-          <motion.article
-            key={item.title}
-            initial={reduced ? false : { opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.35, delay: reduced ? 0 : index * 0.06 }}
-            className="glass-panel surface-hover rounded-lg p-5"
-          >
-            <div className="mb-3 text-amber-300">
-              <item.icon className="h-5 w-5" />
-            </div>
-            <h3 className="text-base font-bold">{item.title}</h3>
-            <p className="text-muted mt-2 text-sm leading-6">{item.description}</p>
-          </motion.article>
+          <Reveal key={item.title} from="left" delay={index * 0.07}>
+            <article className="h-full rounded-lg border border-neutral-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
+              <div className="mb-3 text-black">
+                <item.icon className="h-5 w-5" />
+              </div>
+              <h3 className="font-display text-base font-bold text-black">{item.title}</h3>
+              <p className="text-muted-light mt-2 text-sm leading-6">{item.description}</p>
+            </article>
+          </Reveal>
         ))}
       </div>
-    </section>
+    </div>
   );
 }

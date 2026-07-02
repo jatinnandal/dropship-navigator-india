@@ -35,7 +35,7 @@ export function JourneyModuleAccordion({ detail, doNowBullets }: Props) {
         <div className="grid gap-3 md:grid-cols-2">
           {detail.requiredInputs.map((item) => (
             <article key={`${item.factor}-${item.value}`} className="surface-hover rounded-lg border border-slate-700/60 p-4">
-              <p className="text-xs uppercase tracking-wide text-amber-200">{item.factor}</p>
+              <p className="text-xs uppercase tracking-wide text-neutral-500">{item.factor}</p>
               <p className="mt-1 font-semibold text-slate-100">{item.value}</p>
               <p className="text-muted mt-2 text-sm">
                 <JargonText text={item.impact} />
@@ -87,7 +87,7 @@ export function JourneyModuleAccordion({ detail, doNowBullets }: Props) {
         <div className="grid gap-4 md:grid-cols-2">
           {detail.executionPlan.map((phase) => (
             <article key={phase.phase} className="surface-hover rounded-lg border border-slate-700/60 p-4">
-              <p className="text-xs uppercase tracking-wide text-amber-200">{phase.phase}</p>
+              <p className="text-xs uppercase tracking-wide text-neutral-500">{phase.phase}</p>
               <h3 className="mt-1 font-semibold text-slate-100">{phase.goal}</h3>
               <ul className="text-muted mt-2 list-disc space-y-1 pl-5 text-sm">
                 {phase.tasks.map((task) => (
@@ -162,7 +162,7 @@ export function JourneyModuleAccordion({ detail, doNowBullets }: Props) {
                 <p className="text-muted mt-2 text-sm">
                   <JargonText text={partner.whenToUse} />
                 </p>
-                <p className="mt-2 text-xs text-amber-200">
+                <p className="mt-2 text-xs text-neutral-500">
                   Ask: <JargonText text={partner.whatToAsk} />
                 </p>
               </article>
@@ -176,11 +176,11 @@ export function JourneyModuleAccordion({ detail, doNowBullets }: Props) {
   return (
     <div className="space-y-4">
       <section className="glass-panel rounded-xl p-6">
-        <p className="text-xs uppercase tracking-wide text-amber-200">Do this now</p>
+        <p className="text-xs uppercase tracking-wide text-neutral-500">Do this now</p>
         <ul className="mt-3 space-y-2">
           {doNowBullets.map((item) => (
             <li key={item} className="flex gap-2 text-sm text-slate-200">
-              <span className="text-amber-300">→</span>
+              <span className="text-neutral-400">→</span>
               <JargonText text={item} />
             </li>
           ))}

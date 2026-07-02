@@ -36,7 +36,7 @@ export function AtRiskPanel({
 
   return (
     <section className="banner-at-risk mt-4 rounded-xl p-4 sm:p-5">
-      <p className="text-sm font-semibold text-amber-100">
+      <p className="text-sm font-semibold text-white">
         {warnings.length} risk factor{warnings.length === 1 ? "" : "s"} detected
       </p>
       <p className="text-muted mt-1 text-xs">Address these before they become costly mistakes.</p>
@@ -45,7 +45,7 @@ export function AtRiskPanel({
           <li key={warning.id} className="glass-panel rounded-lg p-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
-                <p className="text-xs uppercase tracking-wide text-amber-200">{warning.severity}</p>
+                <p className="text-xs uppercase tracking-wide text-neutral-400">{warning.severity}</p>
                 <p className="mt-1 text-sm font-semibold text-slate-100">{warning.title}</p>
                 <p className="text-muted mt-1 text-sm leading-6">{warning.message}</p>
               </div>
@@ -69,7 +69,7 @@ export function AtRiskPanel({
               </div>
             </div>
             {showRtoSlider && warning.id === "rto-shock" ? (
-              <div className="mt-4 border-t border-amber-500/20 pt-4">
+              <div className="mt-4 border-t border-neutral-800 pt-4">
                 <RtoScenarioSlider
                   profile={profile}
                   defaultSellingPrice={defaultSellingPrice}

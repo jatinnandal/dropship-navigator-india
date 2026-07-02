@@ -78,7 +78,7 @@ export default async function WelcomePage() {
           const Icon = item.icon;
           return (
             <article key={item.title} className="glass-panel rounded-xl p-5">
-              <Icon className="h-5 w-5 text-amber-300" aria-hidden="true" />
+              <Icon className="h-5 w-5 text-neutral-300" aria-hidden="true" />
               <h2 className="mt-3 text-sm font-semibold text-slate-100">{item.title}</h2>
               <p className="text-muted mt-2 text-sm leading-6">{item.description}</p>
             </article>
@@ -95,7 +95,7 @@ export default async function WelcomePage() {
         <ul className="mt-5 grid gap-2 sm:grid-cols-2">
           {SETUP_CHECKLIST.map((item) => (
             <li key={item} className="meta-tile flex items-start gap-2 px-3 py-2.5 text-sm text-slate-200">
-              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400" aria-hidden="true" />
+              <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-neutral-400" aria-hidden="true" />
               {item}
             </li>
           ))}

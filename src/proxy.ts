@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { userHasProfileInDb } from "@/lib/auth-routing";
 
 const PROTECTED_PREFIXES = ["/app", "/onboarding"];
 const AUTH_PAGES = ["/login", "/signup"];
@@ -10,23 +11,6 @@ function isProtected(pathname: string): boolean {
 
 function isAuthPage(pathname: string): boolean {
   return AUTH_PAGES.includes(pathname);
-}
-
-async function userHasProfile(
-  supabase: ReturnType<typeof createServerClient>,
-  userId: string,
-): Promise<boolean> {
-  try {
-    const { data, error } = await supabase
-      .from("profiles")
-      .select("user_id")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (error) return false;
-    return Boolean(data);
-  } catch {
-    return false;
-  }
 }
 
 export async function proxy(request: NextRequest) {
@@ -76,7 +60,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && (isAuthPage(pathname) || pathname === "/")) {
-    const hasProfile = await userHasProfile(supabase, user.id);
+    const hasProfile = await userHasProfileInDb(supabase, user.id);
     const destination = hasProfile ? "/app" : "/app/welcome";
     return NextResponse.redirect(new URL(destination, request.url));
   }

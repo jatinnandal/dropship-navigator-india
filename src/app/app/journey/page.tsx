@@ -3,16 +3,21 @@ import { buildPersonalizedJourney } from "@/lib/mvp-data";
 import { getJourneyNodes } from "@/lib/journey-graph";
 import { userHasProfile } from "@/lib/auth-routing";
 import { getCurrentUserId } from "@/lib/current-user";
-import { getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
+import { channelLabel } from "@/lib/profile-name";
+import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
+import { getEditProfileHref } from "@/lib/profile-name";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { JourneyMap } from "@/components/journey-map";
 
 export default async function JourneyPage() {
   const userId = await getCurrentUserId();
   const hasProfile = await userHasProfile(userId);
-  const profile = await getStoredProfileForCurrentVisitor();
-  const completed = await getCompletedModuleIdsForCurrentVisitor();
-  const workspace = await getWorkspaceForCurrentVisitor();
+  const [profile, completed, workspace, activeSellerProfile] = await Promise.all([
+    getStoredProfileForCurrentVisitor(),
+    getCompletedModuleIdsForCurrentVisitor(),
+    getWorkspaceForCurrentVisitor(),
+    getActiveSellerProfileForCurrentVisitor(),
+  ]);
   const modules = buildPersonalizedJourney(profile);
   const nodes = getJourneyNodes({
     completedModules: completed,
@@ -24,11 +29,15 @@ export default async function JourneyPage() {
   const completedCount = nodes.filter((n) => n.status === "done").length;
   const completionPercent = Math.max(5, Math.round((completedCount / nodes.length) * 100));
 
+  const editProfileHref = activeSellerProfile
+    ? getEditProfileHref(activeSellerProfile.id, "/app/journey")
+    : "/onboarding";
+
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
       {!hasProfile ? (
         <section className="banner-deadline mb-6 rounded-xl px-4 py-4 sm:px-5">
-          <p className="text-sm font-medium text-rose-50">
+          <p className="text-sm font-medium text-neutral-100">
             Complete setup to unlock personalized recommendations and progress tracking.
           </p>
           <Link
@@ -40,12 +49,19 @@ export default async function JourneyPage() {
         </section>
       ) : null}
 
-      <header className="glass-panel rounded-xl p-6 text-slate-100">
+      <header className="rounded-xl border border-neutral-800 bg-neutral-950 p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h1 className="headline-gradient text-3xl font-bold">
+            <h1 className="text-3xl font-bold text-white">
               {hasProfile ? "Your launch plan" : "Journey preview"}
             </h1>
+            {hasProfile && activeSellerProfile ? (
+              <p className="mt-2 text-sm font-medium text-neutral-200">
+                {activeSellerProfile.name} · {channelLabel(profile.primaryChannel)}
+                {profile.hasGstin ? " · GST ready" : " · GST pending"}
+                {profile.experienceLevel === "existing_seller" ? " · Existing seller" : " · New seller"}
+              </p>
+            ) : null}
             <p className="text-muted mt-2 text-sm">
               {hasProfile
                 ? "Work modules in parallel where it makes sense. One hard lock: ads need live listings."
@@ -53,9 +69,9 @@ export default async function JourneyPage() {
             </p>
           </div>
           {hasProfile ? (
-            <div className="rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3">
-              <p className="text-xs uppercase tracking-wider text-amber-200">Overall</p>
-              <p className="text-xl font-semibold text-emerald-100">
+            <div className="rounded-xl border border-neutral-700 bg-neutral-900 px-4 py-3">
+              <p className="text-xs uppercase tracking-wider text-neutral-400">Overall</p>
+              <p className="text-xl font-semibold text-white">
                 {completedCount}/{nodes.length} modules done
               </p>
             </div>
@@ -63,7 +79,7 @@ export default async function JourneyPage() {
         </div>
         {hasProfile ? (
           <div className="mt-4 max-w-lg">
-            <div className="mb-2 flex items-center justify-between text-xs text-slate-300">
+            <div className="mb-2 flex items-center justify-between text-xs text-neutral-400">
               <span>Aggregate progress</span>
               <span>{completionPercent}%</span>
             </div>
@@ -75,11 +91,11 @@ export default async function JourneyPage() {
       </header>
 
       <section className="mt-6">
-        <JourneyMap nodes={nodes} />
+        <JourneyMap nodes={nodes} modules={modules} />
       </section>
 
-      <section className="glass-panel mt-6 rounded-xl p-4">
-        <p className="text-xs uppercase tracking-wide text-amber-200">
+      <section className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
+        <p className="text-xs uppercase tracking-wide text-neutral-400">
           {hasProfile ? "Personalized for you" : "Preview uses default profile"}
         </p>
         <p className="text-muted mt-2 text-sm">
@@ -91,7 +107,7 @@ export default async function JourneyPage() {
       <footer className="mt-6 flex flex-wrap gap-3">
         {hasProfile ? (
           <>
-            <Link href="/onboarding" className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold text-slate-100">
+            <Link href={editProfileHref} className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold text-slate-100">
               Update profile
             </Link>
             <Link href="/app" className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold text-slate-100">

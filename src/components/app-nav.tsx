@@ -2,40 +2,22 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, LayoutDashboard, ListChecks, SlidersHorizontal } from "lucide-react";
-
-type NavItem = {
-  href: string;
-  label: string;
-  icon: typeof Home;
-};
+import { getAppNavItems, isNavItemActive } from "@/lib/app-nav-items";
 
 type Props = {
   hasProfile: boolean;
 };
 
+/** @deprecated Use AppSidebar on desktop; kept for compatibility if imported elsewhere */
 export function AppNav({ hasProfile }: Props) {
   const pathname = usePathname();
-
-  const navItems: NavItem[] = hasProfile
-    ? [
-        { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-        { href: "/app/journey", label: "Journey", icon: ListChecks },
-      ]
-    : [
-        { href: "/app/welcome", label: "Home", icon: Home },
-        { href: "/onboarding", label: "Setup", icon: SlidersHorizontal },
-        { href: "/app/journey", label: "Preview", icon: ListChecks },
-      ];
+  const navItems = getAppNavItems(hasProfile);
 
   return (
     <nav className="hidden items-center gap-3 text-sm md:flex">
       {navItems.map((item) => {
         const Icon = item.icon;
-        const isActive =
-          pathname === item.href ||
-          (item.href !== "/app" && item.href !== "/app/welcome" && pathname.startsWith(item.href)) ||
-          (item.href === "/app" && pathname === "/app");
+        const isActive = isNavItemActive(pathname, item.href);
 
         return (
           <Link

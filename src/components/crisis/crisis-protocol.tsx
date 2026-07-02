@@ -88,10 +88,10 @@ export function CrisisProtocol({ crisis, profile, legalBusinessName, gstin }: Pr
               key={step.title}
               className={`rounded-lg border px-4 py-3 ${
                 active
-                  ? "border-amber-400/50 bg-amber-400/10"
+                  ? "border-white/40 bg-neutral-900"
                   : done
-                    ? "border-emerald-500/30 bg-emerald-500/5 opacity-80"
-                    : "border-slate-700/50 bg-slate-950/30"
+                    ? "border-neutral-600 bg-neutral-950/50 opacity-80"
+                    : "border-neutral-800 bg-neutral-950/30"
               }`}
             >
               <button
@@ -107,10 +107,10 @@ export function CrisisProtocol({ crisis, profile, legalBusinessName, gstin }: Pr
         })}
       </ol>
 
-      <div className="mt-6 border-t border-slate-700/50 pt-6">
+      <div className="mt-6 border-t border-neutral-800 pt-6">
         <h2 className="text-lg font-bold text-slate-100">{current.title}</h2>
         {current.timerLabel ? (
-          <p className="meta-tile mt-2 inline-block text-xs text-amber-200">{current.timerLabel}</p>
+          <p className="meta-tile mt-2 inline-block text-xs">{current.timerLabel}</p>
         ) : null}
         <p className="text-muted mt-3 text-sm leading-6">{current.body}</p>
 

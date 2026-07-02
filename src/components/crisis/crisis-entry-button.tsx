@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { AlertTriangle } from "lucide-react";
 import type { CrisisType } from "@/lib/crisis/types";
 import { CRISIS_LABELS, SELF_REPORT_CRISIS_TYPES } from "@/lib/crisis/types";
@@ -11,14 +12,19 @@ type Props = {
 };
 
 export function CrisisEntryButton({ className }: Props) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState<CrisisType | null>(null);
 
   async function handleReport(type: CrisisType) {
     setPending(type);
-    await reportCrisis(type);
-    setPending(null);
-    setOpen(false);
+    try {
+      await reportCrisis(type);
+      setOpen(false);
+      router.refresh();
+    } finally {
+      setPending(null);
+    }
   }
 
   return (
@@ -26,23 +32,23 @@ export function CrisisEntryButton({ className }: Props) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={className ?? "text-muted mt-4 text-xs underline hover:text-amber-200"}
+        className={className ?? "text-muted text-sm underline hover:text-white"}
       >
         Something went wrong?
       </button>
 
       {open ? (
         <div
-          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/70 p-4 sm:items-center"
+          className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 p-4 sm:items-center"
           role="dialog"
           aria-modal="true"
           aria-labelledby="crisis-picker-title"
         >
-          <div className="glass-panel w-full max-w-md rounded-xl p-6">
+          <div className="w-full max-w-md rounded-xl border border-neutral-800 bg-neutral-950 p-6">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" aria-hidden="true" />
+              <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-neutral-300" aria-hidden="true" />
               <div>
-                <h2 id="crisis-picker-title" className="text-lg font-bold text-slate-100">
+                <h2 id="crisis-picker-title" className="text-lg font-bold text-white">
                   What happened?
                 </h2>
                 <p className="text-muted mt-1 text-sm">

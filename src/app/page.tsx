@@ -4,22 +4,54 @@ import { LandingFooter } from "@/components/landing/landing-footer";
 import { LandingHeader } from "@/components/landing/landing-header";
 import { LandingHero } from "@/components/landing/landing-hero";
 import { LandingHowItWorks } from "@/components/landing/landing-how-it-works";
-import { LandingJourneyPreview } from "@/components/landing/landing-journey-preview";
+import { AppShowcase } from "@/components/landing/app-showcase";
+import { LandingPageShell } from "@/components/landing/landing-page-shell";
 import { LandingSolution } from "@/components/landing/landing-solution";
 
 export default function Home() {
   return (
-    <main className="app-shell-bg min-h-screen text-slate-100">
-      <LandingHeader />
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-20 px-6 py-10 md:px-10 md:py-16">
-        <LandingHero />
-        <LandingChallenges />
-        <LandingSolution />
-        <LandingHowItWorks />
-        <LandingJourneyPreview />
-        <LandingCta />
-      </div>
-      <LandingFooter />
-    </main>
+    <LandingPageShell>
+      <main className="relative text-neutral-100">
+        <LandingHeader />
+
+        <section className="section-dark full-bleed">
+          <div className="section-inner">
+            <LandingHero />
+          </div>
+        </section>
+
+        <section className="section-light full-bleed">
+          <div className="section-inner">
+            <LandingChallenges />
+          </div>
+        </section>
+
+        <section className="section-dark full-bleed">
+          <div className="section-inner">
+            <LandingSolution />
+          </div>
+        </section>
+
+        <section className="section-dark full-bleed">
+          <div className="section-inner !pt-0">
+            <AppShowcase />
+          </div>
+        </section>
+
+        <section className="section-light full-bleed">
+          <div className="section-inner">
+            <LandingHowItWorks />
+          </div>
+        </section>
+
+        <section className="cta-band full-bleed">
+          <div className="section-inner">
+            <LandingCta />
+          </div>
+        </section>
+
+        <LandingFooter />
+      </main>
+    </LandingPageShell>
   );
 }

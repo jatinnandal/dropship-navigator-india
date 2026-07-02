@@ -20,7 +20,7 @@ export async function getGuestWorkspace(): Promise<Workspace | null> {
     .maybeSingle<GuestWorkspaceRow>();
 
   if (!data?.data) return null;
-  return parseWorkspace(JSON.stringify(data.data));
+  return parseWorkspace(data.data);
 }
 
 export async function upsertGuestWorkspace(workspace: Workspace) {

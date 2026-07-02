@@ -88,6 +88,20 @@ export type TaskState = {
   answers: Record<string, string>;
 };
 
+export function parseTaskStateRow(row: { completed: unknown; answers: unknown } | null): TaskState {
+  if (!row) return { completed: [], answers: {} };
+  const completed = Array.isArray(row.completed)
+    ? row.completed.filter((item): item is string => typeof item === "string")
+    : [];
+  const answers: Record<string, string> = {};
+  if (row.answers && typeof row.answers === "object") {
+    for (const [key, value] of Object.entries(row.answers as Record<string, unknown>)) {
+      if (typeof value === "string") answers[key] = value;
+    }
+  }
+  return { completed, answers };
+}
+
 export type TaskBuildContext = {
   answers: Record<string, string>;
 };

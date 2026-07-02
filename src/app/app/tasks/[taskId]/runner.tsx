@@ -43,6 +43,7 @@ type Props = {
   initialCompleted: string[];
   initialAnswers: Record<string, string>;
   initialWorkspace: Workspace;
+  editProfileHref?: string;
 };
 
 function firstIncompleteId(steps: TaskStep[], completed: Set<string>): string | null {
@@ -72,6 +73,7 @@ export function TaskRunner({
   initialCompleted,
   initialAnswers,
   initialWorkspace,
+  editProfileHref = "/onboarding",
 }: Props) {
   const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers ?? {});
   const [completed, setCompleted] = useState<Set<string>>(new Set(initialCompleted ?? []));
@@ -238,10 +240,10 @@ export function TaskRunner({
   }
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-8 text-slate-100">
-      <header className="glass-panel rounded-xl p-6">
+    <main className="mx-auto w-full max-w-6xl px-4 py-6 text-neutral-100 sm:px-6 sm:py-8">
+      <header className="rounded-xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
         <p className="eyebrow inline-block">Guided walkthrough</p>
-        <h1 className="headline-gradient mt-2 text-3xl font-bold">{task.title}</h1>
+        <h1 className="mt-2 text-2xl font-bold text-white sm:text-3xl">{task.title}</h1>
         <p className="text-muted mt-3 text-sm leading-6">{task.intro}</p>
 
         <div className="mt-5">
@@ -253,25 +255,22 @@ export function TaskRunner({
               {progressPct}%{isSaving ? " · saving…" : ""}
             </span>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-700/50">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-amber-300 to-orange-400 transition-all"
-              style={{ width: `${progressPct}%` }}
-            />
+          <div className="progress-track mt-2 h-2">
+            <div className="progress-fill" style={{ width: `${progressPct}%` }} />
           </div>
         </div>
       </header>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
-        <aside className="space-y-4">
+      <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,260px)_1fr]">
+        <aside className="order-2 space-y-4 lg:order-1">
           {recapItems.length > 0 ? (
-            <div className="glass-panel rounded-xl p-4">
+            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
               <button
                 type="button"
                 onClick={() => setShowRecap((v) => !v)}
                 className="flex w-full items-center justify-between text-left"
               >
-                <p className="text-xs uppercase tracking-wide text-cyan-200">What you&apos;ve told me</p>
+                <p className="text-xs uppercase tracking-wide text-neutral-500">What you&apos;ve told me</p>
                 <span className="text-xs text-muted">{showRecap ? "Hide" : "Show"}</span>
               </button>
               {showRecap ? (
@@ -287,9 +286,9 @@ export function TaskRunner({
             </div>
           ) : null}
 
-          <nav className="glass-panel h-fit rounded-xl p-4 lg:sticky lg:top-6">
-            <p className="px-2 text-xs uppercase tracking-wide text-amber-200">Your path</p>
-            <ol className="mt-3 space-y-1">
+          <nav className="h-fit rounded-xl border border-neutral-800 bg-neutral-950 p-4 lg:sticky lg:top-6">
+            <p className="px-2 text-xs uppercase tracking-wide text-neutral-500">Your path</p>
+            <ol className="mt-3 max-h-[50vh] space-y-1 overflow-y-auto lg:max-h-none">
               {steps.map((step, index) => {
                 const isDone = completed.has(step.id);
                 const isCurrent = step.id === currentStep?.id;
@@ -299,16 +298,16 @@ export function TaskRunner({
                       type="button"
                       onClick={() => goTo(step.id)}
                       className={`flex w-full items-start gap-3 rounded-lg px-2 py-2 text-left text-sm transition ${
-                        isCurrent ? "bg-slate-700/50 text-slate-100" : "text-muted hover:bg-slate-700/30"
+                        isCurrent ? "bg-neutral-800 text-white" : "text-muted hover:bg-neutral-900"
                       }`}
                     >
                       <span
                         className={`mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border text-[11px] ${
                           isDone
-                            ? "border-emerald-400 bg-emerald-400/20 text-emerald-300"
+                            ? "border-white bg-white text-black"
                             : isCurrent
-                              ? "border-amber-300 text-amber-200"
-                              : "border-slate-600 text-slate-400"
+                              ? "border-white text-white"
+                              : "border-neutral-600 text-neutral-500"
                         }`}
                       >
                         {isDone ? <CheckIcon /> : index + 1}
@@ -322,13 +321,13 @@ export function TaskRunner({
           </nav>
         </aside>
 
-        <section>
+        <section className="order-1 min-w-0 lg:order-2">
           {allDone ? (
-            <div className="glass-panel rounded-xl p-8 text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-emerald-400 bg-emerald-400/15 text-emerald-300">
+            <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-6 text-center sm:p-8">
+              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-white bg-white text-black">
                 <CheckIcon />
               </div>
-              <h2 className="headline-gradient mt-4 text-2xl font-bold">You finished this walkthrough</h2>
+              <h2 className="mt-4 text-2xl font-bold text-white">You finished this walkthrough</h2>
               <p className="text-muted mx-auto mt-3 max-w-md text-sm leading-6">
                 Every step is saved. Your answers and workspace data carry forward to the next modules.
               </p>
@@ -353,10 +352,10 @@ export function TaskRunner({
               </div>
             </div>
           ) : currentStep ? (
-            <article className="glass-panel rounded-xl p-6">
+            <article className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 sm:p-6">
               <div className="flex items-center justify-between gap-3">
                 {completed.has(currentStep.id) ? (
-                  <span className="inline-flex items-center gap-1 rounded-md border border-emerald-400/60 px-3 py-1 text-xs text-emerald-300">
+                  <span className="inline-flex items-center gap-1 rounded-md border border-neutral-600 px-3 py-1 text-xs text-neutral-200">
                     <CheckIcon /> Done
                   </span>
                 ) : null}
@@ -367,7 +366,7 @@ export function TaskRunner({
               </div>
 
               {currentStep.input ? (
-                <div className="mt-6 rounded-lg border border-slate-700/60 p-4">
+                <div className="mt-6 rounded-lg border border-neutral-800 p-4">
                   <label className="block text-sm font-semibold text-slate-100">
                     {currentStep.input.label}
                   </label>
@@ -382,7 +381,7 @@ export function TaskRunner({
                       }
                       placeholder={currentStep.input.placeholder}
                       rows={3}
-                      className="mt-3 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                      className="mt-3 w-full rounded-md border border-neutral-700 bg-black px-3 py-2 text-sm text-white"
                     />
                   ) : (
                     <input
@@ -392,7 +391,7 @@ export function TaskRunner({
                         setInputDrafts((prev) => ({ ...prev, [currentStep.id]: e.target.value }))
                       }
                       placeholder={currentStep.input.placeholder}
-                      className="mt-3 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                      className="mt-3 w-full rounded-md border border-neutral-700 bg-black px-3 py-2 text-sm text-white"
                     />
                   )}
                   <button
@@ -502,7 +501,7 @@ export function TaskRunner({
               ) : null}
 
               {currentStep.question ? (
-                <div className="mt-6 rounded-lg border border-slate-700/60 p-4">
+                <div className="mt-6 rounded-lg border border-neutral-800 p-4">
                   <p className="text-sm font-semibold text-slate-100">
                     <JargonText text={currentStep.question.prompt} />
                   </p>
@@ -518,8 +517,8 @@ export function TaskRunner({
                           }
                           className={`surface-hover rounded-lg border px-4 py-3 text-left text-sm transition ${
                             selected
-                              ? "border-amber-300 bg-amber-300/10 text-slate-100"
-                              : "border-slate-700/60 text-slate-200"
+                              ? "border-white bg-neutral-900 text-white"
+                              : "border-neutral-800 text-neutral-200"
                           }`}
                         >
                           <JargonText text={option.label} />
@@ -530,16 +529,16 @@ export function TaskRunner({
                 </div>
               ) : null}
 
-              <div className="mt-6 border-t border-slate-700/50 pt-4">
+              <div className="mt-6 border-t border-neutral-800 pt-4">
                 <button
                   type="button"
                   onClick={() => setShowStuck((value) => !value)}
-                  className="text-sm font-semibold text-amber-200 hover:text-amber-100"
+                  className="text-sm font-semibold text-neutral-400 underline hover:text-white"
                 >
                   {showStuck ? "Hide help" : "I'm stuck on this step"}
                 </button>
                 {showStuck ? (
-                  <div className="mt-3 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
+                  <div className="mt-3 rounded-lg border border-neutral-800 bg-black p-4">
                     {currentStep.stuck && currentStep.stuck.length > 0 ? (
                       <ul className="text-muted list-disc space-y-2 pl-5 text-sm">
                         {currentStep.stuck.map((item) => (
@@ -613,7 +612,7 @@ export function TaskRunner({
             <Link href="/app/journey" className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
               Back to journey
             </Link>
-            <Link href="/onboarding" className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
+            <Link href={editProfileHref} className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
               Update profile inputs
             </Link>
           </footer>

@@ -1,144 +1,145 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
+import { getStoredActiveProfileId } from "@/lib/active-profile";
+import type { SellerProfile } from "@/lib/seller-profile-types";
+import {
+  createSellerProfile,
+  getSellerProfileById,
+  isLegacyProfileId,
+  legacyProfileId,
+  listSellerProfiles,
+  updateSellerProfile,
+  upsertLegacyProfile,
+} from "@/lib/seller-profile-store";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-type ProfileRow = {
-  experience_level: OnboardingProfile["experienceLevel"];
-  budget_band: OnboardingProfile["budgetBand"];
-  primary_channel: OnboardingProfile["primaryChannel"];
-  has_gstin: boolean;
-  operating_state: string;
-  product_type: OnboardingProfile["productType"];
-  business_type: OnboardingProfile["businessType"];
-  sales_model: OnboardingProfile["salesModel"];
-  imports_products: boolean;
-  sells_prepackaged_goods: boolean;
-};
 
 type ProgressRow = {
   module_id: string;
 };
 
+export async function getActiveSellerProfile(userId: string): Promise<SellerProfile | null> {
+  const profileId = await getStoredActiveProfileId(userId);
+  if (profileId) {
+    const profile = await getSellerProfileById(userId, profileId);
+    if (profile) return profile;
+  }
+  const profiles = await listSellerProfiles(userId);
+  return profiles[0] ?? null;
+}
+
 export async function getStoredProfile(userId: string): Promise<OnboardingProfile | null> {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) {
-    return null;
-  }
-
-  const fullSelect =
-    "experience_level,budget_band,primary_channel,has_gstin,operating_state,product_type,business_type,sales_model,imports_products,sells_prepackaged_goods";
-
-  const { data: profileData, error } = await supabase
-    .from("profiles")
-    .select(fullSelect)
-    .eq("user_id", userId)
-    .maybeSingle<ProfileRow>();
-
-  let data = profileData;
-
-  if (error) {
-    const fallback = await supabase
-      .from("profiles")
-      .select("experience_level,budget_band,primary_channel,has_gstin")
-      .eq("user_id", userId)
-      .maybeSingle<Pick<ProfileRow, "experience_level" | "budget_band" | "primary_channel" | "has_gstin">>();
-
-    if (fallback.error || !fallback.data) {
-      return null;
-    }
-
-    data = {
-      ...fallback.data,
-      operating_state: "Maharashtra",
-      product_type: "general",
-      business_type: "proprietorship",
-      sales_model: "marketplace_only",
-      imports_products: false,
-      sells_prepackaged_goods: true,
-    };
-  }
-
-  if (!data) {
-    return null;
-  }
-
+  const profile = await getActiveSellerProfile(userId);
+  if (!profile) return null;
   return {
-    experienceLevel: data.experience_level,
-    budgetBand: data.budget_band,
-    primaryChannel: data.primary_channel,
-    hasGstin: data.has_gstin,
-    operatingState: data.operating_state,
-    productType: data.product_type,
-    businessType: data.business_type,
-    salesModel: data.sales_model,
-    importsProducts: data.imports_products,
-    sellsPrepackagedGoods: data.sells_prepackaged_goods,
+    experienceLevel: profile.experienceLevel,
+    budgetBand: profile.budgetBand,
+    primaryChannel: profile.primaryChannel,
+    hasGstin: profile.hasGstin,
+    operatingState: profile.operatingState,
+    productType: profile.productType,
+    businessType: profile.businessType,
+    salesModel: profile.salesModel,
+    importsProducts: profile.importsProducts,
+    sellsPrepackagedGoods: profile.sellsPrepackagedGoods,
   };
 }
 
 export async function upsertProfile(userId: string, profile: OnboardingProfile) {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) {
+  const active = await getActiveSellerProfile(userId);
+  if (active && !isLegacyProfileId(active.id)) {
+    await updateSellerProfile(userId, active.id, profile);
+    await upsertLegacyProfile(userId, profile);
     return;
   }
 
-  const fullRow = {
-    user_id: userId,
-    experience_level: profile.experienceLevel,
-    budget_band: profile.budgetBand,
-    primary_channel: profile.primaryChannel,
-    has_gstin: profile.hasGstin,
-    operating_state: profile.operatingState,
-    product_type: profile.productType,
-    business_type: profile.businessType,
-    sales_model: profile.salesModel,
-    imports_products: profile.importsProducts,
-    sells_prepackaged_goods: profile.sellsPrepackagedGoods,
+  const created = await createSellerProfile(userId, profile);
+  if (created) {
+    const { setActiveProfileId } = await import("@/lib/active-profile");
+    await setActiveProfileId(userId, created.id);
+    await upsertLegacyProfile(userId, profile);
+    return;
+  }
+
+  await upsertLegacyProfile(userId, profile);
+  const { setActiveProfileId } = await import("@/lib/active-profile");
+  await setActiveProfileId(userId, legacyProfileId(userId));
+}
+
+export async function upsertProfileById(userId: string, profileId: string, profile: OnboardingProfile) {
+  await updateSellerProfile(userId, profileId, profile);
+}
+
+export async function getCompletedModuleIds(userId: string, profileId?: string): Promise<Set<string>> {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return new Set();
+
+  const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
+  if (!resolvedProfileId) return new Set();
+
+  const { data, error } = await supabase
+    .from("journey_progress")
+    .select("module_id")
+    .eq("profile_id", resolvedProfileId)
+    .eq("completed", true)
+    .returns<ProgressRow[]>();
+
+  if (!error) {
+    return new Set((data ?? []).map((item) => item.module_id));
+  }
+
+  if (isLegacyProfileId(resolvedProfileId)) {
+    const legacy = await supabase
+      .from("journey_progress")
+      .select("module_id")
+      .eq("user_id", userId)
+      .eq("completed", true)
+      .returns<ProgressRow[]>();
+    return new Set((legacy.data ?? []).map((item) => item.module_id));
+  }
+
+  return new Set();
+}
+
+export async function setModuleCompletion(
+  userId: string,
+  moduleId: string,
+  completed: boolean,
+  profileId?: string,
+) {
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) return;
+
+  const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
+  if (!resolvedProfileId) return;
+
+  const row = {
+    profile_id: resolvedProfileId,
+    module_id: moduleId,
+    completed,
     updated_at: new Date().toISOString(),
   };
 
-  const { error } = await supabase.from("profiles").upsert(fullRow, { onConflict: "user_id" });
+  const { error } = await supabase.from("journey_progress").upsert(row);
 
   if (error) {
-    await supabase.from("profiles").upsert(
-      {
-        user_id: userId,
-        experience_level: profile.experienceLevel,
-        budget_band: profile.budgetBand,
-        primary_channel: profile.primaryChannel,
-        has_gstin: profile.hasGstin,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: "user_id" },
-    );
+    await supabase.from("journey_progress").upsert({
+      user_id: userId,
+      module_id: moduleId,
+      completed,
+      updated_at: new Date().toISOString(),
+    });
   }
 }
 
-export async function getCompletedModuleIds(userId: string): Promise<Set<string>> {
+export async function getCompletedModuleIdsForProfile(profileId: string): Promise<Set<string>> {
   const supabase = await createSupabaseServerClient();
-  if (!supabase) {
-    return new Set();
-  }
+  if (!supabase) return new Set();
 
   const { data } = await supabase
     .from("journey_progress")
     .select("module_id")
-    .eq("user_id", userId)
+    .eq("profile_id", profileId)
     .eq("completed", true)
     .returns<ProgressRow[]>();
 
   return new Set((data ?? []).map((item) => item.module_id));
-}
-
-export async function setModuleCompletion(userId: string, moduleId: string, completed: boolean) {
-  const supabase = await createSupabaseServerClient();
-  if (!supabase) {
-    return;
-  }
-
-  await supabase.from("journey_progress").upsert({
-    user_id: userId,
-    module_id: moduleId,
-    completed,
-    updated_at: new Date().toISOString(),
-  });
 }

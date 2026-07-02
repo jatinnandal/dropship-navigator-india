@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, ChartSpline, CircleDollarSign, FileCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { ProgressRing } from "@/components/progress-ring";
 import { SeasonNotice } from "@/components/season-notice";
+import { DashboardInsightTile } from "@/components/dashboard-insight-tile";
 import { RtoScenarioSlider } from "@/components/crisis/rto-scenario-slider";
 import { AtRiskPanel } from "@/components/crisis/at-risk-panel";
 import { CrisisEntryButton } from "@/components/crisis/crisis-entry-button";
@@ -11,12 +12,13 @@ import { CrisisProtocol } from "@/components/crisis/crisis-protocol";
 import { userHasProfile } from "@/lib/auth-routing";
 import { getDashboardBanners } from "@/lib/crisis/banners";
 import { getDashboardState } from "@/lib/crisis/dashboard-state";
+import { buildDashboardInsights } from "@/lib/dashboard-insights";
 import { isSubTaskDone } from "@/lib/journey-graph";
+import { getJourneyProgressStats } from "@/lib/journey-engine";
 import { getCurrentUserId } from "@/lib/current-user";
-import { buildPersonalizedJourney } from "@/lib/mvp-data";
 import { getJourneyNodes } from "@/lib/journey-graph";
 import { getNextAction } from "@/lib/next-action";
-import { getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
+import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 
 export default async function DashboardPage() {
@@ -25,16 +27,19 @@ export default async function DashboardPage() {
     redirect("/app/welcome");
   }
 
-  const [profile, completed, workspace] = await Promise.all([
+  const [profile, completed, workspace, activeSellerProfile] = await Promise.all([
     getStoredProfileForCurrentVisitor(),
     getCompletedModuleIdsForCurrentVisitor(),
     getWorkspaceForCurrentVisitor(),
+    getActiveSellerProfileForCurrentVisitor(),
   ]);
 
   const hasGstin = profile.hasGstin || !!workspace.gstin;
   const detectorInput = { profile, workspace, hasGstin };
   const dashboardState = getDashboardState(detectorInput);
   const banners = getDashboardBanners(detectorInput);
+
+  const progressStats = getJourneyProgressStats(profile, completed, workspace.subTasks);
 
   const nodes = getJourneyNodes({
     completedModules: completed,
@@ -45,8 +50,14 @@ export default async function DashboardPage() {
   });
 
   const nextAction = getNextAction({ profile, nodes, subTasks: workspace.subTasks });
-  const completionCount = nodes.filter((n) => n.status === "done").length;
-  const totalModules = buildPersonalizedJourney(profile).length;
+  const completionCount = progressStats.completedModules;
+  const totalModules = progressStats.totalModules;
+  const insights = buildDashboardInsights({
+    profile,
+    hasGstin,
+    modulesCompleted: completionCount,
+    modulesTotal: totalModules,
+  });
 
   const heroWhy =
     nextAction?.isFreshStart && nextAction.subTaskId === "docs-folder-ready"
@@ -72,19 +83,33 @@ export default async function DashboardPage() {
           />
         </>
       ) : nextAction ? (
-        <section className="glass-panel-primary hero-reveal rounded-xl p-6 sm:p-8">
+        <section className="dashboard-hero hero-reveal rounded-xl p-6 sm:p-8">
+          {activeSellerProfile ? (
+            <p className="text-muted mb-3 text-xs">
+              Active plan:{" "}
+              <span className="font-medium text-neutral-200">{activeSellerProfile.name}</span>
+              {" · "}
+              <Link href="/app/profiles" className="underline hover:text-white">
+                Switch plan
+              </Link>
+            </p>
+          ) : null}
           <p className="eyebrow inline-block">Do this now</p>
-          <h1 className="headline-gradient mt-2 text-2xl font-bold sm:text-3xl">{nextAction.title}</h1>
-          <p className="text-muted mt-3 max-w-2xl text-sm leading-6">{heroWhy}</p>
-          <p className="mt-2 text-xs text-amber-200">Estimated time: {nextAction.timeEstimate}</p>
-          <Link
-            href={nextAction.href}
-            className="btn-primary mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-md px-5 py-2.5 text-sm font-medium"
-          >
-            {nextAction.isLocked ? "Complete prerequisite" : "Start this step"}
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-          <CrisisEntryButton />
+          <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-3xl">
+            {nextAction.title}
+          </h1>
+          <p className="text-muted mt-4 max-w-2xl text-sm leading-6">{heroWhy}</p>
+          <p className="text-mentor mt-3 text-xs">Estimated time: {nextAction.timeEstimate}</p>
+          <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <Link
+              href={nextAction.href}
+              className="btn-primary min-h-[44px] gap-2 rounded-md px-5 py-2.5 text-sm font-medium"
+            >
+              {nextAction.isLocked ? "Complete prerequisite" : "Start this step"}
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </Link>
+            <CrisisEntryButton className="text-muted text-left text-sm underline hover:text-white sm:py-2" />
+          </div>
         </section>
       ) : null}
 
@@ -92,13 +117,10 @@ export default async function DashboardPage() {
         ? banners.map((banner) => (
             <section
               key={banner.id}
-              className={`mt-4 rounded-xl p-4 ${banner.variant === "deadline" ? "banner-deadline" : "banner-at-risk"}`}
+              className={`mt-5 rounded-xl p-4 ${banner.variant === "deadline" ? "banner-deadline" : "banner-at-risk"}`}
             >
               <p className="text-sm font-medium text-slate-100">{banner.message}</p>
-              <Link
-                href={banner.href}
-                className="mt-2 inline-block text-sm font-medium text-amber-200 underline"
-              >
+              <Link href={banner.href} className="link-info mt-2 inline-block text-sm font-medium">
                 {banner.ctaLabel}
               </Link>
             </section>
@@ -118,7 +140,7 @@ export default async function DashboardPage() {
       ) : null}
 
       {listingLive && dashboardState.mode !== "crisis" && !showRtoSlider && !hasSnapshot ? (
-        <section className="glass-panel mt-4 rounded-xl p-4 sm:p-5">
+        <section className="glass-panel-receded mt-5 rounded-xl p-4 sm:p-5">
           <RtoScenarioSlider
             profile={profile}
             defaultSellingPrice={workspace.targetSellingPrice}
@@ -131,53 +153,39 @@ export default async function DashboardPage() {
 
       <SeasonNotice productType={profile.productType} />
 
-      <section className="glass-panel mt-6 rounded-xl p-6">
-        <div className="flex flex-wrap items-center gap-6">
-          <ProgressRing completed={completionCount} total={totalModules} />
+      <section className="glass-panel-receded mt-5 rounded-lg p-5">
+        <div className="flex flex-wrap items-center gap-5">
+          <ProgressRing
+            completed={progressStats.completedSubTasks}
+            total={progressStats.totalSubTasks}
+            size={72}
+          />
           <div className="min-w-0 flex-1">
-            <p className="text-xs uppercase tracking-wide text-muted">Overall progress</p>
-            <p className="mt-1 text-lg font-bold">
-              {completionCount}/{totalModules} modules complete
+            <p className="text-muted text-xs uppercase tracking-wide">Overall progress</p>
+            <p className="mt-1 text-base font-semibold text-slate-200">
+              {progressStats.completedSubTasks}/{progressStats.totalSubTasks} steps complete
             </p>
-            <p className="text-muted mt-1 text-sm">
-              {completionCount === 0
-                ? "Your journey map will take shape as you complete steps."
-                : "Keep momentum — one sub-task at a time."}
+            <p className="text-muted mt-1 text-xs leading-5">
+              {progressStats.completedSubTasks === 0
+                ? "Your launch plan is personalized to your profile — start with the first required step."
+                : `${completionCount}/${totalModules} modules done · ${progressStats.subTaskPercent}% of your plan.`}
             </p>
             {dashboardState.mode === "at_risk" ? (
-              <Link href="/app/journey" className="mt-2 inline-block text-xs text-amber-200 underline">
-                View launch plan — risks also flagged on dashboard
+              <Link href="/app/journey" className="link-info mt-2 inline-block text-xs">
+                View launch plan — risks flagged on dashboard
               </Link>
             ) : null}
           </div>
         </div>
       </section>
 
-      <section className="mt-6 grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        <article className="glass-panel surface-hover rounded-lg p-5">
-          <div className="text-muted flex items-center gap-2 text-sm font-medium">
-            <ChartSpline className="h-4 w-4" />
-            Primary channel
-          </div>
-          <p className="mt-2 text-2xl font-bold capitalize">{profile.primaryChannel}</p>
-        </article>
-        <article className="glass-panel surface-hover rounded-lg p-5">
-          <div className="text-muted flex items-center gap-2 text-sm font-medium">
-            <FileCheck className="h-4 w-4" />
-            GST status
-          </div>
-          <p className="mt-2 text-2xl font-bold">{hasGstin ? "Configured" : "Pending"}</p>
-        </article>
-        <article className="glass-panel surface-hover rounded-lg p-5 sm:col-span-2 lg:col-span-1">
-          <div className="text-muted flex items-center gap-2 text-sm font-medium">
-            <CircleDollarSign className="h-4 w-4" />
-            Modules done
-          </div>
-          <p className="mt-2 text-2xl font-bold">{completionCount}</p>
-        </article>
+      <section className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {insights.map((insight) => (
+          <DashboardInsightTile key={insight.id} insight={insight} />
+        ))}
       </section>
 
-      <section className="glass-panel mt-6 rounded-xl p-6">
+      <section className="glass-panel-receded mt-5 rounded-lg px-5 py-4">
         <Link
           href="/app/journey"
           className="btn-ghost inline-flex min-h-[44px] items-center gap-2 rounded-md px-4 py-2 text-sm font-medium"

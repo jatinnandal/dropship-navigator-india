@@ -160,3 +160,60 @@ create policy "user_task_progress_insert_own"
   on public.user_task_progress for insert to authenticated with check (auth.uid() = user_id);
 create policy "user_task_progress_update_own"
   on public.user_task_progress for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Multi-profile seller workspaces (see migrations/002_multi_profile.sql for upgrades)
+create table if not exists public.seller_profiles (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  experience_level text not null check (experience_level in ('beginner', 'existing_seller')),
+  budget_band text not null check (budget_band in ('under_20k', '20k_1l', 'above_1l')),
+  primary_channel text not null check (primary_channel in ('meesho', 'amazon', 'flipkart', 'shopify')),
+  has_gstin boolean not null default false,
+  operating_state text not null default 'Maharashtra',
+  product_type text not null default 'general' check (product_type in ('general', 'food', 'beauty', 'electronics', 'fashion')),
+  business_type text not null default 'proprietorship' check (business_type in ('individual', 'proprietorship', 'partnership', 'llp', 'private_limited')),
+  sales_model text not null default 'marketplace_only' check (sales_model in ('marketplace_only', 'own_website_only', 'both')),
+  imports_products boolean not null default false,
+  sells_prepackaged_goods boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists seller_profiles_user_id_idx on public.seller_profiles(user_id);
+
+alter table public.seller_profiles enable row level security;
+
+drop policy if exists "seller_profiles_select_own" on public.seller_profiles;
+drop policy if exists "seller_profiles_insert_own" on public.seller_profiles;
+drop policy if exists "seller_profiles_update_own" on public.seller_profiles;
+drop policy if exists "seller_profiles_delete_own" on public.seller_profiles;
+
+create policy "seller_profiles_select_own"
+  on public.seller_profiles for select to authenticated using (auth.uid() = user_id);
+create policy "seller_profiles_insert_own"
+  on public.seller_profiles for insert to authenticated with check (auth.uid() = user_id);
+create policy "seller_profiles_update_own"
+  on public.seller_profiles for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "seller_profiles_delete_own"
+  on public.seller_profiles for delete to authenticated using (auth.uid() = user_id);
+
+create table if not exists public.user_preferences (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  active_profile_id uuid references public.seller_profiles(id) on delete set null,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.user_preferences enable row level security;
+
+drop policy if exists "user_preferences_select_own" on public.user_preferences;
+drop policy if exists "user_preferences_insert_own" on public.user_preferences;
+drop policy if exists "user_preferences_update_own" on public.user_preferences;
+
+create policy "user_preferences_select_own"
+  on public.user_preferences for select to authenticated using (auth.uid() = user_id);
+create policy "user_preferences_insert_own"
+  on public.user_preferences for insert to authenticated with check (auth.uid() = user_id);
+create policy "user_preferences_update_own"
+  on public.user_preferences for update to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
+

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
 import { ArrowRight, Lock, RotateCcw } from "lucide-react";
 import type { JourneyNode } from "@/lib/journey-graph";
+import type { JourneyModule } from "@/lib/mvp-data";
 import type { TaskModuleId } from "@/lib/tasks";
 import { getSubTaskGuide, SUBTASK_TIME_ESTIMATES } from "@/lib/subtask-guides";
 import { getModuleCompletionMessage } from "@/lib/mentor-voice";
@@ -17,15 +18,17 @@ import { JargonText } from "@/components/jargon-text";
 
 type Props = {
   nodes: JourneyNode[];
+  modules?: JourneyModule[];
 };
 
-export function JourneyMap({ nodes }: Props) {
+export function JourneyMap({ nodes, modules = [] }: Props) {
   const router = useRouter();
   const warningsRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<TaskModuleId>(nodes[0]?.id ?? "common-documentation");
   const [isResetting, startReset] = useTransition();
 
   const selected = nodes.find((n) => n.id === selectedId) ?? nodes[0];
+  const selectedModule = modules.find((m) => m.id === selected?.id);
   const totalProgress = nodes.reduce((sum, n) => sum + n.progressPercent, 0);
   const allAvailable = nodes.every((n) => n.status === "available" || n.status === "done");
   const isFreshJourney = totalProgress === 0 && allAvailable;
@@ -71,23 +74,31 @@ export function JourneyMap({ nodes }: Props) {
         </p>
       ) : null}
 
-      <div className="glass-panel rounded-xl p-4 sm:p-6">
+      <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4 sm:p-6">
         <JourneyGraphView nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
         <JourneyTimelineMobile nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
       </div>
 
-      <article className="glass-panel rounded-xl p-5 sm:p-6">
+      <article className="rounded-xl border border-neutral-800 bg-neutral-950 p-5 sm:p-6">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h2 className="text-xl font-bold text-slate-100">{selected.title}</h2>
+            <h2 className="text-xl font-bold text-white">{selected.title}</h2>
             <p className="text-muted text-xs capitalize">{selected.status.replace("_", " ")}</p>
           </div>
-          {isLocked ? <Lock className="h-5 w-5 text-rose-300" aria-hidden="true" /> : null}
+          {isLocked ? <Lock className="h-5 w-5 text-neutral-500" aria-hidden="true" /> : null}
         </div>
 
+        {selectedModule?.description ? (
+          <p className="text-muted mt-3 text-sm leading-6">{selectedModule.description}</p>
+        ) : null}
+
         {selected.status === "done" ? (
-          <p className="meta-tile mt-3 text-sm text-emerald-200">
-            {getModuleCompletionMessage(selected.id)}
+          <p className="meta-tile mt-3 text-sm text-neutral-300">{getModuleCompletionMessage(selected.id)}</p>
+        ) : null}
+
+        {selected.deprioritized ? (
+          <p className="meta-tile mt-3 text-xs text-neutral-400">
+            Deprioritized for your budget — complete launch and first payout before scaling ads.
           </p>
         ) : null}
 
@@ -99,12 +110,12 @@ export function JourneyMap({ nodes }: Props) {
         </div>
 
         {selected.blockedBy.length > 0 ? (
-          <div className="mt-3 rounded-lg border border-rose-400/30 bg-rose-400/5 p-3 text-xs text-rose-200">
-            <p className="font-medium">Locked until:</p>
+          <div className="mt-3 rounded-lg border border-neutral-700 bg-neutral-900 p-3 text-xs text-neutral-300">
+            <p className="font-medium text-white">Locked until:</p>
             <ul className="mt-1 list-disc pl-4">
               {selected.blockedBy.map((b) => (
                 <li key={b.subTaskId}>
-                  <Link href={`/app/tasks/${b.moduleId}`} className="underline">
+                  <Link href={`/app/tasks/${b.moduleId}`} className="underline hover:text-white">
                     {b.label}
                   </Link>
                 </li>
@@ -114,13 +125,13 @@ export function JourneyMap({ nodes }: Props) {
         ) : null}
 
         {nextIncomplete && !isLocked ? (
-          <div className="glass-panel-primary mt-4 rounded-lg p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-amber-200">Next step here</p>
-            <p className="mt-1 text-sm font-medium text-slate-100">{nextIncomplete.label}</p>
+          <div className="mt-4 rounded-lg border border-white/15 bg-black p-4">
+            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">Next step here</p>
+            <p className="mt-1 text-sm font-medium text-white">{nextIncomplete.label}</p>
             <p className="text-muted mt-1 text-xs">Estimated time: {nextEstimate}</p>
             <Link
               href={`/app/tasks/${selected.id}`}
-              className="btn-primary mt-3 inline-flex min-h-[44px] items-center gap-2 rounded-md px-4 py-2 text-xs font-medium"
+              className="btn-primary mt-3 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-medium"
             >
               Start this step
               <ArrowRight className="h-3 w-3" />
@@ -131,7 +142,7 @@ export function JourneyMap({ nodes }: Props) {
         {selected.softWarnings.length > 0 ? (
           <div ref={warningsRef} className="mt-3 space-y-2">
             {selected.softWarnings.map((w) => (
-              <p key={w} className="meta-tile text-xs text-amber-200">
+              <p key={w} className="meta-tile text-xs text-neutral-400">
                 <JargonText text={w} />
               </p>
             ))}
@@ -141,8 +152,18 @@ export function JourneyMap({ nodes }: Props) {
         <ul className="mt-4 space-y-2">
           {selected.subTasks.map((st) => {
             const guide = getSubTaskGuide(st.id, selected.id);
+            const severityLabel = st.severity === "required" ? "Required" : "Recommended";
             return (
               <li key={st.id}>
+                <div className="mb-1 flex items-center gap-2">
+                  <span
+                    className={`text-[10px] font-medium uppercase tracking-wide ${
+                      st.severity === "required" ? "text-neutral-300" : "text-neutral-500"
+                    }`}
+                  >
+                    {severityLabel}
+                  </span>
+                </div>
                 <TaskToggle
                   subTaskId={st.id}
                   label={st.label}
@@ -158,10 +179,10 @@ export function JourneyMap({ nodes }: Props) {
           })}
         </ul>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <Link
             href={`/app/journey/${selected.id}`}
-            className="btn-ghost min-h-[44px] rounded-md px-3 py-2 text-xs font-medium"
+            className="btn-ghost inline-flex min-h-[44px] items-center justify-center rounded-md px-3 py-2 text-xs font-medium"
           >
             Overview
           </Link>
@@ -170,7 +191,7 @@ export function JourneyMap({ nodes }: Props) {
           ) : (
             <Link
               href={`/app/tasks/${selected.id}`}
-              className="btn-primary min-h-[44px] rounded-md px-3 py-2 text-xs font-medium"
+              className="btn-primary inline-flex min-h-[44px] items-center justify-center rounded-md px-3 py-2 text-xs font-medium"
             >
               Guided walkthrough
             </Link>

@@ -20,7 +20,7 @@ export function JargonText({ text, className }: Props) {
             key={`${seg.value}-${i}`}
             type="button"
             onClick={() => open(seg.entry)}
-            className="border-b border-dashed border-amber-300/60 text-amber-100 hover:text-amber-50"
+            className="border-b border-dashed border-neutral-500 text-neutral-200 hover:text-white"
           >
             {seg.value}
           </button>

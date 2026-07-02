@@ -1,6 +1,14 @@
-import type { TaskModuleId } from "@/lib/tasks";
 import type { OnboardingProfile } from "@/lib/mvp-data";
+import {
+  allSubTasksDoneForPlan,
+  buildJourneyPlan,
+  buildSoftWarnings,
+  getSubTaskProgressForPlan,
+  mergeProfileSubTaskDefaults,
+} from "@/lib/journey-engine";
 import { getSubTaskGuide } from "@/lib/subtask-guides";
+import type { TaskModuleId } from "@/lib/tasks";
+import type { RequirementSeverity } from "@/lib/journey-rules";
 
 export type JourneyEdgeKind = "prerequisite" | "recommended" | "loop";
 
@@ -31,61 +39,62 @@ export type JourneySubTaskDef = {
   moduleId: TaskModuleId;
   label: string;
   hint?: string;
+  severity: RequirementSeverity;
+  why?: string;
 };
 
 export type JourneyNode = {
   id: TaskModuleId;
   title: string;
   status: JourneyNodeStatus;
+  deprioritized: boolean;
   blockedBy: { subTaskId: string; label: string; moduleId: TaskModuleId }[];
   softWarnings: string[];
   subTasks: (JourneySubTaskDef & { done: boolean })[];
   progressPercent: number;
 };
 
+/** Legacy base catalog — kept for milestone/crisis lookups of known subtask IDs. */
 export const MODULE_SUB_TASKS: Record<TaskModuleId, JourneySubTaskDef[]> = {
   "common-documentation": [
-    { id: "docs-folder-ready", moduleId: "common-documentation", label: "Master document folder created" },
-    { id: "gstin-active", moduleId: "common-documentation", label: "GSTIN obtained or validated" },
-    { id: "bank-matched", moduleId: "common-documentation", label: "Bank name matches legal name" },
-    { id: "gst-filing-understood", moduleId: "common-documentation", label: "GST filing calendar understood" },
+    { id: "docs-folder-ready", moduleId: "common-documentation", label: "Master document folder created", severity: "required" },
+    { id: "gstin-active", moduleId: "common-documentation", label: "GSTIN obtained or validated", severity: "required" },
+    { id: "bank-matched", moduleId: "common-documentation", label: "Bank name matches legal name", severity: "required" },
+    { id: "gst-filing-understood", moduleId: "common-documentation", label: "GST filing calendar understood", severity: "required" },
   ],
   "product-selection": [
-    { id: "product-shortlist", moduleId: "product-selection", label: "3 products shortlisted with margin check" },
-    { id: "samples-ordered", moduleId: "product-selection", label: "Sample order placed" },
+    { id: "product-shortlist", moduleId: "product-selection", label: "3 products shortlisted with margin check", severity: "required" },
+    { id: "samples-ordered", moduleId: "product-selection", label: "Sample order placed", severity: "required" },
   ],
   "compliance-by-product": [
-    { id: "hsn-mapped", moduleId: "compliance-by-product", label: "HSN codes mapped for launch SKUs" },
-    { id: "category-certs", moduleId: "compliance-by-product", label: "Category certificates ready (if needed)" },
+    { id: "hsn-mapped", moduleId: "compliance-by-product", label: "HSN codes mapped for launch SKUs", severity: "required" },
+    { id: "category-certs", moduleId: "compliance-by-product", label: "Category certificates ready (if needed)", severity: "required" },
   ],
   "supplier-sourcing": [
-    { id: "supplier-vetted", moduleId: "supplier-sourcing", label: "Primary supplier vetted + terms in writing" },
-    { id: "backup-supplier", moduleId: "supplier-sourcing", label: "Backup supplier identified" },
-    { id: "domestic-supplier-confirmed", moduleId: "supplier-sourcing", label: "Domestic supplier confirmed (not AliExpress)" },
+    { id: "supplier-vetted", moduleId: "supplier-sourcing", label: "Primary supplier vetted + terms in writing", severity: "required" },
+    { id: "backup-supplier", moduleId: "supplier-sourcing", label: "Backup supplier identified", severity: "recommended" },
+    { id: "domestic-supplier-confirmed", moduleId: "supplier-sourcing", label: "Domestic supplier confirmed (not AliExpress)", severity: "required" },
   ],
   "channel-launch": [
-    { id: "seller-account-live", moduleId: "channel-launch", label: "Seller account approved" },
-    { id: "first-listing-live", moduleId: "channel-launch", label: "First listing live (1 hero SKU)" },
-    { id: "store-linked", moduleId: "channel-launch", label: "Store / channel linked and payout ready" },
-    { id: "cod-practice-done", moduleId: "channel-launch", label: "COD confirmation practice completed" },
-    { id: "first-payout-received", moduleId: "channel-launch", label: "First payout received in bank" },
+    { id: "seller-account-live", moduleId: "channel-launch", label: "Seller account approved", severity: "required" },
+    { id: "first-listing-live", moduleId: "channel-launch", label: "First listing live (1 hero SKU)", severity: "required" },
+    { id: "store-linked", moduleId: "channel-launch", label: "Store / channel linked and payout ready", severity: "required" },
+    { id: "cod-practice-done", moduleId: "channel-launch", label: "COD confirmation practice completed", severity: "required" },
+    { id: "first-payout-received", moduleId: "channel-launch", label: "First payout received in bank", severity: "required" },
   ],
   "ads-growth": [
-    { id: "breakeven-roas-known", moduleId: "ads-growth", label: "Break-even ROAS calculated" },
-    { id: "first-ad-test", moduleId: "ads-growth", label: "First controlled ad test running" },
+    { id: "breakeven-roas-known", moduleId: "ads-growth", label: "Break-even ROAS calculated", severity: "required" },
+    { id: "first-ad-test", moduleId: "ads-growth", label: "First controlled ad test running", severity: "recommended" },
   ],
   "tracking-analytics": [
-    { id: "pnl-sheet-ready", moduleId: "tracking-analytics", label: "Weekly P&L sheet set up" },
-    { id: "settlement-reconcile", moduleId: "tracking-analytics", label: "First settlement reconciled" },
-    { id: "appeal-pack-ready", moduleId: "tracking-analytics", label: "Appeal pack folder assembled" },
-    { id: "gstr8-reviewed", moduleId: "tracking-analytics", label: "GSTR-8 / TCS reconciliation reviewed" },
+    { id: "pnl-sheet-ready", moduleId: "tracking-analytics", label: "Weekly P&L sheet set up", severity: "required" },
+    { id: "settlement-reconcile", moduleId: "tracking-analytics", label: "First settlement reconciled", severity: "required" },
+    { id: "appeal-pack-ready", moduleId: "tracking-analytics", label: "Appeal pack folder assembled", severity: "recommended" },
+    { id: "gstr8-reviewed", moduleId: "tracking-analytics", label: "GSTR-8 / TCS reconciliation reviewed", severity: "required" },
   ],
 };
 
-/** Hard locks: module cannot start guided walkthrough until prerequisite sub-tasks done */
-const MODULE_LOCKS: Partial<Record<TaskModuleId, { subTaskId: string; moduleId: TaskModuleId }[]>> = {
-  "ads-growth": [{ subTaskId: "first-listing-live", moduleId: "channel-launch" }],
-};
+export { mergeProfileSubTaskDefaults } from "@/lib/journey-engine";
 
 export function isSubTaskDone(subTasks: Record<string, boolean> | undefined, subTaskId: string): boolean {
   return subTasks?.[subTaskId] === true;
@@ -101,78 +110,16 @@ export function isSimulatorDone(
 export function getSubTaskProgress(
   moduleId: TaskModuleId,
   subTasks: Record<string, boolean> | undefined,
+  profile?: OnboardingProfile,
 ): number {
+  if (profile) {
+    const plan = buildJourneyPlan(profile);
+    return getSubTaskProgressForPlan(moduleId, plan, subTasks);
+  }
   const defs = MODULE_SUB_TASKS[moduleId];
   if (defs.length === 0) return 0;
   const done = defs.filter((d) => isSubTaskDone(subTasks, d.id)).length;
   return Math.round((done / defs.length) * 100);
-}
-
-function buildSoftWarnings(
-  moduleId: TaskModuleId,
-  input: {
-    hasGstin: boolean;
-    profile: OnboardingProfile;
-    completedSimulators?: Record<string, boolean>;
-    subTasks?: Record<string, boolean>;
-  },
-): string[] {
-  const { hasGstin, profile, completedSimulators, subTasks } = input;
-  const warnings: string[] = [];
-
-  if (moduleId === "compliance-by-product" && !hasGstin) {
-    warnings.push("GSTIN not saved yet — compliance steps may block marketplace listing.");
-  }
-
-  if (moduleId === "product-selection" && profile.productType === "fashion") {
-    if (!isSimulatorDone(completedSimulators, "rto_reality")) {
-      warnings.push("Recommended: complete the RTO Reality slider with fashion defaults (35% RTO).");
-    }
-  }
-
-  if (moduleId === "supplier-sourcing" && !isSimulatorDone(completedSimulators, "sourcing_swipe")) {
-    warnings.push("Recommended: play the sourcing swipe game — avoid AliExpress/CJ traps.");
-  }
-
-  if (moduleId === "ads-growth") {
-    if (!isSimulatorDone(completedSimulators, "rto_reality")) {
-      warnings.push("Recommended: run Will I Survive? RTO slider before scaling ad spend.");
-    }
-    if (!isSimulatorDone(completedSimulators, "cod_prepaid_mix")) {
-      warnings.push("Recommended: model your COD vs prepaid payment mix.");
-    }
-    if (profile.productType === "fashion") {
-      warnings.push("Fashion + COD: budget 35% RTO and high return rates in ad math.");
-    }
-  }
-
-  if (moduleId === "tracking-analytics" && !isSubTaskDone(subTasks, "settlement-reconcile")) {
-    warnings.push("Reconcile your first settlement — catches payout holds and silent underpayment.");
-  }
-
-  if (moduleId === "channel-launch" && profile.primaryChannel === "shopify") {
-    if (profile.businessType === "individual") {
-      warnings.push("Individuals face higher PG rejection — Zero-PG COD path may be needed.");
-    }
-  }
-
-  if (moduleId === "channel-launch") {
-    if (!isSubTaskDone(subTasks, "hsn-mapped")) {
-      warnings.push("Recommended: map HSN codes before listing — wrong tax rate triggers suppression.");
-    }
-    if (!hasGstin) {
-      warnings.push("No GSTIN saved — most marketplaces block listing until GST is active.");
-    }
-    if (!isSubTaskDone(subTasks, "supplier-vetted")) {
-      warnings.push("Recommended: vet supplier before scaling listings — stockouts cause cancellation penalties.");
-    }
-  }
-
-  if (moduleId === "ads-growth" && !isSubTaskDone(subTasks, "breakeven-roas-known")) {
-    warnings.push("Recommended: know break-even ROAS before spending on ads.");
-  }
-
-  return warnings;
 }
 
 export function getJourneyNodes(input: {
@@ -182,40 +129,45 @@ export function getJourneyNodes(input: {
   hasGstin: boolean;
   profile: OnboardingProfile;
 }): JourneyNode[] {
-  const { completedModules, subTasks, completedSimulators, hasGstin, profile } = input;
-  const moduleIds = Object.keys(MODULE_SUB_TASKS) as TaskModuleId[];
+  const { completedModules, completedSimulators, hasGstin, profile } = input;
+  const subTasks = mergeProfileSubTaskDefaults(profile, input.subTasks);
+  const plan = buildJourneyPlan(profile);
+  const runtime = { hasGstin, subTasks, completedSimulators };
 
-  return moduleIds.map((moduleId) => {
-    const defs = MODULE_SUB_TASKS[moduleId];
-    const subTaskStates = defs.map((d) => {
-      const guide = getSubTaskGuide(d.id, moduleId);
-      return { ...d, hint: guide.hint, done: isSubTaskDone(subTasks, d.id) };
+  return plan.modules.map((mod) => {
+    const subTaskStates = mod.subTasks.map((d) => {
+      const guide = getSubTaskGuide(d.id, mod.id);
+      return {
+        id: d.id,
+        moduleId: d.moduleId,
+        label: d.label,
+        why: d.why,
+        severity: d.severity,
+        hint: guide.hint,
+        done: isSubTaskDone(subTasks, d.id),
+      };
     });
-    const progressPercent = getSubTaskProgress(moduleId, subTasks);
-    const allSubDone = subTaskStates.every((s) => s.done);
-    const moduleMarkedDone = completedModules.has(moduleId);
 
-    const locks = MODULE_LOCKS[moduleId] ?? [];
+    const progressPercent = getSubTaskProgressForPlan(mod.id, plan, subTasks);
+    const requiredTasks = mod.subTasks.filter((s) => s.severity === "required");
+    const allRequiredDone =
+      requiredTasks.length === 0 || requiredTasks.every((s) => isSubTaskDone(subTasks, s.id));
+    const allSubDone = allSubTasksDoneForPlan(mod.id, plan, subTasks);
+    const moduleMarkedDone = completedModules.has(mod.id);
+
+    const locks = plan.moduleLocks[mod.id] ?? [];
     const blockedBy = locks
       .filter((lock) => !isSubTaskDone(subTasks, lock.subTaskId))
-      .map((lock) => {
-        const def = MODULE_SUB_TASKS[lock.moduleId].find((d) => d.id === lock.subTaskId);
-        return {
-          subTaskId: lock.subTaskId,
-          moduleId: lock.moduleId,
-          label: def?.label ?? lock.subTaskId,
-        };
-      });
+      .map((lock) => ({
+        subTaskId: lock.subTaskId,
+        moduleId: lock.moduleId,
+        label: lock.label,
+      }));
 
-    const softWarnings = buildSoftWarnings(moduleId, {
-      hasGstin,
-      profile,
-      completedSimulators,
-      subTasks,
-    });
+    const softWarnings = buildSoftWarnings(mod.id, plan.facts, runtime);
 
     let status: JourneyNodeStatus = "available";
-    if (moduleMarkedDone || allSubDone) {
+    if (moduleMarkedDone || (allSubDone && allRequiredDone)) {
       status = "done";
     } else if (blockedBy.length > 0) {
       status = "locked";
@@ -223,20 +175,11 @@ export function getJourneyNodes(input: {
       status = "in_progress";
     }
 
-    const titles: Record<TaskModuleId, string> = {
-      "common-documentation": "Business docs + GST",
-      "product-selection": "Pick your product",
-      "compliance-by-product": "Product compliance",
-      "supplier-sourcing": "Find suppliers",
-      "channel-launch": "Launch on channel",
-      "ads-growth": "Run ads",
-      "tracking-analytics": "Track profit",
-    };
-
     return {
-      id: moduleId,
-      title: titles[moduleId],
+      id: mod.id,
+      title: mod.title,
       status,
+      deprioritized: mod.deprioritized,
       blockedBy,
       softWarnings,
       subTasks: subTaskStates,
@@ -245,6 +188,14 @@ export function getJourneyNodes(input: {
   });
 }
 
-export function allSubTasksDone(moduleId: TaskModuleId, subTasks: Record<string, boolean> | undefined): boolean {
+export function allSubTasksDone(
+  moduleId: TaskModuleId,
+  subTasks: Record<string, boolean> | undefined,
+  profile?: OnboardingProfile,
+): boolean {
+  if (profile) {
+    const plan = buildJourneyPlan(profile);
+    return allSubTasksDoneForPlan(moduleId, plan, subTasks);
+  }
   return MODULE_SUB_TASKS[moduleId].every((d) => isSubTaskDone(subTasks, d.id));
 }

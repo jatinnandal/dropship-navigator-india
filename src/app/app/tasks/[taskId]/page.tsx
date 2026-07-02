@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
+import { getActiveSellerProfileForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
+import { getEditProfileHref } from "@/lib/profile-name";
 import { getTaskState } from "@/lib/task-progress-store";
 import { resolveTaskId } from "@/lib/tasks";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
@@ -16,9 +17,16 @@ export default async function TaskPage({ params }: Props) {
     notFound();
   }
 
-  const profile = await getStoredProfileForCurrentVisitor();
-  const state = await getTaskState(taskId);
-  const workspace = await getWorkspaceForCurrentVisitor();
+  const [profile, state, workspace, activeSellerProfile] = await Promise.all([
+    getStoredProfileForCurrentVisitor(),
+    getTaskState(taskId),
+    getWorkspaceForCurrentVisitor(),
+    getActiveSellerProfileForCurrentVisitor(),
+  ]);
+
+  const editProfileHref = activeSellerProfile
+    ? getEditProfileHref(activeSellerProfile.id, `/app/tasks/${taskId}`)
+    : "/onboarding";
 
   return (
     <TaskRunner
@@ -27,6 +35,7 @@ export default async function TaskPage({ params }: Props) {
       initialCompleted={state.completed}
       initialAnswers={state.answers}
       initialWorkspace={workspace}
+      editProfileHref={editProfileHref}
     />
   );
 }

@@ -1,23 +1,11 @@
+import type { ActiveCrisis, CrisisLogEntry } from "@/lib/crisis/types";
+export type { ActiveCrisis, CrisisLogEntry };
+
 export type SkuShortlistItem = {
   name: string;
   sellingPrice?: number;
   productCost?: number;
   netMarginPercent?: number;
-};
-
-export type CrisisType = "account_suspended" | "supplier_oos";
-
-export type ActiveCrisis = {
-  type: CrisisType;
-  startedAt: string;
-  currentStepIndex: number;
-};
-
-export type CrisisLogEntry = {
-  type: CrisisType;
-  startedAt: string;
-  resolvedAt?: string;
-  selfReported: boolean;
 };
 
 export type Workspace = {
@@ -44,10 +32,10 @@ export type Workspace = {
 
 export const emptyWorkspace: Workspace = {};
 
-export function parseWorkspace(raw: string | undefined): Workspace {
+export function parseWorkspace(raw: string | Record<string, unknown> | undefined): Workspace {
   if (!raw) return { ...emptyWorkspace };
   try {
-    const parsed = JSON.parse(raw) as Partial<Workspace>;
+    const parsed = (typeof raw === "string" ? JSON.parse(raw) : raw) as Partial<Workspace>;
     return {
       legalBusinessName:
         typeof parsed.legalBusinessName === "string" ? parsed.legalBusinessName : undefined,

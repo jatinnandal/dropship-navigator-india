@@ -31,6 +31,18 @@ export const SUBTASK_TIME_ESTIMATES: Record<string, string> = {
   "settlement-reconcile": "~45 mins",
   "appeal-pack-ready": "~20 mins",
   "gstr8-reviewed": "~30 mins",
+  "gst-state-code-match": "~15 mins",
+  "fssai-registered": "~3–7 days",
+  "bis-checked": "~1–7 days",
+  "cosmetic-label-ready": "~1–3 days",
+  "legal-metrology-label": "~1–2 days",
+  "iec-ready": "~3–5 days",
+  "import-risk-acknowledged": "~15 mins",
+  "pg-approved": "~3–7 days",
+  "zero-pg-cod-fallback": "~30 mins",
+  "marketplace-kyc-ready": "~1 day",
+  "fashion-size-chart-ready": "~45 mins",
+  "rto-calculator-done": "~20 mins",
 };
 
 export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
@@ -253,6 +265,126 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
       "Claim in GSTR-3B filing.",
     ],
     walkthroughHref: "/app/tasks/tracking-analytics",
+  },
+  "gst-state-code-match": {
+    hint: "GSTIN state code must match your operating/pickup state.",
+    why: "Marketplaces reject KYC when GST state code doesn't match pickup address — instant blocker.",
+    howToSteps: [
+      "Check first two digits of GSTIN against your state code.",
+      "Confirm pickup address is in the same state.",
+      "Fix GST registration or address before applying.",
+    ],
+    walkthroughHref: "/app/tasks/common-documentation",
+  },
+  "fssai-registered": {
+    hint: "FSSAI Basic Registration or State/Central License.",
+    why: "Food listings are gated until FSSAI is uploaded — no certificate means no category approval.",
+    howToSteps: [
+      "Determine if Basic, State, or Central license applies to your turnover.",
+      "Apply on foscos.fssai.gov.in with business address.",
+      "Upload certificate during marketplace category application.",
+    ],
+    walkthroughHref: "/app/tasks/compliance-by-product",
+  },
+  "bis-checked": {
+    hint: "Check if your electronics SKUs need BIS or standards marks.",
+    why: "Electronics categories on Amazon/Flipkart often require BIS certification before listing.",
+    howToSteps: [
+      "List each SKU and check marketplace gated category requirements.",
+      "Verify BIS registration for applicable products on bis.gov.in.",
+      "Upload certificates or choose SKUs that don't require BIS.",
+    ],
+    walkthroughHref: "/app/tasks/compliance-by-product",
+  },
+  "cosmetic-label-ready": {
+    hint: "Ingredient list, MRP, manufacturer details on label.",
+    why: "Beauty/cosmetics face category gating — incomplete labels block approval.",
+    howToSteps: [
+      "Check marketplace cosmetic category requirements.",
+      "Ensure label has ingredients, net content, and manufacturer address.",
+      "Upload label images during category application.",
+    ],
+    walkthroughHref: "/app/tasks/compliance-by-product",
+  },
+  "legal-metrology-label": {
+    hint: "MRP, net quantity, manufacturer name on pre-packaged goods.",
+    why: "Legal Metrology rules require MRP and net qty on pre-packaged goods — missing labels block compliance.",
+    howToSteps: [
+      "Add MRP in rupees and net quantity (g/ml/pcs) on every pack.",
+      "Include manufacturer/importer name and address.",
+      "Photograph labels for marketplace upload.",
+    ],
+    walkthroughHref: "/app/tasks/compliance-by-product",
+  },
+  "iec-ready": {
+    hint: "Import Export Code from DGFT for cross-border sourcing.",
+    why: "Imports require IEC — without it you can't clear customs or run compliant import invoicing.",
+    howToSteps: [
+      "Apply for IEC on DGFT portal with PAN and bank details.",
+      "Allow 2–5 working days for activation.",
+      "Share IEC with your customs broker or freight forwarder.",
+    ],
+    walkthroughHref: "/app/tasks/supplier-sourcing",
+  },
+  "import-risk-acknowledged": {
+    hint: "Complete import vs COD risk acknowledgment.",
+    why: "2–3 week import shipping destroys COD conversion — acknowledge tradeoff before relying on imports.",
+    howToSteps: [
+      "Open supplier-sourcing walkthrough import path.",
+      "Model margin with customs duty and longer lead time.",
+      "Plan domestic backup or prepaid-only if selling COD.",
+    ],
+    walkthroughHref: "/app/tasks/supplier-sourcing",
+  },
+  "pg-approved": {
+    hint: "Razorpay, Cashfree, or similar PG live on your store.",
+    why: "Own website needs payment gateway for prepaid orders — PG rejection is common for individuals.",
+    howToSteps: [
+      "Apply with business docs matching GST legal name.",
+      "If rejected, document Zero-PG COD fallback path.",
+      "Test a ₹1 transaction before launching ads.",
+    ],
+    walkthroughHref: "/app/tasks/channel-launch",
+  },
+  "zero-pg-cod-fallback": {
+    hint: "COD-first checkout without PG if needed.",
+    why: "Individuals often get PG rejected — COD-first keeps sales flowing while PG is pending.",
+    howToSteps: [
+      "Set up manual COD order flow or Shopify COD apps.",
+      "Document confirmation script for COD orders.",
+      "Reapply to PG with proprietorship docs if possible.",
+    ],
+    walkthroughHref: "/app/tasks/channel-launch",
+  },
+  "marketplace-kyc-ready": {
+    hint: "GST, PAN, bank, address proof packet ready.",
+    why: "Amazon/Flipkart KYC is strict — incomplete docs mean 1–2 week rejection loops.",
+    howToSteps: [
+      "Gather GST cert, PAN, cancelled cheque, address proof.",
+      "Ensure bank name matches GST legal name exactly.",
+      "Upload in one session to avoid partial applications.",
+    ],
+    walkthroughHref: "/app/tasks/channel-launch",
+  },
+  "fashion-size-chart-ready": {
+    hint: "Size chart + return policy on listing and store.",
+    why: "Fashion RTO drops when buyers can pick the right size — size charts are non-negotiable.",
+    howToSteps: [
+      "Create size chart with measurements in cm.",
+      "Add to listing images and product description.",
+      "Draft return policy distinguishing returns from RTO.",
+    ],
+    walkthroughHref: "/app/tasks/product-selection",
+  },
+  "rto-calculator-done": {
+    hint: "Run RTO Reality slider with fashion defaults.",
+    why: "Fashion COD defaults to ~35% RTO — model it before picking SKUs or ad budgets.",
+    howToSteps: [
+      "Open product-selection walkthrough.",
+      "Complete RTO Reality simulator with 35% default.",
+      "Save margin snapshot to workspace.",
+    ],
+    walkthroughHref: "/app/tasks/product-selection",
   },
 };
 

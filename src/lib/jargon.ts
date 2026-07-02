@@ -92,6 +92,9 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
 ];
 
 const SORTED_TERMS = [...JARGON_DICTIONARY].sort((a, b) => b.term.length - a.term.length);
+const TERM_REGEXES = new Map<JargonEntry, RegExp>(
+  SORTED_TERMS.map((entry) => [entry, new RegExp(`\\b${entry.term}\\b`, "i")]),
+);
 
 export function lookupJargon(term: string): JargonEntry | undefined {
   const upper = term.toUpperCase();
@@ -109,7 +112,7 @@ export function segmentJargon(text: string): TextSegment[] {
     let earliest: { index: number; entry: JargonEntry; match: string } | null = null;
 
     for (const entry of SORTED_TERMS) {
-      const regex = new RegExp(`\\b${entry.term}\\b`, "i");
+      const regex = TERM_REGEXES.get(entry)!;
       const match = remaining.match(regex);
       if (match && match.index !== undefined) {
         if (!earliest || match.index < earliest.index) {

@@ -63,7 +63,7 @@ export function RtoScenarioSlider({
 
   return (
     <div>
-      <p className="text-xs uppercase tracking-wide text-amber-200">Try this — RTO scenario</p>
+      <p className="text-xs uppercase tracking-wide text-neutral-400">Try this — RTO scenario</p>
       <p className="text-muted mt-1 text-xs">Slide to see what your first batch of orders actually earns.</p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -76,7 +76,7 @@ export function RtoScenarioSlider({
             step={5}
             value={orders}
             onChange={(e) => setOrders(Number(e.target.value))}
-            className="mt-1 w-full accent-amber-400"
+            className="mt-1 w-full accent-neutral-400"
           />
           <span className="text-slate-200">{orders} orders</span>
         </label>
@@ -89,7 +89,7 @@ export function RtoScenarioSlider({
             step={1}
             value={rtoRate}
             onChange={(e) => setRtoRate(Number(e.target.value))}
-            className="mt-1 w-full accent-amber-400"
+            className="mt-1 w-full accent-neutral-400"
           />
           <span className="text-slate-200">{rtoRate}% (~{result.rtoOrders} returns)</span>
         </label>
@@ -99,7 +99,7 @@ export function RtoScenarioSlider({
             type="number"
             value={sellingPrice}
             onChange={(e) => setSellingPrice(Number(e.target.value))}
-            className="mt-1 w-full min-h-[40px] rounded-md border border-slate-600 bg-slate-950/80 px-2 py-1"
+            className="mt-1 w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-950/80 px-2 py-1"
           />
         </label>
         <label className="block text-xs">
@@ -108,7 +108,7 @@ export function RtoScenarioSlider({
             type="number"
             value={productCost}
             onChange={(e) => setProductCost(Number(e.target.value))}
-            className="mt-1 w-full min-h-[40px] rounded-md border border-slate-600 bg-slate-950/80 px-2 py-1"
+            className="mt-1 w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-950/80 px-2 py-1"
           />
         </label>
         <label className="block text-xs sm:col-span-2">
@@ -117,19 +117,19 @@ export function RtoScenarioSlider({
             type="number"
             value={shippingCost}
             onChange={(e) => setShippingCost(Number(e.target.value))}
-            className="mt-1 w-full min-h-[40px] rounded-md border border-slate-600 bg-slate-950/80 px-2 py-1"
+            className="mt-1 w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-950/80 px-2 py-1"
           />
         </label>
       </div>
 
       <div
         className={`mt-4 rounded-lg border px-4 py-3 ${
-          profitPositive ? "border-emerald-500/40 bg-emerald-500/10" : "border-rose-500/40 bg-rose-500/10"
+          profitPositive ? "border-neutral-500 bg-neutral-900" : "border-neutral-600 bg-neutral-950"
         }`}
       >
         <p className="text-sm font-semibold text-slate-100">
           {orders} orders at {rtoRate}% RTO →{" "}
-          <span className={profitPositive ? "text-emerald-200" : "text-rose-200"}>
+          <span className={profitPositive ? "text-white" : "text-neutral-400"}>
             {profitPositive ? "+" : ""}₹{Math.round(result.totalProfit).toLocaleString("en-IN")} net
           </span>
         </p>

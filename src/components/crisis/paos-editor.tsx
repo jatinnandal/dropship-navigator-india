@@ -62,7 +62,7 @@ export function PaosEditor({ profile, legalBusinessName, gstin, className }: Pro
         >
           {copied ? (
             <>
-              <Check className="h-3.5 w-3.5 text-emerald-300" aria-hidden="true" />
+              <Check className="h-3.5 w-3.5 text-neutral-300" aria-hidden="true" />
               Copied
             </>
           ) : (
