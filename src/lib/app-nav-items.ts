@@ -5,6 +5,7 @@ import {
   ListChecks,
   SlidersHorizontal,
   Users,
+  Wrench,
   type LucideIcon,
 } from "lucide-react";
 
@@ -21,10 +22,17 @@ export function getAppNavItems(hasProfile: boolean): AppNavItem[] {
     icon: BookOpen,
   };
 
+  const tools: AppNavItem = {
+    href: "/app/tools",
+    label: "Tools",
+    icon: Wrench,
+  };
+
   if (hasProfile) {
     return [
       { href: "/app", label: "Dashboard", icon: LayoutDashboard },
       { href: "/app/journey", label: "Journey", icon: ListChecks },
+      tools,
       { href: "/app/profiles", label: "Profiles", icon: Users },
       resources,
     ];
