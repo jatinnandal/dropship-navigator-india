@@ -2,18 +2,55 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import type { LucideIcon } from "lucide-react";
+import {
+  Calculator,
+  Calendar,
+  Clock,
+  Truck,
+  Repeat,
+  TrendingUp,
+  FileCheck,
+  ShieldCheck,
+  CalendarDays,
+  GitBranch,
+  ClipboardCheck,
+  MessageSquare,
+  Flame,
+  TreeDeciduous,
+  DollarSign,
+  BarChart3,
+} from "lucide-react";
+
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+  Calculator,
+  Calendar,
+  Clock,
+  Truck,
+  Repeat,
+  TrendingUp,
+  FileCheck,
+  ShieldCheck,
+  CalendarDays,
+  GitBranch,
+  ClipboardCheck,
+  MessageSquare,
+  Flame,
+  TreeDeciduous,
+  DollarSign,
+  BarChart3,
+};
 
 type Props = {
   href: string;
   title: string;
   description: string;
-  icon: LucideIcon;
+  icon: string;
   accent: string;
   badge?: string;
 };
 
-export function ToolCard({ href, title, description, icon: Icon, accent, badge }: Props) {
+export function ToolCard({ href, title, description, icon, accent, badge }: Props) {
+  const Icon = ICON_MAP[icon] ?? Calculator;
   const reduced = useReducedMotion();
 
   return (

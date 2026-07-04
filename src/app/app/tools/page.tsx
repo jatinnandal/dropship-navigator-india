@@ -1,16 +1,3 @@
-import {
-  Calculator,
-  Calendar,
-  Clock,
-  Truck,
-  Repeat,
-  TrendingUp,
-  FileCheck,
-  ShieldCheck,
-  CalendarDays,
-  GitBranch,
-  ClipboardCheck,
-} from "lucide-react";
 import { ToolCard } from "@/components/tool-card";
 import { getToolTier } from "@/lib/pricing-tiers";
 
@@ -19,28 +6,28 @@ const TOOLS = [
     href: "/app/tools/margin-calculator",
     title: "Profit Margin Calculator",
     description: "Compare real margins across Amazon, Flipkart, Meesho & Shopify with full fee breakdown.",
-    icon: Calculator,
+    icon: "Calculator",
     accent: "text-amber-400 border-amber-500/30 bg-amber-500/5",
   },
   {
     href: "/app/tools/gst-calendar",
     title: "GST Filing Calendar",
     description: "Never miss a deadline — GSTR-1, GSTR-3B, TCS reconciliation with prep checklists.",
-    icon: Calendar,
+    icon: "Calendar",
     accent: "text-cyan-400 border-cyan-500/30 bg-cyan-500/5",
   },
   {
     href: "/app/tools/settlement-timeline",
     title: "Settlement Timeline",
     description: "See when marketplaces actually pay you and how much working capital you need.",
-    icon: Clock,
+    icon: "Clock",
     accent: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
   },
   {
     href: "/app/tools/shipping-estimator",
     title: "Shipping Cost Estimator",
     description: "Compare REAL carrier costs — not advertised rates. Includes COD, GST & fuel surcharges.",
-    icon: Truck,
+    icon: "Truck",
     accent: "text-rose-400 border-rose-500/30 bg-rose-500/5",
   },
 ];
@@ -50,52 +37,52 @@ const DIFFERENTIATOR_TOOLS = [
     href: "/app/tools/supplier-scorecard",
     title: "Supplier Vetting Scorecard",
     description: "Evaluate IndiaMART & other suppliers systematically — catch the red flags that kill 60% of sellers.",
-    icon: ShieldCheck,
+    icon: "ShieldCheck",
     accent: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
   },
   {
     href: "/app/tools/reorder-planner",
     title: "Reorder Planner",
     description: "Know exactly when to reorder based on lead times, sales velocity & safety stock math.",
-    icon: Repeat,
+    icon: "Repeat",
     accent: "text-cyan-400 border-cyan-500/30 bg-cyan-500/5",
   },
   {
     href: "/app/tools/growth-tracker",
     title: "Growth Tracker",
     description: "Track week-over-week metrics that actually matter — not vanity numbers.",
-    icon: TrendingUp,
+    icon: "TrendingUp",
     accent: "text-amber-400 border-amber-500/30 bg-amber-500/5",
   },
   {
     href: "/app/tools/compliance-checker",
     title: "Compliance Checker",
     description: "Verify your listings meet marketplace requirements before they get suppressed.",
-    icon: FileCheck,
+    icon: "FileCheck",
     accent: "text-rose-400 border-rose-500/30 bg-rose-500/5",
   },
 ];
 
 const ENGAGEMENT_TOOLS = [
   {
-    href: "/app/tools/gst-calendar",
+    href: "/app/tools/seasonal-calendar",
     title: "Seasonal Calendar",
     description: "Plan inventory and promotions around Indian festivals, sales events, and seasonal demand spikes.",
-    icon: CalendarDays,
+    icon: "CalendarDays",
     accent: "text-amber-400 border-amber-500/30 bg-amber-500/5",
   },
   {
     href: "/app/tools/decision-trees",
     title: "Decision Tree Wizards",
     description: "Answer a few questions, get a data-backed recommendation — marketplace, fulfillment, niche, and COD strategy.",
-    icon: GitBranch,
+    icon: "GitBranch",
     accent: "text-cyan-400 border-cyan-500/30 bg-cyan-500/5",
   },
   {
     href: "/app/tools/verification-checklist",
     title: "Verification Checklist",
     description: "Don't just check boxes — verify your GSTIN, PAN, bank details, and listings are actually correct.",
-    icon: ClipboardCheck,
+    icon: "ClipboardCheck",
     accent: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
   },
 ];
