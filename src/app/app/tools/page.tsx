@@ -8,6 +8,9 @@ import {
   TrendingUp,
   FileCheck,
   ShieldCheck,
+  CalendarDays,
+  GitBranch,
+  ClipboardCheck,
 } from "lucide-react";
 
 const TOOLS = [
@@ -72,6 +75,30 @@ const DIFFERENTIATOR_TOOLS = [
   },
 ];
 
+const ENGAGEMENT_TOOLS = [
+  {
+    href: "/app/tools/gst-calendar",
+    title: "Seasonal Calendar",
+    description: "Plan inventory and promotions around Indian festivals, sales events, and seasonal demand spikes.",
+    icon: CalendarDays,
+    accent: "text-amber-400 border-amber-500/30 bg-amber-500/5",
+  },
+  {
+    href: "/app/tools/decision-trees",
+    title: "Decision Tree Wizards",
+    description: "Answer a few questions, get a data-backed recommendation — marketplace, fulfillment, niche, and COD strategy.",
+    icon: GitBranch,
+    accent: "text-cyan-400 border-cyan-500/30 bg-cyan-500/5",
+  },
+  {
+    href: "/app/tools/verification-checklist",
+    title: "Verification Checklist",
+    description: "Don't just check boxes — verify your GSTIN, PAN, bank details, and listings are actually correct.",
+    icon: ClipboardCheck,
+    accent: "text-emerald-400 border-emerald-500/30 bg-emerald-500/5",
+  },
+];
+
 export default function ToolsIndexPage() {
   return (
     <div className="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
@@ -118,6 +145,40 @@ export default function ToolsIndexPage() {
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {DIFFERENTIATOR_TOOLS.map((tool) => {
+            const Icon = tool.icon;
+            return (
+              <Link
+                key={tool.href}
+                href={tool.href}
+                className="glass-panel grain group rounded-xl border p-5 transition-colors hover:border-amber-500/30"
+              >
+                <div className={`inline-flex rounded-lg border p-2.5 ${tool.accent}`}>
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h2 className="mt-3 font-display text-base font-semibold text-slate-100 group-hover:text-amber-300 transition-colors">
+                  {tool.title}
+                </h2>
+                <p className="text-muted mt-1 text-sm leading-relaxed">
+                  {tool.description}
+                </p>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Engagement & Growth */}
+      <div className="mt-12">
+        <div className="eyebrow mb-2 text-xs">Engagement &amp; Growth</div>
+        <h2 className="font-display text-xl font-bold text-slate-100">
+          Planning &amp; Verification
+        </h2>
+        <p className="text-muted mt-1 text-sm">
+          Interactive wizards and checklists to keep you on track from day one.
+        </p>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {ENGAGEMENT_TOOLS.map((tool) => {
             const Icon = tool.icon;
             return (
               <Link
