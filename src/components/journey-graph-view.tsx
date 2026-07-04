@@ -102,9 +102,9 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
             stroke={stroke}
             strokeWidth={edge.kind === "prerequisite" ? 2 : 1.5}
             strokeDasharray={dash}
-            initial={reduced ? false : { opacity: 0 }}
-            animate={{ opacity: edge.kind === "prerequisite" ? 0.9 : 0.55 }}
-            transition={{ duration: reduced ? 0 : 0.4, delay: reduced ? 0 : i * 0.03 }}
+            initial={reduced ? false : { opacity: 0, pathLength: 0 }}
+            animate={{ opacity: edge.kind === "prerequisite" ? 0.9 : 0.55, pathLength: 1 }}
+            transition={reduced ? { duration: 0 } : { duration: 0.6, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
           />
         );
       })}
@@ -128,9 +128,9 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
           <g key={node.id} transform={`translate(${pos.x - 24}, ${pos.y - 24})`} opacity={colors.opacity}>
             <motion.g
               className={colors.cssClass}
-              initial={reduced ? false : { opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: reduced ? 0 : 0.35, delay: reduced ? 0 : 0.1 + index * 0.04 }}
+              initial={reduced ? false : { opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 20, delay: 0.1 + index * 0.04 }}
             >
               <circle
                 r={24}
@@ -239,7 +239,7 @@ export function JourneyTimelineMobile({ nodes, selectedId, onSelect }: Props) {
             style={{ opacity: colors.opacity }}
             initial={reduced ? false : { opacity: 0, x: -8 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: reduced ? 0 : 0.3, delay: reduced ? 0 : index * 0.04 }}
+            transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 20, delay: index * 0.04 }}
           >
             {!isLast ? (
               <span

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import { ProgressRing } from "@/components/progress-ring";
+import { StaggerGrid, StaggerItem } from "@/components/dashboard-stagger";
 import { SeasonNotice } from "@/components/season-notice";
 import { DashboardInsightTile } from "@/components/dashboard-insight-tile";
 import { RtoScenarioSlider } from "@/components/crisis/rto-scenario-slider";
@@ -190,11 +191,13 @@ export default async function DashboardPage() {
         </div>
       </section>
 
-      <section className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <StaggerGrid className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {insights.map((insight) => (
-          <DashboardInsightTile key={insight.id} insight={insight} />
+          <StaggerItem key={insight.id}>
+            <DashboardInsightTile insight={insight} />
+          </StaggerItem>
         ))}
-      </section>
+      </StaggerGrid>
 
       <section className="glass-panel-receded mt-5 rounded-lg px-5 py-4">
         <Link

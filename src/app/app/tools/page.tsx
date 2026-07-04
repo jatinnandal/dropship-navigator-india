@@ -1,4 +1,3 @@
-import Link from "next/link";
 import {
   Calculator,
   Calendar,
@@ -12,6 +11,8 @@ import {
   GitBranch,
   ClipboardCheck,
 } from "lucide-react";
+import { ToolCard } from "@/components/tool-card";
+import { getToolTier } from "@/lib/pricing-tiers";
 
 const TOOLS = [
   {
@@ -111,26 +112,9 @@ export default function ToolsIndexPage() {
       </p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        {TOOLS.map((tool) => {
-          const Icon = tool.icon;
-          return (
-            <Link
-              key={tool.href}
-              href={tool.href}
-              className="glass-panel grain group rounded-xl border p-5 transition-colors hover:border-amber-500/30"
-            >
-              <div className={`inline-flex rounded-lg border p-2.5 ${tool.accent}`}>
-                <Icon className="h-5 w-5" />
-              </div>
-              <h2 className="mt-3 font-display text-base font-semibold text-slate-100 group-hover:text-amber-300 transition-colors">
-                {tool.title}
-              </h2>
-              <p className="text-muted mt-1 text-sm leading-relaxed">
-                {tool.description}
-              </p>
-            </Link>
-          );
-        })}
+        {TOOLS.map((tool) => (
+          <ToolCard key={tool.href} {...tool} badge={getToolTier(tool.href) === "premium" ? "Premium" : undefined} />
+        ))}
       </div>
 
       {/* Core Differentiators */}
@@ -144,26 +128,9 @@ export default function ToolsIndexPage() {
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {DIFFERENTIATOR_TOOLS.map((tool) => {
-            const Icon = tool.icon;
-            return (
-              <Link
-                key={tool.href}
-                href={tool.href}
-                className="glass-panel grain group rounded-xl border p-5 transition-colors hover:border-amber-500/30"
-              >
-                <div className={`inline-flex rounded-lg border p-2.5 ${tool.accent}`}>
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h2 className="mt-3 font-display text-base font-semibold text-slate-100 group-hover:text-amber-300 transition-colors">
-                  {tool.title}
-                </h2>
-                <p className="text-muted mt-1 text-sm leading-relaxed">
-                  {tool.description}
-                </p>
-              </Link>
-            );
-          })}
+          {DIFFERENTIATOR_TOOLS.map((tool) => (
+            <ToolCard key={tool.href} {...tool} badge={getToolTier(tool.href) === "premium" ? "Premium" : undefined} />
+          ))}
         </div>
       </div>
 
@@ -178,26 +145,9 @@ export default function ToolsIndexPage() {
         </p>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {ENGAGEMENT_TOOLS.map((tool) => {
-            const Icon = tool.icon;
-            return (
-              <Link
-                key={tool.href}
-                href={tool.href}
-                className="glass-panel grain group rounded-xl border p-5 transition-colors hover:border-amber-500/30"
-              >
-                <div className={`inline-flex rounded-lg border p-2.5 ${tool.accent}`}>
-                  <Icon className="h-5 w-5" />
-                </div>
-                <h2 className="mt-3 font-display text-base font-semibold text-slate-100 group-hover:text-amber-300 transition-colors">
-                  {tool.title}
-                </h2>
-                <p className="text-muted mt-1 text-sm leading-relaxed">
-                  {tool.description}
-                </p>
-              </Link>
-            );
-          })}
+          {ENGAGEMENT_TOOLS.map((tool) => (
+            <ToolCard key={tool.href} {...tool} badge={getToolTier(tool.href) === "premium" ? "Premium" : undefined} />
+          ))}
         </div>
       </div>
     </div>

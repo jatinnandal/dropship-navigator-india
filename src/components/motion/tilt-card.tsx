@@ -9,7 +9,7 @@ type TiltCardProps = {
   maxTilt?: number;
 };
 
-export function TiltCard({ children, className = "", maxTilt = 6 }: TiltCardProps) {
+export function TiltCard({ children, className = "", maxTilt = 4 }: TiltCardProps) {
   const reduced = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);

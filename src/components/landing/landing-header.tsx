@@ -24,6 +24,9 @@ export function LandingHeader() {
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 md:px-10">
         <AppLogo href="/" subtitle="Seller operating system for India" />
         <div className="flex items-center gap-2">
+          <Link href="/pricing" className="hidden sm:inline-flex min-h-[44px] items-center rounded-md px-3 py-2 text-sm font-medium text-slate-300 transition-colors hover:text-slate-100">
+            Pricing
+          </Link>
           <Link href="/login" className="btn-landing-secondary min-h-[44px] rounded-md px-4 py-2 text-sm font-medium">
             Log in
           </Link>
