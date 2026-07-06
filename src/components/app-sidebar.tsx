@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Flame } from "lucide-react";
 import { AppLogo } from "@/components/app-logo";
 import { ProfileSwitcher } from "@/components/profile-switcher";
 import { signOut } from "@/app/login/actions";
@@ -23,74 +23,76 @@ export function AppSidebar({
   hasProfile,
   profiles,
   activeProfileId,
-  collapsed,
-  onToggleCollapsed,
 }: Props) {
   const pathname = usePathname();
   const navItems = getAppNavItems(hasProfile);
 
   return (
     <aside
-      className={`app-sidebar fixed left-0 top-0 z-40 hidden h-screen flex-col border-r border-neutral-800 bg-neutral-950/95 backdrop-blur md:flex ${
-        collapsed ? "app-sidebar-collapsed" : ""
-      }`}
+      className="app-sidebar fixed left-0 top-0 z-40 hidden h-screen flex-col md:flex"
+      style={{ padding: "18px 14px" }}
       aria-label="App navigation"
     >
-      <div className={`flex items-center border-b border-neutral-800 p-4 ${collapsed ? "justify-center" : ""}`}>
-        {collapsed ? (
+      <div className="flex flex-1 flex-col rounded-[18px] bg-[#060606] border border-white/[0.1] p-[18px_12px] box-border"
+        style={{ boxShadow: "0 24px 60px -24px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.06)" }}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 px-2 pb-4 border-b border-white/[0.08]">
           <AppLogo href={hasProfile ? "/app" : "/app/welcome"} />
-        ) : (
-          <AppLogo href={hasProfile ? "/app" : "/app/welcome"} subtitle="Your launch plan" />
-        )}
-      </div>
+        </div>
 
-      {hasProfile && profiles.length > 0 ? (
-        <ProfileSwitcher profiles={profiles} activeProfileId={activeProfileId} collapsed={collapsed} />
-      ) : null}
-
-      <nav className="flex flex-1 flex-col gap-1 p-3">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const active = isNavItemActive(pathname, item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              title={collapsed ? item.label : undefined}
-              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-                active ? "nav-active" : "text-muted hover:bg-neutral-900 hover:text-neutral-100"
-              } ${collapsed ? "justify-center px-2" : ""}`}
-            >
-              <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-              {!collapsed ? <span>{item.label}</span> : null}
-            </Link>
-          );
-        })}
-      </nav>
-
-      <div className="border-t border-neutral-800 p-3">
-        {!collapsed && email ? (
-          <p className="text-muted mb-2 truncate px-2 text-xs">{email}</p>
+        {/* Active plan chip */}
+        {hasProfile && profiles.length > 0 ? (
+          <div className="mt-3.5 mx-1">
+            <ProfileSwitcher profiles={profiles} activeProfileId={activeProfileId} />
+          </div>
         ) : null}
-        <form action={signOut}>
-          <button
-            type="submit"
-            className={`btn-ghost w-full min-h-[44px] rounded-md px-3 py-2 text-xs font-medium ${
-              collapsed ? "px-2" : ""
-            }`}
-          >
-            {collapsed ? "Out" : "Sign out"}
-          </button>
-        </form>
-        <button
-          type="button"
-          onClick={onToggleCollapsed}
-          className="btn-ghost mt-2 flex w-full min-h-[36px] items-center justify-center gap-1 rounded-md px-2 py-1.5 text-xs"
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-        >
-          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          {!collapsed ? <span>Collapse</span> : null}
-        </button>
+
+        {/* Navigation */}
+        <nav className="flex flex-1 flex-col gap-[3px] py-2.5">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = isNavItemActive(pathname, item.href);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-[11px] rounded-[10px] px-3 py-2.5 text-[13.5px] font-medium transition-colors ${
+                  active
+                    ? "text-white bg-white/[0.07] border border-white/[0.16]"
+                    : "text-[var(--text-faint)] border border-transparent hover:text-white"
+                }`}
+              >
+                <Icon className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+                <span>{item.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Streak card */}
+        <div className="mx-1 mb-2.5 rounded-xl p-3 bg-white/[0.03] border border-white/[0.1] flex items-center gap-2.5">
+          <Flame className="h-4 w-4 text-white shrink-0" aria-hidden="true" />
+          <div>
+            <p className="font-mono text-sm font-medium text-white">4-day streak</p>
+            <p className="text-[10.5px] font-medium text-[var(--text-faint)]">One step today keeps it alive</p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-white/[0.08] pt-3">
+          {email ? (
+            <p className="mb-2 px-2 font-mono text-[11px] text-[var(--text-faintest)] truncate">{email}</p>
+          ) : null}
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="w-full min-h-[38px] rounded-[10px] px-3 py-2 text-[12.5px] font-medium border border-white/[0.12] bg-white/[0.03] text-[var(--muted)] hover:text-white hover:border-white/[0.2] transition-colors cursor-pointer"
+            >
+              Sign out
+            </button>
+          </form>
+        </div>
       </div>
     </aside>
   );

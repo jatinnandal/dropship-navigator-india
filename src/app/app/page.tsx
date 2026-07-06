@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import { ProgressRing } from "@/components/progress-ring";
 import { StaggerGrid, StaggerItem } from "@/components/dashboard-stagger";
 import { SeasonNotice } from "@/components/season-notice";
@@ -21,6 +21,21 @@ import { getJourneyNodes } from "@/lib/journey-graph";
 import { getNextAction } from "@/lib/next-action";
 import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
+
+function formatDate() {
+  return new Date().toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good morning";
+  if (hour < 17) return "Good afternoon";
+  return "Good evening";
+}
 
 export default async function DashboardPage() {
   const userId = await getCurrentUserId();
@@ -72,142 +87,185 @@ export default async function DashboardPage() {
   );
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-      {dashboardState.mode === "crisis" && workspace.activeCrisis ? (
-        <>
-          <CrisisHero crisis={workspace.activeCrisis} />
-          <CrisisProtocol
-            crisis={workspace.activeCrisis}
-            profile={profile}
-            legalBusinessName={workspace.legalBusinessName}
-            gstin={workspace.gstin}
-          />
-        </>
-      ) : nextAction ? (
-        <section className="dashboard-hero hero-reveal rounded-xl p-6 sm:p-8 md:p-10 md:min-h-[280px]">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:gap-10">
-            <div className="flex flex-col items-center md:flex-shrink-0">
-              <ProgressRing
-                completed={progressStats.completedSubTasks}
-                total={progressStats.totalSubTasks}
-                size={112}
+    <main className="relative z-[1] flex-1 px-4 py-6 sm:px-8 sm:py-7" style={{ maxWidth: "var(--app-max-width)" }}>
+      <div className="flex flex-wrap gap-5 items-start">
+        {/* Main content column */}
+        <div className="flex-[1_1_560px] min-w-0">
+
+          {/* Top row: date + greeting + crisis CTA */}
+          <div className="flex items-center justify-between gap-4 px-1 pb-5">
+            <div>
+              <p className="font-mono text-[11.5px] text-[var(--text-faintest)]">{formatDate()}</p>
+              <h1 className="mt-1 text-[23px] font-semibold tracking-[-0.03em] text-white">
+                {getGreeting()}, <span className="font-serif-accent">Arjun.</span>
+              </h1>
+            </div>
+            <Link href="/app/crisis" className="btn-danger">
+              <Zap className="h-3.5 w-3.5" aria-hidden="true" />
+              Order gone wrong?
+            </Link>
+          </div>
+
+          {dashboardState.mode === "crisis" && workspace.activeCrisis ? (
+            <>
+              <CrisisHero crisis={workspace.activeCrisis} />
+              <CrisisProtocol
+                crisis={workspace.activeCrisis}
+                profile={profile}
+                legalBusinessName={workspace.legalBusinessName}
+                gstin={workspace.gstin}
               />
-              <p className="text-muted mt-2 text-center text-[11px]">
-                {progressStats.subTaskPercent}% complete
+            </>
+          ) : nextAction ? (
+            /* Command deck */
+            <section className="panel-raised-lg grid-texture rounded-[22px] p-8 sm:p-[32px_34px]">
+              <div className="relative flex flex-wrap gap-[30px] items-center">
+                {/* Corner radial light */}
+                <div className="absolute top-[-60%] right-[-10%] w-[60%] h-[140%] bg-[radial-gradient(circle,rgba(255,255,255,0.08),transparent_65%)] pointer-events-none" aria-hidden="true" />
+
+                <div className="relative flex flex-col items-center gap-2 shrink-0">
+                  <ProgressRing
+                    completed={progressStats.completedSubTasks}
+                    total={progressStats.totalSubTasks}
+                  />
+                  <p className="font-mono text-[11px] text-[var(--muted)]">
+                    {progressStats.subTaskPercent}% of your route
+                  </p>
+                </div>
+
+                <div className="relative min-w-[min(100%,300px)] flex-1">
+                  <p className="flex items-center gap-[9px] text-[11px] font-semibold tracking-[0.2em] uppercase text-[#9a9a9a]">
+                    <span className="w-[7px] h-[7px] rounded-full bg-white pulse-glow" />
+                    Do this now · Stage {Math.ceil((progressStats.completedSubTasks + 1) / 4)}
+                  </p>
+                  <h2 className="mt-3 text-[27px] font-bold tracking-[-0.03em] leading-[1.15] text-white">
+                    {nextAction.title}
+                  </h2>
+                  <p className="mt-3 text-[15px] leading-[1.6] text-[var(--body-text)]">{heroWhy}</p>
+                  <div className="mt-6 flex flex-wrap items-center gap-4">
+                    <Link
+                      href={nextAction.href}
+                      className="btn-primary min-h-[44px] gap-2 text-[14px]"
+                    >
+                      {nextAction.isLocked ? "Complete prerequisite" : "Start this step"}
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                    <span className="font-mono text-[11px] text-[var(--text-faint)]">
+                      ⏱ {nextAction.timeEstimate}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          ) : null}
+
+          {dashboardState.mode === "normal"
+            ? banners.map((banner) => (
+                <section
+                  key={banner.id}
+                  className={`mt-5 rounded-[14px] p-4 ${banner.variant === "deadline" ? "banner-deadline" : "banner-deadline"}`}
+                >
+                  <p className="text-sm font-medium text-white">{banner.message}</p>
+                  <Link href={banner.href} className="mt-2 inline-block text-sm font-medium text-white underline underline-offset-2 hover:text-white/70">
+                    {banner.ctaLabel}
+                  </Link>
+                </section>
+              ))
+            : null}
+
+          {dashboardState.mode === "at_risk" ? (
+            <AtRiskPanel
+              warnings={dashboardState.warnings}
+              profile={profile}
+              showRtoSlider={showRtoSlider}
+              defaultSellingPrice={workspace.targetSellingPrice}
+              defaultProductCost={workspace.productCost}
+              defaultShippingCost={workspace.shippingCost}
+              defaultRtoRate={workspace.estimatedRtoRate}
+            />
+          ) : null}
+
+          {listingLive && dashboardState.mode !== "crisis" && !showRtoSlider && !hasSnapshot ? (
+            <section className="panel mt-5 rounded-[18px] p-4 sm:p-5">
+              <RtoScenarioSlider
+                profile={profile}
+                defaultSellingPrice={workspace.targetSellingPrice}
+                defaultProductCost={workspace.productCost}
+                defaultShippingCost={workspace.shippingCost}
+                defaultRtoRate={workspace.estimatedRtoRate}
+              />
+            </section>
+          ) : null}
+
+          <SeasonNotice productType={profile.productType} />
+
+          {/* Route strip */}
+          <section className="panel mt-5 rounded-[18px] px-5 py-4">
+            <div className="flex items-center justify-between">
+              <p className="mono-label">Your route</p>
+              <Link href="/app/journey" className="text-[13px] font-medium text-white hover:text-white/70 transition-colors">
+                Open full map →
+              </Link>
+            </div>
+            <div className="mt-3 flex items-center gap-3">
+              <div className="flex-1">
+                <div className="progress-track">
+                  <div className="progress-fill" style={{ width: `${progressStats.subTaskPercent}%` }} />
+                </div>
+              </div>
+              <p className="font-mono text-[11px] text-[var(--muted)]">
+                {progressStats.completedSubTasks}/{progressStats.totalSubTasks}
               </p>
             </div>
-            <div className="min-w-0 flex-1">
-              {activeSellerProfile ? (
-                <p className="text-muted mb-3 text-xs">
-                  Active plan:{" "}
-                  <span className="font-medium text-neutral-200">{activeSellerProfile.name}</span>
-                  {" · "}
-                  <Link href="/app/profiles" className="underline hover:text-white">
-                    Switch plan
-                  </Link>
-                </p>
-              ) : null}
-              <p className="eyebrow inline-block">Do this now</p>
-              <h1 className="mt-3 text-2xl font-bold leading-tight text-white sm:text-3xl">
-                {nextAction.title}
-              </h1>
-              <p className="text-muted mt-4 max-w-2xl text-sm leading-6">{heroWhy}</p>
-              <p className="text-mentor mt-3 text-xs">Estimated time: {nextAction.timeEstimate}</p>
-              <div className="mt-6 flex w-full flex-col items-stretch gap-3 sm:flex-row sm:flex-wrap sm:items-center">
-                <Link
-                  href={nextAction.href}
-                  className="btn-primary min-h-[44px] gap-2 rounded-md px-5 py-2.5 text-sm font-medium"
-                >
-                  {nextAction.isLocked ? "Complete prerequisite" : "Start this step"}
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                <CrisisEntryButton className="text-muted text-left text-sm underline hover:text-white sm:py-2" />
-              </div>
-            </div>
-          </div>
-        </section>
-      ) : null}
+          </section>
 
-      {dashboardState.mode === "normal"
-        ? banners.map((banner) => (
-            <section
-              key={banner.id}
-              className={`mt-5 rounded-xl p-4 ${banner.variant === "deadline" ? "banner-deadline" : "banner-at-risk"}`}
-            >
-              <p className="text-sm font-medium text-slate-100">{banner.message}</p>
-              <Link href={banner.href} className="link-info mt-2 inline-block text-sm font-medium">
+          {/* Insight tiles */}
+          <StaggerGrid className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {insights.map((insight) => (
+              <StaggerItem key={insight.id}>
+                <DashboardInsightTile insight={insight} />
+              </StaggerItem>
+            ))}
+          </StaggerGrid>
+        </div>
+
+        {/* Right rail */}
+        <div className="flex-[1_1_300px] max-w-[360px] flex flex-col gap-4 sticky top-7">
+          {/* Deadline card */}
+          {banners.filter((b) => b.variant === "deadline").map((banner) => (
+            <div key={banner.id} className="banner-deadline rounded-[14px] p-4">
+              <p className="text-sm font-medium text-[var(--danger-text)]">{banner.message}</p>
+              <Link href={banner.href} className="mt-2 inline-block text-sm font-medium text-white underline underline-offset-2">
                 {banner.ctaLabel}
               </Link>
-            </section>
-          ))
-        : null}
-
-      {dashboardState.mode === "at_risk" ? (
-        <AtRiskPanel
-          warnings={dashboardState.warnings}
-          profile={profile}
-          showRtoSlider={showRtoSlider}
-          defaultSellingPrice={workspace.targetSellingPrice}
-          defaultProductCost={workspace.productCost}
-          defaultShippingCost={workspace.shippingCost}
-          defaultRtoRate={workspace.estimatedRtoRate}
-        />
-      ) : null}
-
-      {listingLive && dashboardState.mode !== "crisis" && !showRtoSlider && !hasSnapshot ? (
-        <section className="glass-panel-receded mt-5 rounded-xl p-4 sm:p-5">
-          <RtoScenarioSlider
-            profile={profile}
-            defaultSellingPrice={workspace.targetSellingPrice}
-            defaultProductCost={workspace.productCost}
-            defaultShippingCost={workspace.shippingCost}
-            defaultRtoRate={workspace.estimatedRtoRate}
-          />
-        </section>
-      ) : null}
-
-      <SeasonNotice productType={profile.productType} />
-
-      <section className="glass-panel-receded mt-5 rounded-lg px-5 py-4">
-        <div className="flex items-center gap-4">
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-3">
-              <p className="text-muted text-xs uppercase tracking-wide">Progress</p>
-              <p className="text-sm font-semibold text-slate-200">
-                {progressStats.completedSubTasks}/{progressStats.totalSubTasks} steps
-              </p>
             </div>
-            <p className="text-muted mt-1 text-xs leading-5">
-              {progressStats.completedSubTasks === 0
-                ? "Your launch plan is personalized — start with the first step."
-                : `${completionCount}/${totalModules} modules done · ${progressStats.subTaskPercent}% of your plan.`}
+          ))}
+
+          {/* Mentor card */}
+          <div className="panel rounded-[18px] p-5">
+            <p className="mono-label">Mentor&apos;s read</p>
+            <p className="mt-3 text-[15px] leading-[1.65] text-[var(--body-text)]">
+              <span className="font-serif-accent">&ldquo;Your shortlist looks good.</span> Don&apos;t skip the sample order — there&apos;s a 60% chance your first review kills the listing. Order it today — ₹280, 4 days.&rdquo;
             </p>
-            {dashboardState.mode === "at_risk" ? (
-              <Link href="/app/journey" className="link-info mt-2 inline-block text-xs">
-                View launch plan — risks flagged on dashboard
+          </div>
+
+          {/* Tools for this stage */}
+          <div className="panel rounded-[18px] p-5">
+            <p className="mono-label">Tools for this stage</p>
+            <div className="mt-3 flex flex-col gap-1">
+              <Link href="/app/tools/margin-calculator" className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-[var(--body-text)] hover:text-white hover:bg-white/[0.04] transition-colors">
+                🧮 Margin calculator
               </Link>
-            ) : null}
+              <Link href="/app/tools/shipping-estimator" className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-[var(--body-text)] hover:text-white hover:bg-white/[0.04] transition-colors">
+                📦 Shipping estimator
+              </Link>
+              <Link href="/app/tools" className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-[var(--body-text)] hover:text-white hover:bg-white/[0.04] transition-colors">
+                → All tools
+              </Link>
+            </div>
           </div>
         </div>
-      </section>
-
-      <StaggerGrid className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {insights.map((insight) => (
-          <StaggerItem key={insight.id}>
-            <DashboardInsightTile insight={insight} />
-          </StaggerItem>
-        ))}
-      </StaggerGrid>
-
-      <section className="glass-panel-receded mt-5 rounded-lg px-5 py-4">
-        <Link
-          href="/app/journey"
-          className="btn-ghost inline-flex min-h-[44px] items-center gap-2 rounded-md px-4 py-2 text-sm font-medium"
-        >
-          View full launch plan
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      </section>
+      </div>
     </main>
   );
 }

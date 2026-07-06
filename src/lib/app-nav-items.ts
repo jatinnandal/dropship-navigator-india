@@ -1,8 +1,8 @@
 import {
   BookOpen,
+  Compass,
   Home,
   LayoutDashboard,
-  ListChecks,
   SlidersHorizontal,
   Users,
   Wrench,
@@ -16,33 +16,21 @@ export type AppNavItem = {
 };
 
 export function getAppNavItems(hasProfile: boolean): AppNavItem[] {
-  const resources: AppNavItem = {
-    href: "/app/resources",
-    label: "Resources",
-    icon: BookOpen,
-  };
-
-  const tools: AppNavItem = {
-    href: "/app/tools",
-    label: "Tools",
-    icon: Wrench,
-  };
-
   if (hasProfile) {
     return [
       { href: "/app", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/app/journey", label: "Journey", icon: ListChecks },
-      tools,
+      { href: "/app/journey", label: "Journey", icon: Compass },
+      { href: "/app/tools", label: "Tools", icon: Wrench },
       { href: "/app/profiles", label: "Profiles", icon: Users },
-      resources,
+      { href: "/app/resources", label: "Resources", icon: BookOpen },
     ];
   }
 
   return [
     { href: "/app/welcome", label: "Home", icon: Home },
     { href: "/onboarding", label: "Setup", icon: SlidersHorizontal },
-    { href: "/app/journey", label: "Preview", icon: ListChecks },
-    resources,
+    { href: "/app/journey", label: "Preview", icon: Compass },
+    { href: "/app/resources", label: "Resources", icon: BookOpen },
   ];
 }
 

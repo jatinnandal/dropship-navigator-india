@@ -9,7 +9,7 @@ type Props = {
   size?: number;
 };
 
-export function ProgressRing({ completed, total, size = 112 }: Props) {
+export function ProgressRing({ completed, total, size = 116 }: Props) {
   const reduced = useReducedMotion();
   const stroke = 6;
   const radius = (size - stroke) / 2;
@@ -23,7 +23,7 @@ export function ProgressRing({ completed, total, size = 112 }: Props) {
       style={{
         width: size,
         height: size,
-        filter: pct > 0 ? `drop-shadow(0 0 ${Math.round(12 * pct)}px rgba(245, 158, 11, ${0.1 + pct * 0.15}))` : undefined,
+        filter: pct > 0 ? `drop-shadow(0 0 ${Math.round(20 * pct)}px rgba(255,255,255,${0.15 + pct * 0.25}))` : undefined,
       }}
     >
       <svg width={size} height={size} className="-rotate-90" aria-hidden="true">
@@ -32,7 +32,7 @@ export function ProgressRing({ completed, total, size = 112 }: Props) {
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="rgba(12, 24, 41, 0.8)"
+          stroke="rgba(255,255,255,0.08)"
           strokeWidth={stroke}
         />
         <motion.circle
@@ -40,7 +40,7 @@ export function ProgressRing({ completed, total, size = 112 }: Props) {
           cy={size / 2}
           r={radius}
           fill="none"
-          stroke="url(#progressGradient)"
+          stroke="#ffffff"
           strokeWidth={stroke}
           strokeLinecap="round"
           strokeDasharray={circumference}
@@ -48,21 +48,16 @@ export function ProgressRing({ completed, total, size = 112 }: Props) {
           animate={{ strokeDashoffset: targetOffset }}
           transition={{ duration: reduced ? 0 : 0.7, ease: [0.22, 1, 0.36, 1] }}
         />
-        <defs>
-          <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#34d399" />
-          </linearGradient>
-        </defs>
       </svg>
       <div className="absolute text-center">
-        <p className="font-display text-base font-bold text-slate-100">
-          <CountUp to={completed} duration={0.9} />/{total}
+        <p className="font-mono text-[21px] font-medium text-white">
+          <CountUp to={completed} duration={0.9} />
+          <span className="text-[var(--text-faintest)]">/{total}</span>
         </p>
-        <p className="text-[10px] text-muted">steps</p>
+        <p className="font-mono text-[9.5px] uppercase tracking-[0.12em] text-[var(--text-faintest)]">steps</p>
       </div>
       <span className="sr-only">
-        {completed} of {total} modules complete
+        {completed} of {total} steps complete
       </span>
     </div>
   );
