@@ -17,13 +17,13 @@ const NODE_SHORT_LABELS: Record<TaskModuleId, string> = {
 };
 
 const NODE_POSITIONS: Record<TaskModuleId, { x: number; y: number }> = {
-  "common-documentation": { x: 50, y: 220 },
-  "product-selection": { x: 310, y: 90 },
-  "supplier-sourcing": { x: 570, y: 235 },
-  "compliance-by-product": { x: 690, y: 145 },
-  "channel-launch": { x: 800, y: 70 },
-  "ads-growth": { x: 855, y: 130 },
-  "tracking-analytics": { x: 880, y: 200 },
+  "common-documentation": { x: 60, y: 230 },
+  "product-selection": { x: 200, y: 80 },
+  "supplier-sourcing": { x: 370, y: 240 },
+  "compliance-by-product": { x: 520, y: 100 },
+  "channel-launch": { x: 660, y: 60 },
+  "ads-growth": { x: 770, y: 170 },
+  "tracking-analytics": { x: 880, y: 230 },
 };
 
 const SUB_LABELS: Record<string, string> = {
@@ -34,7 +34,7 @@ const SUB_LABELS: Record<string, string> = {
 };
 
 /* Full SVG curve base path */
-const BASE_PATH = "M50 220 C 170 220 190 90 310 90 S 450 235 570 235 S 700 70 800 70 S 880 160 880 200";
+const BASE_PATH = "M60 230 C 130 230 130 80 200 80 S 290 240 370 240 S 450 100 520 100 S 590 60 660 60 S 730 170 770 170 S 830 230 880 230";
 
 /* Progress path — up to the second node (product-selection area) when stage 1 is done */
 function buildProgressPath(nodes: JourneyNode[]): string | null {
