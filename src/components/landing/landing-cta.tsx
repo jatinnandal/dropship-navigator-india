@@ -1,66 +1,134 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import CountUp from "@/components/CountUp";
-import { MagneticButton } from "@/components/motion/magnetic-button";
-import { Reveal } from "@/components/motion/reveal";
-
-const AVATAR_COLORS = [
-  "bg-amber-400",
-  "bg-cyan-400",
-  "bg-emerald-400",
-  "bg-rose-400",
-  "bg-violet-400",
-  "bg-orange-400",
-];
 
 export function LandingCta() {
   return (
-    <Reveal>
-      <div className="relative z-10 text-center">
-        {/* Social proof stat line */}
-        <div className="mx-auto mb-6 flex flex-col items-center gap-4">
-          {/* Avatar stack */}
-          <div className="flex -space-x-2">
-            {AVATAR_COLORS.map((color, i) => (
-              <div
-                key={i}
-                className={`h-8 w-8 rounded-full border-2 border-white ${color} shadow-sm`}
-                aria-hidden
-              />
-            ))}
-            <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-neutral-200 text-[10px] font-bold text-neutral-600 shadow-sm">
-              +<CountUp to={494} duration={2} />
-            </div>
-          </div>
-          <p className="text-sm font-medium text-neutral-600">
-            Join <span className="font-bold text-black"><CountUp to={500} duration={2} separator="," />+</span> Indian sellers building real businesses
-          </p>
-        </div>
+    <section
+      style={{
+        maxWidth: "76rem",
+        margin: "0 auto",
+        padding: "0 40px 110px",
+      }}
+    >
+      <div
+        data-reveal
+        style={{
+          position: "relative",
+          borderRadius: 28,
+          padding: "76px 40px",
+          textAlign: "center",
+          background: "linear-gradient(165deg, #0d0d0d, #030303)",
+          border: "1px solid rgba(255,255,255,0.14)",
+          boxShadow:
+            "0 40px 100px -40px rgba(0,0,0,0.95), 0 0 80px -30px rgba(255,255,255,0.12)",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background:
+              "radial-gradient(ellipse 60% 90% at 50% -30%, rgba(255,255,255,0.12), transparent)",
+            pointerEvents: "none",
+          }}
+        />
 
-        <h2 className="font-display text-3xl font-bold text-black md:text-4xl lg:text-5xl">
-          Ready to launch the right way?
+        <h2
+          style={{
+            position: "relative",
+            fontSize: "clamp(2.1rem, 4.2vw, 3.4rem)",
+            fontWeight: 600,
+            color: "#ffffff",
+            lineHeight: 1.15,
+            margin: 0,
+          }}
+        >
+          Ready to launch{" "}
+          <span className="font-serif-accent">the right way?</span>
         </h2>
-        <p className="text-muted-light mx-auto mt-4 max-w-xl text-base leading-7">
-          A co-pilot that tells you what to do next, not what to Google. Free to start — no credit card required.
+
+        <p
+          style={{
+            position: "relative",
+            fontSize: 16,
+            maxWidth: "32rem",
+            margin: "20px auto 0",
+            color: "#8a8a8a",
+            lineHeight: 1.6,
+          }}
+        >
+          A mentor that tells you what to do next, not what to Google. Free to
+          start — no credit card required.
         </p>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <MagneticButton
+
+        <div
+          style={{
+            position: "relative",
+            display: "flex",
+            justifyContent: "center",
+            gap: 12,
+            marginTop: 36,
+            flexWrap: "wrap",
+          }}
+        >
+          <Link
             href="/signup"
-            className="btn-landing-primary-on-light inline-flex min-h-[52px] items-center gap-2 rounded-md px-8 py-4 text-lg font-semibold"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "14px 32px",
+              borderRadius: 10,
+              backgroundColor: "#ffffff",
+              color: "#000000",
+              fontSize: 15,
+              fontWeight: 600,
+              border: "none",
+              cursor: "pointer",
+              boxShadow:
+                "0 0 30px -4px rgba(255,255,255,0.35), 0 2px 8px rgba(0,0,0,0.4)",
+              textDecoration: "none",
+            }}
           >
-            Get started free
-            <ArrowRight className="h-5 w-5" />
-          </MagneticButton>
+            Chart my route — free
+          </Link>
+
           <Link
             href="/login"
-            className="btn-landing-secondary-on-light inline-flex min-h-[52px] items-center rounded-md px-8 py-4 text-lg font-medium"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              padding: "14px 32px",
+              borderRadius: 10,
+              backgroundColor: "transparent",
+              color: "#ffffff",
+              fontSize: 15,
+              fontWeight: 500,
+              border: "1px solid rgba(255,255,255,0.18)",
+              textDecoration: "none",
+              cursor: "pointer",
+              transition: "border-color 0.2s",
+            }}
           >
             Log in
           </Link>
         </div>
+
+        <p
+          className="font-mono"
+          style={{
+            position: "relative",
+            fontSize: 12,
+            color: "#5a5a5a",
+            marginTop: 28,
+            letterSpacing: "0.01em",
+          }}
+        >
+          Join 500+ Indian sellers building real businesses
+        </p>
       </div>
-    </Reveal>
+    </section>
   );
 }
