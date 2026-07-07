@@ -1,86 +1,55 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
-import { AppLogo } from "@/components/app-logo";
-import { Parallax } from "@/components/motion/parallax";
-import { ProductMockupCard } from "@/components/landing/product-mockup-card";
-import { ScrollAtmosphere } from "@/components/motion/scroll-atmosphere";
-import { SmoothScroll } from "@/components/motion/smooth-scroll";
-
-const VALUE_PROPS = [
-  "Step-by-step launch plan for Indian marketplaces",
-  "Profit math with fees, GST, and RTO built in",
-  "Crisis playbooks when you're about to quit",
-];
+import Link from "next/link";
+import { NavigatorGlyph } from "@/components/app-logo";
 
 type AuthPageShellProps = {
   children: ReactNode;
 };
 
 export function AuthPageShell({ children }: AuthPageShellProps) {
-  const reduced = useReducedMotion();
-
   return (
-    <SmoothScroll>
-      <main className="relative min-h-screen overflow-hidden text-neutral-100">
-        <ScrollAtmosphere />
+    <div style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2", minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr", overflowX: "clip" }}>
 
-        <div className="relative z-10 mx-auto grid min-h-screen w-full max-w-6xl items-center gap-10 px-6 py-10 lg:grid-cols-2 lg:gap-16 lg:px-10 lg:py-14">
-          {/* Brand panel — full on desktop, compact on mobile */}
-          <motion.div
-            initial={{ opacity: 0, x: -32 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="auth-brand-panel grain relative overflow-hidden rounded-2xl lg:block"
-          >
-            {/* Desktop: full brand panel */}
-            <div className="hidden p-8 lg:block">
-              <p className="eyebrow-mono inline-block">Dropship Navigator India</p>
-              <h1 className="font-display mt-4 text-3xl font-bold leading-tight text-white md:text-4xl">
-                Your seller co-pilot for GST, margins, and launch day.
-              </h1>
-              <ul className="mt-6 space-y-3">
-                {VALUE_PROPS.map((item) => (
-                  <li key={item} className="flex items-start gap-2 text-sm leading-6 text-neutral-400">
-                    <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-neutral-300" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+      {/* Left: brand panel */}
+      <aside className="hidden lg:flex" style={{ position: "relative", flexDirection: "column", justifyContent: "space-between", padding: "40px 48px", overflow: "hidden", borderRight: "1px solid rgba(255,255,255,0.08)", minHeight: "100vh", boxSizing: "border-box" }}>
+        <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 70% 55% at 30% 20%, rgba(255,255,255,0.07), transparent 60%)" }} />
+        <div className="grid-texture" style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
 
-              <div className="mt-10 max-w-sm">
-                <Parallax speed={0.12}>
-                  <motion.div
-                    animate={reduced ? undefined : { y: [0, -6, 0] }}
-                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <ProductMockupCard compact />
-                  </motion.div>
-                </Parallax>
-              </div>
+        <Link href="/" style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
+          <span style={{ display: "grid", placeItems: "center", height: 32, width: 32, borderRadius: 9, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.18)", boxShadow: "0 0 20px -4px rgba(255,255,255,0.2)" }}>
+            <NavigatorGlyph size={15} />
+          </span>
+          <span style={{ fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", color: "#ffffff" }}>Navigator <span style={{ fontWeight: 500, color: "#6e6e6e" }}>India</span></span>
+        </Link>
+
+        <div style={{ position: "relative" }}>
+          <h1 style={{ margin: 0, fontSize: "clamp(2rem, 3.2vw, 2.9rem)", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1.08, color: "#ffffff", maxWidth: "16ch" }}>
+            From first doubt to <span className="font-serif-accent">first payout.</span>
+          </h1>
+          <p style={{ margin: "16px 0 0", maxWidth: "26rem", fontSize: "14.5px", lineHeight: 1.7, color: "#8a8a8a" }}>
+            Your route, your progress, your streak — saved to your account, not a browser cookie.
+          </p>
+
+          {/* Floating proof chip */}
+          <div className="float-y" style={{ marginTop: 30, display: "inline-block" }}>
+            <div style={{ borderRadius: 14, padding: "14px 18px", background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.16)", boxShadow: "0 24px 48px -16px rgba(0,0,0,0.9), 0 0 30px -12px rgba(255,255,255,0.2)" }}>
+              <p className="font-mono" style={{ margin: 0, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6e6e6e" }}>Currently guiding</p>
+              <p className="font-mono" style={{ margin: "4px 0 0", fontSize: 20, fontWeight: 500, color: "#ffffff" }}>500+ <span style={{ fontSize: 12, color: "#8a8a8a" }}>Indian sellers</span></p>
             </div>
+          </div>
+        </div>
 
-            {/* Mobile: collapsed to logo + tagline */}
-            <div className="flex items-center gap-3 px-5 py-4 lg:hidden">
-              <AppLogo href="/" />
-              <p className="text-xs text-neutral-400">Seller operating system for India</p>
-            </div>
-          </motion.div>
+        <p className="font-mono" style={{ position: "relative", margin: 0, fontSize: 11, color: "#4a4a4a" }}>vendor-neutral · no affiliate pushing · your data stays yours</p>
+      </aside>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full"
-          >
-            <div className="rounded-xl border border-neutral-800 bg-neutral-950/90 p-6 shadow-2xl backdrop-blur-md sm:p-8">
-              {children}
-            </div>
-          </motion.div>
+      {/* Right: auth card */}
+      <main className="col-span-2 lg:col-span-1" style={{ display: "grid", placeItems: "center", padding: 40, boxSizing: "border-box" }}>
+        <div style={{ width: "100%", maxWidth: 380 }}>
+          {children}
         </div>
       </main>
-    </SmoothScroll>
+    </div>
   );
 }

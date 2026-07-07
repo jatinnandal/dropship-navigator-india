@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { Shield, Sparkles, Zap } from "lucide-react";
 import {
   resendConfirmationEmail,
   signInWithGoogle,
@@ -38,14 +37,14 @@ const INFO_MESSAGES: Record<string, string> = {
 };
 
 function getPasswordStrength(pw: string): { level: "weak" | "medium" | "strong"; width: string; color: string } {
-  if (!pw || pw.length < 4) return { level: "weak", width: "33%", color: "#fb7185" };
+  if (!pw || pw.length < 4) return { level: "weak", width: "33%", color: "oklch(0.72 0.17 20)" };
   const hasUpper = /[A-Z]/.test(pw);
   const hasNumber = /[0-9]/.test(pw);
   const hasSpecial = /[^a-zA-Z0-9]/.test(pw);
   const score = (pw.length >= 8 ? 1 : 0) + (hasUpper ? 1 : 0) + (hasNumber ? 1 : 0) + (hasSpecial ? 1 : 0);
-  if (score >= 3) return { level: "strong", width: "100%", color: "#34d399" };
+  if (score >= 3) return { level: "strong", width: "100%", color: "oklch(0.72 0.13 165)" };
   if (score >= 2) return { level: "medium", width: "66%", color: "#f59e0b" };
-  return { level: "weak", width: "33%", color: "#fb7185" };
+  return { level: "weak", width: "33%", color: "oklch(0.72 0.17 20)" };
 }
 
 type Props = {
@@ -59,6 +58,7 @@ export function AuthForm({ mode }: Props) {
   const emailParam = searchParams.get("email") ?? "";
   const next = searchParams.get("next") ?? "";
   const [password, setPassword] = useState("");
+  const [activeTab, setActiveTab] = useState<"login" | "signup">(mode);
 
   const errorMessage = errorCode ? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.signup_failed) : null;
 
@@ -66,9 +66,7 @@ export function AuthForm({ mode }: Props) {
     if (!messageCode) return null;
     const base = INFO_MESSAGES[messageCode];
     if (!base) return null;
-    if (emailParam) {
-      return `${base} (${decodeURIComponent(emailParam)})`;
-    }
+    if (emailParam) return `${base} (${decodeURIComponent(emailParam)})`;
     return base;
   }, [messageCode, emailParam]);
 
@@ -78,173 +76,169 @@ export function AuthForm({ mode }: Props) {
     messageCode === "confirm_email_required" ||
     messageCode === "confirmation_resent";
 
-  const isLogin = mode === "login";
+  const isLogin = activeTab === "login";
   const strength = !isLogin ? getPasswordStrength(password) : null;
+
+  const inputStyle: React.CSSProperties = {
+    width: "100%",
+    boxSizing: "border-box",
+    minHeight: 46,
+    borderRadius: 11,
+    padding: "0 15px",
+    fontFamily: "var(--font-sans)",
+    fontSize: 14,
+    color: "#ffffff",
+    background: "rgba(255,255,255,0.03)",
+    border: "1px solid rgba(255,255,255,0.14)",
+    outline: "none",
+  };
 
   return (
     <div>
-      <h1 className="headline-gradient text-2xl font-bold">{isLogin ? "Welcome back" : "Create your account"}</h1>
-      <p className="text-muted mt-2 text-sm">
-        {isLogin
-          ? "Sign in to access your launch plan and journey progress."
-          : "Start your India e-commerce journey with a personalized co-pilot."}
-      </p>
-
-      {!isLogin ? (
-        <div className="mt-4 flex items-center gap-4 text-xs text-neutral-400">
-          <span className="inline-flex items-center gap-1">
-            <Sparkles className="h-3.5 w-3.5 text-amber-400" aria-hidden="true" />
-            Free forever
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Shield className="h-3.5 w-3.5 text-cyan-400" aria-hidden="true" />
-            No credit card
-          </span>
-          <span className="inline-flex items-center gap-1">
-            <Zap className="h-3.5 w-3.5 text-emerald-400" aria-hidden="true" />
-            5 min setup
-          </span>
-        </div>
-      ) : null}
-
-      {infoMessage ? (
-        <p className="meta-tile mt-4 rounded-lg px-3 py-2 text-sm text-emerald-200">{infoMessage}</p>
-      ) : null}
-
-      {errorMessage ? (
-        <p className="banner-deadline mt-4 rounded-lg px-3 py-2 text-sm text-rose-100">{errorMessage}</p>
-      ) : null}
-
-      {showResend && emailParam ? (
-        <form action={resendConfirmationEmail} className="mt-4">
-          <input type="hidden" name="email" value={decodeURIComponent(emailParam)} />
-          <button type="submit" className="btn-ghost min-h-[44px] w-full rounded-md px-4 py-2 text-sm font-medium">
-            Resend confirmation email
-          </button>
-        </form>
-      ) : null}
-
-      {messageCode === "confirm_email_required" ? (
-        <Link
-          href={`/login?email=${encodeURIComponent(emailParam)}`}
-          className="btn-primary mt-4 inline-flex min-h-[44px] w-full items-center justify-center rounded-md px-4 py-2 text-sm font-medium"
+      {/* Tab switcher */}
+      <div style={{ display: "flex", gap: 4, borderRadius: 12, padding: 4, background: "#060606", border: "1px solid rgba(255,255,255,0.1)" }}>
+        <button
+          onClick={() => setActiveTab("login")}
+          style={{
+            flex: 1,
+            minHeight: 40,
+            borderRadius: 9,
+            border: "none",
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
+            fontSize: "13.5px",
+            fontWeight: 600,
+            color: isLogin ? "#000000" : "#8a8a8a",
+            background: isLogin ? "#ffffff" : "transparent",
+          }}
         >
-          Go to sign in
-        </Link>
-      ) : (
-        <>
-          {!infoMessage || isLogin ? (
-            <>
-              <form action={signInWithGoogle} className="mt-6">
-                <input type="hidden" name="next" value={next} />
-                <button
-                  type="submit"
-                  className="btn-ghost flex min-h-[44px] w-full items-center justify-center gap-2 rounded-md border border-slate-600 px-4 py-2 text-sm font-medium"
-                >
-                  <GoogleIcon />
-                  Continue with Google
-                </button>
-              </form>
+          Log in
+        </button>
+        <button
+          onClick={() => setActiveTab("signup")}
+          style={{
+            flex: 1,
+            minHeight: 40,
+            borderRadius: 9,
+            border: "none",
+            cursor: "pointer",
+            fontFamily: "var(--font-sans)",
+            fontSize: "13.5px",
+            fontWeight: 600,
+            color: !isLogin ? "#000000" : "#8a8a8a",
+            background: !isLogin ? "#ffffff" : "transparent",
+          }}
+        >
+          Sign up
+        </button>
+      </div>
 
-              <div className="my-6 flex items-center gap-3">
-                <div className="h-px flex-1 bg-slate-700" />
-                <span className="text-muted text-xs uppercase">or</span>
-                <div className="h-px flex-1 bg-slate-700" />
-              </div>
-            </>
-          ) : null}
+      {/* Auth card */}
+      <section style={{ marginTop: 16, borderRadius: 20, padding: "30px 28px", background: "linear-gradient(165deg, #0c0c0c, #050505)", border: "1px solid rgba(255,255,255,0.14)", boxShadow: "0 30px 70px -30px rgba(0,0,0,0.9), 0 0 60px -24px rgba(255,255,255,0.12), inset 0 1px 0 rgba(255,255,255,0.1)" }}>
+        <h2 style={{ margin: 0, fontSize: 21, fontWeight: 600, letterSpacing: "-0.025em", color: "#ffffff" }}>
+          {isLogin ? "Welcome back." : "Chart your route."}
+        </h2>
+        <p style={{ margin: "6px 0 0", fontSize: 13, color: "#6e6e6e" }}>
+          {isLogin ? "Your route is where you left it." : "Ten questions, then a personalized launch plan."}
+        </p>
 
-          {isLogin ? (
-            <form action={signInWithPassword} className="space-y-4">
-              <input type="hidden" name="next" value={next} />
-              <AuthField
-                label="Email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                defaultValue={emailParam ? decodeURIComponent(emailParam) : undefined}
-              />
-              <AuthField label="Password" name="password" type="password" autoComplete="current-password" required />
-              <div className="flex justify-end">
-                <button type="button" className="text-xs text-amber-200/70 hover:text-amber-200 transition-colors" tabIndex={-1}>
-                  Forgot password?
-                </button>
-              </div>
-              <button type="submit" className="btn-primary btn-shimmer min-h-[44px] w-full rounded-md px-4 py-2 text-sm font-medium">
-                Sign in
-              </button>
-            </form>
-          ) : messageCode === "confirm_email_required" ? null : (
-            <form action={signUpWithPassword} className="space-y-4">
-              <AuthField label="Email" name="signup_email" type="email" autoComplete="email" required />
-              <div>
-                <AuthField
-                  label="Password"
-                  name="signup_password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                {password.length > 0 && strength ? (
-                  <div className="mt-2">
-                    <div className="pw-strength-track">
-                      <div
-                        className="pw-strength-fill"
-                        style={{ width: strength.width, backgroundColor: strength.color }}
-                      />
-                    </div>
-                    <p className="mt-1 text-xs" style={{ color: strength.color }}>
-                      {strength.level === "weak" ? "Weak" : strength.level === "medium" ? "Medium" : "Strong"}
-                    </p>
-                  </div>
-                ) : null}
-              </div>
-              <AuthField
-                label="Confirm password"
-                name="confirm_password"
-                type="password"
-                autoComplete="new-password"
-                required
-              />
-              <button type="submit" className="btn-primary btn-shimmer min-h-[44px] w-full rounded-md px-4 py-2 text-sm font-medium">
-                Create account
-              </button>
-            </form>
-          )}
-        </>
-      )}
+        {infoMessage && (
+          <div style={{ marginTop: 16, borderRadius: 11, padding: "10px 14px", fontSize: 13, lineHeight: 1.6, color: "oklch(0.78 0.12 165)", background: "oklch(0.72 0.13 165 / 0.08)", border: "1px solid oklch(0.72 0.13 165 / 0.2)" }}>{infoMessage}</div>
+        )}
 
-      <p className="text-muted mt-6 text-center text-sm">
-        {isLogin ? (
-          <>
-            New here?{" "}
-            <Link href="/signup" className="font-medium text-amber-200 underline">
-              Create an account
-            </Link>
-          </>
+        {errorMessage && (
+          <div style={{ marginTop: 16, borderRadius: 11, padding: "10px 14px", fontSize: 13, lineHeight: 1.6, color: "oklch(0.8 0.13 20)", background: "oklch(0.72 0.17 20 / 0.08)", border: "1px solid oklch(0.72 0.17 20 / 0.2)" }}>{errorMessage}</div>
+        )}
+
+        {showResend && emailParam && (
+          <form action={resendConfirmationEmail} style={{ marginTop: 12 }}>
+            <input type="hidden" name="email" value={decodeURIComponent(emailParam)} />
+            <button type="submit" className="hover:border-white/35 transition-colors" style={{ width: "100%", minHeight: 44, borderRadius: 11, border: "1px solid rgba(255,255,255,0.16)", background: "rgba(255,255,255,0.04)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 600, color: "#d6d6d6" }}>
+              Resend confirmation email
+            </button>
+          </form>
+        )}
+
+        {messageCode === "confirm_email_required" ? (
+          <Link href={`/login?email=${encodeURIComponent(emailParam)}`} className="hover:-translate-y-px transition-transform" style={{ marginTop: 20, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "var(--glow-white-cta), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+            Go to sign in
+          </Link>
         ) : (
           <>
-            Already have an account?{" "}
-            <Link href="/login" className="font-medium text-amber-200 underline">
-              Sign in
-            </Link>
+            {(!infoMessage || isLogin) && (
+              <>
+                {/* Google */}
+                <form action={signInWithGoogle} style={{ marginTop: 22 }}>
+                  <input type="hidden" name="next" value={next} />
+                  <button type="submit" className="hover:border-white/35 transition-colors" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, minHeight: 46, borderRadius: 11, border: "1px solid rgba(255,255,255,0.16)", background: "rgba(255,255,255,0.04)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "#e8e8e8" }}>
+                    <GoogleIcon />
+                    Continue with Google
+                  </button>
+                </form>
+
+                {/* Divider */}
+                <div style={{ margin: "20px 0", display: "flex", alignItems: "center", gap: 12 }}>
+                  <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.1)" }} />
+                  <span className="font-mono" style={{ fontSize: 10, letterSpacing: "0.1em", textTransform: "uppercase", color: "#4a4a4a" }}>or</span>
+                  <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.1)" }} />
+                </div>
+              </>
+            )}
+
+            {isLogin ? (
+              <form action={signInWithPassword} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <input type="hidden" name="next" value={next} />
+                <AuthField label="Email" name="email" type="email" autoComplete="email" required defaultValue={emailParam ? decodeURIComponent(emailParam) : undefined} inputStyle={inputStyle} />
+                <AuthField label="Password" name="password" type="password" autoComplete="current-password" required inputStyle={inputStyle} />
+                <button type="submit" className="hover:-translate-y-px transition-transform" style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                  Log in →
+                </button>
+                <p style={{ margin: "4px 0 0", textAlign: "center" }}>
+                  <button type="button" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12.5px", color: "#6e6e6e", fontFamily: "var(--font-sans)", borderBottom: "1px solid rgba(255,255,255,0.15)", padding: 0 }}>
+                    Forgot password?
+                  </button>
+                </p>
+              </form>
+            ) : (
+              <form action={signUpWithPassword} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <AuthField label="Email" name="signup_email" type="email" autoComplete="email" required inputStyle={inputStyle} />
+                <div>
+                  <AuthField label="Password" name="signup_password" type="password" autoComplete="new-password" required onChange={(e) => setPassword(e.target.value)} inputStyle={inputStyle} />
+                  {password.length > 0 && strength && (
+                    <div style={{ marginTop: 8 }}>
+                      <div style={{ height: 3, borderRadius: 2, background: "rgba(255,255,255,0.08)" }}>
+                        <div style={{ height: "100%", borderRadius: 2, width: strength.width, background: strength.color, transition: "width 200ms, background 200ms" }} />
+                      </div>
+                      <p className="font-mono" style={{ margin: "4px 0 0", fontSize: 10, color: strength.color }}>
+                        {strength.level === "weak" ? "Weak" : strength.level === "medium" ? "Medium" : "Strong"}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <AuthField label="Confirm password" name="confirm_password" type="password" autoComplete="new-password" required inputStyle={inputStyle} />
+                <button type="submit" className="hover:-translate-y-px transition-transform" style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                  Create account →
+                </button>
+                <p className="font-mono" style={{ margin: "4px 0 0", textAlign: "center", fontSize: "10.5px", lineHeight: 1.6, color: "#4a4a4a" }}>no credit card · free plan is the full mentor</p>
+              </form>
+            )}
           </>
         )}
-      </p>
+
+        <p style={{ margin: "16px 0 0", textAlign: "center", fontSize: 13, color: "#6e6e6e" }}>
+          {isLogin ? (
+            <>New here? <Link href="/signup" style={{ fontWeight: 600, color: "#ffffff", textDecoration: "underline", textUnderlineOffset: 3 }}>Create an account</Link></>
+          ) : (
+            <>Already have an account? <Link href="/login" style={{ fontWeight: 600, color: "#ffffff", textDecoration: "underline", textUnderlineOffset: 3 }}>Sign in</Link></>
+          )}
+        </p>
+      </section>
     </div>
   );
 }
 
 function AuthField({
-  label,
-  name,
-  type,
-  autoComplete,
-  required,
-  defaultValue,
-  onChange,
+  label, name, type, autoComplete, required, defaultValue, onChange, inputStyle,
 }: {
   label: string;
   name: string;
@@ -253,10 +247,11 @@ function AuthField({
   required?: boolean;
   defaultValue?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputStyle: React.CSSProperties;
 }) {
   return (
-    <label className="block text-sm">
-      <span className="text-muted">{label}</span>
+    <div>
+      <label className="font-mono" style={{ display: "block", marginBottom: 6, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6e6e6e" }}>{label}</label>
       <input
         name={name}
         type={type}
@@ -264,31 +259,21 @@ function AuthField({
         required={required}
         defaultValue={defaultValue}
         onChange={onChange}
-        className="auth-input mt-1 w-full min-h-[44px] rounded-md border border-slate-600 bg-slate-950/80 px-3 py-2 text-slate-100"
+        placeholder={type === "email" ? "you@example.com" : "••••••••"}
+        className="focus:border-white/45 focus:bg-white/5"
+        style={inputStyle}
       />
-    </label>
+    </div>
   );
 }
 
 function GoogleIcon() {
   return (
-    <svg className="h-4 w-4" viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        fill="#4285F4"
-        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-      />
-      <path
-        fill="#EA4335"
-        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-      />
+    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" fill="#8a8a8a" />
+      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#c9c9c9" />
+      <path d="M5.84 14.1c-.22-.66-.35-1.36-.35-2.1s.13-1.44.35-2.1V7.06H2.18A10.96 10.96 0 0 0 1 12c0 1.77.43 3.45 1.18 4.94l3.66-2.84z" fill="#6e6e6e" />
+      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#f2f2f2" />
     </svg>
   );
 }

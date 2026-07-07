@@ -1,6 +1,4 @@
-import Link from "next/link";
 import { Suspense } from "react";
-import { AppLogo } from "@/components/app-logo";
 import { AuthForm } from "@/components/auth-form";
 import { AuthPageShell } from "@/components/auth-page-shell";
 import { AuthSetupBanner } from "@/components/auth-setup-banner";
@@ -8,16 +6,10 @@ import { AuthSetupBanner } from "@/components/auth-setup-banner";
 export default function SignupPage() {
   return (
     <AuthPageShell>
-      <div className="mb-6 lg:block hidden">
-        <AppLogo href="/" subtitle="Seller operating system for India" />
-      </div>
       <AuthSetupBanner />
-      <Suspense fallback={<p className="text-muted text-sm">Loading...</p>}>
+      <Suspense fallback={<p style={{ fontSize: 13, color: "#6e6e6e" }}>Loading...</p>}>
         <AuthForm mode="signup" />
       </Suspense>
-      <Link href="/" className="text-muted mt-6 block text-center text-sm underline">
-        Back to home
-      </Link>
     </AuthPageShell>
   );
 }
