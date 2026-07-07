@@ -1,7 +1,13 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
+
+const ParticleBackground = dynamic(
+  () => import("./particle-background").then((m) => m.ParticleBackground),
+  { ssr: false }
+);
 
 type Props = {
   children: ReactNode;
@@ -9,7 +15,6 @@ type Props = {
 
 export function LandingPageShell({ children }: Props) {
   useEffect(() => {
-    // Scroll reveal observer
     const els = document.querySelectorAll("[data-reveal]");
     const io = new IntersectionObserver(
       (entries) => {
@@ -28,9 +33,7 @@ export function LandingPageShell({ children }: Props) {
 
   return (
     <div className="relative min-h-screen overflow-x-clip bg-[var(--background)]">
-      {/* WebGL background placeholder */}
-      <div data-webgl-bg className="pointer-events-none fixed inset-0 z-0" />
-      {/* Ambient light layer */}
+      <ParticleBackground />
       <div className="ambient-light" />
       {children}
     </div>

@@ -10,7 +10,7 @@ type AuthPageShellProps = {
 
 export function AuthPageShell({ children }: AuthPageShellProps) {
   return (
-    <div style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2", minHeight: "100vh", display: "grid", gridTemplateColumns: "1fr 1fr", overflowX: "clip" }}>
+    <div className="grid min-h-screen grid-cols-1 lg:grid-cols-2 overflow-x-clip" style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2" }}>
 
       {/* Left: brand panel */}
       <aside className="hidden lg:flex" style={{ position: "relative", flexDirection: "column", justifyContent: "space-between", padding: "40px 48px", overflow: "hidden", borderRight: "1px solid rgba(255,255,255,0.08)", minHeight: "100vh", boxSizing: "border-box" }}>
@@ -45,7 +45,7 @@ export function AuthPageShell({ children }: AuthPageShellProps) {
       </aside>
 
       {/* Right: auth card */}
-      <main className="col-span-2 lg:col-span-1" style={{ display: "grid", placeItems: "center", padding: 40, boxSizing: "border-box" }}>
+      <main className="col-span-1" style={{ display: "grid", placeItems: "center", padding: 40, boxSizing: "border-box" }}>
         <div style={{ width: "100%", maxWidth: 380 }}>
           {children}
         </div>
