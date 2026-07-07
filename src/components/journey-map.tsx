@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition } from "react";
-import { ArrowRight, Lock, RotateCcw } from "lucide-react";
+import { ArrowRight, Lock, RotateCcw, Compass } from "lucide-react";
 import type { JourneyNode } from "@/lib/journey-graph";
 import type { JourneyModule } from "@/lib/mvp-data";
 import type { TaskModuleId } from "@/lib/tasks";
@@ -14,24 +14,84 @@ import { JourneyGraphView, JourneyTimelineMobile } from "@/components/journey-gr
 import { fireMilestoneConfetti } from "@/lib/confetti";
 import { milestoneForSubTask } from "@/lib/milestones";
 import { resetProductWorkspace } from "@/app/app/journey/actions";
-import { JargonText } from "@/components/jargon-text";
+
+/* ── Descriptions per module for the detail panel ── */
+const MODULE_DESCRIPTIONS: Record<string, string> = {
+  "common-documentation":
+    "Master document folder, GSTIN, bank match, and the GST filing calendar — the paperwork that unlocks every marketplace.",
+  "product-selection":
+    "Shortlist products with real margin math — marketplace fees, TCS, shipping and RTO weighting included.",
+  "supplier-sourcing":
+    "Vet suppliers systematically and get terms in writing before any money moves.",
+  "compliance-by-product":
+    "HSN codes and category certificates for your launch SKUs.",
+  "channel-launch":
+    "Seller account, first hero SKU live, payout setup, and COD confirmation practice.",
+  "ads-growth":
+    "Break-even ROAS first, then a controlled ad test. Locked until your listing is live.",
+  "tracking-analytics":
+    "Weekly P&L, settlement reconciliation, and GSTR-8 / TCS review.",
+};
+
+/* ── Mentor notes per module ── */
+const MODULE_MENTOR_NOTES: Record<string, string> = {
+  "common-documentation":
+    "You cleared the paperwork stage faster than most. That folder will save you weeks when marketplace KYC asks for re-verification.",
+  "product-selection":
+    "Your shortlist looks good. Don't skip the sample order — one bad review on your first SKU is very hard to recover from.",
+  "supplier-sourcing":
+    "60% of beginner failures trace back to a bad supplier. Run the scorecard on at least two suppliers before committing.",
+  "compliance-by-product":
+    "Home decor is a low-compliance category — this stage should take you under an hour. Map HSN codes correctly to avoid GST rate disputes.",
+  "channel-launch":
+    "One hero SKU first. Test the full loop — order, ship, payout — before expanding the catalog.",
+  "ads-growth":
+    "Deprioritized for your budget — get to first payout before spending on ads. When you're ready, we calculate your break-even ROAS first.",
+  "tracking-analytics":
+    "Set up the P&L sheet before your first settlement arrives — reconciling from day one is 10x easier than untangling month three.",
+};
+
+const STATUS_TITLES: Record<string, string> = {
+  done: "COMPLETED",
+  in_progress: "YOU ARE HERE",
+  available: "OPEN",
+  locked: "LOCKED",
+};
 
 type Props = {
   nodes: JourneyNode[];
   modules?: JourneyModule[];
+  hasProfile?: boolean;
+  profileLine?: string | null;
+  completedStages?: number;
+  totalStages?: number;
+  doneSteps?: number;
+  totalSteps?: number;
+  routePercent?: number;
+  primaryChannel?: string;
+  productType?: string;
 };
 
-export function JourneyMap({ nodes, modules = [] }: Props) {
+export function JourneyMap({
+  nodes,
+  modules = [],
+  hasProfile = true,
+  profileLine,
+  completedStages = 0,
+  totalStages = 7,
+  doneSteps = 0,
+  totalSteps = 22,
+  routePercent = 0,
+}: Props) {
   const router = useRouter();
   const warningsRef = useRef<HTMLDivElement>(null);
-  const [selectedId, setSelectedId] = useState<TaskModuleId>(nodes[0]?.id ?? "common-documentation");
+  const [selectedId, setSelectedId] = useState<TaskModuleId>(
+    () => nodes.find((n) => n.status === "in_progress")?.id ?? nodes[0]?.id ?? "common-documentation",
+  );
   const [isResetting, startReset] = useTransition();
 
   const selected = nodes.find((n) => n.id === selectedId) ?? nodes[0];
   const selectedModule = modules.find((m) => m.id === selected?.id);
-  const totalProgress = nodes.reduce((sum, n) => sum + n.progressPercent, 0);
-  const allAvailable = nodes.every((n) => n.status === "available" || n.status === "done");
-  const isFreshJourney = totalProgress === 0 && allAvailable;
 
   function handleSelect(id: TaskModuleId) {
     setSelectedId(id);
@@ -63,174 +123,324 @@ export function JourneyMap({ nodes, modules = [] }: Props) {
   const isLocked = selected.status === "locked";
   const nextIncomplete = selected.subTasks.find((st) => !st.done);
   const nextEstimate = nextIncomplete
-    ? SUBTASK_TIME_ESTIMATES[nextIncomplete.id] ?? "~30 mins"
-    : null;
+    ? SUBTASK_TIME_ESTIMATES[nextIncomplete.id] ?? "~30-45 mins"
+    : "Stage complete";
+
+  /* Compute selection details */
+  const selDone = selected.subTasks.filter((st) => st.done).length;
+  const selPct = selected.subTasks.length > 0
+    ? Math.round((selDone / selected.subTasks.length) * 100)
+    : 0;
+
+  const statusColor =
+    selected.status === "done"
+      ? "var(--success-text)"
+      : selected.status === "in_progress"
+        ? "#ffffff"
+        : selected.status === "locked"
+          ? "#5a5a5a"
+          : "#c9c9c9";
+
+  const borderColor =
+    selected.status === "done"
+      ? "oklch(0.72 0.13 165 / 0.3)"
+      : selected.status === "in_progress"
+        ? "rgba(255,255,255,0.28)"
+        : "rgba(255,255,255,0.12)";
+
+  const ringBg =
+    selected.status === "done"
+      ? "conic-gradient(oklch(0.72 0.13 165) 0deg 360deg, rgba(255,255,255,0.07) 0deg)"
+      : `conic-gradient(#ffffff 0deg ${selPct * 3.6}deg, rgba(255,255,255,0.08) ${selPct * 3.6}deg 360deg)`;
+
+  const statusLabel =
+    selected.status === "in_progress"
+      ? `● YOU ARE HERE — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
+      : selected.status === "done"
+        ? `✓ ${STATUS_TITLES.done} — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
+        : selected.status === "locked"
+          ? `LOCKED — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
+          : `${STATUS_TITLES.available} — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`;
+
+  const description =
+    MODULE_DESCRIPTIONS[selected.id] ?? selectedModule?.description ?? "";
+  const mentorNote =
+    MODULE_MENTOR_NOTES[selected.id] ??
+    (selected.status === "done"
+      ? getModuleCompletionMessage(selected.id)
+      : "One step at a time — you're building a real business, not chasing a hack.");
 
   return (
-    <div className="space-y-6">
-      {isFreshJourney ? (
-        <p className="text-muted text-center text-sm">
-          Tap a module below to see sub-tasks. Start with Documentation — it unlocks everything else.
-        </p>
-      ) : null}
+    <div className="space-y-0">
+      {/* ── Header ── */}
+      <div
+        className="flex flex-wrap items-end justify-between gap-5"
+        style={{ padding: "0 4px 20px" }}
+      >
+        <div>
+          <p className="eyebrow">The route</p>
+          <h1
+            className="mt-2.5 text-[27px] font-semibold leading-tight text-white"
+            style={{ letterSpacing: "-0.03em" }}
+          >
+            Your launch{" "}
+            <span className="font-serif-accent">route.</span>
+          </h1>
+          {profileLine ? (
+            <p className="font-mono mt-2 text-xs" style={{ color: "#6e6e6e" }}>
+              {profileLine}
+            </p>
+          ) : null}
+        </div>
 
-      <div className="glass-panel rounded-xl p-4 sm:p-6">
+        {/* Stats cluster */}
+        <div className="panel flex items-center gap-[18px] px-5 py-3.5">
+          <div>
+            <p className="mono-label-sm">Stages</p>
+            <p className="mono-data mt-[3px] text-[17px] text-white">
+              {completedStages}
+              <span style={{ color: "#5a5a5a" }}>/{totalStages}</span>
+            </p>
+          </div>
+          <div
+            className="h-8"
+            style={{ width: "1px", background: "rgba(255,255,255,0.12)" }}
+          />
+          <div>
+            <p className="mono-label-sm">Steps</p>
+            <p className="mono-data mt-[3px] text-[17px] text-white">
+              {doneSteps}
+              <span style={{ color: "#5a5a5a" }}>/{totalSteps}</span>
+            </p>
+          </div>
+          <div
+            className="h-8"
+            style={{ width: "1px", background: "rgba(255,255,255,0.12)" }}
+          />
+          <div>
+            <p className="mono-label-sm">Route</p>
+            <p className="mono-data mt-[3px] text-[17px] text-white">
+              {routePercent}%
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Expedition map ── */}
+      <div className="hidden md:block">
         <JourneyGraphView nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
+      </div>
+      <div className="md:hidden">
         <JourneyTimelineMobile nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
       </div>
 
-      <article
-        className="rounded-xl p-5 sm:p-6"
-        style={{
-          background: selected.status === "in_progress" ? "rgba(245,158,11,0.05)" : "rgba(8,18,32,0.75)",
-          border: selected.status === "in_progress"
-            ? "1px solid rgba(245,158,11,0.2)"
-            : selected.status === "done"
-              ? "1px solid rgba(52,211,153,0.2)"
-              : "1px solid rgba(148,180,214,0.1)",
-        }}
+      {/* ── Detail + Mentor panels ── */}
+      <section
+        className="mt-[18px] grid items-start gap-3.5"
+        style={{ gridTemplateColumns: "1.5fr 1fr" }}
       >
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className={`text-xl font-bold ${selected.status === "done" ? "text-emerald-300" : selected.status === "in_progress" ? "text-amber-200" : "text-white"}`}>
-              {selected.title}
-            </h2>
-            <p className={`text-xs capitalize ${selected.status === "done" ? "text-emerald-400" : selected.status === "in_progress" ? "text-amber-400" : "text-muted"}`}>
-              {selected.status.replace("_", " ")}
+        {/* Detail panel */}
+        <article
+          className="panel"
+          style={{
+            borderRadius: "20px",
+            padding: "26px 28px",
+            borderColor: borderColor,
+          }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p
+                className="font-mono text-[10px] font-medium uppercase"
+                style={{ letterSpacing: "0.15em", color: statusColor }}
+              >
+                {statusLabel}
+              </p>
+              <h2
+                className="mt-2 text-[21px] font-semibold text-white"
+                style={{ letterSpacing: "-0.025em" }}
+              >
+                {selected.title}
+              </h2>
+            </div>
+            {/* Progress ring */}
+            <div
+              className="flex-shrink-0 grid place-items-center"
+              style={{
+                width: "52px",
+                height: "52px",
+                borderRadius: "50%",
+                background: ringBg,
+              }}
+            >
+              <div
+                className="grid place-items-center font-mono text-[11px]"
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  background: "#060606",
+                  color: statusColor,
+                }}
+              >
+                {selPct}%
+              </div>
+            </div>
+          </div>
+
+          <p
+            className="mt-3 text-[13.5px] leading-relaxed"
+            style={{ color: "#8a8a8a" }}
+          >
+            {description}
+          </p>
+
+          {/* Blocked-by notice */}
+          {selected.blockedBy.length > 0 ? (
+            <div className="banner-deadline mt-4 px-4 py-3">
+              <p className="text-xs font-medium text-white">Locked until:</p>
+              <ul className="mt-1 list-disc pl-4 text-xs" style={{ color: "var(--danger-text)" }}>
+                {selected.blockedBy.map((b) => (
+                  <li key={b.subTaskId}>
+                    <Link href={`/app/tasks/${b.moduleId}`} className="underline hover:text-white">
+                      {b.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {/* Warnings */}
+          {selected.softWarnings.length > 0 ? (
+            <div ref={warningsRef} className="mt-3 space-y-2">
+              {selected.softWarnings.map((w) => (
+                <p key={w} className="meta-tile text-xs" style={{ color: "#8a8a8a" }}>
+                  {w}
+                </p>
+              ))}
+            </div>
+          ) : null}
+
+          {/* Sub-tasks */}
+          <div className="mt-[18px] flex flex-col gap-2">
+            {selected.subTasks.map((st) => {
+              const done = st.done;
+              const bg = done ? "oklch(0.72 0.13 165 / 0.05)" : "rgba(255,255,255,0.03)";
+              const border = done ? "oklch(0.72 0.13 165 / 0.22)" : "rgba(255,255,255,0.09)";
+              const labelColor = done ? "oklch(0.78 0.11 165)" : "#e8e8e8";
+              const decoration = done ? "line-through" : "none";
+
+              return (
+                <div
+                  key={st.id}
+                  className="flex items-start gap-[13px] rounded-[13px] px-4 py-[13px] transition-colors"
+                  style={{
+                    background: bg,
+                    border: `1px solid ${border}`,
+                  }}
+                >
+                  <div className="mt-0.5">
+                    <TaskToggle
+                      subTaskId={st.id}
+                      label={st.label}
+                      hint={st.hint ?? ""}
+                      checked={done}
+                      disabled={isLocked}
+                      onToggled={onToggled}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* CTA button */}
+          {!isLocked ? (
+            <div className="mt-[18px] flex flex-wrap items-center gap-3">
+              <Link
+                href={`/app/tasks/${selected.id}`}
+                className="btn-primary inline-flex items-center gap-2.5 rounded-[11px] px-5 py-3 text-[13.5px]"
+              >
+                Open guided walkthrough
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+              {selected.id === "product-selection" ? (
+                <button
+                  type="button"
+                  onClick={handleProductReset}
+                  disabled={isResetting}
+                  className="btn-ghost inline-flex items-center gap-1.5 rounded-[11px] px-4 py-3 text-[13px]"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                  Pick new product
+                </button>
+              ) : null}
+            </div>
+          ) : (
+            <div className="mt-[18px] flex items-center gap-2 text-xs" style={{ color: "#5a5a5a" }}>
+              <Lock className="h-3.5 w-3.5" />
+              <span>Walkthrough locked</span>
+            </div>
+          )}
+        </article>
+
+        {/* ── Mentor panel ── */}
+        <aside
+          className="panel"
+          style={{
+            borderRadius: "20px",
+            padding: "24px",
+            borderColor: "rgba(255,255,255,0.12)",
+          }}
+        >
+          <div className="flex items-center gap-[11px]">
+            <div
+              className="grid place-items-center rounded-full bg-white text-black"
+              style={{ width: "36px", height: "36px" }}
+            >
+              <Compass className="h-4 w-4" />
+            </div>
+            <p
+              className="font-mono text-[10.5px] font-semibold uppercase"
+              style={{ letterSpacing: "0.16em", color: "#9a9a9a" }}
+            >
+              Mentor&apos;s read
             </p>
           </div>
-          {isLocked ? <Lock className="h-5 w-5 text-slate-600" aria-hidden="true" /> : null}
-        </div>
 
-        {selectedModule?.description ? (
-          <p className="text-muted mt-3 text-sm leading-6">{selectedModule.description}</p>
-        ) : null}
-
-        {selected.status === "done" ? (
-          <p className="meta-tile mt-3 text-sm text-neutral-300">{getModuleCompletionMessage(selected.id)}</p>
-        ) : null}
-
-        {selected.deprioritized ? (
-          <p className="meta-tile mt-3 text-xs text-neutral-400">
-            Deprioritized for your budget — complete launch and first payout before scaling ads.
-          </p>
-        ) : null}
-
-        <div className="mt-3">
-          <div className="progress-track h-1.5">
-            <div
-              className="h-full rounded-full transition-[width] duration-300 ease-out"
-              style={{
-                width: `${selected.progressPercent}%`,
-                background: selected.progressPercent === 100
-                  ? "linear-gradient(90deg, #34d399, #6ee7b7)"
-                  : "linear-gradient(90deg, #f59e0b, #fbbf24)",
-              }}
-            />
-          </div>
-          <p className="text-muted mt-1 text-xs">{selected.progressPercent}% sub-tasks done</p>
-        </div>
-
-        {selected.blockedBy.length > 0 ? (
-          <div className="mt-3 rounded-lg border border-neutral-700 bg-neutral-900 p-3 text-xs text-neutral-300">
-            <p className="font-medium text-white">Locked until:</p>
-            <ul className="mt-1 list-disc pl-4">
-              {selected.blockedBy.map((b) => (
-                <li key={b.subTaskId}>
-                  <Link href={`/app/tasks/${b.moduleId}`} className="underline hover:text-white">
-                    {b.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
-
-        {nextIncomplete && !isLocked ? (
-          <div className="mt-4 rounded-lg border border-white/15 bg-black p-4">
-            <p className="text-xs font-medium uppercase tracking-wide text-neutral-500">Next step here</p>
-            <p className="mt-1 text-sm font-medium text-white">{nextIncomplete.label}</p>
-            <p className="text-muted mt-1 text-xs">Estimated time: {nextEstimate}</p>
-            <Link
-              href={`/app/tasks/${selected.id}`}
-              className="btn-primary mt-3 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-md px-4 py-2 text-xs font-medium"
-            >
-              Start this step
-              <ArrowRight className="h-3 w-3" />
-            </Link>
-          </div>
-        ) : null}
-
-        {selected.softWarnings.length > 0 ? (
-          <div ref={warningsRef} className="mt-3 space-y-2">
-            {selected.softWarnings.map((w) => (
-              <p key={w} className="meta-tile text-xs text-neutral-400">
-                <JargonText text={w} />
-              </p>
-            ))}
-          </div>
-        ) : null}
-
-        <ul className="mt-4 space-y-2">
-          {selected.subTasks.map((st) => {
-            const guide = getSubTaskGuide(st.id, selected.id);
-            const severityLabel = st.severity === "required" ? "Required" : "Recommended";
-            return (
-              <li key={st.id}>
-                <div className="mb-1 flex items-center gap-2">
-                  <span
-                    className={`text-[10px] font-medium uppercase tracking-wide ${
-                      st.severity === "required" ? "text-neutral-300" : "text-neutral-500"
-                    }`}
-                  >
-                    {severityLabel}
-                  </span>
-                </div>
-                <TaskToggle
-                  subTaskId={st.id}
-                  label={st.label}
-                  hint={st.hint ?? guide.hint}
-                  howToSteps={guide.howToSteps}
-                  walkthroughHref={guide.walkthroughHref}
-                  checked={st.done}
-                  disabled={isLocked}
-                  onToggled={onToggled}
-                />
-              </li>
-            );
-          })}
-        </ul>
-
-        <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-          <Link
-            href={`/app/journey/${selected.id}`}
-            className="btn-ghost inline-flex min-h-[44px] items-center justify-center rounded-md px-3 py-2 text-xs font-medium"
+          <p
+            className="mt-4 text-[13.5px] leading-[1.7]"
+            style={{ color: "#b8b8b8" }}
           >
-            Overview
-          </Link>
-          {isLocked ? (
-            <span className="text-muted px-3 py-2 text-xs">Walkthrough locked</span>
-          ) : (
-            <Link
-              href={`/app/tasks/${selected.id}`}
-              className="btn-primary inline-flex min-h-[44px] items-center justify-center rounded-md px-3 py-2 text-xs font-medium"
-            >
-              Guided walkthrough
-            </Link>
-          )}
-          {selected.id === "product-selection" ? (
-            <button
-              type="button"
-              onClick={handleProductReset}
-              disabled={isResetting}
-              className="btn-ghost inline-flex min-h-[44px] items-center gap-1 rounded-md px-3 py-2 text-xs font-medium"
-            >
-              <RotateCcw className="h-3 w-3" />
-              Pick new product
-            </button>
+            <span className="font-serif-accent text-[15px] text-white">&ldquo;</span>
+            {mentorNote}
+            <span className="font-serif-accent text-[15px] text-white">&rdquo;</span>
+          </p>
+
+          <div
+            className="mt-[18px] border-t pt-4"
+            style={{ borderColor: "rgba(255,255,255,0.08)" }}
+          >
+            <p className="mono-label-sm">Next step estimate</p>
+            <p className="mono-data mt-1.5 text-[15px] text-white">
+              {nextEstimate}
+            </p>
+          </div>
+
+          {hasProfile ? (
+            <div className="mt-3.5">
+              <p className="mono-label-sm">Personalized for</p>
+              <p
+                className="mt-1.5 text-[12.5px] font-medium leading-relaxed"
+                style={{ color: "#8a8a8a" }}
+              >
+                {profileLine ?? "Default profile"}
+              </p>
+            </div>
           ) : null}
-        </div>
-      </article>
+        </aside>
+      </section>
     </div>
   );
 }

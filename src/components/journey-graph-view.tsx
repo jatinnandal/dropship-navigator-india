@@ -1,61 +1,59 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import type { JourneyNode } from "@/lib/journey-graph";
-import { JOURNEY_EDGES, type JourneyEdgeKind } from "@/lib/journey-graph";
 import type { TaskModuleId } from "@/lib/tasks";
 
+/* ── Node layout on the SVG path ── */
+
 const NODE_SHORT_LABELS: Record<TaskModuleId, string> = {
-  "common-documentation": "Docs",
+  "common-documentation": "Docs & GST",
   "product-selection": "Product",
   "compliance-by-product": "Compliance",
   "supplier-sourcing": "Supplier",
   "channel-launch": "Launch",
   "ads-growth": "Ads",
-  "tracking-analytics": "Analytics",
+  "tracking-analytics": "Payout & P&L",
 };
 
 const NODE_POSITIONS: Record<TaskModuleId, { x: number; y: number }> = {
-  "common-documentation": { x: 80, y: 40 },
-  "product-selection": { x: 240, y: 40 },
-  "compliance-by-product": { x: 400, y: 40 },
-  "supplier-sourcing": { x: 240, y: 140 },
-  "channel-launch": { x: 400, y: 140 },
-  "ads-growth": { x: 560, y: 100 },
-  "tracking-analytics": { x: 560, y: 180 },
+  "common-documentation": { x: 50, y: 220 },
+  "product-selection": { x: 310, y: 90 },
+  "supplier-sourcing": { x: 570, y: 235 },
+  "compliance-by-product": { x: 690, y: 145 },
+  "channel-launch": { x: 800, y: 70 },
+  "ads-growth": { x: 855, y: 130 },
+  "tracking-analytics": { x: 880, y: 200 },
 };
 
-function graphShortLabel(node: JourneyNode): string {
-  if (node.id === "channel-launch" && node.title.startsWith("Launch on ")) {
-    return node.title.replace("Launch on ", "");
-  }
-  if (node.id === "common-documentation" && node.title.startsWith("Validate")) {
-    return "Validate";
-  }
-  return NODE_SHORT_LABELS[node.id];
-}
+const SUB_LABELS: Record<string, string> = {
+  done: "completed",
+  in_progress: "you are here",
+  available: "open",
+  locked: "locked",
+};
 
-function nodeColors(status: JourneyNode["status"], isSelected: boolean) {
-  if (isSelected) {
-    return { fill: "rgba(245,158,11,0.25)", stroke: "#fbbf24", labelFill: "#fbbf24", strokeWidth: 2.5, opacity: 1, cssClass: "" };
-  }
-  switch (status) {
-    case "done":
-      return { fill: "rgba(52,211,153,0.15)", stroke: "#34d399", labelFill: "#6ee7b7", strokeWidth: 2, opacity: 1, cssClass: "" };
-    case "in_progress":
-      return { fill: "rgba(245,158,11,0.15)", stroke: "#f59e0b", labelFill: "#fbbf24", strokeWidth: 2, opacity: 1, cssClass: "pulse-active-node" };
-    case "available":
-      return { fill: "#0c1829", stroke: "#94a3b8", labelFill: "#e2e8f0", strokeWidth: 2, opacity: 1, cssClass: "pulse-available-node" };
-    default:
-      return { fill: "#1e293b", stroke: "#334155", labelFill: "#64748b", strokeWidth: 1.5, opacity: 0.5, cssClass: "" };
-  }
-}
+/* Full SVG curve base path */
+const BASE_PATH = "M50 220 C 170 220 190 90 310 90 S 450 235 570 235 S 700 70 800 70 S 880 160 880 200";
 
-function edgeColor(fromStatus: JourneyNode["status"], toStatus: JourneyNode["status"]): string {
-  if (fromStatus === "done" && toStatus === "done") return "#34d399";
-  if (fromStatus === "done" && (toStatus === "in_progress" || toStatus === "available")) return "#f59e0b";
-  if (fromStatus === "in_progress") return "rgba(245,158,11,0.5)";
-  return "#334155";
+/* Progress path — up to the second node (product-selection area) when stage 1 is done */
+function buildProgressPath(nodes: JourneyNode[]): string | null {
+  const doneCount = nodes.filter((n) => n.status === "done").length;
+  const inProgressIdx = nodes.findIndex((n) => n.status === "in_progress");
+  if (doneCount === 0 && inProgressIdx <= 0) return null;
+
+  // Simple approach: progress path goes to the position of the first in-progress or last done node
+  const targetIdx = inProgressIdx >= 0 ? inProgressIdx : doneCount - 1;
+  const target = nodes[targetIdx];
+  if (!target) return null;
+  const pos = NODE_POSITIONS[target.id];
+  if (!pos) return null;
+
+  // Build a curve from start to the target node position
+  const startPos = NODE_POSITIONS["common-documentation"];
+  if (pos.x <= startPos.x) return null;
+
+  return `M${startPos.x} ${startPos.y} C ${startPos.x + 120} ${startPos.y} ${pos.x - 120} ${pos.y} ${pos.x} ${pos.y}`;
 }
 
 type Props = {
@@ -64,213 +62,344 @@ type Props = {
   onSelect: (id: TaskModuleId) => void;
 };
 
-function edgePath(from: { x: number; y: number }, to: { x: number; y: number }, kind: JourneyEdgeKind): string {
-  if (kind === "loop" && from.x === to.x && from.y === to.y) {
-    return `M ${from.x + 28} ${from.y} a 28 28 0 1 1 -56 0`;
-  }
-  const mx = (from.x + to.x) / 2;
-  const my = (from.y + to.y) / 2;
-  return `M ${from.x} ${from.y} Q ${mx} ${my - 20} ${to.x} ${to.y}`;
-}
-
 export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
-  const reduced = useReducedMotion();
+  const zoneRef = useRef<HTMLDivElement>(null);
+  const planeRef = useRef<HTMLDivElement>(null);
+
+  /* 3D tilt on mousemove */
+  useEffect(() => {
+    const zone = zoneRef.current;
+    const plane = planeRef.current;
+    if (!zone || !plane) return;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    function onMove(e: MouseEvent) {
+      const r = zone!.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - 0.5;
+      const py = (e.clientY - r.top) / r.height - 0.5;
+      plane!.style.transition = "transform 120ms linear";
+      plane!.style.transform = `rotateX(${14 - py * 7}deg) rotateZ(${-px * 2.5}deg)`;
+    }
+
+    function onLeave() {
+      plane!.style.transition = "transform 600ms cubic-bezier(0.22,1,0.36,1)";
+      plane!.style.transform = "rotateX(14deg) rotateZ(0deg)";
+    }
+
+    zone.addEventListener("mousemove", onMove);
+    zone.addEventListener("mouseleave", onLeave);
+    return () => {
+      zone.removeEventListener("mousemove", onMove);
+      zone.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
+  const progressPath = buildProgressPath(nodes);
 
   return (
-    <svg
-      viewBox="0 0 640 240"
-      className="hidden w-full md:block"
-      role="img"
-      aria-label="Launch plan dependency graph"
-    >
-      {JOURNEY_EDGES.map((edge, i) => {
-        const from = NODE_POSITIONS[edge.from];
-        const to = NODE_POSITIONS[edge.to];
-        if (!from || !to) return null;
-        const d = edgePath(from, to, edge.kind);
-        const fromNode = nodes.find((n) => n.id === edge.from);
-        const toNode = nodes.find((n) => n.id === edge.to);
-        const fromStatus = fromNode?.status ?? "locked";
-        const toStatus = toNode?.status ?? "locked";
-        const stroke = edge.kind === "loop" ? "#334155" : edgeColor(fromStatus, toStatus);
-        const dash = edge.kind === "recommended" ? "6 4" : edge.kind === "loop" ? "4 3" : undefined;
-        return (
-          <motion.path
-            key={`${edge.from}-${edge.to}-${i}`}
-            d={d}
-            fill="none"
-            stroke={stroke}
-            strokeWidth={edge.kind === "prerequisite" ? 2 : 1.5}
-            strokeDasharray={dash}
-            initial={reduced ? false : { opacity: 0, pathLength: 0 }}
-            animate={{ opacity: edge.kind === "prerequisite" ? 0.9 : 0.55, pathLength: 1 }}
-            transition={reduced ? { duration: 0 } : { duration: 0.6, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+    <div ref={zoneRef} style={{ perspective: "1500px" }}>
+      <section
+        ref={planeRef}
+        className="panel-raised grid-texture"
+        style={{
+          transform: "rotateX(14deg)",
+          transformStyle: "preserve-3d",
+          willChange: "transform",
+          position: "relative",
+          overflow: "visible",
+          borderRadius: "22px",
+          padding: "28px 26px 16px",
+          background: "linear-gradient(165deg, #0b0b0b, #030303)",
+          border: "1px solid rgba(255,255,255,0.12)",
+          boxShadow: "0 60px 100px -40px rgba(0,0,0,0.98), 0 0 80px -30px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.1)",
+        }}
+      >
+        {/* Extra ambient glow overlay */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            borderRadius: "22px",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "radial-gradient(ellipse 50% 60% at 30% 30%, rgba(255,255,255,0.05), transparent 60%)",
+            }}
           />
-        );
-      })}
+        </div>
 
-      <style>{`
-        .pulse-available-node { animation: pulse-available 2.5s ease-in-out infinite; }
-        .pulse-active-node { animation: pulse-active 2s ease-in-out infinite; }
-        @keyframes pulse-available { 0%,100% { filter: drop-shadow(0 0 0px rgba(148,163,184,0)); } 50% { filter: drop-shadow(0 0 6px rgba(148,163,184,0.4)); } }
-        @keyframes pulse-active { 0%,100% { filter: drop-shadow(0 0 4px rgba(245,158,11,0.2)); } 50% { filter: drop-shadow(0 0 12px rgba(245,158,11,0.5)); } }
-        @media (prefers-reduced-motion: reduce) { .pulse-available-node, .pulse-active-node { animation: none; } }
-      `}</style>
-      {nodes.map((node, index) => {
-        const pos = NODE_POSITIONS[node.id];
-        if (!pos) return null;
-        const isSelected = selectedId === node.id;
-        const colors = nodeColors(node.status, isSelected);
-        const warningCount = node.softWarnings.length;
-        const isDone = node.status === "done";
+        <svg viewBox="0 0 920 300" className="relative block w-full">
+          {/* Base path */}
+          <path
+            d={BASE_PATH}
+            fill="none"
+            stroke="rgba(255,255,255,0.12)"
+            strokeWidth="3.5"
+          />
 
-        return (
-          <g key={node.id} transform={`translate(${pos.x - 24}, ${pos.y - 24})`} opacity={colors.opacity}>
-            <motion.g
-              className={colors.cssClass}
-              initial={reduced ? false : { opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 20, delay: 0.1 + index * 0.04 }}
-            >
-              <circle
-                r={24}
-                cx={24}
-                cy={24}
-                fill={colors.fill}
-                stroke={colors.stroke}
-                strokeWidth={colors.strokeWidth}
-                className="cursor-pointer transition-[stroke,fill] duration-200"
+          {/* Animated progress path */}
+          {progressPath ? (
+            <path
+              d={progressPath}
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="3.5"
+              strokeDasharray="9 8"
+              style={{
+                animation: "dashFlow 1.9s linear infinite",
+                filter: "drop-shadow(0 0 6px rgba(255,255,255,0.6))",
+              }}
+            />
+          ) : null}
+
+          {/* Nodes */}
+          {nodes.map((node) => {
+            const pos = NODE_POSITIONS[node.id];
+            if (!pos) return null;
+            const isSel = selectedId === node.id;
+            const done = node.status === "done";
+            const active = node.status === "in_progress";
+            const locked = node.status === "locked";
+            const r = active ? 15 : done ? 13 : 11;
+
+            const fill = done
+              ? "oklch(0.72 0.13 165)"
+              : active
+                ? "#ffffff"
+                : locked
+                  ? "rgba(255,255,255,0.05)"
+                  : "#0a0a0a";
+            const stroke = isSel
+              ? "#ffffff"
+              : done
+                ? "oklch(0.72 0.13 165 / 0.5)"
+                : active
+                  ? "rgba(255,255,255,0.5)"
+                  : locked
+                    ? "rgba(255,255,255,0.14)"
+                    : "rgba(255,255,255,0.32)";
+
+            const labelAbove = pos.y > 150;
+            const labelY = labelAbove ? pos.y - (r + 14) : pos.y + r + 20;
+            const subLabelY = labelAbove ? pos.y - (r + 28) : pos.y + r + 35;
+
+            const haloR = isSel ? r + 7 : active ? r + 6 : 0;
+            const haloStroke = isSel ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,0.3)";
+
+            const numColor = active ? "#000000" : "#c9c9c9";
+            const labelColor = isSel
+              ? "#ffffff"
+              : done
+                ? "oklch(0.8 0.12 165)"
+                : active
+                  ? "#ffffff"
+                  : locked
+                    ? "#3d3d3d"
+                    : "#c9c9c9";
+            const labelWeight = isSel || active ? "700" : "500";
+
+            const moduleIndex = nodes.findIndex((n) => n.id === node.id);
+            const num = moduleIndex + 1;
+
+            return (
+              <g
+                key={node.id}
                 onClick={() => onSelect(node.id)}
+                style={{ cursor: "pointer" }}
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") onSelect(node.id);
                 }}
-              />
-              {isDone ? (
-                <path
-                  d="M17 24 L22 29 L31 19"
-                  fill="none"
-                  stroke="#34d399"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="pointer-events-none"
-                />
-              ) : (
-                <text
-                  x={24}
-                  y={28}
-                  textAnchor="middle"
-                  fill={colors.labelFill}
-                  fontSize={11}
-                  fontWeight="600"
-                  className="pointer-events-none select-none"
-                >
-                  {index + 1}
-                </text>
-              )}
-              {warningCount > 0 && !isDone ? (
-                <circle cx={40} cy={8} r={8} fill="#f59e0b" stroke="#0c1829" strokeWidth={1} />
-              ) : null}
-              {warningCount > 0 && !isDone ? (
-                <text x={40} y={11} textAnchor="middle" fill="#0c1829" fontSize={9} fontWeight="bold">
-                  {warningCount}
-                </text>
-              ) : null}
-              <title>{node.title}</title>
-              <text
-                x={24}
-                y={58}
-                textAnchor="middle"
-                fill={isDone ? "#6ee7b7" : isSelected ? "#fbbf24" : colors.labelFill}
-                fontSize={9}
-                fontWeight={isSelected ? "600" : "400"}
-                className="pointer-events-none select-none"
+                aria-label={`${NODE_SHORT_LABELS[node.id]} - ${SUB_LABELS[node.status]}`}
               >
-                {graphShortLabel(node)}
-              </text>
-            </motion.g>
-          </g>
-        );
-      })}
+                {/* Halo */}
+                {haloR > 0 ? (
+                  <circle
+                    cx={pos.x}
+                    cy={pos.y}
+                    r={haloR}
+                    fill="none"
+                    stroke={haloStroke}
+                    strokeWidth="1.5"
+                    className={active && !isSel ? "pulse-glow" : ""}
+                  />
+                ) : null}
 
-      <text x={8} y={230} fill="#64748b" fontSize={9}>
-        Emerald = done · Amber = active · Gray = locked · Dashed = recommended
-      </text>
-    </svg>
+                {/* Main circle */}
+                <circle
+                  cx={pos.x}
+                  cy={pos.y}
+                  r={r}
+                  fill={fill}
+                  stroke={stroke}
+                  strokeWidth="2"
+                />
+
+                {/* Done checkmark */}
+                {done ? (
+                  <path
+                    d={`M${pos.x - 6} ${pos.y} L${pos.x - 1.5} ${pos.y + 4.5} L${pos.x + 6.5} ${pos.y - 5}`}
+                    fill="none"
+                    stroke="#03140d"
+                    strokeWidth="2.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="pointer-events-none"
+                  />
+                ) : null}
+
+                {/* Lock icon text */}
+                {locked ? (
+                  <text
+                    x={pos.x}
+                    y={pos.y + 4.5}
+                    textAnchor="middle"
+                    fontSize="12"
+                    className="pointer-events-none"
+                    fill="#6e6e6e"
+                  >
+                    &#x1F512;
+                  </text>
+                ) : null}
+
+                {/* Number */}
+                {!done && !locked ? (
+                  <text
+                    x={pos.x}
+                    y={pos.y + 4.5}
+                    textAnchor="middle"
+                    fill={numColor}
+                    fontSize="13"
+                    fontWeight="700"
+                    fontFamily="'IBM Plex Mono', monospace"
+                    className="pointer-events-none"
+                  >
+                    {num}
+                  </text>
+                ) : null}
+
+                {/* Label */}
+                <text
+                  x={pos.x}
+                  y={labelY}
+                  textAnchor="middle"
+                  fill={labelColor}
+                  fontSize="13"
+                  fontWeight={labelWeight}
+                  fontFamily="'Instrument Sans', sans-serif"
+                  className="pointer-events-none"
+                >
+                  {NODE_SHORT_LABELS[node.id]}
+                </text>
+
+                {/* Sub-label */}
+                <text
+                  x={pos.x}
+                  y={subLabelY}
+                  textAnchor="middle"
+                  fill="#5a5a5a"
+                  fontSize="10"
+                  fontWeight="500"
+                  fontFamily="'IBM Plex Mono', monospace"
+                  className="pointer-events-none"
+                >
+                  {SUB_LABELS[node.status]}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+
+        <p
+          className="mono-label-sm relative"
+          style={{ margin: "4px 4px 6px", color: "#5a5a5a" }}
+        >
+          Tap a milestone to see its steps &middot; solid line = travelled &middot; one hard lock: ads need a live listing
+        </p>
+      </section>
+    </div>
   );
 }
 
+/* ── Mobile timeline ── */
+
 export function JourneyTimelineMobile({ nodes, selectedId, onSelect }: Props) {
-  const reduced = useReducedMotion();
-
-  function mobileNodeStyle(status: JourneyNode["status"], isSelected: boolean) {
-    if (isSelected) return { borderColor: "#fbbf24", bg: "rgba(245,158,11,0.2)", color: "#fbbf24" };
-    switch (status) {
-      case "done": return { borderColor: "#34d399", bg: "rgba(52,211,153,0.15)", color: "#6ee7b7" };
-      case "in_progress": return { borderColor: "#f59e0b", bg: "rgba(245,158,11,0.12)", color: "#fbbf24" };
-      case "available": return { borderColor: "#94a3b8", bg: "#0c1829", color: "#e2e8f0" };
-      default: return { borderColor: "#334155", bg: "#1e293b", color: "#64748b" };
-    }
-  }
-
-  function lineColor(status: JourneyNode["status"]) {
-    switch (status) {
-      case "done": return "#34d399";
-      case "in_progress": return "#f59e0b";
-      default: return "#334155";
-    }
-  }
-
   return (
     <ol className="space-y-0 md:hidden">
       {nodes.map((node, index) => {
         const isSelected = selectedId === node.id;
         const isLast = index === nodes.length - 1;
-        const colors = nodeColors(node.status, isSelected);
-        const style = mobileNodeStyle(node.status, isSelected);
         const isDone = node.status === "done";
+        const isActive = node.status === "in_progress";
+        const locked = node.status === "locked";
+
+        const circleBg = isDone
+          ? "oklch(0.72 0.13 165)"
+          : isActive
+            ? "#ffffff"
+            : locked
+              ? "rgba(255,255,255,0.05)"
+              : "#0a0a0a";
+        const circleBorder = isSelected
+          ? "#ffffff"
+          : isDone
+            ? "oklch(0.72 0.13 165 / 0.5)"
+            : isActive
+              ? "rgba(255,255,255,0.5)"
+              : "rgba(255,255,255,0.2)";
+        const textColor = isDone
+          ? "oklch(0.8 0.12 165)"
+          : isActive || isSelected
+            ? "#ffffff"
+            : locked
+              ? "#5a5a5a"
+              : "#b8b8b8";
 
         return (
-          <motion.li
-            key={node.id}
-            className="relative flex gap-4 pb-6"
-            style={{ opacity: colors.opacity }}
-            initial={reduced ? false : { opacity: 0, x: -8 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={reduced ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 20, delay: index * 0.04 }}
-          >
+          <li key={node.id} className="relative flex gap-4 pb-6">
             {!isLast ? (
               <span
                 className="absolute left-[15px] top-8 h-[calc(100%-16px)] w-px"
-                style={{ backgroundColor: lineColor(node.status) }}
+                style={{
+                  backgroundColor: isDone
+                    ? "oklch(0.72 0.13 165 / 0.4)"
+                    : "rgba(255,255,255,0.1)",
+                }}
                 aria-hidden="true"
               />
             ) : null}
             <button
               type="button"
               onClick={() => onSelect(node.id)}
-              className="relative z-10 flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 text-xs font-bold"
-              style={{ borderColor: style.borderColor, backgroundColor: style.bg, color: style.color }}
+              className="relative z-10 flex h-8 w-8 flex-none items-center justify-center rounded-full border-2 text-xs font-bold font-mono"
+              style={{
+                borderColor: circleBorder,
+                backgroundColor: circleBg,
+                color: isDone ? "#03140d" : isActive ? "#000" : "#b8b8b8",
+              }}
             >
               {isDone ? (
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                  <path d="M3 7 L6 10 L11 4" stroke="#34d399" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M3 7 L6 10 L11 4" stroke="#03140d" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               ) : (
                 index + 1
               )}
             </button>
             <div className="min-w-0 flex-1 pt-0.5">
-              <p className={`text-sm font-semibold ${isDone ? "text-emerald-300" : isSelected ? "text-amber-300" : "text-neutral-200"}`}>
+              <p className="text-sm font-semibold" style={{ color: textColor }}>
                 {node.title}
               </p>
-              <p className="text-muted text-xs capitalize">
-                {node.status.replace("_", " ")} · {node.progressPercent}%
+              <p className="mono-label-sm mt-0.5">
+                {SUB_LABELS[node.status]} &middot; {node.progressPercent}%
               </p>
             </div>
-          </motion.li>
+          </li>
         );
       })}
     </ol>
