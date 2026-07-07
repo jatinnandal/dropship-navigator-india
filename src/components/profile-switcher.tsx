@@ -65,7 +65,7 @@ export function ProfileSwitcher({ profiles, activeProfileId, collapsed }: Props)
               className="w-full appearance-none rounded-lg border border-white/[0.1] bg-white/[0.03] py-2 pl-3 pr-8 text-[13px] font-semibold text-white"
             >
               {profiles.map((p) => (
-                <option key={p.id} value={p.id}>
+                <option key={p.id} value={p.id} style={{ background: "#111", color: "#fff" }}>
                   {p.name}
                 </option>
               ))}
