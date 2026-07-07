@@ -23,17 +23,11 @@ export default async function OnboardingPage({ searchParams }: { searchParams: S
   const profile = isNewProfile ? defaultProfile : await getStoredProfileForCurrentVisitor();
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
+    <main className="min-h-screen">
       <OnboardingWizard
         profile={profile}
         mode="create"
         returnTo={returnTo ?? (isNewProfile ? "/app/profiles" : "/app/journey")}
-        title={isNewProfile ? "Add a launch plan" : "Build your launch plan"}
-        introDescription={
-          isNewProfile
-            ? "Answer a few questions to create a new seller profile. Each plan has its own journey progress and marketplace checklist."
-            : "One focus at a time — your answers shape module order, compliance priority, and tool picks."
-        }
       />
     </main>
   );
