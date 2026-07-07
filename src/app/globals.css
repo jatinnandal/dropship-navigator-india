@@ -379,13 +379,8 @@ body {
    ═══════════════════════════════════════════════════════ */
 
 .app-sidebar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  height: 100vh;
   width: var(--sidebar-width);
   flex-shrink: 0;
-  padding: 18px 14px;
   box-sizing: border-box;
 }
 
@@ -527,6 +522,11 @@ body {
 
 @keyframes dashFlow {
   to { stroke-dashoffset: -24; }
+}
+
+@keyframes marqueeSlide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
 }
 
 @keyframes pulseGlow {
