@@ -1,43 +1,151 @@
+"use client";
+
+import { useState, useRef, useCallback } from "react";
 import { ExternalLink } from "lucide-react";
 import { RESOURCE_CATALOG } from "@/lib/resources-catalog";
 
-export default function ResourcesPage() {
-  return (
-    <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-      <header className="glass-panel grain rounded-xl p-6">
-        <p className="eyebrow inline-block">Tool picks</p>
-        <h1 className="headline-gradient mt-2 text-3xl font-bold">Resources</h1>
-        <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Vendor-neutral tools we reference across your launch plan. We are not affiliated with these
-          services — always verify pricing and terms before signing up.
-        </p>
-      </header>
+const FILTERS = [
+  { id: "all", label: "All" },
+  ...RESOURCE_CATALOG.map((c) => ({ id: c.id, label: c.title })),
+];
 
-      <div className="mt-8 space-y-8">
-        {RESOURCE_CATALOG.map((category) => (
-          <section key={category.id} className="glass-panel-receded rounded-xl p-5 sm:p-6">
-            <h2 className="font-display text-lg font-bold text-slate-100">{category.title}</h2>
-            <p className="text-muted mt-1 text-sm">{category.description}</p>
-            <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-              {category.links.map((link) => (
-                <li key={link.url}>
-                  <a
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="spotlight-card insight-tile insight-tile-info group flex h-full flex-col rounded-lg p-4 transition-colors hover:border-neutral-500"
-                  >
-                    <span className="flex items-center gap-2 font-medium text-slate-100">
-                      {link.name}
-                      <ExternalLink className="h-3.5 w-3.5 text-info opacity-70 group-hover:opacity-100" />
-                    </span>
-                    <span className="text-muted mt-2 text-sm leading-5">{link.description}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+const TAG_COLORS: Record<string, { color: string; border: string }> = {
+  "legal-gst": { color: "oklch(0.8 0.13 20)", border: "oklch(0.65 0.18 20 / 0.35)" },
+  product: { color: "#c9c9c9", border: "rgba(255,255,255,0.2)" },
+  sourcing: { color: "#c9c9c9", border: "rgba(255,255,255,0.2)" },
+  shipping: { color: "oklch(0.78 0.12 165)", border: "oklch(0.72 0.13 165 / 0.35)" },
+  marketplaces: { color: "#c9c9c9", border: "rgba(255,255,255,0.2)" },
+  ads: { color: "#c9c9c9", border: "rgba(255,255,255,0.2)" },
+  analytics: { color: "oklch(0.78 0.12 165)", border: "oklch(0.72 0.13 165 / 0.35)" },
+};
+
+function useTilt() {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const onMove = useCallback((e: React.MouseEvent) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transition = "transform 90ms linear, border-color 200ms";
+    el.style.transform = `perspective(800px) rotateY(${px * 5}deg) rotateX(${-py * 5}deg) translateY(-2px)`;
+    el.style.borderColor = "rgba(255,255,255,0.28)";
+  }, []);
+  const onLeave = useCallback(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.transition = "transform 450ms cubic-bezier(0.22,1,0.36,1), border-color 300ms";
+    el.style.transform = "none";
+    el.style.borderColor = "";
+  }, []);
+  return { ref, onMove, onLeave };
+}
+
+function ResourceCard({ link, categoryId }: { link: { name: string; url: string; description: string }; categoryId: string }) {
+  const tilt = useTilt();
+  const tag = TAG_COLORS[categoryId] ?? { color: "#c9c9c9", border: "rgba(255,255,255,0.2)" };
+
+  return (
+    <a
+      ref={tilt.ref}
+      onMouseMove={tilt.onMove}
+      onMouseLeave={tilt.onLeave}
+      href={link.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      style={{
+        display: "block",
+        textDecoration: "none",
+        borderRadius: 16,
+        padding: "20px 22px",
+        background: "#060606",
+        border: "1px solid rgba(255,255,255,0.09)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+        willChange: "transform",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span className="font-mono" style={{ fontSize: "9.5px", letterSpacing: "0.12em", textTransform: "uppercase", color: tag.color, border: `1px solid ${tag.border}`, borderRadius: 999, padding: "4px 10px" }}>
+          {categoryId.replace("-", " & ")}
+        </span>
+        <ExternalLink size={12} style={{ color: "#4a4a4a" }} />
+      </div>
+      <h3 style={{ margin: "14px 0 0", fontSize: 15, fontWeight: 600, letterSpacing: "-0.015em", lineHeight: 1.4, color: "#e8e8e8" }}>{link.name}</h3>
+      <p style={{ margin: "7px 0 0", fontSize: "12.5px", lineHeight: 1.55, color: "#7a7a7a" }}>{link.description}</p>
+    </a>
+  );
+}
+
+export default function ResourcesPage() {
+  const [filter, setFilter] = useState("all");
+
+  const visible = filter === "all" ? RESOURCE_CATALOG : RESOURCE_CATALOG.filter((c) => c.id === filter);
+
+  return (
+    <main style={{ flex: 1, position: "relative", zIndex: 1, padding: "26px 32px 60px", boxSizing: "border-box", maxWidth: "76rem" }}>
+      {/* Header */}
+      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, flexWrap: "wrap", padding: "0 4px 22px" }}>
+        <div>
+          <p className="eyebrow" style={{ margin: 0, display: "flex", alignItems: "center", gap: 12 }}>
+            <span style={{ display: "inline-block", width: 28, height: 1, background: "linear-gradient(90deg, #ffffff, rgba(255,255,255,0.2))" }} />
+            Resources
+          </p>
+          <h1 style={{ margin: "10px 0 0", fontSize: 27, fontWeight: 600, letterSpacing: "-0.03em", color: "#ffffff" }}>
+            Field guides, <span className="font-serif-accent">not theory.</span>
+          </h1>
+          <p style={{ margin: "8px 0 0", maxWidth: "40rem", fontSize: 14, lineHeight: 1.65, color: "#8a8a8a" }}>
+            Vendor-neutral tools and resources referenced across your launch plan. We are not affiliated — always verify pricing and terms.
+          </p>
+        </div>
+        {/* Filter chips */}
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+          {FILTERS.map((f) => {
+            const sel = filter === f.id;
+            return (
+              <button
+                key={f.id}
+                onClick={() => setFilter(f.id)}
+                style={{
+                  minHeight: 36,
+                  padding: "0 15px",
+                  borderRadius: 999,
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "12.5px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  color: sel ? "#000000" : "#8a8a8a",
+                  background: sel ? "#ffffff" : "rgba(255,255,255,0.03)",
+                  border: `1px solid ${sel ? "transparent" : "rgba(255,255,255,0.12)"}`,
+                  transition: "border-color 160ms",
+                }}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Featured guide */}
+      <section style={{ position: "relative", overflow: "hidden", borderRadius: 20, padding: "28px 30px", background: "linear-gradient(165deg, #0c0c0c, #050505)", border: "1px solid rgba(255,255,255,0.16)", boxShadow: "0 0 60px -24px rgba(255,255,255,0.14), inset 0 1px 0 rgba(255,255,255,0.08)" }}>
+        <div className="grid-texture" style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
+        <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
+          <div style={{ maxWidth: "36rem" }}>
+            <p className="font-mono" style={{ margin: 0, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a8a8a" }}>Featured · for your stage</p>
+            <h2 style={{ margin: "10px 0 0", fontSize: 21, fontWeight: 600, letterSpacing: "-0.025em", color: "#ffffff" }}>The hero SKU playbook: picking a first product that survives COD</h2>
+            <p style={{ margin: "8px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>Why boring products win, the 500g rule, RTO-weighted margin floors, and the ₹280 sample order that saves your listing.</p>
+          </div>
+          <a href="#" className="btn-primary" style={{ flexShrink: 0, gap: 9, minHeight: 44, padding: "0 20px", borderRadius: 11, fontSize: "13.5px" }}>Read · 8 min →</a>
+        </div>
+      </section>
+
+      {/* Resource grid */}
+      <div style={{ marginTop: 20, display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(270px, 1fr))", gap: 12 }}>
+        {visible.flatMap((category) =>
+          category.links.map((link) => (
+            <ResourceCard key={link.url} link={link} categoryId={category.id} />
+          ))
+        )}
       </div>
     </main>
   );
