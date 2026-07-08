@@ -82,7 +82,7 @@ export default function ResourcesPage() {
   const visible = filter === "all" ? RESOURCE_CATALOG : RESOURCE_CATALOG.filter((c) => c.id === filter);
 
   return (
-    <main style={{ flex: 1, position: "relative", zIndex: 1, padding: "26px 32px 60px", boxSizing: "border-box", maxWidth: "76rem" }}>
+    <main style={{ flex: 1, position: "relative", zIndex: 1, padding: "26px 32px 60px", boxSizing: "border-box", maxWidth: "76rem", margin: "0 auto", width: "100%" }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 20, flexWrap: "wrap", padding: "0 4px 22px" }}>
         <div>

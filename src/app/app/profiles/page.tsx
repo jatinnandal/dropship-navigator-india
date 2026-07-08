@@ -38,7 +38,7 @@ export default async function ProfilesPage() {
   const userInitial = email ? email[0]?.toUpperCase() : "U";
 
   return (
-    <main className="page-reveal max-w-[72rem] px-4 py-0 sm:px-8">
+    <main className="page-reveal mx-auto w-full max-w-[72rem] px-4 py-0 sm:px-8">
       {/* Header */}
       <div className="flex flex-wrap items-end justify-between gap-5 px-1 pb-[22px]">
         <div>

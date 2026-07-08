@@ -87,7 +87,7 @@ export default async function DashboardPage() {
   );
 
   return (
-    <main className="relative z-[1] flex-1 px-4 py-6 sm:px-8 sm:py-7" style={{ maxWidth: "var(--app-max-width)" }}>
+    <main className="relative z-[1] flex-1 mx-auto w-full px-4 py-6 sm:px-8 sm:py-7" style={{ maxWidth: "var(--app-max-width)" }}>
       <div className="flex flex-wrap gap-5 items-start">
         {/* Main content column */}
         <div className="flex-[1_1_560px] min-w-0">
