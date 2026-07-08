@@ -1,5 +1,15 @@
 import type { PrimaryChannel } from "./mvp-data";
 
+export const SETTLEMENT_DATA_META = {
+  lastVerified: "2026-07-07",
+  sources: [
+    "gonukkad.com/blog/amazon-india-seller-payment-cycle",
+    "evanik.com/marketplace-payment-cycle",
+    "digicommerce.in/blog/meesho-payment-cycle",
+    "seller.flipkart.com",
+  ],
+} as const;
+
 export type SettlementTimeline = {
   channel: PrimaryChannel;
   label: string;
@@ -14,8 +24,8 @@ export const SETTLEMENT_TIMELINES: Record<PrimaryChannel, SettlementTimeline> = 
   amazon: {
     channel: "amazon",
     label: "Amazon",
-    prepaidSettlementDays: 7,
-    codSettlementDays: 14,
+    prepaidSettlementDays: 14,
+    codSettlementDays: 21,
     deliveryDays: 4,
     returnWindowDays: 7,
     refundProcessingDays: 5,
@@ -23,7 +33,7 @@ export const SETTLEMENT_TIMELINES: Record<PrimaryChannel, SettlementTimeline> = 
   flipkart: {
     channel: "flipkart",
     label: "Flipkart",
-    prepaidSettlementDays: 10,
+    prepaidSettlementDays: 7,
     codSettlementDays: 15,
     deliveryDays: 5,
     returnWindowDays: 10,
@@ -33,7 +43,7 @@ export const SETTLEMENT_TIMELINES: Record<PrimaryChannel, SettlementTimeline> = 
     channel: "meesho",
     label: "Meesho",
     prepaidSettlementDays: 7,
-    codSettlementDays: 15,
+    codSettlementDays: 10,
     deliveryDays: 6,
     returnWindowDays: 7,
     refundProcessingDays: 5,

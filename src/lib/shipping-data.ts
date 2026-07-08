@@ -1,3 +1,13 @@
+export const SHIPPING_DATA_META = {
+  lastVerified: "2026-07-07",
+  sources: [
+    "shiprocket.in/pricing",
+    "delhivery.com/pricing",
+    "bluedart.com/rates",
+    "ecomexpress.in/pricing",
+  ],
+} as const;
+
 export type ShippingZone = "local" | "regional" | "national" | "metro";
 
 export type CarrierRate = {
@@ -38,8 +48,8 @@ export const CARRIERS: CarrierRate[] = [
     emoji: "\u{1F680}",
     baseRate: { local: 26, regional: 32, national: 38, metro: 28 },
     additionalPerKg: { local: 20, regional: 25, national: 30, metro: 22 },
-    codHandlingFee: 30,
-    codPercentFee: 0,
+    codHandlingFee: 25,
+    codPercentFee: 2.0,
     gstPercent: 18,
     fuelSurchargePercent: 15,
     rtoCharges: "full-round-trip",
@@ -53,7 +63,7 @@ export const CARRIERS: CarrierRate[] = [
     baseRate: { local: 40, regional: 48, national: 55, metro: 42 },
     additionalPerKg: { local: 25, regional: 30, national: 35, metro: 28 },
     codHandlingFee: 25,
-    codPercentFee: 0,
+    codPercentFee: 1.5,
     gstPercent: 18,
     fuelSurchargePercent: 10,
     rtoCharges: "full-round-trip",
@@ -67,7 +77,7 @@ export const CARRIERS: CarrierRate[] = [
     baseRate: { local: 60, regional: 70, national: 80, metro: 65 },
     additionalPerKg: { local: 35, regional: 40, national: 50, metro: 38 },
     codHandlingFee: 35,
-    codPercentFee: 0,
+    codPercentFee: 2.5,
     gstPercent: 18,
     fuelSurchargePercent: 12,
     rtoCharges: "full-round-trip",
@@ -95,7 +105,7 @@ export const CARRIERS: CarrierRate[] = [
     baseRate: { local: 35, regional: 42, national: 48, metro: 38 },
     additionalPerKg: { local: 22, regional: 28, national: 32, metro: 25 },
     codHandlingFee: 28,
-    codPercentFee: 0,
+    codPercentFee: 1.5,
     gstPercent: 18,
     fuelSurchargePercent: 12,
     rtoCharges: "full-round-trip",
@@ -125,7 +135,7 @@ export function calculateShippingCost(inputs: {
 
   // COD fee
   const codFee = isCod
-    ? carrier.codHandlingFee + (carrier.codPercentFee / 100) * inputs.orderValue
+    ? Math.max(carrier.codHandlingFee, (carrier.codPercentFee / 100) * inputs.orderValue)
     : 0;
 
   // GST on (base + weight + cod)

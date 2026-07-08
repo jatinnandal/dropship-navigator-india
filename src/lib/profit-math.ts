@@ -1,4 +1,5 @@
-import type { PrimaryChannel } from "@/lib/mvp-data";
+import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
+import { getFeesForProduct } from "@/lib/marketplace-fees";
 
 export type ProfitInputs = {
   sellingPrice: number;
@@ -7,11 +8,17 @@ export type ProfitInputs = {
   adCostPerOrder: number;
   rtoRatePercent: number;
   channel: PrimaryChannel;
+  category?: ProductType;
+  isCod?: boolean;
 };
 
 export type ProfitResult = {
   revenue: number;
   marketplaceCommission: number;
+  closingFee: number;
+  fixedFee: number;
+  codCollectionFee: number;
+  platformFee: number;
   paymentFee: number;
   gstOnFees: number;
   tcs: number;
@@ -24,24 +31,8 @@ export type ProfitResult = {
   breakEvenRoas: number;
   markupMultiple: number;
   verdict: "excellent" | "healthy" | "tight" | "loss";
+  fees: ReturnType<typeof getFeesForProduct>;
 };
-
-function channelCommissionRate(channel: PrimaryChannel): number {
-  switch (channel) {
-    case "amazon":
-      return 0.12;
-    case "flipkart":
-      return 0.13;
-    case "meesho":
-      return 0.08;
-    default:
-      return 0.02;
-  }
-}
-
-function channelTcsRate(channel: PrimaryChannel): number {
-  return channel === "meesho" ? 0 : 0.01;
-}
 
 export function calculateProfit(inputs: ProfitInputs): ProfitResult {
   const {
@@ -51,22 +42,25 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
     adCostPerOrder,
     rtoRatePercent,
     channel,
+    category = "general",
+    isCod = false,
   } = inputs;
 
   const revenue = Math.max(0, sellingPrice);
-  const commissionRate = channelCommissionRate(channel);
-  const marketplaceCommission = revenue * commissionRate;
-  const paymentFee = revenue * 0.02;
-  const platformFees = marketplaceCommission + paymentFee;
-  const gstOnFees = platformFees * 0.18;
-  const tcs = revenue * channelTcsRate(channel);
+  const fees = getFeesForProduct(channel, category, revenue, isCod);
+
   const shipping = Math.max(0, shippingCost);
   const adCost = Math.max(0, adCostPerOrder);
   const rtoFraction = Math.min(100, Math.max(0, rtoRatePercent)) / 100;
   const rtoLoss = (shipping * 2 + productCost * 0.3) * rtoFraction;
 
   const totalCosts =
-    productCost + shipping + marketplaceCommission + paymentFee + gstOnFees + tcs + adCost + rtoLoss;
+    productCost +
+    shipping +
+    fees.totalFees +
+    adCost +
+    rtoLoss;
+
   const netProfit = revenue - totalCosts;
   const netMarginPercent = revenue > 0 ? (netProfit / revenue) * 100 : 0;
   const breakEvenRoas = netMarginPercent > 0 ? 100 / netMarginPercent : Infinity;
@@ -80,10 +74,14 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
 
   return {
     revenue,
-    marketplaceCommission,
-    paymentFee,
-    gstOnFees,
-    tcs,
+    marketplaceCommission: fees.referralFee,
+    closingFee: fees.closingFee,
+    fixedFee: fees.fixedFee,
+    codCollectionFee: fees.codCollectionFee,
+    platformFee: fees.platformFee,
+    paymentFee: fees.paymentGatewayFee,
+    gstOnFees: fees.gstOnFees,
+    tcs: fees.tcs,
     shipping,
     productCost,
     adCost,
@@ -93,6 +91,7 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
     breakEvenRoas: Number.isFinite(breakEvenRoas) ? breakEvenRoas : 99,
     markupMultiple,
     verdict,
+    fees,
   };
 }
 
@@ -105,6 +104,7 @@ export type BlendedEconomicsInputs = {
   codRtoPercent: number;
   prepaidReturnPercent: number;
   channel: PrimaryChannel;
+  category?: ProductType;
 };
 
 export type BlendedEconomicsResult = {
@@ -128,6 +128,8 @@ export function calculateBlendedUnitEconomics(inputs: BlendedEconomicsInputs): B
     adCostPerOrder: inputs.adCostPerOrder,
     rtoRatePercent: inputs.codRtoPercent,
     channel: inputs.channel,
+    category: inputs.category,
+    isCod: true,
   });
 
   const prepaidResult = calculateProfit({
@@ -137,6 +139,8 @@ export function calculateBlendedUnitEconomics(inputs: BlendedEconomicsInputs): B
     adCostPerOrder: inputs.adCostPerOrder,
     rtoRatePercent: inputs.prepaidReturnPercent,
     channel: inputs.channel,
+    category: inputs.category,
+    isCod: false,
   });
 
   const blendedRtoPercent =

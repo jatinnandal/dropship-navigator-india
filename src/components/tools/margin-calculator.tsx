@@ -19,11 +19,13 @@ import { calculateProfit, defaultRtoForProductType } from "@/lib/profit-math";
 import type { ProfitResult } from "@/lib/profit-math";
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 import {
-  MARKETPLACE_FEES,
+  CHANNELS,
   WEIGHT_BRACKET_LABELS,
+  MARKETPLACE_FEES_META,
   type WeightBracket,
-  type MarketplaceFeeStructure,
+  type ChannelInfo,
 } from "@/lib/marketplace-fees";
+import { DataFreshness } from "@/components/data-freshness";
 import CountUp from "@/components/CountUp";
 
 /* ── types ── */
@@ -102,20 +104,21 @@ export function MarginCalculator({
 
   /* compute results for all 4 marketplaces */
   const allResults = useMemo(() => {
-    return MARKETPLACE_FEES.map((mp) => {
+    return CHANNELS.map((ch) => {
       const shipping =
-        shippingOverride ?? mp.typicalShipping[weightBracket];
+        shippingOverride ?? ch.typicalShipping[weightBracket];
       const result = calculateProfit({
         sellingPrice,
         productCost,
         shippingCost: shipping,
         adCostPerOrder,
         rtoRatePercent: rtoRate,
-        channel: mp.channel,
+        channel: ch.channel,
+        category: productCategory,
       });
-      return { mp, result, shipping };
+      return { ch, result, shipping };
     });
-  }, [sellingPrice, productCost, weightBracket, shippingOverride, adCostPerOrder, rtoRate]);
+  }, [sellingPrice, productCost, weightBracket, shippingOverride, adCostPerOrder, rtoRate, productCategory]);
 
   const bestIdx = useMemo(() => {
     let best = 0;
@@ -127,7 +130,7 @@ export function MarginCalculator({
     return best;
   }, [allResults]);
 
-  const activeResult = allResults.find((r) => r.mp.channel === activeTab)!;
+  const activeResult = allResults.find((r) => r.ch.channel === activeTab)!;
 
   /* save scenario */
   function handleSave() {
@@ -281,18 +284,18 @@ export function MarginCalculator({
         <div className="space-y-4">
           {/* Marketplace tab bar */}
           <div className="flex gap-1 rounded-lg bg-neutral-900/60 p-1 border border-neutral-800">
-            {MARKETPLACE_FEES.map((mp, i) => (
+            {CHANNELS.map((ch, i) => (
               <button
-                key={mp.channel}
+                key={ch.channel}
                 type="button"
-                onClick={() => setActiveTab(mp.channel)}
+                onClick={() => setActiveTab(ch.channel)}
                 className={`relative flex-1 min-h-[40px] rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                  activeTab === mp.channel
+                  activeTab === ch.channel
                     ? "text-amber-300"
                     : "text-slate-500 hover:text-slate-300"
                 }`}
               >
-                {activeTab === mp.channel && (
+                {activeTab === ch.channel && (
                   <motion.div
                     layoutId="activeMarketplaceTab"
                     className="absolute inset-0 rounded-md border border-amber-500/30 bg-amber-500/10"
@@ -300,7 +303,7 @@ export function MarginCalculator({
                   />
                 )}
                 <span className="relative z-10 flex items-center justify-center gap-1.5">
-                  {mp.name}
+                  {ch.name}
                   {i === bestIdx && (
                     <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" title="Best margin" />
                   )}
@@ -320,10 +323,10 @@ export function MarginCalculator({
               className="glass-panel grain rounded-xl p-5 sm:p-6"
             >
               <MarketplaceDetail
-                mp={activeResult.mp}
+                ch={activeResult.ch}
                 result={activeResult.result}
                 shipping={activeResult.shipping}
-                isBest={allResults[bestIdx].mp.channel === activeTab}
+                isBest={allResults[bestIdx].ch.channel === activeTab}
               />
             </motion.div>
           </AnimatePresence>
@@ -347,16 +350,16 @@ export function MarginCalculator({
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-800">
-                  {allResults.map(({ mp, result }, i) => (
+                  {allResults.map(({ ch, result }, i) => (
                     <tr
-                      key={mp.channel}
+                      key={ch.channel}
                       className={`${
                         i === bestIdx ? "bg-emerald-500/5" : ""
-                      } ${mp.channel === activeTab ? "text-slate-100" : "text-slate-400"}`}
+                      } ${ch.channel === activeTab ? "text-slate-100" : "text-slate-400"}`}
                     >
                       <td className="py-2.5 pr-3 font-medium">
                         <span className="flex items-center gap-1.5">
-                          {mp.name}
+                          {ch.name}
                           {i === bestIdx && (
                             <TrendingUp className="h-3 w-3 text-emerald-400" />
                           )}
@@ -364,7 +367,7 @@ export function MarginCalculator({
                       </td>
                       <td className="py-2.5 pr-3 text-right">{formatINR(result.marketplaceCommission)}</td>
                       <td className="py-2.5 pr-3 text-right">
-                        {formatINR(result.paymentFee + result.gstOnFees + result.tcs)}
+                        {formatINR(result.paymentFee + result.gstOnFees + result.tcs + result.closingFee + result.fixedFee + result.codCollectionFee + result.platformFee)}
                       </td>
                       <td className="py-2.5 pr-3 text-right">{formatINR(result.shipping)}</td>
                       <td className="py-2.5 pr-3 text-right">{formatINR(result.rtoLoss)}</td>
@@ -413,19 +416,19 @@ export function MarginCalculator({
         </div>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {allResults.map(({ mp, result }, i) => {
+          {allResults.map(({ ch, result }, i) => {
             const monthly = result.netProfit * monthlyOrders;
             const positive = monthly >= 0;
             return (
               <div
-                key={mp.channel}
+                key={ch.channel}
                 className={`rounded-lg border p-4 transition-colors ${
                   i === bestIdx
                     ? "border-emerald-500/30 bg-emerald-500/5"
                     : "border-neutral-800 bg-neutral-900/40"
                 }`}
               >
-                <p className="text-xs font-medium text-slate-400">{mp.name}</p>
+                <p className="text-xs font-medium text-slate-400">{ch.name}</p>
                 <p
                   className={`mt-1 text-xl font-bold ${
                     positive ? "text-emerald-400" : "text-rose-400"
@@ -480,7 +483,7 @@ export function MarginCalculator({
               </span>{" "}
               net on{" "}
               <span className="font-semibold text-slate-200">
-                {allResults[bestIdx].mp.name}
+                {allResults[bestIdx].ch.name}
               </span>{" "}
               after all marketplace fees, shipping, and RTO losses. That is{" "}
               <span className="font-bold text-amber-400">
@@ -491,6 +494,11 @@ export function MarginCalculator({
           </div>
         </div>
       </div>
+
+      {/* ── DATA FRESHNESS ── */}
+      <div className="flex justify-end px-1">
+        <DataFreshness meta={MARKETPLACE_FEES_META} />
+      </div>
     </div>
   );
 }
@@ -498,23 +506,27 @@ export function MarginCalculator({
 /* ── sub-components ── */
 
 function MarketplaceDetail({
-  mp,
+  ch,
   result,
   shipping,
   isBest,
 }: {
-  mp: MarketplaceFeeStructure;
+  ch: ChannelInfo;
   result: ProfitResult;
   shipping: number;
   isBest: boolean;
 }) {
+  const f = result.fees;
   const rows: { label: string; value: number; type?: "cost" | "revenue" }[] = [
     { label: "Revenue", value: result.revenue, type: "revenue" },
-    { label: `Commission (${mp.referralPercent}%)`, value: result.marketplaceCommission, type: "cost" },
-    ...(mp.closingFee > 0 ? [{ label: "Closing Fee", value: mp.closingFee, type: "cost" as const }] : []),
-    { label: `Payment Gateway (${mp.paymentGatewayPercent}%)`, value: result.paymentFee, type: "cost" },
+    ...(f.referralFee > 0 ? [{ label: `Commission (${f.referralPercent}%)`, value: result.marketplaceCommission, type: "cost" as const }] : []),
+    ...(f.closingFee > 0 ? [{ label: "Closing Fee", value: f.closingFee, type: "cost" as const }] : []),
+    ...(f.fixedFee > 0 ? [{ label: "Fixed Fee", value: f.fixedFee, type: "cost" as const }] : []),
+    ...(f.codCollectionFee > 0 ? [{ label: "COD Collection Fee", value: f.codCollectionFee, type: "cost" as const }] : []),
+    ...(f.platformFee > 0 ? [{ label: "Platform Fee", value: f.platformFee, type: "cost" as const }] : []),
+    ...(f.paymentGatewayFee > 0 ? [{ label: `Payment Gateway (${f.paymentGatewayPercent}%)`, value: result.paymentFee, type: "cost" as const }] : []),
     { label: "GST on Fees (18%)", value: result.gstOnFees, type: "cost" },
-    ...(result.tcs > 0 ? [{ label: `TCS (${mp.tcsPercent}%)`, value: result.tcs, type: "cost" as const }] : []),
+    ...(result.tcs > 0 ? [{ label: `TCS (${f.tcsPercent}%)`, value: result.tcs, type: "cost" as const }] : []),
     { label: "Shipping", value: shipping, type: "cost" },
     { label: "Product Cost", value: result.productCost, type: "cost" },
     ...(result.adCost > 0 ? [{ label: "Ad Cost", value: result.adCost, type: "cost" as const }] : []),
@@ -526,7 +538,7 @@ function MarketplaceDetail({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg font-bold text-slate-100">{mp.name}</h3>
+        <h3 className="font-display text-lg font-bold text-slate-100">{ch.name}</h3>
         <span
           className={`rounded-md border px-2.5 py-1 text-xs font-semibold ${vc.className}`}
         >

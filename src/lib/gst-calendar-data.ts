@@ -18,6 +18,15 @@ export type GstEvent = {
   daysUntilDue: number;
 };
 
+export const GST_DATA_META = {
+  lastVerified: "2026-07-07",
+  sources: [
+    "gst.gov.in",
+    "taxguru.in/goods-and-service-tax",
+    "cleartax.in/gst",
+  ],
+} as const;
+
 const GST_FILINGS: GstFiling[] = [
   {
     id: "gstr1-monthly",
@@ -79,8 +88,8 @@ const GST_FILINGS: GstFiling[] = [
     form: "GSTR-3B",
     frequency: "quarterly",
     description:
-      "Quarterly summary return with tax payment for QRMP filers. Due 22nd–24th based on state.",
-    dueDay: 22,
+      "Quarterly summary return with tax payment for QRMP filers. Due 22nd or 24th based on state category.",
+    dueDay: 22, // 22nd or 24th depending on state category
     lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST), max ₹10,000 + 18% interest on tax due",
     applicableTo: "qrmp",
     prepChecklist: [
@@ -113,7 +122,7 @@ const GST_FILINGS: GstFiling[] = [
     form: "GSTR-2A vs GSTR-8",
     frequency: "monthly",
     description:
-      "Match marketplace TCS (GSTR-8) with your GSTR-2A. No fixed deadline — do it monthly to catch mismatches early.",
+      "Match marketplace TCS (GSTR-8, rate 0.5% since July 2024) with your GSTR-2A. Do monthly to catch mismatches.",
     dueDay: 28,
     lateFeePenalty: "No direct penalty, but unclaimed TCS = lost money",
     applicableTo: "all",
@@ -132,7 +141,7 @@ const GST_FILINGS: GstFiling[] = [
     description:
       "Even with zero sales, you MUST file a NIL return every period. Missing it costs ₹20/day.",
     dueDay: 11,
-    lateFeePenalty: "₹20/day (₹10 CGST + ₹10 SGST) for NIL, max ₹10,000",
+    lateFeePenalty: "₹20/day (₹10 CGST + ₹10 SGST) for NIL returns, max ₹10,000",
     applicableTo: "all",
     prepChecklist: [
       "Confirm zero transactions for the period",
