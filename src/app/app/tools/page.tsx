@@ -534,11 +534,11 @@ export default function ToolsIndexPage() {
           }}
         >
           <ToolCard
+            href="/app/tools/cod-simulator"
             title="COD call simulator"
             description="Practice the confirmation call that decides ship vs. return."
             icon="Phone"
-            status="locked"
-            statusLabel="soon"
+            status="open"
           />
           <ToolCard
             title="Product scorecard"
