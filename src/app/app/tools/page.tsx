@@ -1,8 +1,6 @@
 import Link from "next/link";
-import { Calculator, Target } from "lucide-react";
+import { Calculator, ShieldCheck } from "lucide-react";
 import { ToolCard } from "@/components/tool-card";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { getToolTier } from "@/lib/pricing-tiers";
 
 export default function ToolsIndexPage() {
   return (
@@ -157,9 +155,9 @@ export default function ToolsIndexPage() {
             </div>
           </Link>
 
-          {/* Product scorecard */}
+          {/* Supplier scorecard */}
           <Link
-            href="/app/tools/product-scorecard"
+            href="/app/tools/supplier-scorecard"
             className="block"
             style={{ textDecoration: "none" }}
           >
@@ -191,7 +189,7 @@ export default function ToolsIndexPage() {
                     flexShrink: 0,
                   }}
                 >
-                  <Target size={18} className="text-white" />
+                  <ShieldCheck size={18} className="text-white" />
                 </div>
                 <div>
                   <h3
@@ -202,7 +200,7 @@ export default function ToolsIndexPage() {
                       lineHeight: 1.3,
                     }}
                   >
-                    Product scorecard
+                    Supplier scorecard
                   </h3>
                   <span
                     className="font-mono"
@@ -211,7 +209,7 @@ export default function ToolsIndexPage() {
                       color: "var(--text-faint)",
                     }}
                   >
-                    ~10 min per shortlist
+                    ~10 min per supplier
                   </span>
                 </div>
               </div>
@@ -223,9 +221,9 @@ export default function ToolsIndexPage() {
                   color: "var(--muted)",
                 }}
               >
-                Score potential products on competition, margin headroom,
-                shipping fragility, return risk, and seasonal demand — before you
-                commit inventory.
+                Score IndiaMART and Alibaba suppliers on 18 weighted criteria —
+                catch the red flags that cause 60–70% of early failures, before
+                you pay an advance.
               </p>
             </div>
           </Link>
@@ -261,7 +259,7 @@ export default function ToolsIndexPage() {
               color: "var(--text-faintest)",
             }}
           >
-            product &middot; ads
+            product &middot; payout
           </span>
         </div>
 
@@ -287,17 +285,30 @@ export default function ToolsIndexPage() {
             status="open"
           />
           <ToolCard
-            href="/app/tools/breakeven-roas"
-            title="Break-even ROAS"
-            description="Your ad-spend floor, computed from real unit economics."
-            icon="TrendingUp"
-            status="locked"
-            statusLabel="🔒 ads stage"
+            href="/app/tools/cod-prepaid-simulator"
+            title="COD vs prepaid impact"
+            description="Exact margin cost of your COD mix and RTO rate, in rupees."
+            icon="Repeat"
+            status="open"
+          />
+          <ToolCard
+            href="/app/tools/settlement-timeline"
+            title="Settlement timeline"
+            description="When each marketplace actually pays, and the buffer you need."
+            icon="Receipt"
+            status="open"
+          />
+          <ToolCard
+            href="/app/tools/shipping-estimator"
+            title="Shipping estimator"
+            description="Real courier costs — advertised vs. actual, across 5 carriers."
+            icon="Truck"
+            status="open"
           />
         </div>
       </section>
 
-      {/* ── Group 2: Practice simulators ── */}
+      {/* ── Group 2: Vetting & decisions ── */}
       <section style={{ marginTop: 26 }}>
         <div
           style={{
@@ -315,7 +326,7 @@ export default function ToolsIndexPage() {
               color: "white",
             }}
           >
-            Practice simulators
+            Vetting &amp; decisions
           </h2>
           <span
             className="font-mono"
@@ -338,13 +349,6 @@ export default function ToolsIndexPage() {
           }}
         >
           <ToolCard
-            href="/app/tools/cod-simulator"
-            title="COD call simulator"
-            description="Practice the confirmation call that decides ship vs. return."
-            icon="Phone"
-            status="open"
-          />
-          <ToolCard
             href="/app/tools/supplier-scorecard"
             title="Supplier scorecard"
             description="Vet IndiaMART suppliers — catch the red flags systematically."
@@ -352,16 +356,23 @@ export default function ToolsIndexPage() {
             status="open"
           />
           <ToolCard
-            href="/app/tools/sourcing-game"
-            title="Sourcing swipe game"
-            description="Real supplier chats — swipe trap or legit, learn the patterns."
-            icon="Gamepad2"
+            href="/app/tools/decision-trees"
+            title="Decision wizards"
+            description="Which marketplace? FBA or FBM? COD or prepaid? Answer in minutes."
+            icon="GitBranch"
+            status="open"
+          />
+          <ToolCard
+            href="/app/tools/whatsapp-templates"
+            title="WhatsApp templates"
+            description="Proven scripts for order confirmation, delivery, and reviews."
+            icon="MessageSquare"
             status="open"
           />
         </div>
       </section>
 
-      {/* ── Group 3: Compliance & operations ── */}
+      {/* ── Group 3: Compliance & documents ── */}
       <section style={{ marginTop: 26 }}>
         <div
           style={{
@@ -379,7 +390,7 @@ export default function ToolsIndexPage() {
               color: "white",
             }}
           >
-            Compliance &amp; operations
+            Compliance &amp; documents
           </h2>
           <span
             className="font-mono"
@@ -390,7 +401,7 @@ export default function ToolsIndexPage() {
               color: "var(--text-faintest)",
             }}
           >
-            docs &middot; payout
+            docs &middot; gst
           </span>
         </div>
 
@@ -406,23 +417,149 @@ export default function ToolsIndexPage() {
             title="GST filing calendar"
             description="GSTR-1, GSTR-3B, TCS reconciliation with prep checklists."
             icon="Calendar"
-            status="due-soon"
-            statusLabel="due in 6 days"
+            status="open"
           />
           <ToolCard
             href="/app/tools/verification-checklist"
-            title="Document vault checklist"
-            description="PAN, Aadhaar, bank, GST — one folder that clears every KYC."
-            icon="FolderCheck"
-            status="done"
+            title="Verification checklist"
+            description="GSTIN and PAN format checks, cross-document name matching."
+            icon="ClipboardCheck"
+            status="open"
           />
           <ToolCard
-            href="/app/tools/settlement-timeline"
-            title="Settlement reconciler"
-            description="Match marketplace settlements against your P&L, line by line."
-            icon="Receipt"
+            href="/app/tools/document-checker"
+            title="Document checker"
+            description="Pre-submission validation — the #1 cause of KYC rejection."
+            icon="FolderCheck"
+            status="open"
+          />
+        </div>
+      </section>
+
+      {/* ── Group 4: Growth & planning ── */}
+      <section style={{ marginTop: 26 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: 12,
+            padding: "0 4px 12px",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              color: "white",
+            }}
+          >
+            Growth &amp; planning
+          </h2>
+          <span
+            className="font-mono"
+            style={{
+              fontSize: "10.5px",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "var(--text-faintest)",
+            }}
+          >
+            seasons &middot; proof
+          </span>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+            gap: 12,
+          }}
+        >
+          <ToolCard
+            href="/app/tools/seasonal-calendar"
+            title="Seasonal calendar"
+            description="21 Indian sale events with prep timelines and budget multipliers."
+            icon="CalendarDays"
+            status="open"
+          />
+          <ToolCard
+            href="/app/tools/success-stories"
+            title="Success stories"
+            description="Real sellers, real numbers — how they survived the first year."
+            icon="Flame"
+            status="open"
+          />
+        </div>
+      </section>
+
+      {/* ── Coming soon ── */}
+      <section style={{ marginTop: 26 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: 12,
+            padding: "0 4px 12px",
+          }}
+        >
+          <h2
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              letterSpacing: "-0.02em",
+              color: "white",
+            }}
+          >
+            Coming soon
+          </h2>
+          <span
+            className="font-mono"
+            style={{
+              fontSize: "10.5px",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: "var(--text-faintest)",
+            }}
+          >
+            in development
+          </span>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
+            gap: 12,
+          }}
+        >
+          <ToolCard
+            title="COD call simulator"
+            description="Practice the confirmation call that decides ship vs. return."
+            icon="Phone"
             status="locked"
-            statusLabel="🔒 payout stage"
+            statusLabel="soon"
+          />
+          <ToolCard
+            title="Product scorecard"
+            description="Score products on competition, margins, fragility, and returns."
+            icon="Target"
+            status="locked"
+            statusLabel="soon"
+          />
+          <ToolCard
+            title="Break-even ROAS"
+            description="Your ad-spend floor, computed from real unit economics."
+            icon="TrendingUp"
+            status="locked"
+            statusLabel="soon"
+          />
+          <ToolCard
+            title="Sourcing swipe game"
+            description="Real supplier chats — swipe trap or legit, learn the patterns."
+            icon="Gamepad2"
+            status="locked"
+            statusLabel="soon"
           />
         </div>
       </section>

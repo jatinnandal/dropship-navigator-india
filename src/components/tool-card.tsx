@@ -53,7 +53,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string; size?: 
 };
 
 type Props = {
-  href: string;
+  href?: string;
   title: string;
   description: string;
   icon: string;
@@ -142,12 +142,11 @@ export function ToolCard({
     el.style.borderColor = "";
   }, []);
 
-  return (
-    <Link href={href} className="block h-full" style={locked ? { opacity: 0.55 } : undefined}>
+  const inner = (
       <div
         ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
+        onMouseMove={href ? handleMouseMove : undefined}
+        onMouseLeave={href ? handleMouseLeave : undefined}
         className="panel spotlight-card h-full"
         style={{
           borderRadius: "15px",
@@ -205,6 +204,19 @@ export function ToolCard({
           {description}
         </p>
       </div>
+  );
+
+  if (!href) {
+    return (
+      <div className="block h-full" style={{ opacity: 0.55, cursor: "default" }} aria-disabled="true">
+        {inner}
+      </div>
+    );
+  }
+
+  return (
+    <Link href={href} className="block h-full" style={locked ? { opacity: 0.55 } : undefined}>
+      {inner}
     </Link>
   );
 }
