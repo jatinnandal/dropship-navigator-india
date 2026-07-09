@@ -26,6 +26,16 @@ New findings from the live walkthrough (added to the review's list):
 | W16 | "Ten questions" promised (welcome + signup copy), wizard asks 5 | `/app/welcome`, `/signup` |
 | W17 | Landing hero + signup rail claim "**500+ sellers guided**" — fabricated | `/`, `/signup` |
 | W18 | Header "Log in" button wraps to two lines at 375px; "₹5 000–₹50 000" thin-space grouping reads oddly | Mobile |
+| W19 | **Margin calculator unusable at 375px**: input panel renders 427px wide with overflow clipped — "Heavy" weight button cut off and unreachable, fee-breakdown **rupee values entirely off-screen** (labels visible, numbers not), comparison table's Margin column clipped | `/app/tools/margin-calculator`, mobile |
+| W20 | Journey stage panel squeezed to ~55% width on mobile — the desktop mentor rail (`aside.panel`, 161px) sits clipped off-screen instead of stacking below, stealing layout width; subtask cards render one-word-per-line | `/app/journey`, mobile |
+| W21 | Landing "traps" section also broken at 375px (in addition to toolkit, W13): 5 cards forced into 2–3 columns, titles clipped ("Supplier traps everywh…"), stat labels colliding | `/`, mobile |
+| W22 | "Join 500+ Indian sellers" fake stat appears a third time in the landing CTA block | `/`, CTA section |
+
+**Mobile audit summary (375px, all 25 routes probed for horizontal overflow + screenshots):**
+- **Broken:** margin-calculator (W19 — flagship tool), journey stage panel (W20), landing traps (W21) + toolkit (W13) sections, header Log-in wrap (W18).
+- **Clean:** dashboard, welcome, onboarding, task runner, tools index, cashflow, COD-vs-prepaid, settlement (table scrolls within its container), shipping, product scorecard, break-even ROAS, supplier scorecard, GST calendar, verification checklist, document checker, seasonal calendar, WhatsApp templates, success stories, decision trees, COD simulator scenario, sourcing game, profiles, resources, pricing, landing hero/route-map/CTA/footer.
+
+The target audience is mobile-first (most Indian sellers run their business from a phone). W19/W20 are therefore **Phase 0 severity**, not polish.
 
 Everything below is sequenced. Within a phase, items are independent unless noted.
 
@@ -69,7 +79,14 @@ create policy "guest_no_direct_access" on public.guest_profiles for select using
 Guest reads/writes already run server-side (`guest-supabase-store.ts` uses the server client), but the anon key must stop being able to enumerate rows via PostgREST. Either (a) deny-all policies + move guest stores to the service-role client, or (b) per-row policies keyed on a signed visitor claim. Option (a) is a one-hour change: swap `createSupabaseServerClient()` → `createSupabaseAdminClient()` inside the four guest stores only.
 - **Acceptance:** `curl` PostgREST with anon key returns zero guest rows.
 
-### 0.5 Onboarding honesty pass (M)
+### 0.5 Mobile-first repair (M) — *promoted from Phase 2 after full 375px audit*
+- **Margin calculator (W19):** the product-details panel and results card have an effective min-width (~427px) — likely a fixed-width child (weight-bracket button row / `min-w` on the fee table). Make the input grid single-column under 640px, weight buttons `flex-wrap`, fee-breakdown rows `justify-between` with no fixed widths, and wrap the comparison table in `overflow-x-auto`. Acceptance: every rupee value visible at 375px, no clipped control.
+- **Journey (W20):** stage-panel layout must stack the mentor rail below the checklist under `lg:` instead of positioning it off-canvas. Acceptance: checklist cards full-width at 375px, mentor rail visible below.
+- **Landing traps + toolkit (W13/W21):** both card grids → single column under 640px, two columns 640–1024px. Acceptance: no clipped title at 375px anywhere on the landing page.
+- Header: `white-space: nowrap` on Log in / Start free (W18).
+- Add a Playwright viewport test (375×812) asserting `document.documentElement.scrollWidth <= 377` and zero elements wider than viewport on: landing, dashboard, journey, margin-calculator, tools index.
+
+### 0.6 Onboarding honesty pass (M)
 - Progress: count **visited/answered steps only** ([onboarding-wizard.tsx:66](../src/components/onboarding-wizard.tsx) — `answeredCount` counts prefilled defaults; use `stepIndex + answered-this-session` instead) (fixes W3).
 - Copy: "Ten questions" → "Five quick questions" everywhere, or actually ask 10 (see 2.2) (fixes W16).
 - Bug W7: trace option click → `setField` → submit payload for the category step; add a Playwright test that picks Fashion and asserts the saved profile.
