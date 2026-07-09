@@ -10,7 +10,7 @@ import {
   updateSellerProfile,
   upsertLegacyProfile,
 } from "@/lib/seller-profile-store";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseDataClient } from "@/lib/supabase/server";
 
 type ProgressRow = {
   module_id: string;
@@ -69,7 +69,7 @@ export async function upsertProfileById(userId: string, profileId: string, profi
 }
 
 export async function getCompletedModuleIds(userId: string, profileId?: string): Promise<Set<string>> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return new Set();
 
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
@@ -105,7 +105,7 @@ export async function setModuleCompletion(
   completed: boolean,
   profileId?: string,
 ) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return;
 
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
@@ -131,7 +131,7 @@ export async function setModuleCompletion(
 }
 
 export async function getCompletedModuleIdsForProfile(profileId: string): Promise<Set<string>> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return new Set();
 
   const { data } = await supabase

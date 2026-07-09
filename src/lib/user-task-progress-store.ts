@@ -1,5 +1,5 @@
 import { getStoredActiveProfileId } from "@/lib/active-profile";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseDataClient } from "@/lib/supabase/server";
 import { parseTaskStateRow, type TaskState } from "@/lib/tasks/types";
 
 type UserTaskProgressRow = {
@@ -12,7 +12,7 @@ export async function getUserTaskState(
   taskId: string,
   profileId?: string,
 ): Promise<TaskState | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
@@ -47,7 +47,7 @@ export async function setUserTaskState(
   state: TaskState,
   profileId?: string,
 ) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return;
 
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));

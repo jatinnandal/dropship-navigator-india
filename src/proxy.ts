@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { userHasProfileInDb } from "@/lib/auth-routing";
+import { devBypassUserId } from "@/lib/dev-auth";
 
 const PROTECTED_PREFIXES = ["/app", "/onboarding"];
 const AUTH_PAGES = ["/login", "/signup"];
@@ -15,6 +16,12 @@ function isAuthPage(pathname: string): boolean {
 
 export async function proxy(request: NextRequest) {
   let response = NextResponse.next({ request });
+
+  // Dev-only auth bypass: treat every request as authenticated (no redirects
+  // in either direction). See src/lib/dev-auth.ts.
+  if (devBypassUserId()) {
+    return response;
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

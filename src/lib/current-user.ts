@@ -1,8 +1,14 @@
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
+import { devBypassUserId } from "@/lib/dev-auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function getCurrentUser(): Promise<User | null> {
+  const bypassId = devBypassUserId();
+  if (bypassId) {
+    return { id: bypassId, email: "dev.bypass@local.test" } as User;
+  }
+
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
     return null;

@@ -4,12 +4,12 @@ import {
   getSellerProfileById,
   listSellerProfiles,
 } from "@/lib/seller-profile-store";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseDataClient } from "@/lib/supabase/server";
 
 export const ACTIVE_PROFILE_COOKIE = "dni_active_profile_id";
 
 export async function getStoredActiveProfileId(userId: string): Promise<string | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
   const cookieStore = await cookies();
@@ -44,7 +44,7 @@ export async function setActiveProfileId(userId: string, profileId: string): Pro
   const owned = await getSellerProfileById(userId, profileId);
   if (!owned) return false;
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (supabase) {
     const { error } = await supabase.from("user_preferences").upsert({
       user_id: userId,
@@ -83,7 +83,7 @@ export async function resolveActiveProfileIdAfterDelete(
   const cookieStore = await cookies();
   cookieStore.delete(ACTIVE_PROFILE_COOKIE);
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (supabase) {
     await supabase.from("user_preferences").upsert({
       user_id: userId,

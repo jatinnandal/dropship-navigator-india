@@ -1,5 +1,5 @@
 import { getStoredActiveProfileId } from "@/lib/active-profile";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseDataClient } from "@/lib/supabase/server";
 import { emptyWorkspace, parseWorkspace, type Workspace } from "@/lib/workspace";
 
 type UserWorkspaceRow = {
@@ -7,7 +7,7 @@ type UserWorkspaceRow = {
 };
 
 export async function getUserWorkspace(userId: string, profileId?: string): Promise<Workspace | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
@@ -40,7 +40,7 @@ export async function getUserWorkspace(userId: string, profileId?: string): Prom
 }
 
 export async function upsertUserWorkspace(userId: string, workspace: Workspace, profileId?: string) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return;
 
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));

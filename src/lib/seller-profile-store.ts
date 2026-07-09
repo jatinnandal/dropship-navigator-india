@@ -1,7 +1,7 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
 import { defaultProfileName } from "@/lib/profile-name";
 import type { SellerProfile, SellerProfileSummary } from "@/lib/seller-profile-types";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseDataClient } from "@/lib/supabase/server";
 
 type SellerProfileRow = {
   id: string;
@@ -93,7 +93,7 @@ function legacyToSellerProfile(userId: string, profile: OnboardingProfile, name?
 }
 
 export async function upsertLegacyProfile(userId: string, profile: OnboardingProfile) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return;
 
   const fullRow = {
@@ -129,7 +129,7 @@ export async function upsertLegacyProfile(userId: string, profile: OnboardingPro
 }
 
 async function querySellerProfiles(userId: string): Promise<SellerProfile[]> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase
@@ -172,7 +172,7 @@ export async function getSellerProfileById(userId: string, profileId: string): P
     return legacy ? legacyToSellerProfile(userId, legacy) : null;
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
   const { data } = await supabase
@@ -190,7 +190,7 @@ export async function createSellerProfile(
   profile: OnboardingProfile,
   name?: string,
 ): Promise<SellerProfile | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
   const profileName = name?.trim() || defaultProfileName(profile);
@@ -215,7 +215,7 @@ export async function updateSellerProfile(
     return legacyToSellerProfile(userId, profile, name);
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
   const profileName = name?.trim() || defaultProfileName(profile);
@@ -232,7 +232,7 @@ export async function updateSellerProfile(
 }
 
 export async function deleteSellerProfile(userId: string, profileId: string): Promise<boolean> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return false;
 
   const profiles = await listSellerProfiles(userId);
@@ -244,7 +244,7 @@ export async function deleteSellerProfile(userId: string, profileId: string): Pr
 }
 
 export async function countSellerProfiles(userId: string): Promise<number> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return 0;
 
   const { count, error } = await supabase
@@ -257,7 +257,7 @@ export async function countSellerProfiles(userId: string): Promise<number> {
 }
 
 async function getLegacyProfile(userId: string): Promise<OnboardingProfile | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
   const fullSelect =
@@ -296,7 +296,7 @@ export async function ensureLegacyProfileMigrated(userId: string): Promise<Selle
   const created = await createSellerProfile(userId, legacy);
   if (!created) return null;
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = await createSupabaseDataClient();
   if (supabase) {
     await supabase.from("user_preferences").upsert({
       user_id: userId,
