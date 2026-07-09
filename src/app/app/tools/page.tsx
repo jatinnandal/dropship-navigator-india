@@ -305,6 +305,20 @@ export default function ToolsIndexPage() {
             icon="Truck"
             status="open"
           />
+          <ToolCard
+            href="/app/tools/product-scorecard"
+            title="Product scorecard"
+            description="Score products on competition, margins, fragility, and returns."
+            icon="Target"
+            status="open"
+          />
+          <ToolCard
+            href="/app/tools/breakeven-roas"
+            title="Break-even ROAS"
+            description="Your ad-spend floor, computed from real unit economics."
+            icon="TrendingUp"
+            status="open"
+          />
         </div>
       </section>
 
@@ -367,6 +381,20 @@ export default function ToolsIndexPage() {
             title="WhatsApp templates"
             description="Proven scripts for order confirmation, delivery, and reviews."
             icon="MessageSquare"
+            status="open"
+          />
+          <ToolCard
+            href="/app/tools/cod-simulator"
+            title="COD call simulator"
+            description="Practice the confirmation call that decides ship vs. return."
+            icon="Phone"
+            status="open"
+          />
+          <ToolCard
+            href="/app/tools/sourcing-game"
+            title="Sourcing swipe game"
+            description="Real supplier chats — swipe trap or legit, learn the patterns."
+            icon="Gamepad2"
             status="open"
           />
         </div>
@@ -493,76 +521,6 @@ export default function ToolsIndexPage() {
         </div>
       </section>
 
-      {/* ── Coming soon ── */}
-      <section style={{ marginTop: 26 }}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "baseline",
-            gap: 12,
-            padding: "0 4px 12px",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: 16,
-              fontWeight: 600,
-              letterSpacing: "-0.02em",
-              color: "white",
-            }}
-          >
-            Coming soon
-          </h2>
-          <span
-            className="font-mono"
-            style={{
-              fontSize: "10.5px",
-              letterSpacing: "0.1em",
-              textTransform: "uppercase",
-              color: "var(--text-faintest)",
-            }}
-          >
-            in development
-          </span>
-        </div>
-
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
-            gap: 12,
-          }}
-        >
-          <ToolCard
-            href="/app/tools/cod-simulator"
-            title="COD call simulator"
-            description="Practice the confirmation call that decides ship vs. return."
-            icon="Phone"
-            status="open"
-          />
-          <ToolCard
-            href="/app/tools/product-scorecard"
-            title="Product scorecard"
-            description="Score products on competition, margins, fragility, and returns."
-            icon="Target"
-            status="open"
-          />
-          <ToolCard
-            href="/app/tools/breakeven-roas"
-            title="Break-even ROAS"
-            description="Your ad-spend floor, computed from real unit economics."
-            icon="TrendingUp"
-            status="open"
-          />
-          <ToolCard
-            title="Sourcing swipe game"
-            description="Real supplier chats — swipe trap or legit, learn the patterns."
-            icon="Gamepad2"
-            status="locked"
-            statusLabel="soon"
-          />
-        </div>
-      </section>
     </div>
   );
 }
