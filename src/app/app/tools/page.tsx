@@ -541,18 +541,18 @@ export default function ToolsIndexPage() {
             status="open"
           />
           <ToolCard
+            href="/app/tools/product-scorecard"
             title="Product scorecard"
             description="Score products on competition, margins, fragility, and returns."
             icon="Target"
-            status="locked"
-            statusLabel="soon"
+            status="open"
           />
           <ToolCard
+            href="/app/tools/breakeven-roas"
             title="Break-even ROAS"
             description="Your ad-spend floor, computed from real unit economics."
             icon="TrendingUp"
-            status="locked"
-            statusLabel="soon"
+            status="open"
           />
           <ToolCard
             title="Sourcing swipe game"
