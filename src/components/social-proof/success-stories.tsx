@@ -31,6 +31,10 @@ function StoryCard({ story }: { story: SuccessStory }) {
         </span>
       </div>
 
+      <p className="font-mono inline-block rounded border border-slate-700 bg-slate-900/60 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-slate-500">
+        Illustrative scenario
+      </p>
+
       <div className="grid grid-cols-3 gap-2">
         <div className="rounded-md bg-slate-900/60 p-2 text-center">
           <p className="text-xs text-slate-500">Revenue</p>

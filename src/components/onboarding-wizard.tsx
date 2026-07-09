@@ -58,12 +58,15 @@ export function OnboardingWizard({
     }
     return init;
   });
+  // In create mode, defaults don't count as answers — the user must pick each one.
+  const [touched, setTouched] = useState<Set<OnboardingField>>(() =>
+    mode === "edit" ? new Set(ONBOARDING_STEPS.map((s) => s.field)) : new Set(),
+  );
 
   const step = quizSteps[stepIndex];
   const isLast = stepIndex === totalSteps - 1;
 
-  // Count how many steps have been answered
-  const answeredCount = quizSteps.filter((s) => values[s.field]?.trim()).length;
+  const answeredCount = quizSteps.filter((s) => touched.has(s.field)).length;
   const percentDone = Math.round((answeredCount / totalSteps) * 100);
 
   const channelChanged =
@@ -82,6 +85,7 @@ export function OnboardingWizard({
 
   function setField(field: OnboardingField, value: string) {
     setValues((prev) => ({ ...prev, [field]: value }));
+    setTouched((prev) => new Set(prev).add(field));
     // Show ack immediately on selection
     const currentStep = quizSteps[stepIndex];
     if (currentStep) {
@@ -95,7 +99,7 @@ export function OnboardingWizard({
   }
 
   function canContinue(): boolean {
-    return Boolean(step && values[step.field]?.trim());
+    return Boolean(step && touched.has(step.field) && values[step.field]?.trim());
   }
 
   function goBack() {
@@ -134,8 +138,8 @@ export function OnboardingWizard({
         </Link>
       </header>
 
-      {/* Two-column layout */}
-      <main className="grid items-start gap-[18px] pb-20" style={{ gridTemplateColumns: "1.55fr 1fr" }}>
+      {/* Two-column layout — rail stacks below the quiz on mobile */}
+      <main className="grid grid-cols-1 items-start gap-[18px] pb-20 lg:[grid-template-columns:1.55fr_1fr]">
         {/* Quiz card */}
         <section
           className="panel-raised"
@@ -203,7 +207,7 @@ export function OnboardingWizard({
                     />
                   ) : (
                     step.options?.map((opt) => {
-                      const selected = values[step.field] === opt.value;
+                      const selected = touched.has(step.field) && values[step.field] === opt.value;
                       return (
                         <button
                           key={opt.value}

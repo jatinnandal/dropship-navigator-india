@@ -62,8 +62,8 @@ export default function PricingPage() {
           </Link>
           <nav style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "13.5px", fontWeight: 500 }}>
             <Link href="/" className="hover:text-white transition-colors" style={{ color: "#8a8a8a", textDecoration: "none", padding: "8px 12px" }}>Home</Link>
-            <Link href="/login" className="hover:border-white/35 transition-colors" style={{ color: "#d6d6d6", textDecoration: "none", padding: "8px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.14)" }}>Log in</Link>
-            <Link href="/signup" style={{ color: "#000", textDecoration: "none", padding: "9px 16px", borderRadius: 10, fontWeight: 600, background: "#ffffff", boxShadow: "0 0 30px -6px rgba(255,255,255,0.4)" }}>Start free</Link>
+            <Link href="/login" className="hover:border-white/35 transition-colors" style={{ color: "#d6d6d6", textDecoration: "none", padding: "8px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.14)", whiteSpace: "nowrap" }}>Log in</Link>
+            <Link href="/signup" style={{ color: "#000", textDecoration: "none", padding: "9px 16px", borderRadius: 10, fontWeight: 600, background: "#ffffff", boxShadow: "0 0 30px -6px rgba(255,255,255,0.4)", whiteSpace: "nowrap" }}>Start free</Link>
           </nav>
         </div>
       </header>

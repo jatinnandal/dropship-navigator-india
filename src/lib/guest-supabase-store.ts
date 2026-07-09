@@ -1,5 +1,5 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getOrCreateVisitorId, getVisitorId } from "@/lib/visitor-store";
 
 type GuestProfileRow = {
@@ -20,7 +20,7 @@ type GuestProgressRow = {
 };
 
 export async function getGuestStoredProfile(): Promise<OnboardingProfile | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return null;
   }
@@ -56,7 +56,7 @@ export async function getGuestStoredProfile(): Promise<OnboardingProfile | null>
 }
 
 export async function upsertGuestProfile(profile: OnboardingProfile) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return;
   }
@@ -78,7 +78,7 @@ export async function upsertGuestProfile(profile: OnboardingProfile) {
 }
 
 export async function getGuestCompletedModuleIds(): Promise<Set<string>> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return new Set();
   }
@@ -98,7 +98,7 @@ export async function getGuestCompletedModuleIds(): Promise<Set<string>> {
 }
 
 export async function setGuestModuleCompletion(moduleId: string, completed: boolean) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return;
   }

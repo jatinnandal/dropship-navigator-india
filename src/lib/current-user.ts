@@ -27,3 +27,16 @@ export async function getCurrentUserEmail(): Promise<string | null> {
   const user = await getCurrentUser();
   return user?.email ?? null;
 }
+
+function displayNameFromEmail(email: string | null): string {
+  if (!email) return "there";
+  const local = email.split("@")[0]?.trim();
+  if (!local) return "there";
+  const name = local.split(/[._-]/)[0];
+  if (!name) return "there";
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+export async function getDisplayName(): Promise<string> {
+  return displayNameFromEmail(await getCurrentUserEmail());
+}

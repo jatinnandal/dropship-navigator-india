@@ -1,5 +1,4 @@
 import { getStoredActiveProfileId } from "@/lib/active-profile";
-import { isLegacyProfileId } from "@/lib/seller-profile-store";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { parseTaskStateRow, type TaskState } from "@/lib/tasks/types";
 
@@ -28,19 +27,18 @@ export async function getUserTaskState(
 
   if (!error && data) return parseTaskStateRow(data);
 
-  if (isLegacyProfileId(resolvedProfileId)) {
-    const legacy = await supabase
-      .from("user_task_progress")
-      .select("completed,answers")
-      .eq("user_id", userId)
-      .eq("task_id", taskId)
-      .maybeSingle<UserTaskProgressRow>();
+  // Fall back to the user_id-keyed row for ANY profile id: databases where
+  // migration 002's column swap didn't complete still key rows by user_id
+  // (writes land there via the upsert fallback below).
+  const legacy = await supabase
+    .from("user_task_progress")
+    .select("completed,answers")
+    .eq("user_id", userId)
+    .eq("task_id", taskId)
+    .maybeSingle<UserTaskProgressRow>();
 
-    if (!legacy.data) return null;
-    return parseTaskStateRow(legacy.data);
-  }
-
-  return null;
+  if (!legacy.data) return null;
+  return parseTaskStateRow(legacy.data);
 }
 
 export async function setUserTaskState(
@@ -55,23 +53,28 @@ export async function setUserTaskState(
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
   if (!resolvedProfileId) return;
 
-  const row = {
-    profile_id: resolvedProfileId,
+  const updatedAt = new Date().toISOString();
+  const base = {
     task_id: taskId,
     completed: state.completed,
     answers: state.answers,
-    updated_at: new Date().toISOString(),
+    updated_at: updatedAt,
   };
 
-  const { error } = await supabase.from("user_task_progress").upsert(row);
+  // Post-migration schema: (profile_id, task_id) is the primary key.
+  const { error } = await supabase
+    .from("user_task_progress")
+    .upsert({ profile_id: resolvedProfileId, ...base });
 
   if (error) {
-    await supabase.from("user_task_progress").upsert({
-      user_id: userId,
-      task_id: taskId,
-      completed: state.completed,
-      answers: state.answers,
-      updated_at: new Date().toISOString(),
-    });
+    // Pre-migration schema: (user_id, task_id) is the primary key. Write both
+    // ids so the row stays linkable either way.
+    const withBoth = await supabase
+      .from("user_task_progress")
+      .upsert({ user_id: userId, profile_id: resolvedProfileId, ...base });
+
+    if (withBoth.error) {
+      await supabase.from("user_task_progress").upsert({ user_id: userId, ...base });
+    }
   }
 }

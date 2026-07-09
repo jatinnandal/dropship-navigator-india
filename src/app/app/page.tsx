@@ -16,7 +16,9 @@ import { getDashboardState } from "@/lib/crisis/dashboard-state";
 import { buildDashboardInsights } from "@/lib/dashboard-insights";
 import { isSubTaskDone } from "@/lib/journey-graph";
 import { getJourneyProgressStats } from "@/lib/journey-engine";
-import { getCurrentUserId } from "@/lib/current-user";
+import { getCurrentUserId, getDisplayName } from "@/lib/current-user";
+import { getModuleMentorLine } from "@/lib/mentor-voice";
+import { STAGE_TOOLS } from "@/lib/stage-tools";
 import { getJourneyNodes } from "@/lib/journey-graph";
 import { getNextAction } from "@/lib/next-action";
 import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
@@ -80,6 +82,17 @@ export default async function DashboardPage() {
       ? "Every expert was once exactly here. Let's get your first task done — it takes about 30 minutes and unlocks the rest of the journey."
       : nextAction?.why;
 
+  const displayName = await getDisplayName();
+  const mentorLine = nextAction
+    ? getModuleMentorLine(
+        nextAction.moduleId,
+        profile,
+        nodes.find((n) => n.id === nextAction.moduleId)?.status ?? "available",
+        hasGstin,
+      )
+    : "One step at a time — you're building a real business, not chasing a hack.";
+  const stageTools = nextAction ? STAGE_TOOLS[nextAction.moduleId] ?? [] : [];
+
   const showRtoSlider = dashboardState.warnings.some((w) => w.id === "rto-shock");
   const listingLive = isSubTaskDone(workspace.subTasks, "first-listing-live");
   const hasSnapshot = Boolean(
@@ -97,7 +110,7 @@ export default async function DashboardPage() {
             <div>
               <p className="font-mono text-[11.5px] text-[var(--text-faintest)]">{formatDate()}</p>
               <h1 className="mt-1 text-[23px] font-semibold tracking-[-0.03em] text-white">
-                {getGreeting()}, <span className="font-serif-accent">Arjun.</span>
+                {getGreeting()}, <span className="font-serif-accent">{displayName}.</span>
               </h1>
             </div>
             <Link href="/app/crisis" className="btn-danger">
@@ -245,7 +258,9 @@ export default async function DashboardPage() {
           <div className="panel rounded-[18px] p-5">
             <p className="mono-label">Mentor&apos;s read</p>
             <p className="mt-3 text-[15px] leading-[1.65] text-[var(--body-text)]">
-              <span className="font-serif-accent">&ldquo;Your shortlist looks good.</span> Don&apos;t skip the sample order — there&apos;s a 60% chance your first review kills the listing. Order it today — ₹280, 4 days.&rdquo;
+              <span className="font-serif-accent">&ldquo;</span>
+              {mentorLine}
+              <span className="font-serif-accent">&rdquo;</span>
             </p>
           </div>
 
@@ -253,12 +268,11 @@ export default async function DashboardPage() {
           <div className="panel rounded-[18px] p-5">
             <p className="mono-label">Tools for this stage</p>
             <div className="mt-3 flex flex-col gap-1">
-              <Link href="/app/tools/margin-calculator" className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-[var(--body-text)] hover:text-white hover:bg-white/[0.04] transition-colors">
-                🧮 Margin calculator
-              </Link>
-              <Link href="/app/tools/shipping-estimator" className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-[var(--body-text)] hover:text-white hover:bg-white/[0.04] transition-colors">
-                📦 Shipping estimator
-              </Link>
+              {stageTools.map((tool) => (
+                <Link key={tool.href} href={tool.href} className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-[var(--body-text)] hover:text-white hover:bg-white/[0.04] transition-colors">
+                  {tool.emoji} {tool.label}
+                </Link>
+              ))}
               <Link href="/app/tools" className="flex items-center gap-2 rounded-lg px-2 py-2 text-[13px] text-[var(--body-text)] hover:text-white hover:bg-white/[0.04] transition-colors">
                 → All tools
               </Link>

@@ -76,14 +76,18 @@ function TrapCard({
   const dotColor = trap.danger ? "oklch(0.72 0.17 20)" : "#5a5a5a";
   const accentColor = trap.danger ? "oklch(0.8 0.13 20)" : "#8a8a8a";
 
+  // Tailwind needs static class names — map the 12-col span, applied only at lg+.
+  const spanClass =
+    trap.span === 7 ? "lg:col-span-7" : trap.span === 5 ? "lg:col-span-5" : "lg:col-span-4";
+
   return (
     <div
       ref={cardRef}
       data-reveal
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      className={spanClass}
       style={{
-        gridColumn: `span ${trap.span}`,
         background: "#070707",
         border: "1px solid rgba(255,255,255,0.1)",
         borderRadius: 18,
@@ -256,13 +260,7 @@ export function LandingTraps() {
         </p>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(12, 1fr)",
-          gap: 14,
-        }}
-      >
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-12">
         {TRAPS.map((trap) => (
           <TrapCard key={trap.stat} trap={trap} />
         ))}

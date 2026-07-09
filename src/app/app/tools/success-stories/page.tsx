@@ -13,12 +13,13 @@ export default function SuccessStoriesPage() {
       </nav>
 
       <header className="glass-panel grain rounded-xl p-6">
-        <p className="eyebrow inline-block">Community</p>
+        <p className="eyebrow inline-block">Worked examples</p>
         <h1 className="headline-gradient mt-2 text-3xl font-bold">
           Seller Success Stories
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Real Indian sellers, real numbers, real journeys
+          Illustrative scenarios built from realistic unit economics — composite profiles, not real individuals.
+          Verified stories from actual users will replace these as they come in.
         </p>
       </header>
 

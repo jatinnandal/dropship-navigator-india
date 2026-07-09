@@ -93,8 +93,8 @@ alter table public.guest_profiles add column if not exists sales_model text not 
 alter table public.guest_profiles add column if not exists imports_products boolean not null default false;
 alter table public.guest_profiles add column if not exists sells_prepackaged_goods boolean not null default true;
 
-alter table public.guest_profiles disable row level security;
-alter table public.guest_journey_progress disable row level security;
+alter table public.guest_profiles enable row level security;
+alter table public.guest_journey_progress enable row level security;
 
 create table if not exists public.guest_workspace (
   visitor_id text primary key,
@@ -111,8 +111,8 @@ create table if not exists public.guest_task_progress (
   primary key (visitor_id, task_id)
 );
 
-alter table public.guest_workspace disable row level security;
-alter table public.guest_task_progress disable row level security;
+alter table public.guest_workspace enable row level security;
+alter table public.guest_task_progress enable row level security;
 
 -- Authenticated user profile extensions (run after initial profiles table)
 alter table public.profiles add column if not exists operating_state text not null default 'Maharashtra';

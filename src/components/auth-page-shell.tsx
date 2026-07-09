@@ -35,8 +35,8 @@ export function AuthPageShell({ children }: AuthPageShellProps) {
           {/* Floating proof chip */}
           <div className="float-y" style={{ marginTop: 30, display: "inline-block" }}>
             <div style={{ borderRadius: 14, padding: "14px 18px", background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.16)", boxShadow: "0 24px 48px -16px rgba(0,0,0,0.9), 0 0 30px -12px rgba(255,255,255,0.2)" }}>
-              <p className="font-mono" style={{ margin: 0, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6e6e6e" }}>Currently guiding</p>
-              <p className="font-mono" style={{ margin: "4px 0 0", fontSize: 20, fontWeight: 500, color: "#ffffff" }}>500+ <span style={{ fontSize: 12, color: "#8a8a8a" }}>Indian sellers</span></p>
+              <p className="font-mono" style={{ margin: 0, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#6e6e6e" }}>Built on</p>
+              <p className="font-mono" style={{ margin: "4px 0 0", fontSize: 20, fontWeight: 500, color: "#ffffff" }}>2026 <span style={{ fontSize: 12, color: "#8a8a8a" }}>verified marketplace rates</span></p>
             </div>
           </div>
         </div>

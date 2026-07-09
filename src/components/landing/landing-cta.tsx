@@ -126,7 +126,7 @@ export function LandingCta() {
             letterSpacing: "0.01em",
           }}
         >
-          Join 500+ Indian sellers building real businesses
+          Free to start · no credit card · built for Indian sellers
         </p>
       </div>
     </section>

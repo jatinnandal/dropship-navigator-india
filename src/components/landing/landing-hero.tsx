@@ -123,9 +123,9 @@ export function LandingHero() {
           >
             <div>
               <p className="font-mono m-0 text-[25px] font-medium text-white">
-                <CountUp to={500} duration={1.6} />+
+                <CountUp to={17} duration={1.6} />
               </p>
-              <p className="mono-label-sm mt-1">sellers guided</p>
+              <p className="mono-label-sm mt-1">free seller tools</p>
             </div>
             <div
               className="w-px"

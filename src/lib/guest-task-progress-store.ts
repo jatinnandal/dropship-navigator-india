@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getOrCreateVisitorId, getVisitorId } from "@/lib/visitor-store";
 import { parseTaskStateRow, type TaskState } from "@/lib/tasks/types";
 
@@ -8,7 +8,7 @@ type GuestTaskProgressRow = {
 };
 
 export async function getGuestTaskState(taskId: string): Promise<TaskState | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return null;
 
   const visitorId = await getVisitorId();
@@ -26,7 +26,7 @@ export async function getGuestTaskState(taskId: string): Promise<TaskState | nul
 }
 
 export async function setGuestTaskState(taskId: string, state: TaskState) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return;
 
   const visitorId = await getOrCreateVisitorId();

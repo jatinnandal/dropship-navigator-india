@@ -4,6 +4,8 @@ import { getJourneyNodes } from "@/lib/journey-graph";
 import { userHasProfile } from "@/lib/auth-routing";
 import { getCurrentUserId } from "@/lib/current-user";
 import { channelLabel } from "@/lib/profile-name";
+import { getModuleMentorLine } from "@/lib/mentor-voice";
+import type { TaskModuleId } from "@/lib/tasks";
 import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { getEditProfileHref } from "@/lib/profile-name";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
@@ -35,8 +37,18 @@ export default async function JourneyPage() {
   );
   const routePercent = totalSteps > 0 ? Math.round((doneSteps / totalSteps) * 100) : 0;
 
+  const hasGstin = profile.hasGstin || !!workspace.gstin;
+  const mentorNotes = Object.fromEntries(
+    nodes.map((n) => [n.id, getModuleMentorLine(n.id as TaskModuleId, profile, n.status, hasGstin)]),
+  ) as Record<string, string>;
+
+  // Plan names are auto-generated as "<Channel> · <Category>" — don't repeat the channel token.
+  const channel = channelLabel(profile.primaryChannel);
+  const nameHasChannel = hasProfile && activeSellerProfile
+    ? activeSellerProfile.name.toLowerCase().includes(channel.toLowerCase())
+    : false;
   const profileLine = hasProfile && activeSellerProfile
-    ? `${activeSellerProfile.name} · ${channelLabel(profile.primaryChannel)}${profile.hasGstin ? " · GST ready" : " · GST pending"}${profile.experienceLevel === "existing_seller" ? " · existing seller" : " · new seller"}`
+    ? `${activeSellerProfile.name}${nameHasChannel ? "" : ` · ${channel}`}${profile.hasGstin ? " · GST ready" : " · GST pending"}${profile.experienceLevel === "existing_seller" ? " · existing seller" : " · new seller"}`
     : null;
 
   return (
@@ -67,6 +79,7 @@ export default async function JourneyPage() {
         routePercent={routePercent}
         primaryChannel={profile.primaryChannel}
         productType={profile.productType}
+        mentorNotes={mentorNotes}
       />
     </main>
   );

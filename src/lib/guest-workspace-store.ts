@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { getOrCreateVisitorId, getVisitorId } from "@/lib/visitor-store";
 import { emptyWorkspace, parseWorkspace, type Workspace } from "@/lib/workspace";
 
@@ -7,7 +7,7 @@ type GuestWorkspaceRow = {
 };
 
 export async function getGuestWorkspace(): Promise<Workspace | null> {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return null;
 
   const visitorId = await getVisitorId();
@@ -24,7 +24,7 @@ export async function getGuestWorkspace(): Promise<Workspace | null> {
 }
 
 export async function upsertGuestWorkspace(workspace: Workspace) {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return;
 
   const visitorId = await getOrCreateVisitorId();

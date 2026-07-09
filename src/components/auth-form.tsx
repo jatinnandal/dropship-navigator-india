@@ -139,7 +139,7 @@ export function AuthForm({ mode }: Props) {
           {isLogin ? "Welcome back." : "Chart your route."}
         </h2>
         <p style={{ margin: "6px 0 0", fontSize: 13, color: "#6e6e6e" }}>
-          {isLogin ? "Your route is where you left it." : "Ten questions, then a personalized launch plan."}
+          {isLogin ? "Your route is where you left it." : "Five quick questions, then a personalized launch plan."}
         </p>
 
         {infoMessage && (

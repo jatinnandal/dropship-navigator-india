@@ -70,12 +70,12 @@ export function AppSidebar({
           })}
         </nav>
 
-        {/* Streak card */}
+        {/* Streak card — no fake counts; a real streak needs recorded activity */}
         <div className="mx-1 mb-2.5 rounded-xl p-3 bg-white/[0.03] border border-white/[0.1] flex items-center gap-2.5">
           <Flame className="h-4 w-4 text-white shrink-0" aria-hidden="true" />
           <div>
-            <p className="font-mono text-sm font-medium text-white">4-day streak</p>
-            <p className="text-[10.5px] font-medium text-[var(--text-faint)]">One step today keeps it alive</p>
+            <p className="font-mono text-sm font-medium text-white">Build a streak</p>
+            <p className="text-[10.5px] font-medium text-[var(--text-faint)]">One step a day compounds fast</p>
           </div>
         </div>
 

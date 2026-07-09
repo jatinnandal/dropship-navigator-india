@@ -33,24 +33,6 @@ const MODULE_DESCRIPTIONS: Record<string, string> = {
     "Weekly P&L, settlement reconciliation, and GSTR-8 / TCS review.",
 };
 
-/* ── Mentor notes per module ── */
-const MODULE_MENTOR_NOTES: Record<string, string> = {
-  "common-documentation":
-    "You cleared the paperwork stage faster than most. That folder will save you weeks when marketplace KYC asks for re-verification.",
-  "product-selection":
-    "Your shortlist looks good. Don't skip the sample order — one bad review on your first SKU is very hard to recover from.",
-  "supplier-sourcing":
-    "60% of beginner failures trace back to a bad supplier. Run the scorecard on at least two suppliers before committing.",
-  "compliance-by-product":
-    "Home decor is a low-compliance category — this stage should take you under an hour. Map HSN codes correctly to avoid GST rate disputes.",
-  "channel-launch":
-    "One hero SKU first. Test the full loop — order, ship, payout — before expanding the catalog.",
-  "ads-growth":
-    "Deprioritized for your budget — get to first payout before spending on ads. When you're ready, we calculate your break-even ROAS first.",
-  "tracking-analytics":
-    "Set up the P&L sheet before your first settlement arrives — reconciling from day one is 10x easier than untangling month three.",
-};
-
 const STATUS_TITLES: Record<string, string> = {
   done: "COMPLETED",
   in_progress: "YOU ARE HERE",
@@ -70,6 +52,8 @@ type Props = {
   routePercent?: number;
   primaryChannel?: string;
   productType?: string;
+  /** State-aware mentor line per module id, computed server-side. */
+  mentorNotes?: Record<string, string>;
 };
 
 export function JourneyMap({
@@ -82,6 +66,7 @@ export function JourneyMap({
   doneSteps = 0,
   totalSteps = 22,
   routePercent = 0,
+  mentorNotes,
 }: Props) {
   const router = useRouter();
   const warningsRef = useRef<HTMLDivElement>(null);
@@ -165,10 +150,10 @@ export function JourneyMap({
   const description =
     MODULE_DESCRIPTIONS[selected.id] ?? selectedModule?.description ?? "";
   const mentorNote =
-    MODULE_MENTOR_NOTES[selected.id] ??
-    (selected.status === "done"
+    selected.status === "done"
       ? getModuleCompletionMessage(selected.id)
-      : "One step at a time — you're building a real business, not chasing a hack.");
+      : mentorNotes?.[selected.id] ??
+        "One step at a time — you're building a real business, not chasing a hack.";
 
   return (
     <div className="space-y-0">
@@ -235,10 +220,7 @@ export function JourneyMap({
       </div>
 
       {/* ── Detail + Mentor panels ── */}
-      <section
-        className="mt-[18px] grid items-start gap-3.5"
-        style={{ gridTemplateColumns: "1.5fr 1fr" }}
-      >
+      <section className="mt-[18px] grid grid-cols-1 items-start gap-3.5 lg:[grid-template-columns:1.5fr_1fr]">
         {/* Detail panel */}
         <article
           className="panel"

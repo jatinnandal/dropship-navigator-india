@@ -1,5 +1,4 @@
 import { getStoredActiveProfileId } from "@/lib/active-profile";
-import { isLegacyProfileId } from "@/lib/seller-profile-store";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { emptyWorkspace, parseWorkspace, type Workspace } from "@/lib/workspace";
 
@@ -24,16 +23,17 @@ export async function getUserWorkspace(userId: string, profileId?: string): Prom
     return parseWorkspace(data.data);
   }
 
-  if (isLegacyProfileId(resolvedProfileId)) {
-    const legacy = await supabase
-      .from("user_workspace")
-      .select("data")
-      .eq("user_id", userId)
-      .maybeSingle<UserWorkspaceRow>();
+  // Fall back to the user_id-keyed row for ANY profile id: databases where
+  // migration 002's column swap didn't complete still key rows by user_id
+  // (writes land there via the upsert fallback below).
+  const legacy = await supabase
+    .from("user_workspace")
+    .select("data")
+    .eq("user_id", userId)
+    .maybeSingle<UserWorkspaceRow>();
 
-    if (legacy.data?.data) {
-      return parseWorkspace(legacy.data.data);
-    }
+  if (legacy.data?.data) {
+    return parseWorkspace(legacy.data.data);
   }
 
   return null;
@@ -46,20 +46,30 @@ export async function upsertUserWorkspace(userId: string, workspace: Workspace, 
   const resolvedProfileId = profileId ?? (await getStoredActiveProfileId(userId));
   if (!resolvedProfileId) return;
 
-  const row = {
-    profile_id: resolvedProfileId,
-    data: workspace,
-    updated_at: new Date().toISOString(),
-  };
+  const updatedAt = new Date().toISOString();
 
-  const { error } = await supabase.from("user_workspace").upsert(row);
+  // Post-migration schema: profile_id is the primary key.
+  const { error } = await supabase
+    .from("user_workspace")
+    .upsert({ profile_id: resolvedProfileId, data: workspace, updated_at: updatedAt });
 
   if (error) {
-    await supabase.from("user_workspace").upsert({
+    // Pre-migration schema: user_id is the primary key (profile_id column may
+    // or may not exist). Write both so the row stays linkable either way.
+    const withBoth = await supabase.from("user_workspace").upsert({
       user_id: userId,
+      profile_id: resolvedProfileId,
       data: workspace,
-      updated_at: new Date().toISOString(),
+      updated_at: updatedAt,
     });
+
+    if (withBoth.error) {
+      await supabase.from("user_workspace").upsert({
+        user_id: userId,
+        data: workspace,
+        updated_at: updatedAt,
+      });
+    }
   }
 }
 

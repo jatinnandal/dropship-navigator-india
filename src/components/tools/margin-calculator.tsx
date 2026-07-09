@@ -157,8 +157,8 @@ export function MarginCalculator({
     <div className="space-y-6">
       {/* ── INPUT SECTION ── */}
       <div className="grid gap-6 lg:grid-cols-[1fr,1.4fr]">
-        {/* left: inputs */}
-        <div className="glass-panel grain rounded-xl p-5 sm:p-6">
+        {/* left: inputs (min-w-0: grid items must be allowed to shrink below content size) */}
+        <div className="glass-panel grain min-w-0 rounded-xl p-5 sm:p-6">
           <h2 className="font-display text-lg font-bold text-slate-100">Product Details</h2>
           <p className="text-muted mt-1 text-xs">Enter your product economics</p>
 
@@ -196,7 +196,7 @@ export function MarginCalculator({
                       setWeightBracket(w);
                       setShippingOverride(null);
                     }}
-                    className={`min-h-[40px] rounded-md border px-2 py-1.5 text-xs font-medium transition-colors ${
+                    className={`min-w-0 min-h-[40px] rounded-md border px-1.5 sm:px-2 py-1.5 text-xs font-medium transition-colors ${
                       weightBracket === w
                         ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
                         : "border-neutral-700 bg-neutral-900/60 text-slate-400 hover:border-neutral-500"
@@ -281,7 +281,7 @@ export function MarginCalculator({
         </div>
 
         {/* right: marketplace tabs + active detail */}
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {/* Marketplace tab bar */}
           <div className="flex gap-1 rounded-lg bg-neutral-900/60 p-1 border border-neutral-800">
             {CHANNELS.map((ch, i) => (
@@ -289,7 +289,7 @@ export function MarginCalculator({
                 key={ch.channel}
                 type="button"
                 onClick={() => setActiveTab(ch.channel)}
-                className={`relative flex-1 min-h-[40px] rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                className={`relative min-w-0 flex-1 min-h-[40px] rounded-md px-2 sm:px-3 py-2 text-[13px] sm:text-sm font-medium transition-colors ${
                   activeTab === ch.channel
                     ? "text-amber-300"
                     : "text-slate-500 hover:text-slate-300"

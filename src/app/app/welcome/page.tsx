@@ -2,16 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ArrowRight, FileCheck, Package, Rocket } from "lucide-react";
 import { userHasProfile } from "@/lib/auth-routing";
-import { getCurrentUserEmail, getCurrentUserId } from "@/lib/current-user";
-
-function greetingFromEmail(email: string | null): string {
-  if (!email) return "there";
-  const local = email.split("@")[0]?.trim();
-  if (!local) return "there";
-  const name = local.split(/[._-]/)[0];
-  if (!name) return "there";
-  return name.charAt(0).toUpperCase() + name.slice(1);
-}
+import { getCurrentUserId, getDisplayName } from "@/lib/current-user";
 
 const MODULE_PREVIEW = [
   {
@@ -44,8 +35,7 @@ export default async function WelcomePage() {
     redirect("/app");
   }
 
-  const email = await getCurrentUserEmail();
-  const greeting = greetingFromEmail(email);
+  const greeting = await getDisplayName();
 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
@@ -89,7 +79,7 @@ export default async function WelcomePage() {
       <section className="glass-panel mt-8 rounded-xl p-6 sm:p-8">
         <h2 className="text-lg font-bold text-slate-100">What you&apos;ll answer</h2>
         <p className="text-muted mt-2 text-sm leading-6">
-          Ten quick questions — one at a time. We use them to order modules, surface compliance first, and skip what
+          Five quick questions — one at a time. We use them to order modules, surface compliance first, and skip what
           you already know.
         </p>
         <ul className="mt-5 grid gap-2 sm:grid-cols-2">

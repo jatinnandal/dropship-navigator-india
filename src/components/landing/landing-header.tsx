@@ -60,13 +60,13 @@ export function LandingHeader() {
           </Link>
           <Link
             href="/login"
-            className="rounded-[10px] border border-white/[0.14] px-3.5 py-2 text-[#d6d6d6] transition-colors hover:border-white/[0.35] hover:text-white"
+            className="whitespace-nowrap rounded-[10px] border border-white/[0.14] px-3.5 py-2 text-[#d6d6d6] transition-colors hover:border-white/[0.35] hover:text-white"
           >
             Log in
           </Link>
           <MagneticButton
             href="/signup"
-            className="inline-block rounded-[10px] bg-white px-4 py-[9px] text-sm font-semibold text-black shadow-[0_0_30px_-6px_rgba(255,255,255,0.4)]"
+            className="inline-block whitespace-nowrap rounded-[10px] bg-white px-4 py-[9px] text-sm font-semibold text-black shadow-[0_0_30px_-6px_rgba(255,255,255,0.4)]"
           >
             Start free
           </MagneticButton>

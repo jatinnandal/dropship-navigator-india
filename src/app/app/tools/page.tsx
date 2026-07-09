@@ -514,7 +514,7 @@ export default function ToolsIndexPage() {
           <ToolCard
             href="/app/tools/success-stories"
             title="Success stories"
-            description="Real sellers, real numbers — how they survived the first year."
+            description="Worked examples with real fee math — how a first year can look."
             icon="Flame"
             status="open"
           />
