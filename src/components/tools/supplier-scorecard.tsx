@@ -67,6 +67,7 @@ export function SupplierScorecard() {
   }, []);
 
   const result = useMemo(() => calculateSupplierScore(answers), [answers]);
+  const answeredCount = Object.keys(answers).length;
 
   const handleSave = () => {
     if (!supplierName.trim()) return;
@@ -82,26 +83,34 @@ export function SupplierScorecard() {
     setTimeout(() => setSaved(false), 2000);
   };
 
+  // Neutral until the user has actually scored something — an unanswered
+  // scorecard is not an "Avoid This Supplier" verdict.
   const verdictColor =
-    result.overallVerdict === "recommended"
-      ? "text-emerald-400 border-emerald-500/40 bg-emerald-500/10"
-      : result.overallVerdict === "proceed-with-caution"
-        ? "text-amber-400 border-amber-500/40 bg-amber-500/10"
-        : "text-rose-400 border-rose-500/40 bg-rose-500/10";
+    answeredCount === 0
+      ? "text-slate-400 border-white/[0.14] bg-white/[0.03]"
+      : result.overallVerdict === "recommended"
+        ? "text-emerald-400 border-emerald-500/40 bg-emerald-500/10"
+        : result.overallVerdict === "proceed-with-caution"
+          ? "text-amber-400 border-amber-500/40 bg-amber-500/10"
+          : "text-rose-400 border-rose-500/40 bg-rose-500/10";
 
   const verdictLabel =
-    result.overallVerdict === "recommended"
-      ? "Recommended"
-      : result.overallVerdict === "proceed-with-caution"
-        ? "Proceed with Caution"
-        : "Avoid This Supplier";
+    answeredCount === 0
+      ? "Score at least one criterion to get a verdict"
+      : result.overallVerdict === "recommended"
+        ? "Recommended"
+        : result.overallVerdict === "proceed-with-caution"
+          ? "Proceed with Caution"
+          : "Avoid This Supplier";
 
   const scoreColor =
-    result.totalScore >= 70
-      ? "text-emerald-400"
-      : result.totalScore >= 40
-        ? "text-amber-400"
-        : "text-rose-400";
+    answeredCount === 0
+      ? "text-slate-500"
+      : result.totalScore >= 70
+        ? "text-emerald-400"
+        : result.totalScore >= 40
+          ? "text-amber-400"
+          : "text-rose-400";
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -193,6 +202,7 @@ export function SupplierScorecard() {
         {/* Final verdict (mobile/bottom) */}
         <div className="lg:hidden">
           <VerdictCard
+            answeredCount={answeredCount}
             result={result}
             verdictColor={verdictColor}
             verdictLabel={verdictLabel}
@@ -208,6 +218,7 @@ export function SupplierScorecard() {
       <div className="hidden lg:block">
         <div className="sticky top-6 space-y-4">
           <VerdictCard
+            answeredCount={answeredCount}
             result={result}
             verdictColor={verdictColor}
             verdictLabel={verdictLabel}
@@ -362,6 +373,7 @@ function VerdictCard({
   supplierName,
   onSave,
   saved,
+  answeredCount = 1,
 }: {
   result: ReturnType<typeof calculateSupplierScore>;
   verdictColor: string;
@@ -370,6 +382,7 @@ function VerdictCard({
   supplierName: string;
   onSave: () => void;
   saved: boolean;
+  answeredCount?: number;
 }) {
   return (
     <div className="glass-panel grain rounded-xl border p-5 space-y-4">
@@ -385,7 +398,7 @@ function VerdictCard({
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200 }}
         >
-          {result.totalScore}
+          {answeredCount === 0 ? "—" : result.totalScore}
           <span className="text-lg text-slate-500">/100</span>
         </motion.p>
       </div>

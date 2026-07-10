@@ -17,6 +17,7 @@ export type CarrierRate = {
   additionalPerKg: Record<ShippingZone, number>;
   codHandlingFee: number;
   codPercentFee: number;
+  supportsCod: boolean;
   gstPercent: number;
   fuelSurchargePercent: number;
   rtoCharges: "full-round-trip" | "one-way-return" | "free-return";
@@ -50,6 +51,7 @@ export const CARRIERS: CarrierRate[] = [
     additionalPerKg: { local: 20, regional: 25, national: 30, metro: 22 },
     codHandlingFee: 25,
     codPercentFee: 2.0,
+    supportsCod: true,
     gstPercent: 18,
     fuelSurchargePercent: 15,
     rtoCharges: "full-round-trip",
@@ -64,6 +66,7 @@ export const CARRIERS: CarrierRate[] = [
     additionalPerKg: { local: 25, regional: 30, national: 35, metro: 28 },
     codHandlingFee: 25,
     codPercentFee: 1.5,
+    supportsCod: true,
     gstPercent: 18,
     fuelSurchargePercent: 10,
     rtoCharges: "full-round-trip",
@@ -78,6 +81,7 @@ export const CARRIERS: CarrierRate[] = [
     additionalPerKg: { local: 35, regional: 40, national: 50, metro: 38 },
     codHandlingFee: 35,
     codPercentFee: 2.5,
+    supportsCod: true,
     gstPercent: 18,
     fuelSurchargePercent: 12,
     rtoCharges: "full-round-trip",
@@ -92,6 +96,7 @@ export const CARRIERS: CarrierRate[] = [
     additionalPerKg: { local: 15, regional: 18, national: 22, metro: 16 },
     codHandlingFee: 0,
     codPercentFee: 0,
+    supportsCod: false,
     gstPercent: 18,
     fuelSurchargePercent: 0,
     rtoCharges: "one-way-return",
@@ -106,6 +111,7 @@ export const CARRIERS: CarrierRate[] = [
     additionalPerKg: { local: 22, regional: 28, national: 32, metro: 25 },
     codHandlingFee: 28,
     codPercentFee: 1.5,
+    supportsCod: true,
     gstPercent: 18,
     fuelSurchargePercent: 12,
     rtoCharges: "full-round-trip",

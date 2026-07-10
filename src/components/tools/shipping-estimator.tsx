@@ -34,23 +34,33 @@ export function ShippingEstimator() {
   const [zone, setZone] = useState<ShippingZone>("national");
   const [orderValue, setOrderValue] = useState(500);
   const [isCod, setIsCod] = useState(true);
+  const [dims, setDims] = useState({ l: 0, w: 0, h: 0 });
+
+  /* Couriers charge max(actual, volumetric); volumetric kg = L×W×H(cm)/5000 */
+  const volumetricGrams = Math.round(((dims.l * dims.w * dims.h) / 5000) * 1000);
+  const chargeableGrams = Math.max(weightGrams, volumetricGrams);
 
   /* ── Calculate all carrier costs ── */
   const results = useMemo(() => {
     return CARRIERS.map((carrier) => ({
       carrier,
+      codUnsupported: isCod && !carrier.supportsCod,
       result: calculateShippingCost({
         carrier,
-        weightGrams,
+        weightGrams: chargeableGrams,
         zone,
-        isCod,
+        isCod: isCod && carrier.supportsCod,
         orderValue,
       }),
-    })).sort((a, b) => a.result.totalCost - b.result.totalCost);
-  }, [weightGrams, zone, isCod, orderValue]);
+    })).sort((a, b) => {
+      // COD-capable carriers rank above non-COD ones when COD is on
+      if (a.codUnsupported !== b.codUnsupported) return a.codUnsupported ? 1 : -1;
+      return a.result.totalCost - b.result.totalCost;
+    });
+  }, [chargeableGrams, zone, isCod, orderValue]);
 
-  const cheapestTotal = results[0]?.result.totalCost ?? 0;
-  const mostExpensiveTotal = results[results.length - 1]?.result.totalCost ?? 0;
+  const rankable = results.filter((r) => !r.codUnsupported);
+  const cheapestTotal = rankable[0]?.result.totalCost ?? 0;
 
   /* ── Shiprocket "real vs advertised" ── */
   const shiprocketResult = results.find((r) => r.carrier.carrier === "Shiprocket");
@@ -94,6 +104,32 @@ export function ShippingEstimator() {
             className="mt-2 w-full rounded-md border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 focus:border-cyan-500 focus:outline-none"
             placeholder="Custom weight (grams)"
           />
+
+          {/* Volumetric weight */}
+          <p className="mt-3 text-xs font-medium text-slate-400">
+            Box dimensions (cm, optional) — couriers bill max(actual, L×W×H÷5000)
+          </p>
+          <div className="mt-1.5 grid grid-cols-3 gap-2">
+            {(["l", "w", "h"] as const).map((d) => (
+              <input
+                key={d}
+                type="number"
+                min={0}
+                value={dims[d] || ""}
+                onChange={(e) =>
+                  setDims((prev) => ({ ...prev, [d]: Number(e.target.value) || 0 }))
+                }
+                className="w-full rounded-md border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 focus:border-cyan-500 focus:outline-none"
+                placeholder={d.toUpperCase()}
+                aria-label={`${d === "l" ? "Length" : d === "w" ? "Width" : "Height"} in cm`}
+              />
+            ))}
+          </div>
+          {volumetricGrams > weightGrams && (
+            <p className="mt-1.5 text-xs text-amber-400">
+              Volumetric weight wins: charged as {chargeableGrams} g, not {weightGrams} g
+            </p>
+          )}
         </div>
 
         {/* Zone */}
@@ -158,12 +194,13 @@ export function ShippingEstimator() {
       <div className="space-y-4">
         {/* Carrier cards */}
         <AnimatePresence mode="popLayout">
-          {results.map(({ carrier, result }, idx) => (
+          {results.map(({ carrier, result, codUnsupported }, idx) => (
             <CarrierCard
               key={carrier.carrier}
               carrier={carrier}
               result={result}
-              isCheapest={idx === 0}
+              isCheapest={idx === 0 && !codUnsupported}
+              codUnsupported={codUnsupported}
               zone={zone}
               index={idx}
             />
@@ -226,12 +263,14 @@ function CarrierCard({
   carrier,
   result,
   isCheapest,
+  codUnsupported = false,
   zone,
   index,
 }: {
   carrier: CarrierRate;
   result: ShippingCostResult;
   isCheapest: boolean;
+  codUnsupported?: boolean;
   zone: ShippingZone;
   index: number;
 }) {
@@ -239,7 +278,7 @@ function CarrierCard({
     <motion.div
       layout
       initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: codUnsupported ? 0.45 : 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.25, delay: index * 0.05 }}
       className={`glass-panel grain rounded-xl p-4 ${
@@ -252,6 +291,11 @@ function CarrierCard({
             {carrier.emoji}
           </span>
           <span className="text-sm font-semibold text-slate-100">{carrier.carrier}</span>
+          {codUnsupported && (
+            <span className="rounded-md bg-rose-500/15 px-2 py-0.5 text-xs font-medium text-rose-400">
+              No COD
+            </span>
+          )}
           {isCheapest && (
             <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-400">
               Cheapest
