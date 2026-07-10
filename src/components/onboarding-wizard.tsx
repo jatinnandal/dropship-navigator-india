@@ -63,8 +63,12 @@ export function OnboardingWizard({
     mode === "edit" ? new Set(ONBOARDING_STEPS.map((s) => s.field)) : new Set(),
   );
 
-  const step = quizSteps[stepIndex];
-  const isLast = stepIndex === totalSteps - 1;
+  // Final screen: confirm the fields we assumed instead of asking (state,
+  // business type, sales model, imports, prepackaged).
+  const assumedSteps = ONBOARDING_STEPS.filter((s) => !QUIZ_STEP_IDS.includes(s.id));
+  const onConfirm = stepIndex === totalSteps;
+  const step = quizSteps[Math.min(stepIndex, totalSteps - 1)];
+  const isLast = onConfirm;
 
   const answeredCount = quizSteps.filter((s) => touched.has(s.field)).length;
   const percentDone = Math.round((answeredCount / totalSteps) * 100);
@@ -99,6 +103,7 @@ export function OnboardingWizard({
   }
 
   function canContinue(): boolean {
+    if (onConfirm) return true;
     return Boolean(step && touched.has(step.field) && values[step.field]?.trim());
   }
 
@@ -155,11 +160,11 @@ export function OnboardingWizard({
               <input key={s.field} type="hidden" name={s.field} value={values[s.field] ?? ""} />
             ))}
 
-            {/* Segment progress bar */}
+            {/* Segment progress bar (quiz steps + confirm) */}
             <div className="flex items-center gap-1.5">
-              {quizSteps.map((s, i) => (
+              {[...quizSteps.map((s) => s.id), "confirm"].map((id, i) => (
                 <div
-                  key={s.id}
+                  key={id}
                   className="h-[3px] flex-1 rounded-full transition-colors duration-200"
                   style={{
                     background:
@@ -175,18 +180,87 @@ export function OnboardingWizard({
 
             {/* Step counter */}
             <p className="mono-label mt-4" style={{ color: "var(--text-faint)", letterSpacing: "0.16em" }}>
-              Charting your route &middot; {stepIndex + 1} / {totalSteps}
+              Charting your route &middot; {stepIndex + 1} / {totalSteps + 1}
             </p>
 
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div
-                key={step.id}
+                key={onConfirm ? "confirm" : step.id}
                 custom={direction}
                 initial={reduced ? false : { opacity: 0, x: direction * 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={reduced ? undefined : { opacity: 0, x: direction * -20 }}
                 transition={{ duration: reduced ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
               >
+                {onConfirm ? (
+                  <>
+                    <h1
+                      className="mt-3.5 text-[27px] font-semibold leading-[1.2] text-white"
+                      style={{ letterSpacing: "-0.03em", textWrap: "balance" }}
+                    >
+                      Confirm what we assumed.
+                    </h1>
+                    <p className="mt-2.5 text-[14px] leading-[1.65] text-[var(--muted)]">
+                      These shape your compliance steps and calculators. Change anything that&apos;s off — takes ten seconds.
+                    </p>
+                    <div className="mt-6 flex flex-col gap-4">
+                      {assumedSteps.map((s) => (
+                        <div key={s.id}>
+                          <div className="flex items-center gap-2">
+                            <p className="text-[13.5px] font-semibold text-white">{s.label}</p>
+                            {!touched.has(s.field) ? (
+                              <span
+                                className="font-mono text-[9.5px] uppercase tracking-[0.12em] rounded-full px-2 py-0.5"
+                                style={{ color: "var(--text-faint)", border: "1px solid rgba(255,255,255,0.14)" }}
+                              >
+                                assumed
+                              </span>
+                            ) : (
+                              <span
+                                className="font-mono text-[9.5px] uppercase tracking-[0.12em] rounded-full px-2 py-0.5"
+                                style={{ color: "oklch(0.78 0.12 165)", border: "1px solid oklch(0.72 0.13 165 / 0.3)" }}
+                              >
+                                set by you
+                              </span>
+                            )}
+                          </div>
+                          {s.inputType === "text" ? (
+                            <input
+                              value={values[s.field] ?? ""}
+                              onChange={(e) => setField(s.field, e.target.value)}
+                              placeholder={s.placeholder}
+                              className="auth-input mt-2 w-full min-h-[42px] px-3 py-2 text-sm"
+                            />
+                          ) : (
+                            <div className="mt-2 flex flex-wrap gap-1.5">
+                              {s.options?.map((opt) => {
+                                const selected = values[s.field] === opt.value;
+                                return (
+                                  <button
+                                    key={opt.value}
+                                    type="button"
+                                    onClick={() => setField(s.field, opt.value)}
+                                    className="rounded-[10px] px-3 py-2 text-[12.5px] font-medium transition-colors"
+                                    style={{
+                                      background: selected ? "rgba(255,255,255,0.09)" : "rgba(255,255,255,0.02)",
+                                      border: `1px solid ${selected ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.1)"}`,
+                                      color: selected ? "#ffffff" : "#b8b8b8",
+                                      cursor: "pointer",
+                                    }}
+                                    aria-pressed={selected}
+                                  >
+                                    {opt.label}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                <>
                 {/* Question */}
                 <h1
                   className="mt-3.5 text-[27px] font-semibold leading-[1.2] text-white"
@@ -301,8 +375,10 @@ export function OnboardingWizard({
                     </button>
                   </div>
                 ) : null}
+                </>
+                )}
 
-                {/* Plan name on last step */}
+                {/* Plan name on confirm screen */}
                 {isLast && mode === "create" ? (
                   <div className="mt-6">
                     <label htmlFor="profileName" className="text-sm font-medium text-white">
@@ -396,9 +472,11 @@ export function OnboardingWizard({
               </p>
             </div>
             <p className="mt-[15px] text-[13.5px] leading-[1.7] text-[var(--body-text)]">
-              {step.why}
+              {onConfirm
+                ? "We assumed sensible defaults for these so the quiz stayed short. They drive your compliance checklist (state codes, entity documents, FSSAI/labelling), so a ten-second review here saves wrong guidance later."
+                : step.why}
             </p>
-            {step.mentorNote ? (
+            {!onConfirm && step.mentorNote ? (
               <p
                 className="mt-3.5 pt-3.5 font-serif-accent text-[14.5px] leading-[1.65] text-[#d6d6d6]"
                 style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
