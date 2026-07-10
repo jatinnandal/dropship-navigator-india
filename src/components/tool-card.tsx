@@ -25,6 +25,7 @@ import {
   FolderCheck,
   Receipt,
   Gamepad2,
+  Landmark,
 } from "lucide-react";
 
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string; size?: number }>> = {
@@ -50,6 +51,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string; size?: 
   FolderCheck,
   Receipt,
   Gamepad2,
+  Landmark,
 };
 
 type Props = {

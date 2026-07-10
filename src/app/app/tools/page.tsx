@@ -292,6 +292,13 @@ export default function ToolsIndexPage() {
             status="open"
           />
           <ToolCard
+            href="/app/tools/payout-reconciliation"
+            title="Payout reconciliation"
+            description="Upload a settlement CSV — expected vs received per order, plus unclaimed TCS."
+            icon="Landmark"
+            status="open"
+          />
+          <ToolCard
             href="/app/tools/settlement-timeline"
             title="Settlement timeline"
             description="When each marketplace actually pays, and the buffer you need."

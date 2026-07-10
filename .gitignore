@@ -40,3 +40,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local tool caches / artifacts
+.claude-flow/
+.swarm/
+graphify-out/
+ruvector.db
+design_handoff_mono_redesign/
