@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
+import { MARKETPLACE_FEES_META } from "@/lib/marketplace-fees";
 import { CodPrepaidSimulator } from "@/components/tools/cod-prepaid-simulator";
 
 export default function CodPrepaidSimulatorPage() {
@@ -20,6 +22,7 @@ export default function CodPrepaidSimulatorPage() {
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
           See exactly how COD mix destroys your margins — in rupees, not percentages
         </p>
+        <EstimateDisclaimer meta={MARKETPLACE_FEES_META} />
       </header>
 
       <section className="mt-8">

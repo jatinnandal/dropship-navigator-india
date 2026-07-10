@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
+import { SHIPPING_DATA_META } from "@/lib/shipping-data";
 import { ShippingEstimator } from "@/components/tools/shipping-estimator";
 
 export default function ShippingEstimatorPage() {
@@ -20,6 +22,7 @@ export default function ShippingEstimatorPage() {
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
           Compare REAL carrier costs — not advertised rates
         </p>
+        <EstimateDisclaimer meta={SHIPPING_DATA_META} />
       </header>
 
       <section className="mt-8">

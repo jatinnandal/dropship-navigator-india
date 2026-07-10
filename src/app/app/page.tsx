@@ -23,13 +23,10 @@ import { getJourneyNodes } from "@/lib/journey-graph";
 import { getNextAction } from "@/lib/next-action";
 import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
+import { formatDateIN } from "@/lib/format";
 
 function formatDate() {
-  return new Date().toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-  });
+  return formatDateIN();
 }
 
 function getGreeting() {

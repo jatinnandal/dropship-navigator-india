@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
+import { SETTLEMENT_DATA_META } from "@/lib/settlement-data";
 import { CashflowSimulator } from "@/components/tools/cashflow-simulator";
 
 export default function CashflowSimulatorPage() {
@@ -20,6 +22,7 @@ export default function CashflowSimulatorPage() {
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
           Model your working capital needs with settlement delays, ad spend &amp; festival surges
         </p>
+        <EstimateDisclaimer meta={SETTLEMENT_DATA_META} />
       </header>
 
       <section className="mt-8">

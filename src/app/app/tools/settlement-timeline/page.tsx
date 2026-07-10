@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
+import { SETTLEMENT_DATA_META } from "@/lib/settlement-data";
 import { SettlementTimeline } from "@/components/tools/settlement-timeline";
 
 export default function SettlementTimelinePage() {
@@ -20,6 +22,7 @@ export default function SettlementTimelinePage() {
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
           See when marketplaces actually pay you — plan your working capital
         </p>
+        <EstimateDisclaimer meta={SETTLEMENT_DATA_META} />
       </header>
 
       <section className="mt-8">

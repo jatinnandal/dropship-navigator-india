@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
+import { MARKETPLACE_FEES_META } from "@/lib/marketplace-fees";
 import { Store, Warehouse, Package, Banknote } from "lucide-react";
 import { DECISION_TREES } from "@/lib/decision-trees-data";
 
@@ -27,6 +29,7 @@ export default function DecisionTreesPage() {
           Stop overthinking — answer a few questions and get a clear,
           data-backed recommendation for your situation.
         </p>
+        <EstimateDisclaimer meta={MARKETPLACE_FEES_META} />
       </header>
 
       <div className="grid gap-4 sm:grid-cols-2">
