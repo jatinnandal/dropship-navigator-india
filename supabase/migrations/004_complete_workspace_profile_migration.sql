@@ -30,13 +30,12 @@ begin
     where uw.profile_id is null and up.user_id = uw.user_id and up.active_profile_id is not null;
 
     update public.user_workspace uw
-    set profile_id = sp.id
-    from lateral (
-      select id from public.seller_profiles sp
+    set profile_id = (
+      select sp.id from public.seller_profiles sp
       where sp.user_id = uw.user_id
       order by sp.created_at desc
       limit 1
-    ) sp
+    )
     where uw.profile_id is null;
 
     -- 3. Rows for users with no seller profile can't be linked; drop them.
@@ -67,13 +66,12 @@ begin
     where utp.profile_id is null and up.user_id = utp.user_id and up.active_profile_id is not null;
 
     update public.user_task_progress utp
-    set profile_id = sp.id
-    from lateral (
-      select id from public.seller_profiles sp
+    set profile_id = (
+      select sp.id from public.seller_profiles sp
       where sp.user_id = utp.user_id
       order by sp.created_at desc
       limit 1
-    ) sp
+    )
     where utp.profile_id is null;
 
     delete from public.user_task_progress where profile_id is null;
