@@ -8,10 +8,10 @@ import type { TaskStep } from "@/lib/tasks/types";
 function MentorAvatar() {
   return (
     <div
-      className="flex h-12 w-12 flex-none items-center justify-center rounded-full text-sm font-bold text-white"
+      className="flex h-12 w-12 flex-none items-center justify-center rounded-full text-sm font-bold text-black"
       style={{
-        background: "linear-gradient(135deg, #f59e0b, #d97706)",
-        boxShadow: "0 0 16px -4px rgba(245, 158, 11, 0.35), 0 0 0 2px rgba(245, 158, 11, 0.15)",
+        background: "linear-gradient(135deg, #ffffff, #d6d6d6)",
+        boxShadow: "0 0 16px -4px rgba(255, 255, 255, 0.35), 0 0 0 2px rgba(255, 255, 255, 0.14)",
       }}
       aria-hidden="true"
     >

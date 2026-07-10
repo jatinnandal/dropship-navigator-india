@@ -64,8 +64,8 @@ export function CashflowTimeline({ onComplete }: Props) {
   }
 
   return (
-    <div className="mt-4 space-y-4 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
-      <p className="text-sm font-semibold text-slate-100">Cashflow timeline — the dead zone</p>
+    <div className="mt-4 space-y-4 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
+      <p className="text-sm font-semibold text-white">Cashflow timeline — the dead zone</p>
       <p className="text-muted text-xs">
         Meta bills daily. COD remittance arrives day 5–7. Marketplace settlements can take 7–14 days. Plan
         float accordingly.
@@ -78,7 +78,7 @@ export function CashflowTimeline({ onComplete }: Props) {
             type="number"
             value={budget}
             onChange={(e) => setBudget(Number(e.target.value) || 0)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
         </label>
         <label className="text-sm">
@@ -87,7 +87,7 @@ export function CashflowTimeline({ onComplete }: Props) {
             type="number"
             value={dailyAdSpend}
             onChange={(e) => setDailyAdSpend(Number(e.target.value) || 0)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
         </label>
         <label className="text-sm">
@@ -98,7 +98,7 @@ export function CashflowTimeline({ onComplete }: Props) {
             max={20}
             value={ordersPerDay}
             onChange={(e) => setOrdersPerDay(Number(e.target.value) || 1)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
         </label>
         <label className="text-sm">
@@ -107,7 +107,7 @@ export function CashflowTimeline({ onComplete }: Props) {
             type="number"
             value={avgOrderValue}
             onChange={(e) => setAvgOrderValue(Number(e.target.value) || 0)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
         </label>
       </div>
@@ -136,7 +136,7 @@ export function CashflowTimeline({ onComplete }: Props) {
               : "border-cyan-400/30 bg-cyan-400/5"
           }`}
         >
-          <p className="text-lg font-bold text-slate-100">Day {activeDay}</p>
+          <p className="text-lg font-bold text-white">Day {activeDay}</p>
           <p className="text-muted mt-1 text-sm">
             −₹{activeRow?.adSpend} ads
             {activeRow && activeRow.codIn > 0 ? ` · +₹${activeRow.codIn.toFixed(0)} COD in` : " · no COD yet"}

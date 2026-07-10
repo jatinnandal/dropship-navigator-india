@@ -14,43 +14,43 @@ const CHANNEL_FILTERS: { id: PrimaryChannel | "all"; label: string }[] = [
 
 function StoryCard({ story }: { story: SuccessStory }) {
   return (
-    <div className="glass-panel grain rounded-xl p-5 space-y-4 border-l-2" style={{ borderLeftColor: story.accentColor }}>
+    <div className="panel rounded-xl p-5 space-y-4">
       <div className="flex items-center gap-3">
         <div
-          className="h-10 w-10 rounded-md flex items-center justify-center text-sm font-bold text-slate-900"
-          style={{ backgroundColor: story.accentColor }}
+          className="h-10 w-10 rounded-md flex items-center justify-center text-sm font-bold text-black"
+          style={{ background: "linear-gradient(135deg, #ffffff, #d6d6d6)" }}
         >
           {story.initials}
         </div>
         <div>
-          <p className="text-sm font-semibold text-slate-200">{story.name}</p>
-          <p className="text-xs text-slate-500">{story.city} · {story.monthsActive} months</p>
+          <p className="text-sm font-semibold text-white">{story.name}</p>
+          <p className="text-xs text-[var(--text-faint)]">{story.city} · {story.monthsActive} months</p>
         </div>
-        <span className="ml-auto rounded-md bg-slate-800 border border-slate-700 px-2 py-0.5 text-xs text-slate-400 capitalize">
+        <span className="ml-auto rounded-md bg-white/[0.06] border border-white/[0.12] px-2 py-0.5 text-xs text-[var(--muted)] capitalize">
           {story.channel}
         </span>
       </div>
 
-      <p className="font-mono inline-block rounded border border-slate-700 bg-slate-900/60 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-slate-500">
+      <p className="font-mono inline-block rounded border border-white/[0.12] bg-white/[0.03] px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-[var(--text-faint)]">
         Illustrative scenario
       </p>
 
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-md bg-slate-900/60 p-2 text-center">
-          <p className="text-xs text-slate-500">Revenue</p>
-          <p className="text-sm font-semibold text-slate-200">{story.stats.monthlyRevenue}</p>
+        <div className="rounded-md bg-white/[0.03] p-2 text-center">
+          <p className="text-xs text-[var(--text-faint)]">Revenue</p>
+          <p className="text-sm font-semibold text-white">{story.stats.monthlyRevenue}</p>
         </div>
-        <div className="rounded-md bg-slate-900/60 p-2 text-center">
-          <p className="text-xs text-slate-500">Margin</p>
+        <div className="rounded-md bg-white/[0.03] p-2 text-center">
+          <p className="text-xs text-[var(--text-faint)]">Margin</p>
           <p className="text-sm font-semibold text-emerald-400">{story.stats.profitMargin}</p>
         </div>
-        <div className="rounded-md bg-slate-900/60 p-2 text-center">
-          <p className="text-xs text-slate-500">Orders/day</p>
-          <p className="text-sm font-semibold text-slate-200">{story.stats.ordersPerDay}</p>
+        <div className="rounded-md bg-white/[0.03] p-2 text-center">
+          <p className="text-xs text-[var(--text-faint)]">Orders/day</p>
+          <p className="text-sm font-semibold text-white">{story.stats.ordersPerDay}</p>
         </div>
       </div>
 
-      <p className="text-sm text-slate-400 leading-relaxed">{story.journey}</p>
+      <p className="text-sm text-[var(--muted)] leading-relaxed">{story.journey}</p>
 
       <p className="text-xs text-cyan-400 leading-relaxed">
         <span className="font-semibold">Tip:</span> {story.tip}
@@ -77,7 +77,7 @@ export function SuccessStoriesGrid() {
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
               channelFilter === f.id
                 ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                : "bg-slate-800/60 text-slate-400 border border-slate-700 hover:text-slate-200"
+                : "bg-white/[0.05] text-[var(--muted)] border border-white/[0.12] hover:text-white"
             }`}
           >
             {f.label}

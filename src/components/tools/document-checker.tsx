@@ -66,7 +66,7 @@ function MarketplaceSelector({
             className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
               active
                 ? "border-amber-500/50 bg-amber-500/10 text-amber-400"
-                : "border-slate-700 bg-slate-800/50 text-slate-400 hover:border-slate-600 hover:text-slate-300"
+                : "border-white/[0.12] bg-white/[0.04] text-[var(--muted)] hover:border-white/[0.2] hover:text-[var(--body-text)]"
             }`}
           >
             {MARKETPLACE_LABELS[m]}
@@ -94,7 +94,7 @@ function ExpandableSection({
     <div className="mt-2">
       <button
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-300 transition-colors"
+        className="flex items-center gap-1.5 text-xs font-medium text-[var(--muted)] hover:text-[var(--body-text)] transition-colors"
       >
         <ChevronDown
           className={`h-3 w-3 transition-transform ${open ? "rotate-0" : "-rotate-90"}`}
@@ -140,7 +140,7 @@ function DocumentCard({
 
   return (
     <div
-      className={`glass-panel-tertiary rounded-lg p-4 transition-all ${
+      className={`panel-chip rounded-lg p-4 transition-all ${
         checked ? "border-emerald-500/30 bg-emerald-500/5" : ""
       }`}
     >
@@ -150,7 +150,7 @@ function DocumentCard({
           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all ${
             checked
               ? "border-emerald-500 bg-emerald-500/20 text-emerald-400"
-              : "border-slate-600 text-transparent hover:border-slate-500"
+              : "border-white/[0.2] text-transparent hover:border-white/[0.35]"
           }`}
           aria-label={checked ? `Unmark ${doc.name}` : `Mark ${doc.name} as ready`}
         >
@@ -159,11 +159,11 @@ function DocumentCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <h4 className="text-sm font-semibold text-slate-200">{doc.name}</h4>
+            <h4 className="text-sm font-semibold text-white">{doc.name}</h4>
             {doc.requiredFor.map((m) => (
               <span
                 key={m}
-                className="rounded bg-slate-800 px-1.5 py-0.5 text-[10px] text-slate-500"
+                className="rounded bg-white/[0.06] px-1.5 py-0.5 text-[10px] text-[var(--text-faint)]"
               >
                 {MARKETPLACE_LABELS[m]}
               </span>
@@ -231,8 +231,8 @@ function DocumentCard({
 /* ── Cross-Check Matrix ── */
 function CrossCheckMatrix({ allChecked }: { allChecked: Record<string, boolean> }) {
   return (
-    <div className="glass-panel-receded rounded-lg p-4">
-      <h3 className="text-sm font-semibold text-slate-200 mb-3 flex items-center gap-2">
+    <div className="panel rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
         <LinkIcon className="h-4 w-4 text-cyan-400" />
         Cross-Validation Matrix
       </h3>
@@ -269,7 +269,7 @@ function CrossCheckMatrix({ allChecked }: { allChecked: Record<string, boolean> 
                     }`}
                   />
                 )}
-                <span className="text-xs font-medium text-slate-200">
+                <span className="text-xs font-medium text-white">
                   {check.label}
                 </span>
                 <span
@@ -413,8 +413,8 @@ export function DocumentChecker() {
   if (!mounted) {
     return (
       <div className="animate-pulse space-y-4">
-        <div className="h-32 rounded-lg bg-slate-800/50" />
-        <div className="h-64 rounded-lg bg-slate-800/50" />
+        <div className="h-32 rounded-lg bg-white/[0.04]" />
+        <div className="h-64 rounded-lg bg-white/[0.04]" />
       </div>
     );
   }
@@ -430,7 +430,7 @@ export function DocumentChecker() {
               Document name mismatches are the #1 rejection reason on Amazon India
             </p>
             <p className="text-muted mt-1 text-xs leading-relaxed">
-              Your name must match <strong className="text-slate-200">CHARACTER-FOR-CHARACTER</strong> across
+              Your name must match <strong className="text-white">CHARACTER-FOR-CHARACTER</strong> across
               PAN, GST certificate, and bank statement. Even &quot;KUMAR&quot; vs
               &quot;Kumar&quot; can trigger rejection.
             </p>
@@ -439,8 +439,8 @@ export function DocumentChecker() {
       </div>
 
       {/* Marketplace Selector */}
-      <div className="glass-panel rounded-lg p-4">
-        <h3 className="text-sm font-semibold text-slate-200 mb-3">
+      <div className="panel rounded-lg p-4">
+        <h3 className="text-sm font-semibold text-white mb-3">
           Which platforms are you applying to?
         </h3>
         <MarketplaceSelector
@@ -455,11 +455,11 @@ export function DocumentChecker() {
       </div>
 
       {/* Validation Status Panel */}
-      <div className="glass-panel rounded-lg p-4 sticky top-4 z-10">
+      <div className="panel rounded-lg p-4 sticky top-4 z-10">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <FileCheck className="h-4 w-4 text-amber-400" />
-            <span className="text-sm font-semibold text-slate-200">
+            <span className="text-sm font-semibold text-white">
               {checkedCount} of {totalDocs} documents ready
             </span>
           </div>
@@ -530,7 +530,7 @@ export function DocumentChecker() {
           ([category, docs]) =>
             docs.length > 0 && (
               <div key={category}>
-                <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-[var(--body-text)] mb-3 flex items-center gap-2">
                   <span className="h-1 w-1 rounded-full bg-amber-400" />
                   {CATEGORY_LABELS[category]}
                 </h3>

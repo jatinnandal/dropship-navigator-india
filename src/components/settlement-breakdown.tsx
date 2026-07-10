@@ -50,8 +50,8 @@ export function SettlementBreakdown({ channel, orderValue = 1000 }: Props) {
   const lines = buildSettlementExample(channel, orderValue);
 
   return (
-    <div className="mt-4 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
-      <p className="text-sm font-semibold text-slate-100">
+    <div className="mt-4 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
+      <p className="text-sm font-semibold text-white">
         Worked example: ₹{orderValue.toLocaleString("en-IN")} order → payout
       </p>
       <p className="text-muted mt-1 text-xs">
@@ -62,11 +62,11 @@ export function SettlementBreakdown({ channel, orderValue = 1000 }: Props) {
           <li
             key={line.label}
             className={`flex flex-wrap items-baseline justify-between gap-2 text-sm ${
-              line.label.includes("Net payout") ? "border-t border-slate-600 pt-2 font-semibold text-emerald-200" : ""
+              line.label.includes("Net payout") ? "border-t border-white/[0.2] pt-2 font-semibold text-emerald-200" : ""
             }`}
           >
-            <span className="text-slate-200">{line.label}</span>
-            <span className={line.amount >= 0 ? "text-slate-100" : "text-rose-200"}>
+            <span className="text-white">{line.label}</span>
+            <span className={line.amount >= 0 ? "text-white" : "text-rose-200"}>
               {line.amount >= 0 ? "" : "−"}₹{Math.abs(line.amount).toFixed(0)}
             </span>
             {line.note ? <span className="text-muted w-full text-xs">{line.note}</span> : null}

@@ -78,7 +78,7 @@ function SliderField({
     <label className="block text-sm">
       <span className="text-muted flex items-center justify-between">
         {label}
-        <span className="font-medium text-slate-100">
+        <span className="font-medium text-white">
           {value}
           {suffix}
         </span>
@@ -137,8 +137,8 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
 
   if (kind === "rto_impact") {
     return (
-      <div className="mt-4 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
-        <p className="text-sm font-semibold text-slate-100">RTO impact estimator</p>
+      <div className="mt-4 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
+        <p className="text-sm font-semibold text-white">RTO impact estimator</p>
         <p className="text-muted mt-1 text-xs">
           COD confirmation within 30 minutes typically cuts RTO from ~26% to ~12-14%.
         </p>
@@ -149,7 +149,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
               type="number"
               value={rtoRate}
               onChange={(e) => setRtoRate(e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+              className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
             />
           </label>
           <label className="block text-sm">
@@ -158,7 +158,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
               type="number"
               value={ordersPerMonth}
               onChange={(e) => setOrdersPerMonth(e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+              className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
             />
           </label>
         </div>
@@ -200,8 +200,8 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
   const showFullBreakdown = kind === "margin" || kind === "breakeven_roas";
 
   return (
-    <div className="mt-4 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
-      <p className="text-sm font-semibold text-slate-100">
+    <div className="mt-4 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
+      <p className="text-sm font-semibold text-white">
         {kind === "breakeven_roas" ? "Break-even ROAS calculator" : "India profit calculator"}
       </p>
       <p className="text-muted mt-1 text-xs">{CHANNEL_LABELS[channel]} + 18% GST on fees + 0.5% TCS</p>
@@ -250,7 +250,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             type="number"
             value={productCost}
             onChange={(e) => setProductCost(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
         </label>
         <label className="block text-sm">
@@ -259,7 +259,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             type="number"
             value={shippingCost}
             onChange={(e) => setShippingCost(e.target.value)}
-            className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+            className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
         </label>
         <label className="block text-sm sm:col-span-2">
@@ -270,21 +270,21 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
               value={sellingPrice}
               onChange={(e) => setSellingPrice(e.target.value)}
               placeholder="Selling ₹"
-              className="w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+              className="w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
             />
             <input
               type="number"
               value={adCost}
               onChange={(e) => setAdCost(e.target.value)}
               placeholder="Ad ₹"
-              className="w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+              className="w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
             />
             <input
               type="number"
               value={rtoRate}
               onChange={(e) => setRtoRate(e.target.value)}
               placeholder="RTO %"
-              className="w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+              className="w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
             />
           </div>
         </label>
@@ -295,7 +295,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
               type="number"
               value={monthlyFixed}
               onChange={(e) => setMonthlyFixed(e.target.value)}
-              className="mt-1 w-full rounded-md border border-slate-600 bg-slate-900/60 px-3 py-2 text-slate-100"
+              className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
             />
           </label>
         ) : null}
