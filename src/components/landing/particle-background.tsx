@@ -14,8 +14,18 @@ export function ParticleBackground() {
     if (!container) return;
 
     let destroyed = false;
+    let cleanupScene: (() => void) | undefined;
 
-    import("three").then(({ Scene, PerspectiveCamera, WebGLRenderer, BufferGeometry, Float32BufferAttribute, Points, ShaderMaterial, Color }) => {
+    // Defer the ~500KB three.js fetch until the browser is idle so it never
+    // competes with first paint; fall back to a timeout where unsupported.
+    const idle: (cb: () => void) => number =
+      "requestIdleCallback" in window
+        ? (cb) => window.requestIdleCallback(cb, { timeout: 3000 })
+        : (cb) => window.setTimeout(cb, 1500);
+
+    idle(() => {
+      if (destroyed) return;
+      import("three").then(({ Scene, PerspectiveCamera, WebGLRenderer, BufferGeometry, Float32BufferAttribute, Points, ShaderMaterial, Color }) => {
       if (destroyed) return;
 
       const scene = new Scene();
@@ -115,8 +125,7 @@ export function ParticleBackground() {
       };
       raf = requestAnimationFrame(animate);
 
-      return () => {
-        destroyed = true;
+      cleanupScene = () => {
         cancelAnimationFrame(raf);
         window.removeEventListener("mousemove", onMouseMove);
         window.removeEventListener("resize", onResize);
@@ -127,10 +136,12 @@ export function ParticleBackground() {
           container.removeChild(renderer.domElement);
         }
       };
+      });
     });
 
     return () => {
       destroyed = true;
+      cleanupScene?.();
     };
   }, []);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, RotateCcw, CheckCircle2 } from "lucide-react";
 import type { DecisionTree, DecisionNode } from "@/lib/decision-trees-data";
@@ -24,19 +24,15 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
     (n) => n.id === currentNodeId
   ) as DecisionNode;
 
-  const estimatedSteps = Math.max(
-    ...tree.nodes.map((n) => {
-      let depth = 0;
-      let node: DecisionNode | undefined = n;
-      while (node) {
-        depth++;
-        const nextId: string | null | undefined = node.options[0]?.nextId;
-        if (!nextId) break;
-        node = tree.nodes.find((x) => x.id === nextId);
-      }
-      return depth;
-    })
-  );
+  // Longest path from the start node across ALL options (trees are tiny).
+  const estimatedSteps = useMemo(() => {
+    const depthFrom = (id: string | null): number => {
+      const node = id ? tree.nodes.find((n) => n.id === id) : undefined;
+      if (!node) return 0;
+      return 1 + Math.max(0, ...node.options.map((o) => depthFrom(o.nextId)));
+    };
+    return depthFrom(tree.startNodeId);
+  }, [tree]);
 
   const handleChoice = useCallback(
     (option: { label: string; nextId: string | null; recommendation?: string }) => {
@@ -83,12 +79,12 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
       {/* Progress */}
       <div className="flex items-center gap-3">
         <div className="text-muted text-xs font-medium">
-          Step {recommendation ? stepNumber : stepNumber} of ~{estimatedSteps}
+          {recommendation ? "Recommendation" : `Step ${stepNumber} of ~${estimatedSteps}`}
         </div>
         <div className="progress-track h-1.5 flex-1 rounded-full">
           <div
             className="progress-fill h-full rounded-full transition-all duration-300"
-            style={{ width: `${Math.min(100, (stepNumber / estimatedSteps) * 100)}%` }}
+            style={{ width: `${recommendation ? 100 : Math.min(100, (stepNumber / estimatedSteps) * 100)}%` }}
           />
         </div>
       </div>

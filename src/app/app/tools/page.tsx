@@ -30,7 +30,7 @@ export default function ToolsIndexPage() {
             marginTop: 10,
           }}
         >
-          Every tool here replaces a mistake that costs ₹5 000–₹50 000 to learn
+          Every tool here replaces a mistake that costs ₹5,000–₹50,000 to learn
           the hard way. Run the numbers, rehearse the calls, vet the suppliers —
           before a single rupee leaves your account.
         </p>

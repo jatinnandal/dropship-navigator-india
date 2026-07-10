@@ -585,11 +585,30 @@ body {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 700ms var(--motion-ease-out), transform 700ms var(--motion-ease-out);
+  /* Self-heal: if the IntersectionObserver never fires (JS stall, hydration
+     race), force content visible after 1.2s. Normal reveals beat the delay. */
+  animation: reveal-fallback 0s linear 1.2s forwards;
+}
+
+@keyframes reveal-fallback {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 [data-reveal].revealed {
   opacity: 1;
   transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    animation: none;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
