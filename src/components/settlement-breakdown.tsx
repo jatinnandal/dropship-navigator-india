@@ -1,4 +1,5 @@
 import type { PrimaryChannel } from "@/lib/mvp-data";
+import { getFeesForProduct, getShippingForWeight } from "@/lib/marketplace-fees";
 
 export type SettlementLine = {
   label: string;
@@ -7,24 +8,33 @@ export type SettlementLine = {
 };
 
 export function buildSettlementExample(channel: PrimaryChannel, orderValue = 1000): SettlementLine[] {
-  const commissionRate =
-    channel === "amazon" ? 0.12 : channel === "flipkart" ? 0.13 : channel === "meesho" ? 0.08 : 0.02;
-  const commission = orderValue * commissionRate;
-  const paymentFee = orderValue * 0.02;
-  const gstOnFees = (commission + paymentFee) * 0.18;
-  const tcs = channel === "meesho" ? 0 : orderValue * 0.01;
-  const shipping = 60;
-  const payout = orderValue - commission - paymentFee - gstOnFees - tcs - shipping;
+  const fees = getFeesForProduct(channel, "general", orderValue, false);
+  const shipping = getShippingForWeight(channel, "light");
+  const fixedFees = fees.closingFee + fees.fixedFee + fees.platformFee + fees.codCollectionFee;
+  const payout = orderValue - fees.totalFees - shipping;
 
   return [
     { label: "Order value (what customer paid)", amount: orderValue },
-    { label: "Marketplace commission", amount: -commission, note: `${(commissionRate * 100).toFixed(0)}% of order` },
-    { label: "Payment / collection fee", amount: -paymentFee, note: "~2%" },
-    { label: "GST on platform fees (18%)", amount: -gstOnFees, note: "On commission + payment fee" },
+    {
+      label: "Marketplace commission",
+      amount: -fees.referralFee,
+      note: fees.referralPercent > 0 ? `${fees.referralPercent}% of order` : "0% on this channel/price band",
+    },
+    {
+      label: "Fixed / closing / platform fee",
+      amount: -fixedFees,
+      note: "Per-order flat fees",
+    },
+    {
+      label: "Payment / collection fee",
+      amount: -fees.paymentGatewayFee,
+      note: fees.paymentGatewayPercent > 0 ? `~${fees.paymentGatewayPercent}%` : undefined,
+    },
+    { label: "GST on platform fees (18%)", amount: -fees.gstOnFees, note: "On all fees above" },
     {
       label: "TCS (Tax Collected at Source)",
-      amount: -tcs,
-      note: tcs > 0 ? "1% — credited to your GSTIN via GSTR-2A" : "Meesho may handle differently",
+      amount: -fees.tcs,
+      note: fees.tcs > 0 ? "0.5% — accept via TDS/TCS credit received statement" : "No TCS on your own website",
     },
     { label: "Shipping / logistics deduction", amount: -shipping, note: "If platform logistics" },
     { label: "Net payout to bank", amount: payout, note: "What actually hits your account" },
@@ -45,7 +55,7 @@ export function SettlementBreakdown({ channel, orderValue = 1000 }: Props) {
         Worked example: ₹{orderValue.toLocaleString("en-IN")} order → payout
       </p>
       <p className="text-muted mt-1 text-xs">
-        TCS is credited to your GSTIN (claim in GSTR-3B). TDS on commission, if deducted, is claimed in ITR.
+        TCS is credited to your GSTIN — accept it in the TDS/TCS credit received statement. TDS on commission, if deducted, is claimed in ITR.
       </p>
       <ul className="mt-3 space-y-2">
         {lines.map((line) => (

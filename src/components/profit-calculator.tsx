@@ -25,10 +25,10 @@ type Props = {
 };
 
 const CHANNEL_LABELS: Record<PrimaryChannel, string> = {
-  amazon: "Amazon (~12% commission)",
-  flipkart: "Flipkart (~13% commission)",
-  meesho: "Meesho (~8% commission)",
-  shopify: "Shopify (~2% transaction fee)",
+  amazon: "Amazon (category rate card)",
+  flipkart: "Flipkart (commission + fixed + collection)",
+  meesho: "Meesho (0% commission + platform fee)",
+  shopify: "Shopify (~2% gateway fee)",
 };
 
 function verdictLabel(verdict: ReturnType<typeof calculateProfit>["verdict"]): string {
@@ -204,7 +204,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       <p className="text-sm font-semibold text-slate-100">
         {kind === "breakeven_roas" ? "Break-even ROAS calculator" : "India profit calculator"}
       </p>
-      <p className="text-muted mt-1 text-xs">{CHANNEL_LABELS[channel]} + 18% GST on fees + 1% TCS</p>
+      <p className="text-muted mt-1 text-xs">{CHANNEL_LABELS[channel]} + 18% GST on fees + 0.5% TCS</p>
 
       {result.netMarginPercent < 15 && result.netMarginPercent > 0 ? (
         <div className="banner-deadline mt-4 rounded-lg p-3">
@@ -329,9 +329,9 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             <summary className="cursor-pointer text-sm text-amber-200">Show cost breakdown</summary>
             <ul className="text-muted mt-2 space-y-1 text-xs">
               <li>Marketplace commission: ₹{result.marketplaceCommission.toFixed(0)}</li>
-              <li>Payment fee (2%): ₹{result.paymentFee.toFixed(0)}</li>
+              <li>Fixed/closing/collection fees: ₹{(result.closingFee + result.fixedFee + result.codCollectionFee + result.platformFee + result.paymentFee).toFixed(0)}</li>
               <li>GST on fees (18%): ₹{result.gstOnFees.toFixed(0)}</li>
-              <li>TCS (1%): ₹{result.tcs.toFixed(0)}</li>
+              <li>TCS (0.5%): ₹{result.tcs.toFixed(0)}</li>
               <li>RTO loss (weighted): ₹{result.rtoLoss.toFixed(0)}</li>
               <li>Ad cost: ₹{result.adCost.toFixed(0)}</li>
             </ul>
