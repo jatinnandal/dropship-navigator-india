@@ -1,9 +1,11 @@
-import type { PrimaryChannel } from "@/lib/mvp-data";
+import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
+import { getFeesForProduct } from "@/lib/marketplace-fees";
+import { DEFAULT_RTO_DAMAGE_RATE } from "@/lib/profit-math";
 import { SETTLEMENT_TIMELINES } from "@/lib/settlement-data";
-import { calculateProfit } from "@/lib/profit-math";
 
 export type CashFlowInputs = {
   channel: PrimaryChannel;
+  category?: ProductType;
   sellingPrice: number;
   productCost: number;
   shippingCost: number;
@@ -38,6 +40,7 @@ export type CashFlowResult = {
 export function simulate90DayCashFlow(inputs: CashFlowInputs): CashFlowResult {
   const {
     channel,
+    category = "general",
     sellingPrice,
     productCost,
     shippingCost,
@@ -54,15 +57,11 @@ export function simulate90DayCashFlow(inputs: CashFlowInputs): CashFlowResult {
   const prepaidFraction = 1 - codFraction;
   const rtoFraction = rtoPercent / 100;
 
-  // Calculate per-order profit using existing engine
-  const profitResult = calculateProfit({
-    sellingPrice,
-    productCost,
-    shippingCost,
-    adCostPerOrder: adSpendPerDay / Math.max(1, ordersPerDay),
-    rtoRatePercent: rtoPercent,
-    channel,
-  });
+  // Same fee source as every other money tool — settlement = price − fees.
+  const codFees = getFeesForProduct(channel, category, sellingPrice, true);
+  const prepaidFees = getFeesForProduct(channel, category, sellingPrice, false);
+  const netPerCodOrder = Math.max(0, sellingPrice - codFees.totalFees);
+  const netPerPrepaidOrder = Math.max(0, sellingPrice - prepaidFees.totalFees);
 
   // Settlement delays (days after order placed)
   const prepaidSettlementDelay = timeline.deliveryDays + timeline.prepaidSettlementDays;
@@ -97,8 +96,11 @@ export function simulate90DayCashFlow(inputs: CashFlowInputs): CashFlowResult {
     const dayRevenue = successfulOrders * sellingPrice;
     totalRevenue += dayRevenue;
 
-    // Immediate expenses: product cost + shipping for ALL orders (incl. RTO attempts)
-    const dayProductCost = dayOrders * productCost;
+    // Immediate expenses. Product cost goes out for every order shipped;
+    // RTO'd units come back with only the damage share written off
+    // (same DEFAULT_RTO_DAMAGE_RATE as the margin calculator).
+    const dayProductCost =
+      successfulOrders * productCost + rtoOrders * productCost * DEFAULT_RTO_DAMAGE_RATE;
     const dayShippingCost = dayOrders * shippingCost;
     // RTO return shipping cost
     const dayRtoShippingCost = rtoOrders * shippingCost;
@@ -107,26 +109,19 @@ export function simulate90DayCashFlow(inputs: CashFlowInputs): CashFlowResult {
     totalExpenses += dayExpenses;
 
     // Schedule settlements for successful orders
-    // Prepaid portion
-    const prepaidRevenue = successfulOrders * prepaidFraction * sellingPrice;
-    if (prepaidRevenue > 0) {
-      // Deduct marketplace fees from settlement
-      const commissionRate = channel === "meesho" ? 0.08 : channel === "flipkart" ? 0.13 : channel === "amazon" ? 0.12 : 0.02;
-      const netPrepaidSettlement = prepaidRevenue * (1 - commissionRate - 0.02 - 0.01); // commission + payment fee + tcs approx
+    const prepaidSettlement = successfulOrders * prepaidFraction * netPerPrepaidOrder;
+    if (prepaidSettlement > 0) {
       pendingSettlements.push({
         arrivalDay: day + prepaidSettlementDelay,
-        amount: netPrepaidSettlement,
+        amount: prepaidSettlement,
       });
     }
 
-    // COD portion
-    const codRevenue = successfulOrders * codFraction * sellingPrice;
-    if (codRevenue > 0) {
-      const commissionRate = channel === "meesho" ? 0.08 : channel === "flipkart" ? 0.13 : channel === "amazon" ? 0.12 : 0.02;
-      const netCodSettlement = codRevenue * (1 - commissionRate - 0.02 - 0.01);
+    const codSettlement = successfulOrders * codFraction * netPerCodOrder;
+    if (codSettlement > 0) {
       pendingSettlements.push({
         arrivalDay: day + codSettlementDelay,
-        amount: netCodSettlement,
+        amount: codSettlement,
       });
     }
 

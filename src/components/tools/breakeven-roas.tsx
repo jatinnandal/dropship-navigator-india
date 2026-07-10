@@ -7,10 +7,10 @@ import {
   CHANNELS,
   WEIGHT_BRACKET_LABELS,
   MARKETPLACE_FEES_META,
-  getFeesForProduct,
   getShippingForWeight,
   type WeightBracket,
 } from "@/lib/marketplace-fees";
+import { computeRoas as computeRoasShared } from "@/lib/roas";
 import { DataFreshness } from "@/components/data-freshness";
 
 const PRODUCT_CATEGORIES: { value: ProductType; label: string }[] = [
@@ -63,34 +63,23 @@ function computeRoas(
   rtoRate: number,
 ): RoasResult {
   const ch = CHANNELS.find((c) => c.channel === channel)!;
-  const shipping = getShippingForWeight(channel, weightBracket);
-
-  const codFraction = codMix / 100;
-  const prepaidFraction = 1 - codFraction;
-  const rtoFraction = rtoRate / 100;
-
-  const feesCod = getFeesForProduct(channel, category, sellingPrice, true);
-  const feesPrepaid = getFeesForProduct(channel, category, sellingPrice, false);
-
-  const blendedFees =
-    codFraction * feesCod.totalFees + prepaidFraction * feesPrepaid.totalFees;
-
-  const rtoCost = (shipping * 2 + productCost * 0.3) * rtoFraction;
-  const contribution = sellingPrice - productCost - blendedFees - shipping - rtoCost;
-
-  const breakeven = contribution > 0 ? sellingPrice / contribution : Infinity;
-  const margin10 = contribution - sellingPrice * 0.1;
-  const margin20 = contribution - sellingPrice * 0.2;
-  const target10 = margin10 > 0 ? sellingPrice / margin10 : Infinity;
-  const target20 = margin20 > 0 ? sellingPrice / margin20 : Infinity;
+  const result = computeRoasShared({
+    sellingPrice,
+    productCost,
+    channel,
+    category,
+    shippingCost: getShippingForWeight(channel, weightBracket),
+    codMixPercent: codMix,
+    rtoRatePercent: rtoRate,
+  });
 
   return {
     channel,
     name: ch.name,
-    contribution,
-    breakeven,
-    target10,
-    target20,
+    contribution: result.contribution,
+    breakeven: result.breakeven,
+    target10: result.target10,
+    target20: result.target20,
   };
 }
 

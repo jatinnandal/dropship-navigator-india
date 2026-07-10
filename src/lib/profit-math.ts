@@ -1,6 +1,21 @@
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 import { getFeesForProduct } from "@/lib/marketplace-fees";
 
+/**
+ * Category-level average RTO rates (COD-heavy mix). Single source of truth —
+ * import from here, never redefine.
+ */
+export const CATEGORY_RTO: Record<ProductType, number> = {
+  fashion: 35,
+  electronics: 18,
+  beauty: 22,
+  food: 15,
+  general: 25,
+};
+
+/** Share of product cost written off when an RTO comes back (damage/repack). */
+export const DEFAULT_RTO_DAMAGE_RATE = 0.3;
+
 export type ProfitInputs = {
   sellingPrice: number;
   productCost: number;
@@ -10,6 +25,8 @@ export type ProfitInputs = {
   channel: PrimaryChannel;
   category?: ProductType;
   isCod?: boolean;
+  /** 0–1. Advanced input; defaults to DEFAULT_RTO_DAMAGE_RATE. */
+  damageRate?: number;
 };
 
 export type ProfitResult = {
@@ -25,15 +42,31 @@ export type ProfitResult = {
   shipping: number;
   productCost: number;
   adCost: number;
+  /** Profit on an order that delivers (no RTO weighting). */
+  deliveredProfit: number;
+  /** Expected loss per shipped order attributable to RTO risk (≥ 0). */
   rtoLoss: number;
+  /** Expected profit per shipped order: (1−r)·delivered + r·rtoOutcome. */
   netProfit: number;
   netMarginPercent: number;
+  /** price / contribution-before-ads. Same definition as the ROAS tool. */
   breakEvenRoas: number;
   markupMultiple: number;
   verdict: "excellent" | "healthy" | "tight" | "loss";
   fees: ReturnType<typeof getFeesForProduct>;
 };
 
+/**
+ * Expected-value model per SHIPPED order:
+ *
+ *   delivered (prob 1−r): price − productCost − shipping − fees − adCost
+ *   rto       (prob r):  −(2×shipping) − damageRate×productCost − adCost
+ *                        − fees.nonRefundableOnRto
+ *
+ * Ad money is spent whether or not the parcel delivers. Referral/TCS are
+ * treated as reversed on RTO; fixed/closing/collection fees are not
+ * (see ComputedFees.nonRefundableOnRto).
+ */
 export function calculateProfit(inputs: ProfitInputs): ProfitResult {
   const {
     sellingPrice,
@@ -44,6 +77,7 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
     channel,
     category = "general",
     isCod = false,
+    damageRate = DEFAULT_RTO_DAMAGE_RATE,
   } = inputs;
 
   const revenue = Math.max(0, sellingPrice);
@@ -51,19 +85,21 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
 
   const shipping = Math.max(0, shippingCost);
   const adCost = Math.max(0, adCostPerOrder);
-  const rtoFraction = Math.min(100, Math.max(0, rtoRatePercent)) / 100;
-  const rtoLoss = (shipping * 2 + productCost * 0.3) * rtoFraction;
+  const r = Math.min(100, Math.max(0, rtoRatePercent)) / 100;
+  const damage = Math.min(1, Math.max(0, damageRate));
 
-  const totalCosts =
-    productCost +
-    shipping +
-    fees.totalFees +
-    adCost +
-    rtoLoss;
+  const deliveredProfit = revenue - productCost - shipping - fees.totalFees - adCost;
+  const rtoOutcome = -(2 * shipping) - damage * productCost - adCost - fees.nonRefundableOnRto;
 
-  const netProfit = revenue - totalCosts;
+  const netProfit = (1 - r) * deliveredProfit + r * rtoOutcome;
+  const rtoLoss = deliveredProfit - netProfit; // r · (delivered − rtoOutcome)
+
   const netMarginPercent = revenue > 0 ? (netProfit / revenue) * 100 : 0;
-  const breakEvenRoas = netMarginPercent > 0 ? 100 / netMarginPercent : Infinity;
+
+  // Contribution before ads: same EV with adCost = 0 in both branches.
+  const contributionBeforeAds = netProfit + adCost;
+  const breakEvenRoas = contributionBeforeAds > 0 ? revenue / contributionBeforeAds : Infinity;
+
   const landedCost = productCost + shipping;
   const markupMultiple = landedCost > 0 ? revenue / landedCost : 0;
 
@@ -85,6 +121,7 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
     shipping,
     productCost,
     adCost,
+    deliveredProfit,
     rtoLoss,
     netProfit,
     netMarginPercent,
@@ -161,18 +198,7 @@ export function calculateBlendedUnitEconomics(inputs: BlendedEconomicsInputs): B
 }
 
 export function defaultRtoForProductType(productType: string): number {
-  switch (productType) {
-    case "fashion":
-      return 35;
-    case "electronics":
-      return 18;
-    case "beauty":
-      return 22;
-    case "food":
-      return 15;
-    default:
-      return 25;
-  }
+  return CATEGORY_RTO[productType as ProductType] ?? CATEGORY_RTO.general;
 }
 
 export function calculateMonthlyProjections(

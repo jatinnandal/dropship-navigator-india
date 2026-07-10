@@ -1,6 +1,8 @@
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 import type { WeightBracket } from "@/lib/marketplace-fees";
-import { getFeesForProduct, getShippingForWeight } from "@/lib/marketplace-fees";
+import { getShippingForWeight } from "@/lib/marketplace-fees";
+import { calculateProfit, CATEGORY_RTO } from "@/lib/profit-math";
+import { SETTLEMENT_TIMELINES } from "@/lib/settlement-data";
 
 export type CompetitionLevel = "low" | "medium" | "high" | "saturated";
 export type FragilityLevel = "sturdy" | "normal" | "fragile";
@@ -35,14 +37,6 @@ export type ScorecardResult = {
   topRisks: string[];
 };
 
-const CATEGORY_RTO: Record<ProductType, number> = {
-  fashion: 35,
-  electronics: 18,
-  beauty: 22,
-  food: 15,
-  general: 25,
-};
-
 const COMPETITION_SCORES: Record<CompetitionLevel, number> = {
   low: 90,
   medium: 65,
@@ -62,12 +56,9 @@ const SEASONALITY_SCORES: Record<SeasonalityLevel, number> = {
   highly_seasonal: 25,
 };
 
-const SETTLEMENT_DAYS: Record<PrimaryChannel, number> = {
-  amazon: 14,
-  flipkart: 7,
-  meesho: 10,
-  shopify: 3,
-};
+function settlementDays(channel: PrimaryChannel): number {
+  return SETTLEMENT_TIMELINES[channel].codSettlementDays;
+}
 
 function clamp(v: number, min: number, max: number) {
   return Math.max(min, Math.min(max, v));
@@ -105,12 +96,17 @@ function capitalScore(moq: number, productCost: number, settlementDays: number):
 export function scoreProduct(inputs: ScorecardInputs): ScorecardResult {
   const { sellingPrice, productCost, channel, category, weightBracket, fragility } = inputs;
 
-  const fees = getFeesForProduct(channel, category, sellingPrice, false);
   const shipping = getShippingForWeight(channel, weightBracket);
   const rtoRate = CATEGORY_RTO[category];
-  const rtoLoss = (shipping * 2 + productCost * 0.3) * (rtoRate / 100);
-  const netProfit = sellingPrice - productCost - fees.totalFees - shipping - rtoLoss;
-  const netMarginPercent = sellingPrice > 0 ? (netProfit / sellingPrice) * 100 : 0;
+  const { netMarginPercent } = calculateProfit({
+    sellingPrice,
+    productCost,
+    shippingCost: shipping,
+    adCostPerOrder: 0,
+    rtoRatePercent: rtoRate,
+    channel,
+    category,
+  });
 
   const axes: AxisScore[] = [
     {
@@ -150,10 +146,10 @@ export function scoreProduct(inputs: ScorecardInputs): ScorecardResult {
     },
     {
       name: "Capital need",
-      score: capitalScore(inputs.moq, productCost, SETTLEMENT_DAYS[channel]),
+      score: capitalScore(inputs.moq, productCost, settlementDays(channel)),
       weight: 15,
       weighted: 0,
-      detail: `MOQ ${inputs.moq} × ₹${productCost} + ${SETTLEMENT_DAYS[channel]}d settlement`,
+      detail: `MOQ ${inputs.moq} × ₹${productCost} + ${settlementDays(channel)}d settlement`,
     },
   ];
 
