@@ -89,8 +89,9 @@ function SliderField({
         max={max}
         step={step}
         value={value}
+        aria-valuetext={`${value}${suffix}`}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-2 w-full accent-amber-400"
+        className="mt-2 w-full accent-white"
       />
     </label>
   );

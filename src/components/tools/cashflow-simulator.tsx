@@ -83,7 +83,7 @@ export function CashflowSimulator() {
     <div className="space-y-8">
       {/* ── Inputs Panel ── */}
       <div className="glass-panel grain rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-slate-100 mb-4">Simulation Inputs</h2>
+        <h2 className="text-lg font-semibold text-white mb-4">Simulation Inputs</h2>
 
         {/* Channel tabs */}
         <div className="flex flex-wrap gap-2 mb-6">
@@ -93,8 +93,8 @@ export function CashflowSimulator() {
               onClick={() => setChannel(ch.value)}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 channel === ch.value
-                  ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                  : "bg-slate-800/50 text-slate-400 border border-slate-700/50 hover:text-slate-200"
+                  ? "bg-white/20 text-amber-400 border border-amber-500/40"
+                  : "bg-white/[0.04] text-[var(--muted)] border border-white/[0.1] hover:text-white"
               }`}
             >
               {ch.label}
@@ -117,56 +117,62 @@ export function CashflowSimulator() {
           {/* Orders per day slider */}
           <div>
             <label className="text-muted text-xs font-medium block mb-1.5">
-              Orders / Day: <span className="text-slate-200">{ordersPerDay}</span>
+              Orders / Day: <span className="text-white">{ordersPerDay}</span>
             </label>
             <input
               type="range"
               min={1}
               max={30}
               value={ordersPerDay}
+              aria-label="Orders per day"
+              aria-valuetext={`${ordersPerDay} orders per day`}
               onChange={(e) => setOrdersPerDay(Number(e.target.value))}
-              className="w-full accent-amber-500"
+              className="w-full accent-white"
             />
           </div>
 
           {/* COD % slider */}
           <div>
             <label className="text-muted text-xs font-medium block mb-1.5">
-              COD %: <span className="text-slate-200">{codPercent}%</span>
+              COD %: <span className="text-white">{codPercent}%</span>
             </label>
             <input
               type="range"
               min={0}
               max={100}
               value={codPercent}
+              aria-label="COD share"
+              aria-valuetext={`${codPercent}% COD`}
               onChange={(e) => setCodPercent(Number(e.target.value))}
-              className="w-full accent-amber-500"
+              className="w-full accent-white"
             />
           </div>
 
           {/* RTO % slider */}
           <div>
             <label className="text-muted text-xs font-medium block mb-1.5">
-              RTO %: <span className="text-slate-200">{rtoPercent}%</span>
+              RTO %: <span className="text-white">{rtoPercent}%</span>
             </label>
             <input
               type="range"
               min={0}
               max={60}
               value={rtoPercent}
+              aria-label="RTO rate"
+              aria-valuetext={`${rtoPercent}% RTO`}
               onChange={(e) => setRtoPercent(Number(e.target.value))}
-              className="w-full accent-rose-500"
+              className="w-full accent-white"
             />
           </div>
         </div>
 
         {/* Festival surge toggle */}
-        <div className="mt-6 border-t border-slate-700/50 pt-4">
+        <div className="mt-6 border-t border-white/[0.1] pt-4">
           <div className="flex items-center gap-3">
             <button
               onClick={() => setFestivalEnabled(!festivalEnabled)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                festivalEnabled ? "bg-amber-500" : "bg-slate-700"
+                festivalEnabled ? "bg-white" : "bg-white/[0.1]"
               }`}
             >
               <span
@@ -175,7 +181,7 @@ export function CashflowSimulator() {
                 }`}
               />
             </button>
-            <span className="text-sm text-slate-300 flex items-center gap-1.5">
+            <span className="text-sm text-[var(--body-text)] flex items-center gap-1.5">
               <Zap className="h-4 w-4 text-amber-400" />
               Festival Surge
             </span>
@@ -202,12 +208,12 @@ export function CashflowSimulator() {
 
       {/* ── 90-Day Chart ── */}
       <div className="glass-panel grain rounded-xl p-6">
-        <h2 className="text-lg font-semibold text-slate-100 mb-2">90-Day Cash Balance</h2>
+        <h2 className="text-lg font-semibold text-white mb-2">90-Day Cash Balance</h2>
         <p className="text-muted text-xs mb-6">Balance over time — green above zero, red below</p>
 
         <div className="relative h-64 flex items-end gap-1.5 sm:gap-2">
           {/* Zero line */}
-          <div className="absolute left-0 right-0 top-1/2 border-t border-dashed border-slate-600/60 z-0" />
+          <div className="absolute left-0 right-0 top-1/2 border-t border-dashed border-white/[0.15] z-0" />
 
           {chartDays.map((dayData) => {
             const height = Math.abs(dayData.balance) / maxAbsBalance;
@@ -233,7 +239,7 @@ export function CashflowSimulator() {
               >
                 {/* Festival zone highlight */}
                 {isFestival && (
-                  <div className="absolute inset-0 bg-amber-500/5 border-x border-amber-500/20 rounded-sm z-0" />
+                  <div className="absolute inset-0 bg-white/5 border-x border-amber-500/20 rounded-sm z-0" />
                 )}
 
                 {/* Bar */}
@@ -256,14 +262,14 @@ export function CashflowSimulator() {
                 </div>
 
                 {/* Day label */}
-                <span className="text-[10px] text-slate-500 mt-1">D{dayData.day}</span>
+                <span className="text-[10px] text-[var(--text-faint)] mt-1">D{dayData.day}</span>
               </div>
             );
           })}
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 mt-4 text-xs text-slate-400">
+        <div className="flex flex-wrap gap-4 mt-4 text-xs text-[var(--muted)]">
           <span className="flex items-center gap-1.5">
             <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500/70" /> Positive
           </span>
@@ -280,7 +286,7 @@ export function CashflowSimulator() {
           </span>
           {festivalEnabled && (
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-amber-500/30 border border-amber-500/40" /> Festival
+              <span className="h-2.5 w-2.5 rounded-sm bg-white/30 border border-amber-500/40" /> Festival
             </span>
           )}
         </div>
@@ -310,7 +316,7 @@ export function CashflowSimulator() {
           icon={<TrendingDown className="h-5 w-5 text-rose-400" />}
           label="Lowest Balance"
           value={`${formatINR(result.lowestBalance)} (Day ${result.lowestDay})`}
-          valueColor={result.lowestBalance >= 0 ? "text-slate-200" : "text-rose-400"}
+          valueColor={result.lowestBalance >= 0 ? "text-white" : "text-rose-400"}
         />
       </div>
 
@@ -320,7 +326,7 @@ export function CashflowSimulator() {
           <AlertTriangle className="h-4 w-4" />
           Key Insights
         </h3>
-        <ul className="space-y-2 text-sm text-slate-300">
+        <ul className="space-y-2 text-sm text-[var(--body-text)]">
           <li>
             You need <span className="font-semibold text-cyan-300">{formatINR(result.peakCapitalNeeded)}</span> to survive the settlement delay gap.
           </li>
@@ -351,7 +357,7 @@ export function CashflowSimulator() {
       <div className="glass-panel-receded grain rounded-xl overflow-hidden">
         <button
           onClick={() => setShowTable(!showTable)}
-          className="w-full flex items-center justify-between p-4 text-sm text-slate-300 hover:text-slate-100 transition-colors"
+          className="w-full flex items-center justify-between p-4 text-sm text-[var(--body-text)] hover:text-white transition-colors"
         >
           <span className="font-medium">Weekly Cash Flow Breakdown</span>
           {showTable ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
@@ -368,7 +374,7 @@ export function CashflowSimulator() {
               <div className="overflow-x-auto px-4 pb-4">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-slate-700/50 text-slate-400">
+                    <tr className="border-b border-white/[0.1] text-[var(--muted)]">
                       <th className="text-left py-2 pr-4">Day</th>
                       <th className="text-right py-2 px-3">Balance</th>
                       <th className="text-right py-2 px-3">Revenue</th>
@@ -380,13 +386,13 @@ export function CashflowSimulator() {
                     {result.days
                       .filter((d) => d.day % 7 === 0 || d.day === 1)
                       .map((d) => (
-                        <tr key={d.day} className="border-b border-slate-800/50">
-                          <td className="py-2 pr-4 text-slate-300 font-medium">Day {d.day}</td>
+                        <tr key={d.day} className="border-b border-white/[0.08]">
+                          <td className="py-2 pr-4 text-[var(--body-text)] font-medium">Day {d.day}</td>
                           <td className={`py-2 px-3 text-right font-mono ${d.isNegative ? "text-rose-400" : "text-emerald-400"}`}>
                             {formatINR(d.balance)}
                           </td>
-                          <td className="py-2 px-3 text-right text-slate-400">{formatINR(d.revenue)}</td>
-                          <td className="py-2 px-3 text-right text-slate-400">{formatINR(d.expenses)}</td>
+                          <td className="py-2 px-3 text-right text-[var(--muted)]">{formatINR(d.revenue)}</td>
+                          <td className="py-2 px-3 text-right text-[var(--muted)]">{formatINR(d.expenses)}</td>
                           <td className="py-2 px-3 text-right text-cyan-400">{formatINR(d.settlementIncoming)}</td>
                         </tr>
                       ))}
@@ -425,8 +431,8 @@ function InputField({
   return (
     <div>
       <label className="text-muted text-xs font-medium block mb-1.5">{label}</label>
-      <div className="flex items-center gap-1 rounded-md border border-slate-700/50 bg-slate-800/50 px-3 py-2">
-        {prefix && <span className="text-slate-500 text-sm">{prefix}</span>}
+      <div className="flex items-center gap-1 rounded-md border border-white/[0.1] bg-white/[0.04] px-3 py-2">
+        {prefix && <span className="text-[var(--text-faint)] text-sm">{prefix}</span>}
         <input
           type="number"
           min={min}
@@ -434,9 +440,9 @@ function InputField({
           step={step}
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className="flex-1 bg-transparent text-sm text-slate-200 outline-none w-full min-w-0"
+          className="flex-1 bg-transparent text-sm text-white outline-none w-full min-w-0"
         />
-        {suffix && <span className="text-slate-500 text-sm">{suffix}</span>}
+        {suffix && <span className="text-[var(--text-faint)] text-sm">{suffix}</span>}
       </div>
     </div>
   );

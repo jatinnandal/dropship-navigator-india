@@ -58,7 +58,7 @@ export function RtoRealitySlider({
           step={50}
           value={sellingPrice}
           onChange={(e) => setSellingPrice(Number(e.target.value))}
-          className="mt-2 w-full accent-cyan-400"
+          className="mt-2 w-full accent-white"
         />
       </label>
 
@@ -70,7 +70,7 @@ export function RtoRealitySlider({
           max={800}
           value={productCost}
           onChange={(e) => setProductCost(Number(e.target.value))}
-          className="mt-2 w-full accent-amber-400"
+          className="mt-2 w-full accent-white"
         />
       </label>
 
@@ -82,7 +82,7 @@ export function RtoRealitySlider({
           max={300}
           value={adCost}
           onChange={(e) => setAdCost(Number(e.target.value))}
-          className="mt-2 w-full accent-amber-400"
+          className="mt-2 w-full accent-white"
         />
       </label>
 
@@ -94,7 +94,7 @@ export function RtoRealitySlider({
           max={45}
           value={rtoRate}
           onChange={(e) => setRtoRate(Number(e.target.value))}
-          className="mt-2 w-full accent-rose-400"
+          className="mt-2 w-full accent-white"
         />
       </label>
 

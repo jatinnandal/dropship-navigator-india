@@ -169,7 +169,7 @@ export function CashflowTimeline({ onComplete }: Props) {
           max={14}
           value={activeDay}
           onChange={(e) => setActiveDay(Number(e.target.value))}
-          className="flex-1 accent-amber-400"
+          className="flex-1 accent-white"
           aria-label="Select day"
         />
       </div>

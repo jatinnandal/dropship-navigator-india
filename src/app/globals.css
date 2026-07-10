@@ -13,7 +13,7 @@
   --muted: #8a8a8a;
   --body-text: #b8b8b8;
   --text-faint: #6e6e6e;
-  --text-faintest: #5a5a5a;
+  --text-faintest: #6e6e6e; /* was #5a5a5a — failed WCAG AA (~4.0:1) on black for body-size text */
   --text-ghost: #4a4a4a;
 
   /* ── Surfaces ── */
@@ -83,6 +83,20 @@ html {
   html {
     scroll-behavior: auto;
   }
+
+  .float-y,
+  .pulse-glow,
+  .crisis-pulse,
+  .skeleton-line {
+    animation: none;
+  }
+}
+
+/* Keyboard focus: visible ring on every interactive element (cards are
+   whole-card links, so outline must work on any element, not just buttons). */
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.65);
+  outline-offset: 2px;
 }
 
 body {

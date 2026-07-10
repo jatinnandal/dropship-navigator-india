@@ -54,7 +54,7 @@ export function CodPrepaidMix({ channel, sellingPrice = 899, onComplete }: Props
           max={100}
           value={codPercent}
           onChange={(e) => setCodPercent(Number(e.target.value))}
-          className="mt-2 w-full accent-amber-400"
+          className="mt-2 w-full accent-white"
         />
       </label>
 
@@ -66,7 +66,7 @@ export function CodPrepaidMix({ channel, sellingPrice = 899, onComplete }: Props
           max={40}
           value={codRto}
           onChange={(e) => setCodRto(Number(e.target.value))}
-          className="mt-2 w-full accent-rose-400"
+          className="mt-2 w-full accent-white"
         />
       </label>
 
@@ -78,7 +78,7 @@ export function CodPrepaidMix({ channel, sellingPrice = 899, onComplete }: Props
           max={15}
           value={prepaidReturn}
           onChange={(e) => setPrepaidReturn(Number(e.target.value))}
-          className="mt-2 w-full accent-cyan-400"
+          className="mt-2 w-full accent-white"
         />
       </label>
 

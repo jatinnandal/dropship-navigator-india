@@ -115,7 +115,7 @@ Expand trigger: 2 consecutive weeks RTO < ${rtoCutoff}% on a pincode → add adj
             max={30}
             value={rtoCutoff}
             onChange={(e) => setRtoCutoff(Number(e.target.value))}
-            className="mt-2 w-full accent-amber-400"
+            className="mt-2 w-full accent-white"
           />
         </label>
       </div>
@@ -128,7 +128,7 @@ Expand trigger: 2 consecutive weeks RTO < ${rtoCutoff}% on a pincode → add adj
               type="checkbox"
               checked={checklist[`item-${i}`] ?? false}
               onChange={(e) => setChecklist((prev) => ({ ...prev, [`item-${i}`]: e.target.checked }))}
-              className="mt-1 accent-amber-400"
+              className="mt-1 accent-white"
             />
             {item}
           </label>

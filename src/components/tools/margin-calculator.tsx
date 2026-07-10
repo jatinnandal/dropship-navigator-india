@@ -404,7 +404,7 @@ export function MarginCalculator({
               step={10}
               value={monthlyOrders}
               onChange={(e) => setMonthlyOrders(Number(e.target.value))}
-              className="w-32 accent-cyan-400"
+              className="w-32 accent-white"
             />
             <span className="min-w-[3ch] text-sm font-semibold text-slate-200">
               {monthlyOrders}
