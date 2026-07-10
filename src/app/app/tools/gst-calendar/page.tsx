@@ -1,6 +1,14 @@
 import { GstCalendar } from "@/components/tools/gst-calendar";
+import { getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
+import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 
-export default function GstCalendarPage() {
+export default async function GstCalendarPage() {
+  const [profile, workspace] = await Promise.all([
+    getStoredProfileForCurrentVisitor(),
+    getWorkspaceForCurrentVisitor(),
+  ]);
+  const hasGstin = profile.hasGstin || Boolean(workspace.gstin);
+
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
       <header className="mb-6">
@@ -20,7 +28,7 @@ export default function GstCalendarPage() {
         </p>
       </header>
 
-      <GstCalendar />
+      <GstCalendar hasGstin={hasGstin} />
     </main>
   );
 }

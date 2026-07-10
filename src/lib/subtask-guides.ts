@@ -10,6 +10,7 @@ export type SubTaskGuide = {
 
 export const SUBTASK_TIME_ESTIMATES: Record<string, string> = {
   "docs-folder-ready": "~30 mins",
+  "enrolment-id-start": "~30 mins",
   "gstin-active": "~2–5 days",
   "bank-matched": "~15 mins",
   "gst-filing-understood": "~15 mins",
@@ -53,6 +54,17 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
       "Create a folder named after your business.",
       "Add PAN card, Aadhaar, cancelled cheque, and address proof scans.",
       "Keep originals ready for marketplace KYC uploads.",
+    ],
+    walkthroughHref: "/app/tasks/common-documentation",
+  },
+  "enrolment-id-start": {
+    hint: "Free Enrolment ID from gst.gov.in — sell on Meesho while GSTIN processes.",
+    why: "Meesho onboards non-GST sellers with an Enrolment ID (intra-state only, under ₹40L turnover) — you don't have to wait 3–5 days doing nothing.",
+    howToSteps: [
+      "On gst.gov.in choose Registration → Generate User ID for Unregistered Applicant → e-commerce enrolment.",
+      "Verify PAN + Aadhaar OTP and note the 15-digit Enrolment ID.",
+      "Enter it in Meesho seller signup (sell within your state only).",
+      "Upgrade to a full GSTIN before selling inter-state or crossing ₹40L.",
     ],
     walkthroughHref: "/app/tasks/common-documentation",
   },

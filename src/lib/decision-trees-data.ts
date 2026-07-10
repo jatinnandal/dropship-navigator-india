@@ -38,7 +38,7 @@ export const DECISION_TREES: DecisionTree[] = [
         id: "low-gst",
         question: "Do you have GST registration?",
         context:
-          "Most marketplaces require GST. Meesho is the most accessible for new sellers.",
+          "Amazon and Flipkart require a GSTIN. Meesho also onboards sellers without one via a free Enrolment ID (intra-state sales only).",
         options: [
           {
             label: "Yes, I have GST",
@@ -50,7 +50,7 @@ export const DECISION_TREES: DecisionTree[] = [
             label: "No, not yet",
             nextId: null,
             recommendation:
-              "Get GST registration first (costs ~₹500 via CA), then start with Meesho. Without GST, no legitimate marketplace will onboard you.",
+              "You can start on Meesho THIS WEEK without a GSTIN: get a free Enrolment ID from the GST portal (works for intra-state sales, turnover under ₹40L). Register a full GSTIN (free on gst.gov.in) in parallel — you'll need it for Amazon/Flipkart and to ship outside your state.",
           },
         ],
       },

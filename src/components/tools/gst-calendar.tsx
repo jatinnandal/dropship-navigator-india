@@ -70,8 +70,10 @@ function daysLabel(days: number, status: GstEvent["status"]) {
 
 export function GstCalendar({
   defaultIsQrmp = false,
+  hasGstin = true,
 }: {
   defaultIsQrmp?: boolean;
+  hasGstin?: boolean;
 }) {
   const [isQrmp, setIsQrmp] = useState(defaultIsQrmp);
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
@@ -172,8 +174,24 @@ export function GstCalendar({
 
   return (
     <div className="space-y-6">
+      {/* No GSTIN yet: nothing is due */}
+      {!hasGstin && (
+        <div className="rounded-lg border border-white/[0.14] bg-white/[0.03] p-4">
+          <p className="text-sm font-semibold text-white">
+            No GSTIN yet — you have no filing obligations.
+          </p>
+          <p className="mt-1 text-sm leading-6 text-slate-400">
+            These deadlines start only after your GST registration is active
+            (an Enrolment ID for Meesho intra-state selling has no return
+            filings either). The calendar below is a preview of what your
+            compliance rhythm will look like — deadlines shown are not yours
+            yet.
+          </p>
+        </div>
+      )}
+
       {/* Overdue warning */}
-      {overdueEvents.length > 0 && (
+      {hasGstin && overdueEvents.length > 0 && (
         <div className="banner-deadline flex items-start gap-3 rounded-lg p-4">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
           <div>
