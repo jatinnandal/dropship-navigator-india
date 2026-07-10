@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatINR } from "@/lib/format";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TrendingUp,
@@ -67,10 +68,6 @@ function marginBg(margin: number): string {
   if (margin >= 25) return "border-emerald-500/30 bg-emerald-500/5";
   if (margin >= 15) return "border-amber-500/30 bg-amber-500/5";
   return "border-rose-500/30 bg-rose-500/5";
-}
-
-function formatINR(n: number): string {
-  return "₹" + Math.round(n).toLocaleString("en-IN");
 }
 
 /* ── component ── */

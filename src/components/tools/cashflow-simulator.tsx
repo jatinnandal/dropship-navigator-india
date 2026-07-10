@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatINR } from "@/lib/format";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TrendingUp,
@@ -22,12 +23,6 @@ import {
 import CountUp from "@/components/CountUp";
 
 /* ── helpers ── */
-function formatINR(n: number): string {
-  const abs = Math.abs(Math.round(n));
-  const formatted = abs.toLocaleString("en-IN");
-  return n < 0 ? `-₹${formatted}` : `₹${formatted}`;
-}
-
 const CHANNELS: { value: PrimaryChannel; label: string }[] = [
   { value: "meesho", label: "Meesho" },
   { value: "amazon", label: "Amazon" },

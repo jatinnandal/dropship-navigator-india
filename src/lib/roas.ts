@@ -1,5 +1,4 @@
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
-import type { WeightBracket } from "@/lib/marketplace-fees";
 import { calculateProfit } from "@/lib/profit-math";
 
 export type RoasInputs = {
@@ -57,14 +56,4 @@ export function computeRoas(inputs: RoasInputs): RoasResult {
     target10: margin10 > 0 ? price / margin10 : Infinity,
     target20: margin20 > 0 ? price / margin20 : Infinity,
   };
-}
-
-export function roasForWeightBracket(
-  inputs: Omit<RoasInputs, "shippingCost"> & { weightBracket: WeightBracket },
-  shippingForWeight: (channel: PrimaryChannel, weight: WeightBracket) => number,
-): RoasResult {
-  return computeRoas({
-    ...inputs,
-    shippingCost: shippingForWeight(inputs.channel, inputs.weightBracket),
-  });
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { formatINR } from "@/lib/format";
 import { motion } from "framer-motion";
 import { Clock, Truck, Wallet, TrendingUp, ArrowRight } from "lucide-react";
 import CountUp from "@/components/CountUp";
@@ -34,10 +35,6 @@ const DOT_TEXT_COLORS: Record<string, string> = {
   rose: "text-rose-400",
   cyan: "text-cyan-400",
 };
-
-function formatINR(n: number): string {
-  return "₹" + Math.round(n).toLocaleString("en-IN");
-}
 
 /* ── component ── */
 export function SettlementTimeline() {

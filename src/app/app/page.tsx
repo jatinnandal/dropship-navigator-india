@@ -25,10 +25,6 @@ import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurren
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { formatDateIN } from "@/lib/format";
 
-function formatDate() {
-  return formatDateIN();
-}
-
 function getGreeting() {
   const hour = new Date().getHours();
   if (hour < 12) return "Good morning";
@@ -105,7 +101,7 @@ export default async function DashboardPage() {
           {/* Top row: date + greeting + crisis CTA */}
           <div className="flex items-center justify-between gap-4 px-1 pb-5">
             <div>
-              <p className="font-mono text-[11.5px] text-[var(--text-faintest)]">{formatDate()}</p>
+              <p className="font-mono text-[11.5px] text-[var(--text-faintest)]">{formatDateIN()}</p>
               <h1 className="mt-1 text-[23px] font-semibold tracking-[-0.03em] text-white">
                 {getGreeting()}, <span className="font-serif-accent">{displayName}.</span>
               </h1>

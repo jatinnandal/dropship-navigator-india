@@ -1,6 +1,6 @@
 "use client";
 
-type DataMeta = {
+export type DataMeta = {
   readonly lastVerified: string;
   readonly sources: readonly string[];
 };

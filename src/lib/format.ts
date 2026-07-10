@@ -8,11 +8,6 @@ export function formatINR(value: number, opts?: { decimals?: boolean }): string 
   return `${sign}₹${fmt.format(Math.abs(value))}`;
 }
 
-/** Indian-grouped number without the rupee sign. */
-export function formatIN(value: number): string {
-  return inrWhole.format(value);
-}
-
 export function formatDateIN(date: Date = new Date()): string {
   return date.toLocaleDateString("en-IN", {
     weekday: "long",

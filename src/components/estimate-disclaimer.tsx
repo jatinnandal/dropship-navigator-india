@@ -1,9 +1,4 @@
-import { DataFreshness } from "@/components/data-freshness";
-
-type DataMeta = {
-  readonly lastVerified: string;
-  readonly sources: readonly string[];
-};
+import { DataFreshness, type DataMeta } from "@/components/data-freshness";
 
 /** Freshness badge + the accuracy-contract disclaimer, for every money tool. */
 export function EstimateDisclaimer({
