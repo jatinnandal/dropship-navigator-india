@@ -32,6 +32,7 @@ export function getAppNavItems(hasProfile: boolean): AppNavItem[] {
     { href: "/app/welcome", label: "Home", icon: Home },
     { href: "/onboarding", label: "Setup", icon: SlidersHorizontal },
     { href: "/app/journey", label: "Preview", icon: Compass },
+    { href: "/app/tools", label: "Tools", icon: Wrench },
     { href: "/app/resources", label: "Resources", icon: BookOpen },
     { href: "/app/plans", label: "Plans", icon: Gem },
   ];
