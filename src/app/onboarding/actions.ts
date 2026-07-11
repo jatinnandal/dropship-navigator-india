@@ -11,12 +11,15 @@ import { parseOnboardingFormData } from "@/lib/parse-onboarding-form";
 import { ensureProfileWorkspace } from "@/lib/profile-workspace";
 import { getCurrentEntitlements } from "@/lib/plan";
 import {
+  countMaterialChangesThisMonth,
   createSellerProfile,
   deleteSellerProfile,
   getSellerProfileById,
+  hasMaterialProfileChange,
   isLegacyProfileId,
   legacyProfileId,
   listSellerProfileSummaries,
+  recordMaterialChange,
   updateSellerProfile,
   upsertLegacyProfile,
 } from "@/lib/seller-profile-store";
@@ -50,9 +53,28 @@ export async function saveOnboardingProfile(formData: FormData) {
   if (mode === "edit" && profileId) {
     const existing = await getSellerProfileById(userId, profileId);
     if (!existing) redirect("/app/profiles");
+
+    // Cap material edits (state/entity/GST/product/model/import/pre-packaged)
+    // per month so one profile can't be cycled through many configs. Non-
+    // material edits (name, budget) are always allowed. Legacy profiles aren't
+    // in seller_profiles, so the counter (FK-scoped) only applies to real ones.
+    const material = hasMaterialProfileChange(existing, profile);
+    if (material && !isLegacyProfileId(profileId)) {
+      const [entitlements, used] = await Promise.all([
+        getCurrentEntitlements(),
+        countMaterialChangesThisMonth(profileId),
+      ]);
+      if (used >= entitlements.materialProfileChangesPerMonth) {
+        const params = new URLSearchParams({ error: "changes_exhausted" });
+        if (returnTo) params.set("returnTo", returnTo);
+        redirect(`/app/profiles/${profileId}/edit?${params.toString()}`);
+      }
+    }
+
     await updateSellerProfile(userId, profileId, profile, profileName);
     if (!isLegacyProfileId(profileId)) {
       await upsertLegacyProfile(userId, profile);
+      if (material) await recordMaterialChange(profileId);
     }
     await ensureMigratedIfPossible(userId);
     revalidateAppShell();

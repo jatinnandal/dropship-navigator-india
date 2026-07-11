@@ -76,4 +76,10 @@ describe("entitlements", () => {
     expect(entitlementsFor("starter").llmPlanRegensPerMonth).toBe(10);
     expect(entitlementsFor("growth").llmPlanRegensPerMonth).toBe(30);
   });
+
+  it("material profile-change cap: 2 / 6 / 20", () => {
+    expect(entitlementsFor("free").materialProfileChangesPerMonth).toBe(2);
+    expect(entitlementsFor("starter").materialProfileChangesPerMonth).toBe(6);
+    expect(entitlementsFor("growth").materialProfileChangesPerMonth).toBe(20);
+  });
 });

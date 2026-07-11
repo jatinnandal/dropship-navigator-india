@@ -36,6 +36,14 @@ export type Entitlements = {
    * use (2 modules + a few genuine profile/product changes) never hits it.
    */
   llmPlanRegensPerMonth: number;
+  /**
+   * Cap on material profile edits per calendar month, per profile — changes to
+   * the personalization-relevant fields (state, entity, GST, product category,
+   * sales model, import/pre-packaged). Stops cycling one profile through many
+   * configs to fake multiple profiles. Non-material edits (name, budget) are
+   * unlimited.
+   */
+  materialProfileChangesPerMonth: number;
   /** Crisis protocols usable on this plan ("all" for growth). */
   crisisProtocols: CrisisType[] | "all";
   weeklyDigest: boolean;
@@ -53,6 +61,7 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     allJourneyModules: false,
     personalizedPlan: false,
     llmPlanRegensPerMonth: 0,
+    materialProfileChangesPerMonth: 2,
     crisisProtocols: [],
     weeklyDigest: false,
     rateAlerts: false,
@@ -65,6 +74,7 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     allJourneyModules: true,
     personalizedPlan: true,
     llmPlanRegensPerMonth: 10,
+    materialProfileChangesPerMonth: 6,
     crisisProtocols: STARTER_CRISIS,
     weeklyDigest: true,
     rateAlerts: false,
@@ -77,6 +87,7 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     allJourneyModules: true,
     personalizedPlan: true,
     llmPlanRegensPerMonth: 30,
+    materialProfileChangesPerMonth: 20,
     crisisProtocols: "all",
     weeklyDigest: true,
     rateAlerts: true,

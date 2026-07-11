@@ -256,6 +256,54 @@ export async function countSellerProfiles(userId: string): Promise<number> {
   return count ?? 0;
 }
 
+/** Personalization-relevant fields; a change to any of these is "material". */
+type MaterialFields = Pick<
+  OnboardingProfile,
+  | "operatingState"
+  | "businessType"
+  | "hasGstin"
+  | "salesModel"
+  | "productType"
+  | "importsProducts"
+  | "sellsPrepackagedGoods"
+>;
+
+/** True if any personalization-relevant field differs between old and new. */
+export function hasMaterialProfileChange(a: MaterialFields, b: MaterialFields): boolean {
+  return (
+    a.operatingState !== b.operatingState ||
+    a.businessType !== b.businessType ||
+    a.hasGstin !== b.hasGstin ||
+    a.salesModel !== b.salesModel ||
+    a.productType !== b.productType ||
+    a.importsProducts !== b.importsProducts ||
+    a.sellsPrepackagedGoods !== b.sellsPrepackagedGoods
+  );
+}
+
+export async function countMaterialChangesThisMonth(profileId: string): Promise<number> {
+  const supabase = await createSupabaseDataClient();
+  if (!supabase) return 0;
+
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+
+  const { count } = await supabase
+    .from("profile_material_changes")
+    .select("id", { count: "exact", head: true })
+    .eq("profile_id", profileId)
+    .gte("changed_at", monthStart.toISOString());
+
+  return count ?? 0;
+}
+
+export async function recordMaterialChange(profileId: string): Promise<void> {
+  const supabase = await createSupabaseDataClient();
+  if (!supabase) return;
+  await supabase.from("profile_material_changes").insert({ profile_id: profileId });
+}
+
 async function getLegacyProfile(userId: string): Promise<OnboardingProfile | null> {
   const supabase = await createSupabaseDataClient();
   if (!supabase) return null;

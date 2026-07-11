@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { applyStepCopy, type PersonalizedModulePlan } from "@/lib/llm/plan-generator";
-import { PersonalizedPlanAutoLoader } from "@/components/personalized-plan-controls";
+import { PersonalizePlanButton } from "@/components/personalized-plan-controls";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { ProfitCalculator } from "@/components/profit-calculator";
 import { MentorStepContent } from "@/components/mentor-step-content";
@@ -275,8 +275,12 @@ export function TaskRunner({
       </header>
 
       {needsPersonalization ? (
-        <div className="mt-4">
-          <PersonalizedPlanAutoLoader moduleId={taskId} />
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-muted max-w-xl text-sm leading-6">
+            Tailor this walkthrough&apos;s steps to your exact state, entity type, GST status, and
+            product category.
+          </p>
+          <PersonalizePlanButton moduleId={taskId} />
         </div>
       ) : personalizedCopy ? (
         <p className="mt-4 flex items-center gap-2 text-xs text-[var(--muted)]">
