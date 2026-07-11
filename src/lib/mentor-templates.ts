@@ -173,6 +173,81 @@ Test route: {{origin_pincode}} → {{dest_pincode}}
 
 Run 5 test shipments each before committing volume.`;
 
+export const IP_COMPLAINT_RESPONSE = `Subject: Response to IP complaint — Listing {{listing_id}}, Seller ID {{seller_id}}
+
+Dear {{marketplace}} Notice Team,
+
+I received an intellectual-property complaint dated {{complaint_date}} on listing {{listing_id}}.
+
+My position (pick ONE, delete the rest):
+A) AUTHORIZED RESELLER — I source this product from {{supplier_name}}, an authorized distributor. Attached: purchase invoices with GST, supplier authorization chain.
+B) GENERIC PRODUCT — The listing is for an unbranded/generic product and does not use the complainant's brand name, logo, or images. Attached: product photos as sold, listing history.
+C) LISTING ERROR, FIXED — The flagged content was removed on {{fix_date}}. Attached: updated listing screenshots.
+
+Immediate actions taken:
+- Listing {{action_taken}} on {{fix_date}}
+- Full catalogue reviewed for similar issues on {{review_date}}
+
+I request reinstatement of the listing / withdrawal of the strike. If the complainant maintains the claim, please share their contact for direct resolution.
+
+{{legal_name}} · Seller ID {{seller_id}} · {{contact}}`;
+
+export const GST_SCN_REPLY = `DRAFT skeleton — a GST notice is a legal document. Have a CA review before submission. Reply within the deadline printed on the notice (usually 7/15/30 days) — missing it converts a query into a demand.
+
+To: The Proper Officer, {{jurisdiction}}
+Ref: Notice {{notice_ref}} dated {{notice_date}} (Form {{notice_form}})
+GSTIN: {{gstin}} · Legal name: {{legal_name}}
+
+1. ACKNOWLEDGEMENT
+We acknowledge receipt of the above notice regarding {{issue_summary}}.
+
+2. FACTS
+- Nature of business: e-commerce seller on {{marketplace}} (marketplace collects TCS u/s 52)
+- The period in question: {{period}}
+- Marketplace sales as per GSTR-1: ₹{{gstr1_sales}}; TCS credited: ₹{{tcs_amount}}
+
+3. EXPLANATION / RECONCILIATION
+{{explanation}}
+(Common e-commerce mismatches: GSTR-1 vs GSTR-3B timing, TCS credit not accepted in the TDS/TCS statement, returns/RTO reducing taxable value in a later month, marketplace commission invoices claimed as ITC.)
+
+4. DOCUMENTS ENCLOSED
+- GSTR-1, GSTR-3B for {{period}}; marketplace settlement reports; TCS statement; reconciliation sheet order-wise.
+
+5. PRAYER
+We request the proceedings be dropped / the discrepancy be treated as explained. We are available for a personal hearing if required.
+
+{{legal_name}} · Authorized signatory · {{contact}}`;
+
+export const COURIER_DISPUTE_TICKET = `Subject: Dispute — AWB {{awb}}: {{dispute_type}}
+
+To: {{courier}} Escalation Desk / {{marketplace}} Seller Support
+
+Order: {{order_id}} · AWB: {{awb}} · Declared value: ₹{{amount}}
+
+Dispute type (keep one): fake delivery (marked delivered, customer never received) / RTO never returned to origin / weight discrepancy (charged {{charged_weight}} vs actual {{actual_weight}}) / damaged in transit.
+
+Evidence attached:
+- Pickup scan + weight at pickup (packing video/photo with scale, if available)
+- Customer's written statement that the parcel was not received (for fake delivery)
+- POD copy requested — signature does not match customer name
+- Dimensions/weight photos for weight disputes
+
+Requested resolution: reverse the delivery status / refund forward+RTO freight / correct the weight slab and refund the difference / claim for declared value.
+
+Per your SLA I expect a response within 48 hours. This is dispute {{dispute_count}} on this route this month — repeated issues will move our volume.
+
+{{store_name}} · {{contact}}`;
+
+export const REVIEW_RESPONSE = `Public reply template — professional, no arguing, signals to REAL buyers that you're responsive.
+
+"Hi {{name}}, sorry your experience fell short. We take quality seriously — every unit is checked before dispatch. Please reach us at {{contact}} with your order ID; we'll replace the item or refund you within 48 hours. — {{store_name}}"
+
+Rules:
+- Reply within 24h, never argue, never accuse the reviewer of being fake (even when they are).
+- Offer the fix publicly, resolve privately.
+- For suspected fake/competitor reviews, do NOT reply-fight — report via the marketplace's "Report abuse" with: order-ID mismatch (reviewer never bought), burst pattern (5+ 1-stars in 48h), copy-paste text across your listings, reviewer history of only 1-star reviews.
+- Log every reported review ID — a second report referencing the first gets human eyes.`;
+
 export function fillTemplate(template: string, vars: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => vars[key] ?? `{{${key}}}`);
 }

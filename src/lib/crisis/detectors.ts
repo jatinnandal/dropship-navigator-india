@@ -1,4 +1,5 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
+import { getUpcomingGstEvents } from "@/lib/gst-calendar-data";
 import { isSubTaskDone } from "@/lib/journey-graph";
 import { calculateProfit, defaultRtoForProductType } from "@/lib/profit-math";
 import type { CrisisWarning } from "@/lib/crisis/types";
@@ -10,6 +11,8 @@ export type CrisisDetectorInput = {
   profile: OnboardingProfile;
   workspace: Workspace;
   hasGstin: boolean;
+  /** ISO timestamp of the newest settlement reconciliation upload, if any. */
+  latestSettlementUploadAt?: string | null;
 };
 
 function isDismissed(warningId: string, dismissed?: Record<string, string>): boolean {
@@ -158,6 +161,56 @@ export function detectGstTrap(input: CrisisDetectorInput): CrisisWarning | null 
   };
 }
 
+export function detectGstrDeadline(input: CrisisDetectorInput): CrisisWarning | null {
+  if (!input.hasGstin) return null;
+
+  // Monthly filing assumed (QRMP status isn't persisted); dismissal snoozes.
+  const urgent = getUpcomingGstEvents(false).find(
+    (e) => e.status !== "done" && e.daysUntilDue >= 0 && e.daysUntilDue <= 2,
+  );
+  if (!urgent) return null;
+
+  const when =
+    urgent.daysUntilDue === 0
+      ? "today"
+      : urgent.daysUntilDue === 1
+        ? "tomorrow"
+        : `in ${urgent.daysUntilDue} days`;
+
+  return {
+    id: `gstr-due-${urgent.id}`,
+    severity: "high",
+    title: `${urgent.filing.name} due ${when}`,
+    message: `${urgent.filing.name} is due ${when} (${urgent.dueDate.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}). Late filing costs ₹50/day (₹20 for NIL) and a flagged GSTIN blocks marketplace payouts. Zero sales still means filing NIL. Already filed? Dismiss this.`,
+    href: "/app/tools/gst-calendar",
+    ctaLabel: "Open GST calendar",
+  };
+}
+
+export function detectPayoutStale(input: CrisisDetectorInput): CrisisWarning | null {
+  const { workspace, latestSettlementUploadAt } = input;
+  if (!isSubTaskDone(workspace.subTasks, "first-payout-received")) return null;
+  if (latestSettlementUploadAt === undefined) return null; // caller didn't fetch uploads
+
+  const daysSince = latestSettlementUploadAt
+    ? Math.floor((Date.now() - new Date(latestSettlementUploadAt).getTime()) / 86_400_000)
+    : null;
+
+  if (daysSince !== null && daysSince <= 30) return null;
+
+  return {
+    id: "payout-stale",
+    severity: "medium",
+    title: daysSince === null ? "Payouts never reconciled" : `No payout reconciliation in ${daysSince} days`,
+    message:
+      daysSince === null
+        ? "You're receiving payouts but have never checked them against the fee card. Silent over-deductions and unclaimed TCS hide here — a settlement CSV upload takes two minutes."
+        : "Marketplace fee errors and unclaimed TCS compound while nobody looks. Upload the latest settlement CSV — two minutes, and this month's baseline is set.",
+    href: "/app/tools/payout-reconciliation",
+    ctaLabel: "Reconcile payouts",
+  };
+}
+
 export function buildCrisisWarnings(input: CrisisDetectorInput): CrisisWarning[] {
   const dismissed = input.workspace.dismissedWarnings;
   const detectors = [
@@ -165,6 +218,8 @@ export function buildCrisisWarnings(input: CrisisDetectorInput): CrisisWarning[]
     detectNdrSpiral,
     detectAdBurn,
     detectGstTrap,
+    detectGstrDeadline,
+    detectPayoutStale,
     detectSupplierOosPreventive,
   ];
 

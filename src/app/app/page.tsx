@@ -52,7 +52,15 @@ export default async function DashboardPage() {
   ]);
 
   const hasGstin = profile.hasGstin || !!workspace.gstin;
-  const detectorInput = { profile, workspace, hasGstin };
+  const latestUpload = activeSellerProfile
+    ? (await listUploads(activeSellerProfile.id))[0]
+    : undefined;
+  const detectorInput = {
+    profile,
+    workspace,
+    hasGstin,
+    latestSettlementUploadAt: latestUpload?.uploadedAt ?? null,
+  };
   const dashboardState = getDashboardState(detectorInput);
   const banners = getDashboardBanners(detectorInput);
 
@@ -92,9 +100,6 @@ export default async function DashboardPage() {
     : "One step at a time — you're building a real business, not chasing a hack.";
   const stageTools = nextAction ? STAGE_TOOLS[nextAction.moduleId] ?? [] : [];
 
-  const latestUpload = activeSellerProfile
-    ? (await listUploads(activeSellerProfile.id))[0]
-    : undefined;
   const weeklyReview = buildWeeklyReview({
     profile,
     workspace,

@@ -1,4 +1,11 @@
-export type CrisisType = "account_suspended" | "supplier_oos";
+export type CrisisType =
+  | "account_suspended"
+  | "supplier_oos"
+  | "payment_hold"
+  | "ip_complaint"
+  | "gst_notice"
+  | "courier_dispute"
+  | "review_bombing";
 
 export type CrisisSeverity = "critical" | "high" | "medium";
 
@@ -35,13 +42,24 @@ export type CrisisLogEntry = {
   selfReported: boolean;
 };
 
+export type CrisisTemplateId =
+  | "paos"
+  | "supplier_eta"
+  | "customer_whatsapp"
+  | "settlement_ticket"
+  | "settlement_escalation"
+  | "ip_response"
+  | "gst_scn_reply"
+  | "courier_dispute"
+  | "review_response";
+
 export type CrisisProtocolStep = {
   title: string;
   body: string;
   timerLabel?: string;
   actionHref?: string;
   actionLabel?: string;
-  templateId?: "paos" | "supplier_eta" | "customer_whatsapp";
+  templateId?: CrisisTemplateId;
 };
 
 export type CrisisProtocol = {
@@ -50,9 +68,22 @@ export type CrisisProtocol = {
   steps: CrisisProtocolStep[];
 };
 
-export const SELF_REPORT_CRISIS_TYPES: CrisisType[] = ["account_suspended", "supplier_oos"];
+export const SELF_REPORT_CRISIS_TYPES: CrisisType[] = [
+  "account_suspended",
+  "payment_hold",
+  "supplier_oos",
+  "ip_complaint",
+  "gst_notice",
+  "courier_dispute",
+  "review_bombing",
+];
 
 export const CRISIS_LABELS: Record<CrisisType, string> = {
   account_suspended: "Account suspended",
   supplier_oos: "Supplier out of stock",
+  payment_hold: "Payout held / not received",
+  ip_complaint: "IP / brand complaint on listing",
+  gst_notice: "GST notice received",
+  courier_dispute: "Courier dispute / fake delivery",
+  review_bombing: "Review attack on listing",
 };

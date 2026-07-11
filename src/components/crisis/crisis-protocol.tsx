@@ -13,7 +13,13 @@ import {
 import { PaosEditor } from "@/components/crisis/paos-editor";
 import { CopyTemplate } from "@/components/copy-template";
 import {
+  COURIER_DISPUTE_TICKET,
+  ESCALATION_LETTER,
   fillTemplate,
+  GST_SCN_REPLY,
+  IP_COMPLAINT_RESPONSE,
+  MARKETPLACE_APPEAL_TICKET,
+  REVIEW_RESPONSE,
   WHATSAPP_CUSTOMER_DELAY,
   WHATSAPP_SUPPLIER_ETA,
 } from "@/lib/mentor-templates";
@@ -51,6 +57,24 @@ function templateForStep(
   }
   if (templateId === "customer_whatsapp") {
     return fillTemplate(WHATSAPP_CUSTOMER_DELAY, vars);
+  }
+  if (templateId === "settlement_ticket") {
+    return fillTemplate(MARKETPLACE_APPEAL_TICKET, vars);
+  }
+  if (templateId === "settlement_escalation") {
+    return fillTemplate(ESCALATION_LETTER, vars);
+  }
+  if (templateId === "ip_response") {
+    return fillTemplate(IP_COMPLAINT_RESPONSE, vars);
+  }
+  if (templateId === "gst_scn_reply") {
+    return fillTemplate(GST_SCN_REPLY, vars);
+  }
+  if (templateId === "courier_dispute") {
+    return fillTemplate(COURIER_DISPUTE_TICKET, vars);
+  }
+  if (templateId === "review_response") {
+    return fillTemplate(REVIEW_RESPONSE, vars);
   }
   return null;
 }
