@@ -156,7 +156,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
     case "product-selection":
       return {
         plainLanguageSummary:
-          "Pick products that are easy to ship, hard to break, and can survive returns. Focus on practical winners, not viral products.",
+          "Pick ONE hero product to launch first — easy to ship, hard to break, survives returns. Focus beats spread: one product done well outsells three half-tested ones. Keep 2 backups noted for later.",
         requiredInputs: [
           {
             factor: "Product category",
@@ -171,7 +171,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
         ],
         mustHaveDocuments: [
           "Basic SKU costing sheet (product + packaging + shipping + fees + ads + returns)",
-          "Supplier quotation and sample test notes",
+          "Shortlist notes: demand signal, competitor price band, and expected RTO per idea",
         ],
         decisionFlow: [
           "If margin after all costs is below your target, reject the SKU even if demand appears high.",
@@ -190,23 +190,23 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
           },
           {
             phase: "Phase 2 - Unit Economics",
-            goal: "Find 3 candidates that are profitable after real costs.",
+            goal: "Find your 1 hero product (plus 2 backups) that survives real costs.",
             tasks: [
               "Estimate landed cost, packaging, shipping, commission, ad cost, and expected returns loss.",
               "Compute contribution margin per order at conservative selling price.",
-              "Retain only top 3 SKUs that survive conservative assumptions.",
+              "Pick the single strongest SKU as your hero; keep the next 2 as backups.",
             ],
           },
         ],
         doneCriteria: [
-          "You have exactly 3 launch SKUs with positive conservative unit economics.",
-          "Each selected SKU has supplier sample confirmation and quality notes.",
+          "You have 1 hero SKU with positive conservative unit economics (2 backups noted).",
+          "Your hero SKU has a target selling price and break-even RTO from the margin calculator.",
         ],
         actionChecklist: [
           "Shortlist 10 products in your category and check demand consistency.",
           "Reject items with fragile packaging, high size/weight, or poor margin.",
           "Estimate final per-order profit after fees, shipping, ads, and expected returns.",
-          "Pick 3 products only for first test cycle.",
+          "Pick 1 hero product to launch first; note 2 backups. (You order the sample in the supplier step.)",
         ],
         mistakesToAvoid: [
           "Selecting products only by trend videos without margin math.",
@@ -215,19 +215,19 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
         ],
         partnerOptions: [
           {
-            name: "Helium 10",
-            whenToUse: "If you need deeper market data for Amazon-focused launch.",
-            whatToAsk: "Ask which plan is enough for early-stage SKU validation.",
+            name: "Marketplace bestseller lists + Google Trends India (free)",
+            whenToUse: "Your first, zero-cost demand check before paying for any tool.",
+            whatToAsk: "Cross-check bestseller ranks on your target marketplace against 12-month Google Trends (India) — steady beats spiky.",
           },
           {
-            name: "SellerSprite",
-            whenToUse: "If you want keyword + competitor analysis for listing prep.",
-            whatToAsk: "Ask how to estimate sales velocity for shortlisted products.",
+            name: "Product Scorecard (in-app)",
+            whenToUse: "To score a shortlisted idea on margin, RTO risk, and competition in one place.",
+            whatToAsk: "Run each candidate through the scorecard and keep only the top verdict as your hero.",
           },
           {
-            name: "Freelance category researcher",
-            whenToUse: "If you want quick shortlist support before purchase decisions.",
-            whatToAsk: "Ask for data-backed shortlist with margin assumptions clearly shown.",
+            name: "Freelance category researcher (India)",
+            whenToUse: "If you want a quick data-backed shortlist without buying a SaaS subscription.",
+            whatToAsk: "Ask for an India-market shortlist with margin and RTO assumptions clearly shown.",
           },
         ],
       };
@@ -402,7 +402,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
         ],
         doneCriteria: [
           "At least one backup supplier is finalized with written replacement terms.",
-          "Sample quality pass criteria are documented and approved.",
+          "Sample ordered from your primary supplier and checked against documented pass criteria.",
         ],
         actionChecklist: [
           "Collect 5 supplier options and compare MOQ, lead time, and replacement policy.",

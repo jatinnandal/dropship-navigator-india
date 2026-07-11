@@ -99,24 +99,24 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
     walkthroughHref: "/app/tasks/common-documentation",
   },
   "product-shortlist": {
-    hint: "3 SKUs that pass the margin calculator.",
-    why: "Don't fall in love with a product before the margin calculator says yes — 15%+ net margin is the survival gate.",
+    hint: "1 hero SKU that passes the margin calculator (2 backups noted).",
+    why: "Don't fall in love with a product before the margin calculator says yes — 15%+ net margin is the survival gate. One hero product done well beats three half-tested ones.",
     howToSteps: [
       "Run demand check on your target marketplace.",
       "Use the margin calculator — target 15%+ net margin.",
-      "Save 3 product names in the product-selection walkthrough.",
+      "Pick 1 hero product to launch first and note 2 backups in the product-selection walkthrough.",
     ],
     walkthroughHref: "/app/tasks/product-selection",
   },
   "samples-ordered": {
-    hint: "Order 1 sample per shortlisted SKU before listing.",
-    why: "₹200 on a sample saves you from a ₹20,000 inventory mistake — catalogue photos lie.",
+    hint: "Order a sample of your hero product from your vetted supplier.",
+    why: "₹200 on a sample saves you from a ₹20,000 inventory mistake — catalogue photos lie. Order it once you have a supplier, not before.",
     howToSteps: [
-      "Order from your top supplier candidate.",
+      "From your vetted primary supplier, order a sample of your hero product.",
       "Do a drop test and check dispatch time.",
-      "Only list products where sample quality passes.",
+      "Only list the product if sample quality and dispatch speed pass.",
     ],
-    walkthroughHref: "/app/tasks/product-selection",
+    walkthroughHref: "/app/tasks/supplier-sourcing",
   },
   "hsn-mapped": {
     hint: "Each SKU needs correct HSN + GST rate.",

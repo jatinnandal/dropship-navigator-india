@@ -179,10 +179,10 @@ export function buildProductSelectionTask(
   steps.push(
     {
       id: "shortlist",
-      title: "Build your shortlist of 3 test products",
-      why: "Focused testing beats launching 50 random products. Three SKUs let you compare without spreading thin.",
+      title: "Build a shortlist of 3 candidates to compare",
+      why: "You will launch ONE hero product first — but compare 3 candidates so the winner is a choice, not a guess. The other two become backups.",
       how: [
-        "Write 3 product names you want to test.",
+        "Write 3 product names you want to compare.",
         "For each: note selling price, supplier cost, and weight.",
         "Reject any where you cannot find a supplier with sample availability.",
       ],
@@ -192,9 +192,9 @@ export function buildProductSelectionTask(
         label: "Product 1 name",
         placeholder: "e.g. Silicone kitchen organizer",
         workspaceKey: "shortlistedSkus",
-        hint: "We'll save your top picks for later steps.",
+        hint: "We'll save your candidates — you'll pick 1 hero next.",
       },
-      mentorNote: "Three products. Not ten. Not fifty. Three.",
+      mentorNote: "Three candidates to compare. You launch ONE hero first — the other two are backups, not simultaneous launches.",
     },
     {
       id: "rto-reality",
@@ -218,9 +218,9 @@ export function buildProductSelectionTask(
       calculator: { kind: "margin" },
       tools: [
         {
-          name: "SellerSprite",
-          whenToUse: "For Amazon keyword and competitor analysis.",
-          why: "Helps estimate sales velocity before you commit to a SKU.",
+          name: "Marketplace bestseller lists + Google Trends India",
+          whenToUse: "Free demand check before you commit to a SKU.",
+          why: "Steady bestseller rank + steady 12-month Trends beats a spiky fad you can't restock into.",
         },
       ],
     },
@@ -261,27 +261,26 @@ export function buildProductSelectionTask(
   }
 
   steps.push({
-    id: "sample-commit",
-    title: "Commit to ordering samples before listing",
-    why: "Catalogue photos lie. Sample orders reveal actual quality, packaging durability, and dispatch speed.",
+    id: "lock-hero",
+    title: "Lock your hero product",
+    why: "Pick the single strongest candidate as your hero to launch first. The other two stay on the bench as backups — you do not launch or sample all three at once.",
     how: [
-      "Order 1 sample of each shortlisted product from your top supplier candidate.",
-      "Test packaging by simulating courier handling (drop test from 3 feet).",
-      "Time the dispatch: if supplier takes 5+ days, your customers wait 7-10 days total.",
-      "Only list products where sample quality and dispatch speed pass.",
+      "Choose the candidate with the best margin-after-RTO and easiest fulfilment.",
+      "Mark it as your hero; keep the runner-ups noted as backups.",
+      "You will order a sample of this hero from a vetted supplier in the next step (Supplier sourcing) — not before you have a supplier.",
     ],
-    trap: "Bulk ordering before sampling is the most expensive beginner mistake. ₹5,000-50,000 stuck in unsellable inventory.",
-    mentorNote: "A ₹200 sample order saves you from a ₹20,000 mistake. Always sample.",
+    trap: "Sampling and launching 3 products at once triples your cost and splits your attention. One hero, done well, first.",
+    mentorNote: "A ₹200 sample of your hero saves you from a ₹20,000 mistake — but you order it once you have a supplier, in the next module.",
   });
 
   const intro =
     profile.budgetBand === "under_20k"
-      ? "With a tight budget, product selection is everything. We'll find 3 winners that survive real costs — no ad budget to waste on bad picks."
-      : "Let's find products with real demand, healthy margins, and manageable RTO risk for your first launch.";
+      ? "With a tight budget, product selection is everything. We'll compare 3 candidates and lock ONE hero that survives real costs — no ad budget to waste on bad picks."
+      : "Let's compare a few candidates and lock one hero product with real demand, healthy margins, and manageable RTO risk for your first launch.";
 
   return {
     id: "product-selection",
-    title: "Find winning products, step by step",
+    title: "Find your hero product, step by step",
     intro,
     steps,
   };

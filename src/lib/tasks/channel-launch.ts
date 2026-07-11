@@ -328,7 +328,7 @@ export function buildChannelLaunchTask(
           why: "Meesho handles payments and logistics — no PG needed. You can test products while PG application processes.",
           how: [
             "Complete Meesho supplier onboarding (reuse your GSTIN + docs).",
-            "List 3 SKUs from your shortlist.",
+            "List your hero SKU first; add backups only after the first orders teach you what works.",
             "Use Meesho sales to fund PG re-application and ad tests later.",
           ],
         },

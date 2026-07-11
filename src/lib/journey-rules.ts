@@ -101,17 +101,9 @@ export const BASE_SUBTASK_RULES: BaseSubTaskRule[] = [
   {
     id: "product-shortlist",
     moduleId: "product-selection",
-    label: "3 products shortlisted with margin check",
-    why: "Margin calculator gate before listing prevents cash burn.",
+    label: "1 hero product chosen, margin-checked (2 backups noted)",
+    why: "One product done well beats three half-done — margin gate before listing prevents cash burn.",
     severity: "required",
-  },
-  {
-    id: "samples-ordered",
-    moduleId: "product-selection",
-    label: "Sample order placed",
-    why: "Samples catch quality issues before inventory commitment.",
-    severity: "required",
-    severityWhen: (f) => (f.isLeanBudget ? "recommended" : "required"),
   },
   {
     id: "hsn-mapped",
@@ -133,6 +125,14 @@ export const BASE_SUBTASK_RULES: BaseSubTaskRule[] = [
     label: "Primary supplier vetted + terms in writing",
     why: "Unvetted suppliers cause stockouts and cancellation penalties.",
     severity: "required",
+  },
+  {
+    id: "samples-ordered",
+    moduleId: "supplier-sourcing",
+    label: "Sample ordered from vetted supplier",
+    why: "Samples catch quality issues before inventory commitment — order once you have a supplier, not before.",
+    severity: "required",
+    severityWhen: (f) => (f.isLeanBudget ? "recommended" : "required"),
   },
   {
     id: "backup-supplier",
@@ -437,14 +437,14 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
         description: `Validate demand, margin viability, and competition before listing.${fashionNote}${importNote}`,
         outcomes: facts.isFashion
           ? [
-              "Shortlist 3 SKUs with 15%+ net margin after 35% RTO",
+              "Pick 1 hero SKU with 15%+ net margin after 35% RTO (note 2 backups)",
               "Draft size chart and return policy",
-              "Order samples before listing",
+              "Confirm a supplier can sample it (you order the sample in the supplier step)",
             ]
           : [
               "Avoid heavy/fragile high-RTO products",
               "Estimate margin after fees and ad spend",
-              "Build shortlist of 3–5 test SKUs",
+              "Pick 1 hero SKU + 2 backups after fee and RTO math",
             ],
         tools: BASE_MODULE_TOOLS[moduleId],
         isPriority: true,

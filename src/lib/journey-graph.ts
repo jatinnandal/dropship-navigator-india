@@ -20,6 +20,7 @@ export type JourneyEdge = {
 
 export const JOURNEY_EDGES: JourneyEdge[] = [
   { from: "product-selection", to: "supplier-sourcing", kind: "recommended" },
+  { from: "product-selection", to: "common-documentation", kind: "recommended" },
   { from: "product-selection", to: "product-selection", kind: "loop" },
   { from: "supplier-sourcing", to: "common-documentation", kind: "recommended" },
   { from: "supplier-sourcing", to: "channel-launch", kind: "recommended" },
@@ -62,8 +63,7 @@ export const MODULE_SUB_TASKS: Record<TaskModuleId, JourneySubTaskDef[]> = {
     { id: "gst-filing-understood", moduleId: "common-documentation", label: "GST filing calendar understood", severity: "required" },
   ],
   "product-selection": [
-    { id: "product-shortlist", moduleId: "product-selection", label: "3 products shortlisted with margin check", severity: "required" },
-    { id: "samples-ordered", moduleId: "product-selection", label: "Sample order placed", severity: "required" },
+    { id: "product-shortlist", moduleId: "product-selection", label: "1 hero product chosen, margin-checked (2 backups noted)", severity: "required" },
   ],
   "compliance-by-product": [
     { id: "hsn-mapped", moduleId: "compliance-by-product", label: "HSN codes mapped for launch SKUs", severity: "required" },
@@ -71,6 +71,7 @@ export const MODULE_SUB_TASKS: Record<TaskModuleId, JourneySubTaskDef[]> = {
   ],
   "supplier-sourcing": [
     { id: "supplier-vetted", moduleId: "supplier-sourcing", label: "Primary supplier vetted + terms in writing", severity: "required" },
+    { id: "samples-ordered", moduleId: "supplier-sourcing", label: "Sample ordered from vetted supplier", severity: "required" },
     { id: "backup-supplier", moduleId: "supplier-sourcing", label: "Backup supplier identified", severity: "recommended" },
     { id: "domestic-supplier-confirmed", moduleId: "supplier-sourcing", label: "Domestic supplier confirmed (not AliExpress)", severity: "required" },
   ],

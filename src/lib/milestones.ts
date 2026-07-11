@@ -11,7 +11,7 @@ export const MILESTONE_LABELS: Record<MilestoneId, string> = {
   "first-listing-live": "First listings live — you are officially selling",
   "store-linked": "Store linked — payouts can flow",
   "module-complete": "Module complete — great momentum",
-  "product-picked": "Winning product shortlisted",
+  "product-picked": "Hero product picked",
   "supplier-locked": "Supplier locked in",
 };
 
