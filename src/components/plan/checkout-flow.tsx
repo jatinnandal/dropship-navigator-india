@@ -44,7 +44,7 @@ export function CheckoutFlow({
   const [state, setState] = useState<CheckoutState>("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [scriptLoaded, setScriptLoaded] = useState(false);
-  const pollRef = useRef<ReturnType<typeof setInterval>>();
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const upgradePlans = PLAN_CARDS.filter((c) => {
     if (c.plan === "free") return false;
@@ -55,7 +55,7 @@ export function CheckoutFlow({
   const stopPolling = useCallback(() => {
     if (pollRef.current) {
       clearInterval(pollRef.current);
-      pollRef.current = undefined;
+      pollRef.current = null;
     }
   }, []);
 

@@ -10,12 +10,14 @@ function gatedCard(plan: Plan) {
   return function GatedToolCard(props: CardProps) {
     const slug = props.href?.split("/").pop() ?? "";
     const required = requiredPlanForTool(slug);
-    const locked = !planCovers(plan, required);
+    const isLocked = !planCovers(plan, required);
     return (
       <ToolCard
         {...props}
-        status={locked ? "locked" : props.status}
-        statusLabel={locked ? `${PLAN_LABELS[required]} plan` : props.statusLabel}
+        href={isLocked ? "/app/upgrade" : props.href}
+        status={isLocked ? "locked" : props.status}
+        statusLabel={isLocked ? `${PLAN_LABELS[required]} plan` : props.statusLabel}
+        locked={isLocked}
       />
     );
   };
@@ -178,9 +180,9 @@ export default async function ToolsIndexPage() {
 
           {/* Supplier scorecard */}
           <Link
-            href="/app/tools/supplier-scorecard"
+            href={planCovers(plan, requiredPlanForTool("supplier-scorecard")) ? "/app/tools/supplier-scorecard" : "/app/upgrade"}
             className="block"
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", opacity: planCovers(plan, requiredPlanForTool("supplier-scorecard")) ? 1 : 0.55 }}
           >
             <div
               style={{

@@ -4,6 +4,9 @@ import { getCurrentPlan } from "@/lib/plan";
 import { getCurrentUserEmail } from "@/lib/current-user";
 import { PLAN_LABELS } from "@/lib/entitlements";
 import { CheckoutFlow } from "@/components/plan/checkout-flow";
+import { ManageSubscription } from "@/components/plan/manage-subscription";
+import { CancelSubscriptionButton } from "@/components/plan/cancel-subscription-button";
+import { getSubscriptionDetails } from "./actions";
 
 export default async function UpgradePage() {
   const [plan, email] = await Promise.all([
@@ -14,6 +17,8 @@ export default async function UpgradePage() {
   const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "";
 
   if (plan === "growth") {
+    const details = await getSubscriptionDetails();
+
     return (
       <div className="mx-auto max-w-lg px-6 py-16 text-center">
         <div className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-white/[0.2] bg-[#111]">
@@ -23,12 +28,12 @@ export default async function UpgradePage() {
           You're on the Growth plan
         </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-[var(--muted)]">
-          You have access to everything Navigator offers. Need to manage your
-          subscription? Contact us at{" "}
-          <a href="mailto:support@navigatorindia.in" className="text-white underline">
-            support@navigatorindia.in
-          </a>
+          You have access to everything Navigator offers.
         </p>
+        <ManageSubscription
+          periodEnd={details.periodEnd}
+          pendingDowngrade={details.pendingDowngrade}
+        />
         <Link
           href="/app"
           className="mt-6 inline-flex items-center gap-2 text-[13.5px] font-medium text-[var(--text-faint)] no-underline hover:text-white transition-colors"
@@ -86,6 +91,8 @@ export default async function UpgradePage() {
           </Link>
         </div>
       )}
+
+      {plan === "starter" && <CancelSubscriptionButton />}
 
       {/* Honesty note */}
       <div className="mx-auto mt-10 flex max-w-lg gap-3 rounded-[14px] border border-white/[0.1] bg-[#060606] p-4">

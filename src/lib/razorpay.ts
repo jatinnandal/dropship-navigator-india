@@ -98,6 +98,48 @@ export async function createRazorpaySubscription(params: {
   return { subscriptionId: data.id, shortUrl: data.short_url };
 }
 
+export function planFromRazorpayId(razorpayPlanId: string): Exclude<Plan, "free"> | null {
+  for (const [key, envName] of Object.entries(PLAN_ENV_MAP)) {
+    if (process.env[envName] === razorpayPlanId) {
+      return key.split("_")[0] as Exclude<Plan, "free">;
+    }
+  }
+  return null;
+}
+
+export async function updateSubscriptionPlan(
+  subscriptionId: string,
+  newPlanId: string,
+): Promise<RazorpaySubscriptionEntity> {
+  const config = getRazorpayConfig();
+  if (!config) throw new Error("Razorpay not configured");
+
+  return razorpayFetch<RazorpaySubscriptionEntity>(
+    `/subscriptions/${subscriptionId}`,
+    config,
+    {
+      method: "PATCH",
+      body: JSON.stringify({
+        plan_id: newPlanId,
+        schedule_change_at: "cycle_end",
+        customer_notify: 1,
+      }),
+    },
+  );
+}
+
+export async function fetchSubscription(
+  subscriptionId: string,
+): Promise<RazorpaySubscriptionEntity & { has_scheduled_changes?: boolean; change_scheduled_at?: number }> {
+  const config = getRazorpayConfig();
+  if (!config) throw new Error("Razorpay not configured");
+
+  return razorpayFetch(
+    `/subscriptions/${subscriptionId}`,
+    config,
+  );
+}
+
 export async function cancelRazorpaySubscription(
   subscriptionId: string,
 ): Promise<boolean> {

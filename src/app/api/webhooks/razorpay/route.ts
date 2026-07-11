@@ -3,6 +3,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import {
   getRazorpayConfig,
   verifyWebhookSignature,
+  planFromRazorpayId,
   type RazorpaySubscriptionEntity,
 } from "@/lib/razorpay";
 import type { Plan } from "@/lib/entitlements";
@@ -101,13 +102,20 @@ export async function POST(request: NextRequest) {
       ? new Date(entity.current_end * 1000).toISOString()
       : null;
 
+    const resolvedPlan = planFromRazorpayId(entity.plan_id);
+
+    const updateFields: Record<string, unknown> = {
+      status: "active",
+      current_period_end: periodEnd,
+      updated_at: now,
+    };
+    if (resolvedPlan) {
+      updateFields.plan = resolvedPlan;
+    }
+
     const { error } = await admin
       .from("subscriptions")
-      .update({
-        status: "active",
-        current_period_end: periodEnd,
-        updated_at: now,
-      })
+      .update(updateFields)
       .eq("razorpay_subscription_id", entity.id);
 
     if (error) {
