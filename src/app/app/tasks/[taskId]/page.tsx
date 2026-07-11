@@ -29,15 +29,15 @@ export default async function TaskPage({ params }: Props) {
           The route continues on Starter
         </h1>
         <p className="mt-3 max-w-xl text-[14px] leading-[1.65] text-[var(--muted)]">
-          Module 1 (documents + GST) is free — you&apos;ve seen how the mentor works. The remaining
-          six modules walk you from product selection to profit tracking.
+          Module 1 (product selection) is free — you&apos;ve seen how the mentor works. The remaining
+          six modules walk you from supplier sourcing to profit tracking.
         </p>
         <div className="mt-6">
           <UpgradePanel
             requiredPlan="starter"
             title="Unlock the full 7-module launch route"
             bullets={[
-              "Product selection with margin gates, supplier vetting, channel launch",
+              "Supplier vetting, docs + GST, compliance, channel launch",
               "Every calculator and simulator, personalized to your answers",
               "Crisis protocols and the weekly profit ritual",
             ]}
