@@ -11,8 +11,11 @@ import { getEditProfileHref } from "@/lib/profile-name";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { getStepDetail } from "@/lib/step-details";
 import { getCurrentPlan } from "@/lib/plan";
-import { canUseJourneyModule, PLAN_LABELS } from "@/lib/entitlements";
+import { canUseJourneyModule, entitlementsFor, PLAN_LABELS } from "@/lib/entitlements";
 import { UpgradePanel } from "@/components/plan/upgrade-panel";
+import { getLatestPlan } from "@/lib/journey-plan-store";
+import { applyPersonalizedPlan } from "@/lib/llm/plan-generator";
+import { PersonalizedPlanControls } from "@/components/personalized-plan-controls";
 
 type Props = {
   params: Promise<{ moduleId: string }>;
@@ -73,7 +76,13 @@ export default async function JourneyStepPage({ params }: Props) {
     hasGstin,
   );
 
-  const detail = getStepDetail(stepModule.id, profile);
+  const entitlements = entitlementsFor(plan);
+  const personalizedPlan =
+    entitlements.personalizedPlan && activeSellerProfile
+      ? await getLatestPlan(activeSellerProfile.id)
+      : null;
+  const modulePlan = personalizedPlan?.modules.find((m) => m.moduleId === stepModule.id);
+  const detail = applyPersonalizedPlan(getStepDetail(stepModule.id, profile), modulePlan);
   const guidedTaskLabel = getTaskTitle(stepModule.id);
   const doNowBullets = detail.actionChecklist.slice(0, 3);
 
@@ -89,6 +98,47 @@ export default async function JourneyStepPage({ params }: Props) {
         <p className="text-muted mt-3 text-sm">{stepModule.description}</p>
         <p className="meta-tile mt-4 text-sm">{mentorLine}</p>
       </header>
+
+      {entitlements.personalizedPlan ? (
+        <section className="glass-panel mt-6 rounded-xl border border-neutral-700 p-6">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-wide text-neutral-400">
+                {detail.personalized ? "Personalized for you" : "Personalize this plan"}
+              </p>
+              <p className="text-muted mt-1 max-w-xl text-sm leading-6">
+                {detail.personalized
+                  ? "This plan's framing and priorities are tailored to your profile. All numbers still come from the app's verified calculators."
+                  : "Tailor this module's framing and priorities to your channel, budget, and GST status. Numbers always come from the verified calculators."}
+              </p>
+            </div>
+            <PersonalizedPlanControls hasPlan={detail.personalized} />
+          </div>
+
+          {detail.watchOuts.length > 0 ? (
+            <div className="mt-5 rounded-lg border border-white/[0.1] bg-white/[0.02] p-4">
+              <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
+                Watch-outs for your setup
+              </p>
+              <ul className="mt-2 space-y-1.5">
+                {detail.watchOuts.map((w, i) => (
+                  <li key={i} className="text-muted flex items-start gap-2 text-sm leading-6">
+                    <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-white/40" />
+                    {w}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+
+          {detail.personalized ? (
+            <p className="mt-4 text-xs leading-5 text-neutral-500">
+              AI-generated guidance — verify category-specific compliance and figures with the tools
+              or a CA before acting.
+            </p>
+          ) : null}
+        </section>
+      ) : null}
 
       <section className="glass-panel mt-6 rounded-xl border border-neutral-700 p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
