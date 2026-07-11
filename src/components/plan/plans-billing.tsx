@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Script from "next/script";
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import { PLAN_PRICES, type Plan } from "@/lib/entitlements";
 import { PLAN_CARDS } from "@/lib/pricing-tiers";
@@ -27,9 +26,7 @@ type BillingPeriod = "monthly" | "yearly";
 
 const PLAN_ORDER: Record<Plan, number> = { free: 0, starter: 1, growth: 2 };
 
-function sleep(ms: number) {
-  return new Promise((r) => setTimeout(r, ms));
-}
+const RAZORPAY_SRC = "https://checkout.razorpay.com/v1/checkout.js";
 
 export function PlansBilling({
   currentPlan,
@@ -51,7 +48,6 @@ export function PlansBilling({
   const [state, setState] = useState<CheckoutState>("idle");
   const [activePlan, setActivePlan] = useState<"starter" | "growth" | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const scriptReady = useRef(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -85,15 +81,31 @@ export function PlansBilling({
     [router],
   );
 
-  // Wait for the external Razorpay script (afterInteractive) instead of failing
-  // immediately — covers slow networks and lazy load timing.
+  // Load the Razorpay checkout script on demand (first Subscribe click) instead
+  // of eagerly on page mount — nothing loads while a user is just viewing plans.
+  // The click handler awaits onload, so there's no false "still loading" race.
   const ensureRazorpay = useCallback(async (): Promise<boolean> => {
-    if (typeof window !== "undefined" && window.Razorpay) return true;
-    for (let i = 0; i < 30; i++) {
-      await sleep(200);
-      if (typeof window !== "undefined" && window.Razorpay) return true;
+    if (typeof window === "undefined") return false;
+    if (window.Razorpay) return true;
+
+    let script = document.querySelector<HTMLScriptElement>(`script[src="${RAZORPAY_SRC}"]`);
+    if (!script) {
+      script = document.createElement("script");
+      script.src = RAZORPAY_SRC;
+      script.async = true;
+      document.body.appendChild(script);
     }
-    return false;
+
+    await new Promise<void>((resolve) => {
+      if (window.Razorpay) return resolve();
+      const done = () => resolve();
+      script!.addEventListener("load", done, { once: true });
+      script!.addEventListener("error", done, { once: true });
+      // Safety net if the load/error event already fired before we attached.
+      setTimeout(done, 8000);
+    });
+
+    return !!window.Razorpay;
   }, []);
 
   const handleSubscribe = useCallback(
@@ -169,14 +181,6 @@ export function PlansBilling({
 
   return (
     <>
-      <Script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        strategy="afterInteractive"
-        onLoad={() => {
-          scriptReady.current = true;
-        }}
-      />
-
       {/* Billing toggle */}
       <div className="mx-auto mt-8 flex w-fit items-center gap-1 rounded-full border border-white/[0.12] bg-[#060606] p-1">
         <button
