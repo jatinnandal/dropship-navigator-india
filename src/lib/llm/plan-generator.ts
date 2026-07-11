@@ -170,8 +170,16 @@ export async function generatePersonalizedPlan(
     if (modules.length === 0) return null;
 
     return { generatedAt: new Date().toISOString(), model: config.model, modules };
-  } catch {
+  } catch (err) {
     // Any failure → static templates. Never surface a half-built plan.
+    // Surface the real reason in dev only (e.g. "credit balance too low"),
+    // never in production where it could leak into logs users can reach.
+    if (process.env.NODE_ENV !== "production") {
+      console.error(
+        "[personalized-plan] generation failed:",
+        err instanceof Error ? err.message : err,
+      );
+    }
     return null;
   }
 }
