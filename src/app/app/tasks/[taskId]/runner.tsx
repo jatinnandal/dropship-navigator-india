@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useState, useTransition, type ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ProfitCalculator } from "@/components/profit-calculator";
@@ -45,6 +45,7 @@ type Props = {
   initialAnswers: Record<string, string>;
   initialWorkspace: Workspace;
   editProfileHref?: string;
+  personalizedSlot?: ReactNode;
 };
 
 function firstIncompleteId(steps: TaskStep[], completed: Set<string>): string | null {
@@ -75,6 +76,7 @@ export function TaskRunner({
   initialAnswers,
   initialWorkspace,
   editProfileHref = "/onboarding",
+  personalizedSlot,
 }: Props) {
   const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers ?? {});
   const [completed, setCompleted] = useState<Set<string>>(new Set(initialCompleted ?? []));
@@ -261,6 +263,8 @@ export function TaskRunner({
           </div>
         </div>
       </header>
+
+      {personalizedSlot ? <div className="mt-6">{personalizedSlot}</div> : null}
 
       <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,260px)_1fr]">
         <aside className="order-2 space-y-4 lg:order-1">

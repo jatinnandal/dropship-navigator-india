@@ -1,12 +1,16 @@
 import { notFound } from "next/navigation";
-import { canUseJourneyModule } from "@/lib/entitlements";
+import { canUseJourneyModule, entitlementsFor } from "@/lib/entitlements";
 import { getCurrentPlan } from "@/lib/plan";
 import { getActiveSellerProfileForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { getEditProfileHref } from "@/lib/profile-name";
 import { getTaskState } from "@/lib/task-progress-store";
 import { resolveTaskId } from "@/lib/tasks";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
+import { getStepDetail } from "@/lib/step-details";
+import { applyPersonalizedPlan, isPersonalizableModule, profileHash } from "@/lib/llm/plan-generator";
+import { getModulePlan } from "@/lib/journey-plan-store";
 import { UpgradePanel } from "@/components/plan/upgrade-panel";
+import { PersonalizedPlanSection } from "@/components/personalized-plan-section";
 import { TaskRunner } from "./runner";
 
 type Props = {
@@ -58,6 +62,15 @@ export default async function TaskPage({ params }: Props) {
     ? getEditProfileHref(activeSellerProfile.id, `/app/tasks/${taskId}`)
     : "/onboarding";
 
+  const entitlements = entitlementsFor(plan);
+  const canPersonalize =
+    entitlements.personalizedPlan && isPersonalizableModule(taskId) && !!activeSellerProfile;
+  const modulePlan =
+    canPersonalize && activeSellerProfile
+      ? await getModulePlan(activeSellerProfile.id, taskId, profileHash(profile))
+      : null;
+  const detail = applyPersonalizedPlan(getStepDetail(taskId, profile), modulePlan ?? undefined);
+
   return (
     <TaskRunner
       taskId={taskId}
@@ -66,6 +79,11 @@ export default async function TaskPage({ params }: Props) {
       initialAnswers={state.answers}
       initialWorkspace={workspace}
       editProfileHref={editProfileHref}
+      personalizedSlot={
+        canPersonalize ? (
+          <PersonalizedPlanSection moduleId={taskId} canPersonalize={canPersonalize} detail={detail} />
+        ) : null
+      }
     />
   );
 }
