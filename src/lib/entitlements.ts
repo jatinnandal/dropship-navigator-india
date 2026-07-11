@@ -18,8 +18,19 @@ export type Entitlements = {
   maxProfiles: number;
   /** Payout reconciliations per calendar month. Infinity = unlimited. */
   reconPerMonth: number;
+  /**
+   * How many months of per-order reconciliation rows we retain. Past this,
+   * the bulky rows are purged and only the compact upload summary is kept
+   * (so history trends survive without unbounded storage). "Unlimited"
+   * reconciliations means unlimited uploads, not infinite raw-row retention.
+   */
+  reconHistoryMonths: number;
   /** Free tier gets only the first journey module. */
   allJourneyModules: boolean;
+  /** LLM-personalized journey plan (template-anchored generation). */
+  personalizedPlan: boolean;
+  /** Cap on LLM plan (re)generations per calendar month; profile-thrash guard. */
+  llmPlanRegensPerMonth: number;
   /** Crisis protocols usable on this plan ("all" for growth). */
   crisisProtocols: CrisisType[] | "all";
   weeklyDigest: boolean;
@@ -33,7 +44,10 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     plan: "free",
     maxProfiles: 1,
     reconPerMonth: 0,
+    reconHistoryMonths: 0,
     allJourneyModules: false,
+    personalizedPlan: false,
+    llmPlanRegensPerMonth: 0,
     crisisProtocols: [],
     weeklyDigest: false,
     rateAlerts: false,
@@ -42,7 +56,10 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     plan: "starter",
     maxProfiles: 2,
     reconPerMonth: 1,
+    reconHistoryMonths: 3,
     allJourneyModules: true,
+    personalizedPlan: true,
+    llmPlanRegensPerMonth: 5,
     crisisProtocols: STARTER_CRISIS,
     weeklyDigest: true,
     rateAlerts: false,
@@ -51,7 +68,10 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     plan: "growth",
     maxProfiles: 5,
     reconPerMonth: Infinity,
+    reconHistoryMonths: 12,
     allJourneyModules: true,
+    personalizedPlan: true,
+    llmPlanRegensPerMonth: 20,
     crisisProtocols: "all",
     weeklyDigest: true,
     rateAlerts: true,

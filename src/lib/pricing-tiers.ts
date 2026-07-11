@@ -52,7 +52,7 @@ export const PLAN_CARDS: PlanCard[] = [
     features: [
       "Everything in Starter",
       "5 seller profiles — run niches side-by-side",
-      "Unlimited payout reconciliations + history",
+      "Unlimited payout reconciliations · 12-month order-level history",
       "Full crisis pack: payment holds, IP complaints, GST notices, courier disputes, review attacks",
       "Rate-change alerts on your saved products",
       "Priority support",

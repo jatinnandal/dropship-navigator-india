@@ -61,4 +61,21 @@ describe("entitlements", () => {
     expect(entitlementsFor("starter").rateAlerts).toBe(false);
     expect(entitlementsFor("growth").rateAlerts).toBe(true);
   });
+
+  it("recon history retention: 0 / 3mo / 12mo", () => {
+    expect(entitlementsFor("free").reconHistoryMonths).toBe(0);
+    expect(entitlementsFor("starter").reconHistoryMonths).toBe(3);
+    expect(entitlementsFor("growth").reconHistoryMonths).toBe(12);
+  });
+
+  it("personalized plan starter+, with regen caps", () => {
+    expect(entitlementsFor("free").personalizedPlan).toBe(false);
+    expect(entitlementsFor("starter").personalizedPlan).toBe(true);
+    expect(entitlementsFor("growth").personalizedPlan).toBe(true);
+    expect(entitlementsFor("free").llmPlanRegensPerMonth).toBe(0);
+    expect(entitlementsFor("starter").llmPlanRegensPerMonth).toBeGreaterThan(0);
+    expect(entitlementsFor("growth").llmPlanRegensPerMonth).toBeGreaterThan(
+      entitlementsFor("starter").llmPlanRegensPerMonth,
+    );
+  });
 });

@@ -7,7 +7,11 @@ import { getActiveSellerProfileForCurrentVisitor } from "@/lib/progress-store";
 import { parseSettlementCsv } from "@/lib/settlement-recon/adapters";
 import { reconcile } from "@/lib/settlement-recon/reconcile";
 import type { ReconChannel } from "@/lib/settlement-recon/types";
-import { countUploadsThisMonth, insertUpload } from "@/lib/settlement-recon-store";
+import {
+  countUploadsThisMonth,
+  insertUpload,
+  purgeExpiredReconRows,
+} from "@/lib/settlement-recon-store";
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2MB ≈ well past 2,000 orders
 
@@ -46,6 +50,9 @@ export async function uploadSettlementCsv(formData: FormData) {
   const report = reconcile(channel, category, adapter);
   const uploadId = await insertUpload(profile.id, file.name || null, report);
   if (!uploadId) fail("store_failed");
+
+  // Retention: drop per-order rows older than the plan's window (summary kept).
+  await purgeExpiredReconRows(profile.id, entitlements.reconHistoryMonths);
 
   redirect(`/app/tools/payout-reconciliation/${uploadId}`);
 }

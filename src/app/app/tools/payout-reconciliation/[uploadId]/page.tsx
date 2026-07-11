@@ -34,6 +34,9 @@ export default async function ReconReportPage({ params }: { params: Params }) {
   const s = upload.summary;
   const flagged = upload.rows.filter((r) => r.flagged);
   const returns = upload.rows.filter((r) => r.isReturn);
+  // Order-level rows are purged past the plan's retention window; the compact
+  // summary is kept. Detect that so we don't render an empty table as "clean".
+  const rowsPurged = upload.rows.length === 0 && upload.rowCount > 0;
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
@@ -57,6 +60,13 @@ export default async function ReconReportPage({ params }: { params: Params }) {
           meta={MARKETPLACE_FEES_META}
           note="Expected fees exclude shipping/weight handling (not in the CSV). Deltas near your shipping cost are usually courier charges — investigate the big ones, not the small ones."
         />
+        {rowsPurged ? (
+          <p className="text-muted mt-3 rounded-xl border border-white/[0.1] bg-white/[0.02] px-4 py-3 text-xs leading-5">
+            Order-level detail for this reconciliation has passed your plan&apos;s
+            retention window and was cleared to save space. The totals above are
+            kept permanently — upgrade for a longer history window.
+          </p>
+        ) : null}
       </header>
 
       {/* Summary tiles */}
@@ -109,7 +119,15 @@ export default async function ReconReportPage({ params }: { params: Params }) {
           </h2>
         </div>
 
-        {flagged.length === 0 ? (
+        {rowsPurged ? (
+          <div className="panel mt-3 rounded-2xl p-6">
+            <p className="text-muted text-sm leading-6">
+              {s.flaggedCount > 0
+                ? `${s.flaggedCount} order${s.flaggedCount > 1 ? "s were" : " was"} flagged in this settlement, but the order-level rows have passed your plan's retention window. Re-upload the file to inspect them again.`
+                : "No orders were flagged in this settlement. Order-level rows have passed your plan's retention window; the summary above is kept."}
+            </p>
+          </div>
+        ) : flagged.length === 0 ? (
           <div className="panel mt-3 rounded-2xl p-6">
             <p className="text-sm text-[var(--success)]">
               Nothing flagged — every delivered order's deduction is within the expected band. That's
@@ -163,7 +181,13 @@ export default async function ReconReportPage({ params }: { params: Params }) {
           <h2 className="text-base font-semibold text-white">Returns & RTO ({s.returnCount})</h2>
         </div>
         <div className="panel mt-3 rounded-2xl p-5">
-          {returns.length === 0 ? (
+          {rowsPurged ? (
+            <p className="text-sm text-[var(--muted)]">
+              {s.returnCount > 0
+                ? `${s.returnCount} return${s.returnCount > 1 ? "s" : ""} in this settlement — order-level detail has passed your plan's retention window.`
+                : "No returned orders in this settlement."}
+            </p>
+          ) : returns.length === 0 ? (
             <p className="text-sm text-[var(--muted)]">No returned orders in this settlement.</p>
           ) : (
             <>

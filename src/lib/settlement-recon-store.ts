@@ -189,6 +189,35 @@ export async function getUpload(profileId: string, uploadId: string): Promise<St
   };
 }
 
+/**
+ * Purge per-order rows for uploads older than the plan's retention window.
+ * The compact upload summary is kept, so history trends survive without
+ * unbounded `user_settlement_rows` growth. No-op for unlimited/zero windows.
+ */
+export async function purgeExpiredReconRows(
+  profileId: string,
+  historyMonths: number,
+): Promise<void> {
+  if (!Number.isFinite(historyMonths) || historyMonths <= 0) return;
+  const supabase = await createSupabaseDataClient();
+  if (!supabase) return;
+
+  const cutoff = new Date();
+  cutoff.setMonth(cutoff.getMonth() - historyMonths);
+
+  const { data: oldUploads } = await supabase
+    .from("user_settlement_uploads")
+    .select("id")
+    .eq("profile_id", profileId)
+    .lt("uploaded_at", cutoff.toISOString());
+
+  const ids = (oldUploads ?? []).map((u: { id: string }) => u.id);
+  if (ids.length === 0) return;
+
+  // Drop the bulky per-order rows; the summary on the upload row stays.
+  await supabase.from("user_settlement_rows").delete().in("upload_id", ids);
+}
+
 function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
