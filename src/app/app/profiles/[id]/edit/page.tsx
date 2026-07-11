@@ -55,9 +55,9 @@ export default async function EditProfilePage({
             color: "var(--body-text)",
           }}
         >
-          You&apos;ve changed this profile&apos;s key details the maximum of {changeCap} times this
-          month. Your last change wasn&apos;t saved. You can still edit the name and budget, or come
-          back next month — or run a separate profile for a different setup.
+          You&apos;ve used all {changeCap} key-detail changes for this profile this month, so your
+          last change wasn&apos;t saved. You can still edit the name and budget, come back next month,
+          or run a separate profile for a different setup.
         </div>
       ) : changeCap > 0 ? (
         <p className="text-[var(--text-faint)] mb-4 text-xs">

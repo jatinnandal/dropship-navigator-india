@@ -256,20 +256,12 @@ export async function countSellerProfiles(userId: string): Promise<number> {
   return count ?? 0;
 }
 
-/** Personalization-relevant fields; a change to any of these is "material". */
-type MaterialFields = Pick<
-  OnboardingProfile,
-  | "operatingState"
-  | "businessType"
-  | "hasGstin"
-  | "salesModel"
-  | "productType"
-  | "importsProducts"
-  | "sellsPrepackagedGoods"
->;
-
-/** True if any personalization-relevant field differs between old and new. */
-export function hasMaterialProfileChange(a: MaterialFields, b: MaterialFields): boolean {
+/**
+ * True if any personalization-relevant field differs between old and new
+ * (state, entity, GST, product category, sales model, import/pre-packaged).
+ * Non-material fields (name, budget, channel, experience) are ignored.
+ */
+export function hasMaterialProfileChange(a: OnboardingProfile, b: OnboardingProfile): boolean {
   return (
     a.operatingState !== b.operatingState ||
     a.businessType !== b.businessType ||
