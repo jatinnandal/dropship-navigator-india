@@ -72,7 +72,7 @@ export function requiredPlanForCrisis(type: CrisisType): Exclude<Plan, "free"> {
 }
 
 /** The journey module every plan (incl. free) can run. */
-export const FREE_JOURNEY_MODULE = "common-documentation";
+export const FREE_JOURNEY_MODULE = "product-selection";
 
 export function canUseJourneyModule(plan: Plan, moduleId: string): boolean {
   return ENTITLEMENTS[plan].allJourneyModules || moduleId === FREE_JOURNEY_MODULE;

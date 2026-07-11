@@ -23,9 +23,11 @@ describe("entitlements", () => {
   });
 
   it("free gets exactly the first journey module", () => {
+    expect(FREE_JOURNEY_MODULE).toBe("product-selection");
     expect(canUseJourneyModule("free", FREE_JOURNEY_MODULE)).toBe(true);
-    expect(canUseJourneyModule("free", "product-selection")).toBe(false);
-    expect(canUseJourneyModule("starter", "product-selection")).toBe(true);
+    expect(canUseJourneyModule("free", "common-documentation")).toBe(false);
+    expect(canUseJourneyModule("free", "supplier-sourcing")).toBe(false);
+    expect(canUseJourneyModule("starter", "common-documentation")).toBe(true);
   });
 
   it("crisis pack: none / core two / all", () => {

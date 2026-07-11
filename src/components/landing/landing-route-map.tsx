@@ -3,9 +3,9 @@
 import { useRef, useCallback } from "react";
 
 const STOPS = [
-  { left: "7%", top: "62%", label: "Docs & GST", sub: "done", labelColor: "oklch(0.8 0.12 165)", border: "oklch(0.72 0.13 165 / 0.45)", glow: "oklch(0.72 0.13 165 / 0.45)" },
-  { left: "33%", top: "14%", label: "Product", sub: "you are here", labelColor: "#ffffff", border: "rgba(255,255,255,0.5)", glow: "rgba(255,255,255,0.5)" },
-  { left: "62%", top: "64%", label: "Supplier", sub: "next", labelColor: "#d6d6d6", border: "rgba(255,255,255,0.25)", glow: undefined },
+  { left: "7%", top: "62%", label: "Product", sub: "done", labelColor: "oklch(0.8 0.12 165)", border: "oklch(0.72 0.13 165 / 0.45)", glow: "oklch(0.72 0.13 165 / 0.45)" },
+  { left: "33%", top: "14%", label: "Supplier", sub: "you are here", labelColor: "#ffffff", border: "rgba(255,255,255,0.5)", glow: "rgba(255,255,255,0.5)" },
+  { left: "62%", top: "64%", label: "Docs & GST", sub: "next", labelColor: "#d6d6d6", border: "rgba(255,255,255,0.25)", glow: undefined },
   { left: "73%", top: "36%", label: "Compliance", sub: "open", labelColor: "#8a8a8a", border: "rgba(255,255,255,0.16)", glow: undefined },
   { left: "86%", top: "8%", label: "Launch", sub: "open", labelColor: "#8a8a8a", border: "rgba(255,255,255,0.16)", glow: undefined },
   { left: "95%", top: "42%", label: "Payout", sub: "goal", labelColor: "#6e6e6e", border: "rgba(255,255,255,0.12)", glow: undefined },
@@ -76,7 +76,7 @@ export function LandingRouteMap() {
             fontFamily: "var(--font-sans)",
           }}
         >
-          One lit path from paperwork to{" "}
+          One lit path from first product to{" "}
           <span className="font-serif-accent">payout.</span>
         </h2>
         <p

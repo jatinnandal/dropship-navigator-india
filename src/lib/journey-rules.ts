@@ -696,10 +696,10 @@ export const WARNING_RULES: WarningRule[] = [
 ];
 
 export const ALL_MODULE_IDS: TaskModuleId[] = [
-  "common-documentation",
   "product-selection",
-  "compliance-by-product",
   "supplier-sourcing",
+  "common-documentation",
+  "compliance-by-product",
   "channel-launch",
   "ads-growth",
   "tracking-analytics",

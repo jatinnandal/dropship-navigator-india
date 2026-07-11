@@ -54,6 +54,8 @@ type Props = {
   productType?: string;
   /** State-aware mentor line per module id, computed server-side. */
   mentorNotes?: Record<string, string>;
+  /** Module IDs locked behind a paid plan. */
+  planLockedModuleIds?: string[];
 };
 
 export function JourneyMap({
@@ -67,11 +69,13 @@ export function JourneyMap({
   totalSteps = 22,
   routePercent = 0,
   mentorNotes,
+  planLockedModuleIds = [],
 }: Props) {
+  const planLockedSet = new Set(planLockedModuleIds);
   const router = useRouter();
   const warningsRef = useRef<HTMLDivElement>(null);
   const [selectedId, setSelectedId] = useState<TaskModuleId>(
-    () => nodes.find((n) => n.status === "in_progress")?.id ?? nodes[0]?.id ?? "common-documentation",
+    () => nodes.find((n) => n.status === "in_progress")?.id ?? nodes[0]?.id ?? "product-selection",
   );
   const [isResetting, startReset] = useTransition();
 
@@ -105,7 +109,8 @@ export function JourneyMap({
 
   if (!selected) return null;
 
-  const isLocked = selected.status === "locked";
+  const isPlanLocked = planLockedSet.has(selected.id);
+  const isLocked = selected.status === "locked" || isPlanLocked;
   const nextIncomplete = selected.subTasks.find((st) => !st.done);
   const nextEstimate = nextIncomplete
     ? SUBTASK_TIME_ESTIMATES[nextIncomplete.id] ?? "~30-45 mins"
@@ -213,10 +218,10 @@ export function JourneyMap({
 
       {/* ── Expedition map ── */}
       <div className="hidden md:block">
-        <JourneyGraphView nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
+        <JourneyGraphView nodes={nodes} selectedId={selectedId} onSelect={handleSelect} planLockedSet={planLockedSet} />
       </div>
       <div className="md:hidden">
-        <JourneyTimelineMobile nodes={nodes} selectedId={selectedId} onSelect={handleSelect} />
+        <JourneyTimelineMobile nodes={nodes} selectedId={selectedId} onSelect={handleSelect} planLockedSet={planLockedSet} />
       </div>
 
       {/* ── Detail + Mentor panels ── */}
@@ -305,40 +310,56 @@ export function JourneyMap({
           ) : null}
 
           {/* Sub-tasks */}
-          <div className="mt-[18px] flex flex-col gap-2">
-            {selected.subTasks.map((st) => {
-              const done = st.done;
-              const bg = done ? "oklch(0.72 0.13 165 / 0.05)" : "rgba(255,255,255,0.03)";
-              const border = done ? "oklch(0.72 0.13 165 / 0.22)" : "rgba(255,255,255,0.09)";
-              const labelColor = done ? "oklch(0.78 0.11 165)" : "#e8e8e8";
-              const decoration = done ? "line-through" : "none";
+          {isPlanLocked ? (
+            <div className="mt-[18px] rounded-[13px] border border-white/[0.12] bg-[rgba(255,255,255,0.03)] px-5 py-5">
+              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-faintest)]">
+                Starter plan feature
+              </p>
+              <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--muted)]">
+                This module is part of the full 7-module guided journey. Upgrade to unlock all modules, walkthroughs, and personalized steps.
+              </p>
+              <Link
+                href="/app/upgrade"
+                className="btn-primary mt-4 inline-flex items-center gap-2.5 rounded-[11px] px-5 py-3 text-[13.5px]"
+              >
+                Upgrade to unlock
+                <ArrowRight className="h-3.5 w-3.5" />
+              </Link>
+            </div>
+          ) : (
+            <div className="mt-[18px] flex flex-col gap-2">
+              {selected.subTasks.map((st) => {
+                const done = st.done;
+                const bg = done ? "oklch(0.72 0.13 165 / 0.05)" : "rgba(255,255,255,0.03)";
+                const border = done ? "oklch(0.72 0.13 165 / 0.22)" : "rgba(255,255,255,0.09)";
 
-              return (
-                <div
-                  key={st.id}
-                  className="flex items-start gap-[13px] rounded-[13px] px-4 py-[13px] transition-colors"
-                  style={{
-                    background: bg,
-                    border: `1px solid ${border}`,
-                  }}
-                >
-                  <div className="mt-0.5">
-                    <TaskToggle
-                      subTaskId={st.id}
-                      label={st.label}
-                      hint={st.hint ?? ""}
-                      checked={done}
-                      disabled={isLocked}
-                      onToggled={onToggled}
-                    />
+                return (
+                  <div
+                    key={st.id}
+                    className="flex items-start gap-[13px] rounded-[13px] px-4 py-[13px] transition-colors"
+                    style={{
+                      background: bg,
+                      border: `1px solid ${border}`,
+                    }}
+                  >
+                    <div className="mt-0.5">
+                      <TaskToggle
+                        subTaskId={st.id}
+                        label={st.label}
+                        hint={st.hint ?? ""}
+                        checked={done}
+                        disabled={isLocked}
+                        onToggled={onToggled}
+                      />
+                    </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
 
           {/* CTA button */}
-          {!isLocked ? (
+          {isPlanLocked ? null : !isLocked ? (
             <div className="mt-[18px] flex flex-wrap items-center gap-3">
               <Link
                 href={`/app/tasks/${selected.id}`}

@@ -22,10 +22,10 @@ export type NextAction = {
 };
 
 const MODULE_ORDER: TaskModuleId[] = [
-  "common-documentation",
   "product-selection",
-  "compliance-by-product",
   "supplier-sourcing",
+  "common-documentation",
+  "compliance-by-product",
   "channel-launch",
   "ads-growth",
   "tracking-analytics",

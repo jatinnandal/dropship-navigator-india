@@ -105,7 +105,7 @@ export default async function DashboardPage() {
     profile,
     workspace,
     hasGstin,
-    currentModuleId: nextAction?.moduleId ?? "common-documentation",
+    currentModuleId: nextAction?.moduleId ?? "product-selection",
     moduleStatus: nextAction
       ? nodes.find((n) => n.id === nextAction.moduleId)?.status ?? "available"
       : "done",

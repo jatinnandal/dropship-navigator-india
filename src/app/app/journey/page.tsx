@@ -10,6 +10,8 @@ import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurren
 import { getEditProfileHref } from "@/lib/profile-name";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { JourneyMap } from "@/components/journey-map";
+import { getCurrentPlan } from "@/lib/plan";
+import { canUseJourneyModule } from "@/lib/entitlements";
 
 export default async function JourneyPage() {
   const userId = await getCurrentUserId();
@@ -20,7 +22,11 @@ export default async function JourneyPage() {
     getWorkspaceForCurrentVisitor(),
     getActiveSellerProfileForCurrentVisitor(),
   ]);
+  const plan = await getCurrentPlan();
   const modules = buildPersonalizedJourney(profile);
+  const planLockedModuleIds = modules
+    .filter((m) => !canUseJourneyModule(plan, m.id))
+    .map((m) => m.id);
   const nodes = getJourneyNodes({
     completedModules: completed,
     subTasks: workspace.subTasks,
@@ -80,6 +86,7 @@ export default async function JourneyPage() {
         primaryChannel={profile.primaryChannel}
         productType={profile.productType}
         mentorNotes={mentorNotes}
+        planLockedModuleIds={planLockedModuleIds}
       />
     </main>
   );

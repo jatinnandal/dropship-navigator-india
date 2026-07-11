@@ -15,7 +15,7 @@ export function getModuleMentorLine(
   switch (moduleId) {
     case "common-documentation":
       if (!hasGstin) {
-        return "Most sellers feel stuck here first. GST feels scary, but it's the gate to every marketplace.";
+        return "Most sellers feel stuck at GST. It feels scary, but it's the gate to every marketplace.";
       }
       return "Docs look boring — but a 10-minute name mismatch costs you weeks of KYC rejections.";
     case "product-selection":

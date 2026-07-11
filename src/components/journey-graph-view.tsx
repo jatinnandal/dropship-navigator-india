@@ -17,9 +17,9 @@ const NODE_SHORT_LABELS: Record<TaskModuleId, string> = {
 };
 
 const NODE_POSITIONS: Record<TaskModuleId, { x: number; y: number }> = {
-  "common-documentation": { x: 60, y: 230 },
-  "product-selection": { x: 200, y: 80 },
-  "supplier-sourcing": { x: 370, y: 240 },
+  "product-selection": { x: 60, y: 230 },
+  "supplier-sourcing": { x: 200, y: 80 },
+  "common-documentation": { x: 370, y: 240 },
   "compliance-by-product": { x: 520, y: 100 },
   "channel-launch": { x: 660, y: 60 },
   "ads-growth": { x: 770, y: 170 },
@@ -36,7 +36,7 @@ const SUB_LABELS: Record<string, string> = {
 /* Full SVG curve base path */
 const BASE_PATH = "M60 230 C 130 230 130 80 200 80 S 290 240 370 240 S 450 100 520 100 S 590 60 660 60 S 730 170 770 170 S 830 230 880 230";
 
-/* Progress path — up to the second node (product-selection area) when stage 1 is done */
+/* Progress path — travelled curve up to the first in-progress or last done node */
 function buildProgressPath(nodes: JourneyNode[]): string | null {
   const doneCount = nodes.filter((n) => n.status === "done").length;
   const inProgressIdx = nodes.findIndex((n) => n.status === "in_progress");
@@ -49,9 +49,10 @@ function buildProgressPath(nodes: JourneyNode[]): string | null {
   const pos = NODE_POSITIONS[target.id];
   if (!pos) return null;
 
-  // Build a curve from start to the target node position
-  const startPos = NODE_POSITIONS["common-documentation"];
-  if (pos.x <= startPos.x) return null;
+  // Build a curve from the first node on the route to the target node position
+  const firstId = nodes[0]?.id;
+  const startPos = firstId ? NODE_POSITIONS[firstId] : undefined;
+  if (!startPos || pos.x <= startPos.x) return null;
 
   return `M${startPos.x} ${startPos.y} C ${startPos.x + 120} ${startPos.y} ${pos.x - 120} ${pos.y} ${pos.x} ${pos.y}`;
 }
@@ -60,9 +61,10 @@ type Props = {
   nodes: JourneyNode[];
   selectedId: TaskModuleId | null;
   onSelect: (id: TaskModuleId) => void;
+  planLockedSet?: Set<string>;
 };
 
-export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
+export function JourneyGraphView({ nodes, selectedId, onSelect, planLockedSet = new Set() }: Props) {
   const zoneRef = useRef<HTMLDivElement>(null);
   const planeRef = useRef<HTMLDivElement>(null);
 
@@ -163,7 +165,7 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
             const isSel = selectedId === node.id;
             const done = node.status === "done";
             const active = node.status === "in_progress";
-            const locked = node.status === "locked";
+            const locked = node.status === "locked" || planLockedSet.has(node.id);
             const r = active ? 15 : done ? 13 : 11;
 
             const fill = done
@@ -328,7 +330,7 @@ export function JourneyGraphView({ nodes, selectedId, onSelect }: Props) {
 
 /* ── Mobile timeline ── */
 
-export function JourneyTimelineMobile({ nodes, selectedId, onSelect }: Props) {
+export function JourneyTimelineMobile({ nodes, selectedId, onSelect, planLockedSet = new Set() }: Props) {
   return (
     <ol className="space-y-0 md:hidden">
       {nodes.map((node, index) => {
@@ -336,7 +338,7 @@ export function JourneyTimelineMobile({ nodes, selectedId, onSelect }: Props) {
         const isLast = index === nodes.length - 1;
         const isDone = node.status === "done";
         const isActive = node.status === "in_progress";
-        const locked = node.status === "locked";
+        const locked = node.status === "locked" || planLockedSet.has(node.id);
 
         const circleBg = isDone
           ? "oklch(0.72 0.13 165)"

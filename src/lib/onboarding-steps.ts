@@ -43,7 +43,7 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
         value: "beginner",
         label: "Absolute beginner",
         description: "Never sold online before",
-        ack: "Perfect — we'll start from documents and GST, not ads.",
+        ack: "Perfect — we'll start from picking a product with real margin math, not ads.",
       },
       {
         value: "existing_seller",
@@ -135,6 +135,12 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     mentorNote: "Fashion can work — but budget 35% RTO in your margin calculator from day one.",
     inputType: "select",
     options: [
+      {
+        value: "not_sure",
+        label: "I don't know yet",
+        description: "Totally fine — the journey starts with product selection",
+        ack: "Perfect starting point — module 1 walks you through picking a product with real margin math. We'll use general defaults until you decide.",
+      },
       { value: "general", label: "General merchandise", ack: "General goods — we'll use moderate RTO defaults in your calculator." },
       { value: "fashion", label: "Fashion & apparel", description: "Higher RTO — we'll warn you early", ack: "Fashion flagged — we'll use 35% RTO defaults and size-chart checklists." },
       { value: "beauty", label: "Beauty & cosmetics", ack: "Beauty — watch for category gating and labeling rules on marketplaces." },

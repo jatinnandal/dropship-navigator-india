@@ -10,6 +10,9 @@ import { getCompletedModuleIdsForCurrentVisitor, getActiveSellerProfileForCurren
 import { getEditProfileHref } from "@/lib/profile-name";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { getStepDetail } from "@/lib/step-details";
+import { getCurrentPlan } from "@/lib/plan";
+import { canUseJourneyModule, PLAN_LABELS } from "@/lib/entitlements";
+import { UpgradePanel } from "@/components/plan/upgrade-panel";
 
 type Props = {
   params: Promise<{ moduleId: string }>;
@@ -17,6 +20,29 @@ type Props = {
 
 export default async function JourneyStepPage({ params }: Props) {
   const { moduleId } = await params;
+  const plan = await getCurrentPlan();
+
+  if (!canUseJourneyModule(plan, moduleId)) {
+    return (
+      <main className="mx-auto w-full max-w-3xl px-4 py-10 sm:px-6">
+        <p className="eyebrow">{PLAN_LABELS.starter} feature</p>
+        <h1 className="mt-2 text-[26px] font-semibold tracking-[-0.03em] text-white">
+          {moduleId.replaceAll("-", " ").replace(/^\w/, (c) => c.toUpperCase())}
+        </h1>
+        <div className="mt-6">
+          <UpgradePanel
+            requiredPlan="starter"
+            title="Unlock the full 7-module journey"
+            bullets={[
+              "Personalized launch roadmap with guided walkthroughs",
+              "Every module from supplier sourcing to payout tracking",
+              "₹49/month — less than one RTO'd parcel",
+            ]}
+          />
+        </div>
+      </main>
+    );
+  }
   const [profile, completed, workspace, activeSellerProfile] = await Promise.all([
     getStoredProfileForCurrentVisitor(),
     getCompletedModuleIdsForCurrentVisitor(),

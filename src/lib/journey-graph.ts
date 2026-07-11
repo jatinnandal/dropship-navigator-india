@@ -19,14 +19,13 @@ export type JourneyEdge = {
 };
 
 export const JOURNEY_EDGES: JourneyEdge[] = [
+  { from: "product-selection", to: "supplier-sourcing", kind: "recommended" },
+  { from: "product-selection", to: "product-selection", kind: "loop" },
+  { from: "supplier-sourcing", to: "common-documentation", kind: "recommended" },
+  { from: "supplier-sourcing", to: "channel-launch", kind: "recommended" },
   { from: "common-documentation", to: "compliance-by-product", kind: "recommended" },
   { from: "common-documentation", to: "channel-launch", kind: "recommended" },
-  { from: "product-selection", to: "compliance-by-product", kind: "recommended" },
-  { from: "product-selection", to: "supplier-sourcing", kind: "recommended" },
-  { from: "product-selection", to: "channel-launch", kind: "recommended" },
-  { from: "product-selection", to: "product-selection", kind: "loop" },
   { from: "compliance-by-product", to: "channel-launch", kind: "recommended" },
-  { from: "supplier-sourcing", to: "channel-launch", kind: "recommended" },
   { from: "channel-launch", to: "ads-growth", kind: "prerequisite" },
   { from: "channel-launch", to: "tracking-analytics", kind: "recommended" },
   { from: "ads-growth", to: "tracking-analytics", kind: "recommended" },

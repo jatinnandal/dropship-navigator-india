@@ -18,7 +18,7 @@ export const PLAN_CARDS: PlanCard[] = [
     priceMonthly: 0,
     priceYearly: null,
     features: [
-      "Journey module 1: documents + GST, done right",
+      "Journey module 1: pick your product with real margin math",
       "Profit margin calculator (verified 2026 rate card)",
       "GSTIN & PAN verification checklist",
       "Seasonal sale calendar",
