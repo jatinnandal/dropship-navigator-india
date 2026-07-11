@@ -10,6 +10,7 @@ import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurren
 import { getEditProfileHref } from "@/lib/profile-name";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { JourneyMap } from "@/components/journey-map";
+import { MilestoneStamps } from "@/components/milestone-stamps";
 import { getCurrentPlan } from "@/lib/plan";
 import { canUseJourneyModule } from "@/lib/entitlements";
 
@@ -72,6 +73,8 @@ export default async function JourneyPage() {
           </Link>
         </section>
       ) : null}
+
+      {hasProfile ? <MilestoneStamps profile={profile} subTasks={workspace.subTasks} /> : null}
 
       <JourneyMap
         nodes={nodes}
