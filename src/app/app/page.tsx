@@ -23,6 +23,9 @@ import { getJourneyNodes } from "@/lib/journey-graph";
 import { getNextAction } from "@/lib/next-action";
 import { getActiveSellerProfileForCurrentVisitor, getCompletedModuleIdsForCurrentVisitor, getStoredProfileForCurrentVisitor } from "@/lib/progress-store";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
+import { listUploads } from "@/lib/settlement-recon-store";
+import { buildWeeklyReview } from "@/lib/weekly-review";
+import { WeeklyReviewCard } from "@/components/weekly-review-card";
 import { formatDateIN } from "@/lib/format";
 
 function getGreeting() {
@@ -85,6 +88,31 @@ export default async function DashboardPage() {
       )
     : "One step at a time — you're building a real business, not chasing a hack.";
   const stageTools = nextAction ? STAGE_TOOLS[nextAction.moduleId] ?? [] : [];
+
+  const latestUpload = activeSellerProfile
+    ? (await listUploads(activeSellerProfile.id))[0]
+    : undefined;
+  const weeklyReview = buildWeeklyReview({
+    profile,
+    workspace,
+    hasGstin,
+    currentModuleId: nextAction?.moduleId ?? "common-documentation",
+    moduleStatus: nextAction
+      ? nodes.find((n) => n.id === nextAction.moduleId)?.status ?? "available"
+      : "done",
+    progress: {
+      completedSubTasks: progressStats.completedSubTasks,
+      totalSubTasks: progressStats.totalSubTasks,
+    },
+    recon: latestUpload
+      ? {
+          uploadedAt: latestUpload.uploadedAt,
+          totalDelta: latestUpload.summary.totalDelta,
+          flaggedCount: latestUpload.summary.flaggedCount,
+          tcsEstimate: latestUpload.summary.tcsEstimate,
+        }
+      : null,
+  });
 
   const showRtoSlider = dashboardState.warnings.some((w) => w.id === "rto-shock");
   const listingLive = isSubTaskDone(workspace.subTasks, "first-listing-live");
@@ -246,6 +274,9 @@ export default async function DashboardPage() {
               </Link>
             </div>
           ))}
+
+          {/* Weekly review */}
+          <WeeklyReviewCard review={weeklyReview} />
 
           {/* Mentor card */}
           <div className="panel rounded-[18px] p-5">
