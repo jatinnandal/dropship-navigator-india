@@ -1,99 +1,106 @@
+import { createHash } from "crypto";
 import type { OnboardingProfile } from "@/lib/mvp-data";
-import { ALL_MODULE_IDS } from "@/lib/journey-rules";
 import { getStepDetail, type StepDetail } from "@/lib/step-details";
 import { getAnthropicConfig, generateStructured } from "@/lib/llm/anthropic";
 
 /**
- * Template-anchored personalization. The LLM never supplies numbers, fees, GST
- * deadlines, or new tasks — those come from our deterministic engines. It only
- * rewrites the plain-language framing, re-prioritizes the pre-defined checklist,
- * and adds persona-specific cautions. This keeps hallucinated compliance/fee
- * claims (a legal risk for a "correct numbers" brand) out of the output.
+ * Personalized COMPLIANCE plan. Only the two modules whose required steps
+ * genuinely differ per seller are personalized: documentation + GST and
+ * product-compliance. The LLM assembles the seller's exact ordered path from
+ * the deterministic requirement data we supply — it never invents documents,
+ * fees, GST rates, or deadlines (those stay in the authoritative sections and
+ * the calculators). Everything else stays on the static template.
  */
+
+/** The only modules that get an LLM-personalized plan. */
+export const PERSONALIZED_MODULES = ["common-documentation", "compliance-by-product"];
+
+export function isPersonalizableModule(moduleId: string): boolean {
+  return PERSONALIZED_MODULES.includes(moduleId);
+}
+
+export type PersonalizedStep = {
+  title: string;
+  detail: string;
+};
 
 export type PersonalizedModulePlan = {
   moduleId: string;
   /** Personalized replacement for StepDetail.plainLanguageSummary. */
   summary: string;
-  /** A re-ordering of the module's existing actionChecklist (validated to
-   *  contain only pre-defined items — the model cannot invent actions). */
-  orderedChecklist: string[];
-  /** Persona-specific cautions (AI-generated prose; no fabricated figures). */
+  /** Ordered, profile-exact steps assembled from the module's requirement data. */
+  steps: PersonalizedStep[];
+  /** Persona-specific cautions (no figures). */
   watchOuts: string[];
-};
-
-export type PersonalizedPlan = {
-  generatedAt: string;
-  model: string;
-  modules: PersonalizedModulePlan[];
 };
 
 /** StepDetail plus the personalized overlay the UI renders when present. */
 export type PersonalizedStepDetail = StepDetail & {
   personalized: boolean;
+  steps: PersonalizedStep[];
   watchOuts: string[];
 };
 
-type ModuleAnchor = {
-  moduleId: string;
-  summary: string;
-  checklist: string[];
-  doneCriteria: string[];
-};
-
-function buildAnchors(profile: OnboardingProfile): ModuleAnchor[] {
-  return ALL_MODULE_IDS.map((moduleId) => {
-    const detail = getStepDetail(moduleId, profile);
-    return {
-      moduleId,
-      summary: detail.plainLanguageSummary,
-      checklist: detail.actionChecklist,
-      doneCriteria: detail.doneCriteria,
-    };
-  });
+/**
+ * Stable hash of the compliance-relevant profile fields. Two profiles with the
+ * same hash produce the same plan, so generation is idempotent per (hash ×
+ * module) and cannot be looped. Changing product/entity/state/GST/model mints a
+ * new hash → one fresh generation.
+ */
+export function profileHash(profile: OnboardingProfile): string {
+  const key = [
+    profile.businessType,
+    profile.operatingState,
+    profile.hasGstin ? "gst" : "nogst",
+    profile.salesModel,
+    profile.productType,
+    profile.importsProducts ? "import" : "domestic",
+    profile.sellsPrepackagedGoods ? "prepack" : "custom",
+  ].join("|");
+  return createHash("sha256").update(key).digest("hex").slice(0, 16);
 }
 
-const SYSTEM_PROMPT = `You are an experienced Indian e-commerce mentor personalizing a beginner seller's launch plan.
+const SYSTEM_PROMPT = `You are an experienced Indian e-commerce mentor writing a seller's EXACT compliance/setup path for one journey module.
 
-You are given the seller's profile and, per journey module, the factual checklist and done-criteria that our verified engines already produced.
+You are given the seller's profile and the deterministic requirement data our engines produced for this module (documents, decision points, execution phases, done-criteria). Turn it into a precise, ordered, plain-language plan for THIS seller's exact situation.
 
 STRICT RULES:
-- NEVER invent or state numbers: no fees, commissions, GST rates, deadlines, RTO percentages, or rupee figures. Those live in the app's calculators, not your text.
-- The "orderedChecklist" for each module MUST be a re-ordering of exactly the checklist items you were given for that module — do not add, remove, reword, merge, or split items. Copy each item verbatim.
-- "summary" rewrites the module's framing in plain, encouraging language tailored to THIS seller's channel, budget, product, and GST status. 1-3 sentences.
-- "watchOuts" are 1-3 short, persona-specific cautions (general judgement, not statistics). No figures.
-- Be practical and India-specific. No hype, no guarantees of income.
+- Use ONLY the provided requirements. Do NOT introduce documents, licenses, portals, fees, GST rates, thresholds, penalties, or deadlines that were not given. If a number would be needed, refer the seller to the app's calculator/checklist instead of stating it.
+- "steps" is an ORDERED list (4-8 items). Each step: a short "title" (imperative) and a "detail" (1-2 sentences, tailored to this seller's entity type, state, GST status, product category, import/pre-packaged status). You may merge, sequence, and prioritize the provided requirements; do not pad with generic filler.
+- "summary": 1-2 sentences framing why this module matters for THIS seller.
+- "watchOuts": 1-3 short persona-specific cautions (judgement, not statistics). No figures.
+- India-specific, practical, honest. No income guarantees.
 Return JSON matching the provided schema.`;
 
 const PLAN_SCHEMA: Record<string, unknown> = {
   type: "object",
   additionalProperties: false,
   properties: {
-    modules: {
+    summary: { type: "string" },
+    steps: {
       type: "array",
       items: {
         type: "object",
         additionalProperties: false,
         properties: {
-          moduleId: { type: "string" },
-          summary: { type: "string" },
-          orderedChecklist: { type: "array", items: { type: "string" } },
-          watchOuts: { type: "array", items: { type: "string" } },
+          title: { type: "string" },
+          detail: { type: "string" },
         },
-        required: ["moduleId", "summary", "orderedChecklist", "watchOuts"],
+        required: ["title", "detail"],
       },
     },
+    watchOuts: { type: "array", items: { type: "string" } },
   },
-  required: ["modules"],
+  required: ["summary", "steps", "watchOuts"],
 };
 
-function buildUserPrompt(profile: OnboardingProfile, anchors: ModuleAnchor[]): string {
+function buildUserPrompt(profile: OnboardingProfile, moduleId: string, detail: StepDetail): string {
   const profileLines = [
     `Experience: ${profile.experienceLevel}`,
     `Budget band: ${profile.budgetBand}`,
     `Primary channel: ${profile.primaryChannel}`,
     `Has GSTIN: ${profile.hasGstin ? "yes" : "no"}`,
-    `Product type: ${profile.productType}`,
+    `Product category: ${profile.productType}`,
     `Operating state: ${profile.operatingState}`,
     `Business type: ${profile.businessType}`,
     `Sales model: ${profile.salesModel}`,
@@ -101,79 +108,60 @@ function buildUserPrompt(profile: OnboardingProfile, anchors: ModuleAnchor[]): s
     `Pre-packaged goods: ${profile.sellsPrepackagedGoods ? "yes" : "no"}`,
   ].join("\n");
 
-  const moduleBlocks = anchors
-    .map(
-      (a) =>
-        `MODULE ${a.moduleId}\nCurrent framing: ${a.summary}\nChecklist (re-order only, copy verbatim):\n${a.checklist
-          .map((c, i) => `  ${i + 1}. ${c}`)
-          .join("\n")}`,
-    )
-    .join("\n\n");
+  const requirements = [
+    `Must-have documents:\n${detail.mustHaveDocuments.map((d) => `  - ${d}`).join("\n")}`,
+    `Decision points:\n${detail.decisionFlow.map((d) => `  - ${d}`).join("\n")}`,
+    `Execution phases:\n${detail.executionPlan
+      .map((p) => `  ${p.phase} (${p.goal})\n${p.tasks.map((t) => `    - ${t}`).join("\n")}`)
+      .join("\n")}`,
+    `Done when:\n${detail.doneCriteria.map((d) => `  - ${d}`).join("\n")}`,
+  ].join("\n\n");
 
-  return `SELLER PROFILE\n${profileLines}\n\nMODULES\n${moduleBlocks}`;
-}
-
-/** Keep only checklist items the model was actually given (verbatim, order-insensitive
- *  match); append any anchor items the model dropped so nothing is lost. */
-function reconcileChecklist(anchorChecklist: string[], modelChecklist: string[]): string[] {
-  const norm = (s: string) => s.trim().toLowerCase();
-  const anchorByNorm = new Map(anchorChecklist.map((c) => [norm(c), c]));
-  const result: string[] = [];
-  const used = new Set<string>();
-  for (const item of modelChecklist) {
-    const match = anchorByNorm.get(norm(item));
-    if (match && !used.has(match)) {
-      result.push(match);
-      used.add(match);
-    }
-  }
-  for (const item of anchorChecklist) {
-    if (!used.has(item)) result.push(item);
-  }
-  return result;
+  return `MODULE: ${moduleId}\n\nSELLER PROFILE\n${profileLines}\n\nREQUIREMENT DATA (use only this)\n${requirements}`;
 }
 
 /**
- * Generate a personalized plan, or null when the LLM is unconfigured or the
- * call fails (callers fall back to static templates). Numbers are never
- * sourced from the model; checklist items are validated against the anchors.
+ * Generate a personalized plan for one compliance module, or null when the
+ * module isn't personalizable, the LLM is unconfigured, or the call fails
+ * (callers fall back to the static template).
  */
-export async function generatePersonalizedPlan(
+export async function generateModulePlan(
   profile: OnboardingProfile,
-): Promise<PersonalizedPlan | null> {
+  moduleId: string,
+): Promise<PersonalizedModulePlan | null> {
+  if (!isPersonalizableModule(moduleId)) return null;
   const config = getAnthropicConfig();
   if (!config) return null;
 
-  const anchors = buildAnchors(profile);
-  const anchorById = new Map(anchors.map((a) => [a.moduleId, a]));
+  const detail = getStepDetail(moduleId, profile);
 
   try {
-    const raw = await generateStructured<{ modules: PersonalizedModulePlan[] }>({
+    const raw = await generateStructured<{
+      summary: string;
+      steps: PersonalizedStep[];
+      watchOuts: string[];
+    }>({
       config,
       system: SYSTEM_PROMPT,
-      userPrompt: buildUserPrompt(profile, anchors),
+      userPrompt: buildUserPrompt(profile, moduleId, detail),
       schema: PLAN_SCHEMA,
     });
 
-    const modules: PersonalizedModulePlan[] = (raw.modules ?? [])
-      .filter((m) => anchorById.has(m.moduleId))
-      .map((m) => {
-        const anchor = anchorById.get(m.moduleId)!;
-        return {
-          moduleId: m.moduleId,
-          summary: (m.summary ?? "").trim() || anchor.summary,
-          orderedChecklist: reconcileChecklist(anchor.checklist, m.orderedChecklist ?? []),
-          watchOuts: (m.watchOuts ?? []).map((w) => w.trim()).filter(Boolean).slice(0, 3),
-        };
-      });
+    const steps = (raw.steps ?? [])
+      .map((s) => ({ title: (s.title ?? "").trim(), detail: (s.detail ?? "").trim() }))
+      .filter((s) => s.title && s.detail)
+      .slice(0, 8);
 
-    if (modules.length === 0) return null;
+    if (steps.length === 0) return null;
 
-    return { generatedAt: new Date().toISOString(), model: config.model, modules };
+    return {
+      moduleId,
+      summary: (raw.summary ?? "").trim() || detail.plainLanguageSummary,
+      steps,
+      watchOuts: (raw.watchOuts ?? []).map((w) => w.trim()).filter(Boolean).slice(0, 3),
+    };
   } catch (err) {
-    // Any failure → static templates. Never surface a half-built plan.
-    // Surface the real reason in dev only (e.g. "credit balance too low"),
-    // never in production where it could leak into logs users can reach.
+    // Any failure → static template. Surface the reason in dev only.
     if (process.env.NODE_ENV !== "production") {
       console.error(
         "[personalized-plan] generation failed:",
@@ -186,21 +174,22 @@ export async function generatePersonalizedPlan(
 
 /**
  * Overlay a personalized module plan onto the deterministic StepDetail. Numbers,
- * documents, decision flows, and partner options are unchanged — only framing,
- * checklist order, and the watch-outs come from personalization.
+ * documents, decision flow, done-criteria, and partner options are unchanged —
+ * they remain the authoritative ground truth; personalization adds the tailored
+ * ordered path, framing, and watch-outs on top.
  */
 export function applyPersonalizedPlan(
   detail: StepDetail,
   modulePlan: PersonalizedModulePlan | undefined,
 ): PersonalizedStepDetail {
   if (!modulePlan) {
-    return { ...detail, personalized: false, watchOuts: [] };
+    return { ...detail, personalized: false, steps: [], watchOuts: [] };
   }
   return {
     ...detail,
     plainLanguageSummary: modulePlan.summary,
-    actionChecklist: reconcileChecklist(detail.actionChecklist, modulePlan.orderedChecklist),
     personalized: true,
+    steps: modulePlan.steps,
     watchOuts: modulePlan.watchOuts,
   };
 }

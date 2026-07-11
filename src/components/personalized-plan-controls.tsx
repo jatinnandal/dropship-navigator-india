@@ -1,69 +1,42 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { Sparkles, Loader2, Check } from "lucide-react";
-import { generatePersonalizedPlanAction, type GeneratePlanResult } from "@/app/app/journey/actions";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { Loader2 } from "lucide-react";
+import { ensureModulePlan, type EnsurePlanResult } from "@/app/app/journey/actions";
 
-const MESSAGES: Record<Exclude<GeneratePlanResult, { ok: true }>["reason"], string> = {
-  locked: "Personalized plans are a Starter feature.",
-  no_profile: "Set up a seller profile first.",
-  limit: "You've used your plan regenerations for this month.",
-  unavailable: "Personalization is warming up — using the standard plan for now.",
-  store_failed: "Couldn't save the plan. Try again.",
+const FAIL_MESSAGES: Partial<Record<Exclude<EnsurePlanResult, { ok: true }>["reason"], string>> = {
+  limit: "Personalized steps paused — you've hit this month's generation limit. Standard checklist below still applies.",
+  unavailable: "Personalized steps are warming up — showing the standard checklist for now.",
+  store_failed: "Couldn't save personalized steps — showing the standard checklist.",
 };
 
-export function PersonalizedPlanControls({ hasPlan }: { hasPlan: boolean }) {
-  const [pending, startTransition] = useTransition();
-  const [result, setResult] = useState<{ ok: boolean; msg: string } | null>(null);
+/**
+ * Auto-fires plan generation once on mount for a personalizable module that has
+ * no cached plan yet. On success the server action revalidates the page, which
+ * re-renders with the plan and unmounts this loader. No manual button.
+ */
+export function PersonalizedPlanAutoLoader({ moduleId }: { moduleId: string }) {
+  const [, startTransition] = useTransition();
+  const [failMsg, setFailMsg] = useState<string | null>(null);
+  const fired = useRef(false);
 
-  const run = () => {
-    setResult(null);
+  useEffect(() => {
+    if (fired.current) return;
+    fired.current = true;
     startTransition(async () => {
-      const r = await generatePersonalizedPlanAction();
-      if (r.ok) {
-        setResult({ ok: true, msg: hasPlan ? "Plan regenerated." : "Your plan is personalized." });
-      } else {
-        setResult({ ok: false, msg: MESSAGES[r.reason] });
-      }
+      const result = await ensureModulePlan(moduleId);
+      if (!result.ok) setFailMsg(FAIL_MESSAGES[result.reason] ?? null);
     });
-  };
+  }, [moduleId]);
+
+  if (failMsg) {
+    return <p className="text-muted text-xs leading-5">{failMsg}</p>;
+  }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={run}
-          disabled={pending}
-          aria-busy={pending}
-          className="btn-ghost inline-flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-semibold disabled:cursor-wait disabled:opacity-70"
-        >
-          {pending ? (
-            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-          ) : (
-            <Sparkles className="h-4 w-4" aria-hidden="true" />
-          )}
-          {pending ? "Generating your plan…" : hasPlan ? "Regenerate my plan" : "Personalize my plan"}
-        </button>
-
-        {!pending && result ? (
-          <span
-            className={`inline-flex items-center gap-1.5 text-xs ${
-              result.ok ? "text-[var(--success)]" : "text-muted"
-            }`}
-          >
-            {result.ok ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : null}
-            {result.msg}
-          </span>
-        ) : null}
-      </div>
-
-      {pending ? (
-        <p className="text-muted text-xs leading-5" aria-live="polite">
-          Reading your profile and writing your plan — about 30 seconds. You can keep reading below;
-          it will update when ready.
-        </p>
-      ) : null}
+    <div className="text-muted flex items-center gap-2 text-xs leading-5" aria-live="polite">
+      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+      Writing your exact steps for your state, entity type, and product — about 10 seconds.
     </div>
   );
 }

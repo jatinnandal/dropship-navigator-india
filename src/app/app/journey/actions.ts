@@ -10,19 +10,35 @@ import {
 import { getWorkspaceForCurrentVisitor, patchWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { getCurrentPlan } from "@/lib/plan";
 import { entitlementsFor } from "@/lib/entitlements";
-import { generatePersonalizedPlan } from "@/lib/llm/plan-generator";
-import { countRegensThisMonth, insertPlan } from "@/lib/journey-plan-store";
+import { getAnthropicConfig } from "@/lib/llm/anthropic";
+import {
+  generateModulePlan,
+  isPersonalizableModule,
+  profileHash,
+} from "@/lib/llm/plan-generator";
+import {
+  countGenerationsThisMonth,
+  getModulePlan,
+  insertModulePlan,
+} from "@/lib/journey-plan-store";
 
-export type GeneratePlanResult =
-  | { ok: true }
-  | { ok: false; reason: "locked" | "no_profile" | "limit" | "unavailable" | "store_failed" };
+export type EnsurePlanResult =
+  | { ok: true; state: "cached" | "generated" }
+  | {
+      ok: false;
+      reason: "locked" | "no_profile" | "not_personalizable" | "limit" | "unavailable" | "store_failed";
+    };
 
 /**
- * Generate + persist an LLM personalized plan for the active profile.
- * Starter+ only; capped per month; degrades to static templates when the LLM
- * is unconfigured or declines (reason "unavailable").
+ * Ensure a personalized plan exists for one compliance module + the active
+ * profile's current state. Idempotent: if one is already cached for this
+ * (profile, module, profile-hash) it does nothing. Otherwise it generates once,
+ * under the monthly cap. Auto-fired on the module page; there is no manual
+ * regenerate. Degrades to the static template on any failure.
  */
-export async function generatePersonalizedPlanAction(): Promise<GeneratePlanResult> {
+export async function ensureModulePlan(moduleId: string): Promise<EnsurePlanResult> {
+  if (!isPersonalizableModule(moduleId)) return { ok: false, reason: "not_personalizable" };
+
   const [plan, profile, sellerProfile] = await Promise.all([
     getCurrentPlan(),
     getStoredProfileForCurrentVisitor(),
@@ -33,18 +49,23 @@ export async function generatePersonalizedPlanAction(): Promise<GeneratePlanResu
   if (!ent.personalizedPlan) return { ok: false, reason: "locked" };
   if (!sellerProfile) return { ok: false, reason: "no_profile" };
 
-  const used = await countRegensThisMonth(sellerProfile.id);
+  const hash = profileHash(profile);
+
+  const existing = await getModulePlan(sellerProfile.id, moduleId, hash);
+  if (existing) return { ok: true, state: "cached" };
+
+  const used = await countGenerationsThisMonth(sellerProfile.id);
   if (used >= ent.llmPlanRegensPerMonth) return { ok: false, reason: "limit" };
 
-  const generated = await generatePersonalizedPlan(profile);
+  const generated = await generateModulePlan(profile, moduleId);
   if (!generated) return { ok: false, reason: "unavailable" };
 
-  const stored = await insertPlan(sellerProfile.id, generated);
+  const model = getAnthropicConfig()?.model ?? "unknown";
+  const stored = await insertModulePlan(sellerProfile.id, moduleId, hash, model, generated);
   if (!stored) return { ok: false, reason: "store_failed" };
 
-  revalidatePath("/app/journey", "layout");
-  revalidatePath("/app");
-  return { ok: true };
+  revalidatePath(`/app/journey/${moduleId}`);
+  return { ok: true, state: "generated" };
 }
 
 export async function updateModuleCompletion(formData: FormData) {

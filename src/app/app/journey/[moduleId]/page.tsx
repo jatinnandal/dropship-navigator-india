@@ -13,9 +13,9 @@ import { getStepDetail } from "@/lib/step-details";
 import { getCurrentPlan } from "@/lib/plan";
 import { canUseJourneyModule, entitlementsFor, PLAN_LABELS } from "@/lib/entitlements";
 import { UpgradePanel } from "@/components/plan/upgrade-panel";
-import { getLatestPlan } from "@/lib/journey-plan-store";
-import { applyPersonalizedPlan } from "@/lib/llm/plan-generator";
-import { PersonalizedPlanControls } from "@/components/personalized-plan-controls";
+import { getModulePlan } from "@/lib/journey-plan-store";
+import { applyPersonalizedPlan, isPersonalizableModule, profileHash } from "@/lib/llm/plan-generator";
+import { PersonalizedPlanAutoLoader } from "@/components/personalized-plan-controls";
 
 type Props = {
   params: Promise<{ moduleId: string }>;
@@ -77,12 +77,15 @@ export default async function JourneyStepPage({ params }: Props) {
   );
 
   const entitlements = entitlementsFor(plan);
-  const personalizedPlan =
-    entitlements.personalizedPlan && activeSellerProfile
-      ? await getLatestPlan(activeSellerProfile.id)
+  const canPersonalize =
+    entitlements.personalizedPlan &&
+    isPersonalizableModule(stepModule.id) &&
+    !!activeSellerProfile;
+  const modulePlan =
+    canPersonalize && activeSellerProfile
+      ? await getModulePlan(activeSellerProfile.id, stepModule.id, profileHash(profile))
       : null;
-  const modulePlan = personalizedPlan?.modules.find((m) => m.moduleId === stepModule.id);
-  const detail = applyPersonalizedPlan(getStepDetail(stepModule.id, profile), modulePlan);
+  const detail = applyPersonalizedPlan(getStepDetail(stepModule.id, profile), modulePlan ?? undefined);
   const guidedTaskLabel = getTaskTitle(stepModule.id);
   const doNowBullets = detail.actionChecklist.slice(0, 3);
 
@@ -99,23 +102,38 @@ export default async function JourneyStepPage({ params }: Props) {
         <p className="meta-tile mt-4 text-sm">{mentorLine}</p>
       </header>
 
-      {entitlements.personalizedPlan ? (
+      {canPersonalize ? (
         <section className="glass-panel mt-6 rounded-xl border border-neutral-700 p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-wide text-neutral-400">
-                {detail.personalized ? "Personalized for you" : "Personalize this plan"}
+                {detail.personalized ? "Your exact steps" : "Personalizing for you"}
               </p>
               <p className="text-muted mt-1 max-w-xl text-sm leading-6">
-                {detail.personalized
-                  ? "This plan's framing and priorities are tailored to your profile. All numbers still come from the app's verified calculators."
-                  : "Tailor this module's framing and priorities to your channel, budget, and GST status. Numbers always come from the verified calculators."}
+                A precise, ordered path for your entity type, state, GST status, and product.
+                Documents and figures below stay from the verified checklist.
               </p>
             </div>
-            <PersonalizedPlanControls hasPlan={detail.personalized} />
+            {!detail.personalized ? <PersonalizedPlanAutoLoader moduleId={stepModule.id} /> : null}
           </div>
 
-          {detail.watchOuts.length > 0 ? (
+          {detail.personalized && detail.steps.length > 0 ? (
+            <ol className="mt-5 space-y-3">
+              {detail.steps.map((s, i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full border border-white/[0.16] bg-white/[0.03] font-mono text-xs text-white">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-white">{s.title}</p>
+                    <p className="text-muted mt-0.5 text-sm leading-6">{s.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          ) : null}
+
+          {detail.personalized && detail.watchOuts.length > 0 ? (
             <div className="mt-5 rounded-lg border border-white/[0.1] bg-white/[0.02] p-4">
               <p className="text-xs font-medium uppercase tracking-wide text-neutral-400">
                 Watch-outs for your setup
@@ -133,8 +151,8 @@ export default async function JourneyStepPage({ params }: Props) {
 
           {detail.personalized ? (
             <p className="mt-4 text-xs leading-5 text-neutral-500">
-              AI-generated guidance — verify category-specific compliance and figures with the tools
-              or a CA before acting.
+              AI-generated guidance — verify category-specific compliance and figures with the
+              verified checklist below or a CA before acting.
             </p>
           ) : null}
         </section>

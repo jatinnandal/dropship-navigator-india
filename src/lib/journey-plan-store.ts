@@ -1,13 +1,18 @@
 import { createSupabaseDataClient } from "@/lib/supabase/server";
-import type { PersonalizedPlan } from "@/lib/llm/plan-generator";
+import type { PersonalizedModulePlan } from "@/lib/llm/plan-generator";
 
 /**
- * Persistence for LLM personalized journey plans. One row per generation; the
- * profile's current plan is the most recent row. The regen cap is enforced by
- * counting this-calendar-month rows (see countRegensThisMonth).
+ * Persistence for personalized compliance-module plans. Keyed by
+ * (profile_id, module_id, profile_hash) so a plan is generated once per profile
+ * state and served from cache thereafter — returning users never regenerate.
+ * The monthly generation count (countGenerationsThisMonth) is the abuse cap.
  */
 
-export async function getLatestPlan(profileId: string): Promise<PersonalizedPlan | null> {
+export async function getModulePlan(
+  profileId: string,
+  moduleId: string,
+  profileHash: string,
+): Promise<PersonalizedModulePlan | null> {
   const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
 
@@ -15,14 +20,16 @@ export async function getLatestPlan(profileId: string): Promise<PersonalizedPlan
     .from("journey_plans")
     .select("plan")
     .eq("profile_id", profileId)
+    .eq("module_id", moduleId)
+    .eq("profile_hash", profileHash)
     .order("generated_at", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  return (data?.plan as PersonalizedPlan | undefined) ?? null;
+  return (data?.plan as PersonalizedModulePlan | undefined) ?? null;
 }
 
-export async function countRegensThisMonth(profileId: string): Promise<number> {
+export async function countGenerationsThisMonth(profileId: string): Promise<number> {
   const supabase = await createSupabaseDataClient();
   if (!supabase) return 0;
 
@@ -34,18 +41,27 @@ export async function countRegensThisMonth(profileId: string): Promise<number> {
     .from("journey_plans")
     .select("id", { count: "exact", head: true })
     .eq("profile_id", profileId)
+    .not("module_id", "is", null)
     .gte("generated_at", monthStart.toISOString());
 
   return count ?? 0;
 }
 
-export async function insertPlan(profileId: string, plan: PersonalizedPlan): Promise<boolean> {
+export async function insertModulePlan(
+  profileId: string,
+  moduleId: string,
+  profileHash: string,
+  model: string,
+  plan: PersonalizedModulePlan,
+): Promise<boolean> {
   const supabase = await createSupabaseDataClient();
   if (!supabase) return false;
 
   const { error } = await supabase.from("journey_plans").insert({
     profile_id: profileId,
-    model: plan.model,
+    module_id: moduleId,
+    profile_hash: profileHash,
+    model,
     plan,
   });
 

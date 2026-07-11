@@ -27,9 +27,14 @@ export type Entitlements = {
   reconHistoryMonths: number;
   /** Free tier gets only the first journey module. */
   allJourneyModules: boolean;
-  /** LLM-personalized journey plan (template-anchored generation). */
+  /** LLM-personalized compliance plan (Docs+GST and Product-compliance modules). */
   personalizedPlan: boolean;
-  /** Cap on LLM plan (re)generations per calendar month; profile-thrash guard. */
+  /**
+   * Cap on total personalized-plan generations per calendar month per profile.
+   * Auto-generation is idempotent per (profile-state × module), so this only
+   * bites on profile/product thrash — a pure abuse backstop. Sized so normal
+   * use (2 modules + a few genuine profile/product changes) never hits it.
+   */
   llmPlanRegensPerMonth: number;
   /** Crisis protocols usable on this plan ("all" for growth). */
   crisisProtocols: CrisisType[] | "all";
@@ -59,7 +64,7 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     reconHistoryMonths: 3,
     allJourneyModules: true,
     personalizedPlan: true,
-    llmPlanRegensPerMonth: 5,
+    llmPlanRegensPerMonth: 10,
     crisisProtocols: STARTER_CRISIS,
     weeklyDigest: true,
     rateAlerts: false,
@@ -71,7 +76,7 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
     reconHistoryMonths: 12,
     allJourneyModules: true,
     personalizedPlan: true,
-    llmPlanRegensPerMonth: 20,
+    llmPlanRegensPerMonth: 30,
     crisisProtocols: "all",
     weeklyDigest: true,
     rateAlerts: true,

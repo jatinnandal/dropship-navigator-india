@@ -73,9 +73,7 @@ describe("entitlements", () => {
     expect(entitlementsFor("starter").personalizedPlan).toBe(true);
     expect(entitlementsFor("growth").personalizedPlan).toBe(true);
     expect(entitlementsFor("free").llmPlanRegensPerMonth).toBe(0);
-    expect(entitlementsFor("starter").llmPlanRegensPerMonth).toBeGreaterThan(0);
-    expect(entitlementsFor("growth").llmPlanRegensPerMonth).toBeGreaterThan(
-      entitlementsFor("starter").llmPlanRegensPerMonth,
-    );
+    expect(entitlementsFor("starter").llmPlanRegensPerMonth).toBe(10);
+    expect(entitlementsFor("growth").llmPlanRegensPerMonth).toBe(30);
   });
 });
