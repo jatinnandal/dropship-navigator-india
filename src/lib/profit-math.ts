@@ -1,5 +1,6 @@
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 import { getFeesForProduct } from "@/lib/marketplace-fees";
+import type { RateCard } from "@/lib/rate-card";
 
 /**
  * Category-level average RTO rates (COD-heavy mix). Single source of truth —
@@ -27,6 +28,8 @@ export type ProfitInputs = {
   isCod?: boolean;
   /** 0–1. Advanced input; defaults to DEFAULT_RTO_DAMAGE_RATE. */
   damageRate?: number;
+  /** Rate card override — used by the rates-impact diff. Defaults to CURRENT. */
+  rates?: RateCard;
 };
 
 export type ProfitResult = {
@@ -78,10 +81,11 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
     category = "general",
     isCod = false,
     damageRate = DEFAULT_RTO_DAMAGE_RATE,
+    rates,
   } = inputs;
 
   const revenue = Math.max(0, sellingPrice);
-  const fees = getFeesForProduct(channel, category, revenue, isCod);
+  const fees = getFeesForProduct(channel, category, revenue, isCod, rates);
 
   const shipping = Math.max(0, shippingCost);
   const adCost = Math.max(0, adCostPerOrder);

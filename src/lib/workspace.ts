@@ -28,6 +28,8 @@ export type Workspace = {
   activeCrisis?: ActiveCrisis;
   crisisLog?: CrisisLogEntry[];
   dismissedWarnings?: Record<string, string>;
+  /** Rate-card version whose "rates updated" banner the user dismissed. */
+  seenRatesVersion?: string;
 };
 
 export const emptyWorkspace: Workspace = {};
@@ -60,6 +62,8 @@ export function parseWorkspace(raw: string | Record<string, unknown> | undefined
       breakEvenRoas: typeof parsed.breakEvenRoas === "number" ? parsed.breakEvenRoas : undefined,
       estimatedRtoRate:
         typeof parsed.estimatedRtoRate === "number" ? parsed.estimatedRtoRate : undefined,
+      seenRatesVersion:
+        typeof parsed.seenRatesVersion === "string" ? parsed.seenRatesVersion : undefined,
       calculatorSnapshot:
         parsed.calculatorSnapshot && typeof parsed.calculatorSnapshot === "object"
           ? (parsed.calculatorSnapshot as Record<string, number>)

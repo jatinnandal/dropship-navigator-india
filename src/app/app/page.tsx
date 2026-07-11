@@ -26,6 +26,9 @@ import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { listUploads } from "@/lib/settlement-recon-store";
 import { buildWeeklyReview } from "@/lib/weekly-review";
 import { WeeklyReviewCard } from "@/components/weekly-review-card";
+import { CURRENT_RATES } from "@/data/rates";
+import { computeRatesImpact } from "@/lib/rates-impact";
+import { RatesUpdateBanner } from "@/components/rates-update-banner";
 import { formatDateIN } from "@/lib/format";
 
 function getGreeting() {
@@ -114,6 +117,11 @@ export default async function DashboardPage() {
       : null,
   });
 
+  const ratesImpact =
+    workspace.seenRatesVersion !== CURRENT_RATES.meta.version
+      ? computeRatesImpact({ profile, workspace })
+      : null;
+
   const showRtoSlider = dashboardState.warnings.some((w) => w.id === "rto-shock");
   const listingLive = isSubTaskDone(workspace.subTasks, "first-listing-live");
   const hasSnapshot = Boolean(
@@ -191,6 +199,10 @@ export default async function DashboardPage() {
                 </div>
               </div>
             </section>
+          ) : null}
+
+          {ratesImpact && dashboardState.mode !== "crisis" ? (
+            <RatesUpdateBanner impact={ratesImpact} />
           ) : null}
 
           {dashboardState.mode === "normal"
