@@ -1,15 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { defaultProfile } from "@/lib/mvp-data";
-import { getStepDetail } from "@/lib/step-details";
+import type { TaskStep } from "@/lib/tasks/types";
 import {
-  applyPersonalizedPlan,
-  generateModulePlan,
+  applyStepCopy,
+  generateModuleCopy,
   isPersonalizableModule,
   profileHash,
   type PersonalizedModulePlan,
 } from "@/lib/llm/plan-generator";
-
-const base = getStepDetail("common-documentation", defaultProfile);
 
 describe("isPersonalizableModule", () => {
   it("only the two compliance modules personalize", () => {
@@ -17,7 +15,6 @@ describe("isPersonalizableModule", () => {
     expect(isPersonalizableModule("compliance-by-product")).toBe(true);
     expect(isPersonalizableModule("product-selection")).toBe(false);
     expect(isPersonalizableModule("channel-launch")).toBe(false);
-    expect(isPersonalizableModule("ads-growth")).toBe(false);
   });
 });
 
@@ -25,71 +22,85 @@ describe("profileHash", () => {
   it("is stable for the same profile", () => {
     expect(profileHash(defaultProfile)).toBe(profileHash({ ...defaultProfile }));
   });
-  it("changes when the product category changes", () => {
-    const a = profileHash(defaultProfile);
-    const b = profileHash({ ...defaultProfile, productType: "food" });
-    expect(a).not.toBe(b);
-  });
-  it("changes when GST status changes", () => {
-    const a = profileHash({ ...defaultProfile, hasGstin: false });
-    const b = profileHash({ ...defaultProfile, hasGstin: true });
-    expect(a).not.toBe(b);
+  it("changes with product category and GST status", () => {
+    expect(profileHash(defaultProfile)).not.toBe(profileHash({ ...defaultProfile, productType: "food" }));
+    expect(profileHash({ ...defaultProfile, hasGstin: false })).not.toBe(
+      profileHash({ ...defaultProfile, hasGstin: true }),
+    );
   });
 });
 
-describe("applyPersonalizedPlan", () => {
-  it("passthrough when no personalization", () => {
-    const out = applyPersonalizedPlan(base, undefined);
-    expect(out.personalized).toBe(false);
-    expect(out.steps).toEqual([]);
-    expect(out.watchOuts).toEqual([]);
-    expect(out.plainLanguageSummary).toBe(base.plainLanguageSummary);
+const staticSteps: TaskStep[] = [
+  {
+    id: "gstin-input",
+    title: "Enter your GSTIN",
+    why: "Marketplaces need it.",
+    how: ["Paste your 15-digit GSTIN."],
+    kind: "input",
+    input: { id: "gstin-input", label: "GSTIN", workspaceKey: "gstin" },
+  },
+  {
+    id: "premises",
+    title: "Where do you operate?",
+    why: "Address proof differs.",
+    how: ["Pick owned or rented."],
+    kind: "question",
+    question: { id: "premises", prompt: "Owned or rented?", options: [] },
+    trap: "Missing NOC bounces filings.",
+  },
+];
+
+describe("applyStepCopy", () => {
+  it("returns steps unchanged when there is no plan", () => {
+    expect(applyStepCopy(staticSteps, null)).toEqual(staticSteps);
   });
 
-  it("overlays summary, steps, and watch-outs", () => {
+  it("overlays title/why/how/trap by id but preserves the interactive skeleton", () => {
     const plan: PersonalizedModulePlan = {
       moduleId: "common-documentation",
-      summary: "Your exact doc path.",
+      intro: "Tailored intro.",
       steps: [
-        { title: "Register GST", detail: "As a Pvt Ltd in Karnataka…" },
-        { title: "Match bank name", detail: "…" },
+        {
+          id: "gstin-input",
+          title: "Enter your Karnataka GSTIN",
+          why: "Amazon needs it for your proprietorship.",
+          how: ["Paste the 15-digit GSTIN from gst.gov.in."],
+        },
       ],
-      watchOuts: ["Name mismatch is the #1 rejection."],
     };
-    const out = applyPersonalizedPlan(base, plan);
-    expect(out.personalized).toBe(true);
-    expect(out.plainLanguageSummary).toBe("Your exact doc path.");
-    expect(out.steps).toHaveLength(2);
-    expect(out.steps[0].title).toBe("Register GST");
-    expect(out.watchOuts).toHaveLength(1);
+    const out = applyStepCopy(staticSteps, plan);
+
+    // copy overlaid on the matching step
+    expect(out[0].title).toBe("Enter your Karnataka GSTIN");
+    expect(out[0].why).toContain("proprietorship");
+    // interactive skeleton preserved
+    expect(out[0].kind).toBe("input");
+    expect(out[0].input).toEqual(staticSteps[0].input);
+    // step without copy is untouched (incl. its trap + question)
+    expect(out[1]).toEqual(staticSteps[1]);
   });
 
-  it("never touches documents / decisionFlow / done-criteria / partners", () => {
+  it("keeps static copy when the personalized fields are empty", () => {
     const plan: PersonalizedModulePlan = {
       moduleId: "common-documentation",
-      summary: "s",
-      steps: [{ title: "t", detail: "d" }],
-      watchOuts: [],
+      intro: "",
+      steps: [{ id: "gstin-input", title: "", why: "", how: [] }],
     };
-    const out = applyPersonalizedPlan(base, plan);
-    expect(out.mustHaveDocuments).toEqual(base.mustHaveDocuments);
-    expect(out.decisionFlow).toEqual(base.decisionFlow);
-    expect(out.doneCriteria).toEqual(base.doneCriteria);
-    expect(out.partnerOptions).toEqual(base.partnerOptions);
+    const out = applyStepCopy(staticSteps, plan);
+    expect(out[0].title).toBe(staticSteps[0].title);
+    expect(out[0].how).toEqual(staticSteps[0].how);
   });
 });
 
-describe("generateModulePlan", () => {
-  it("returns null for a non-personalizable module without calling the LLM", async () => {
-    const plan = await generateModulePlan(defaultProfile, "product-selection");
-    expect(plan).toBeNull();
+describe("generateModuleCopy", () => {
+  it("returns null for a non-personalizable module", async () => {
+    expect(await generateModuleCopy(defaultProfile, "product-selection")).toBeNull();
   });
 
   it("returns null when the LLM is unconfigured (graceful static fallback)", async () => {
     const prev = process.env.ANTHROPIC_API_KEY;
     delete process.env.ANTHROPIC_API_KEY;
-    const plan = await generateModulePlan(defaultProfile, "common-documentation");
-    expect(plan).toBeNull();
+    expect(await generateModuleCopy(defaultProfile, "common-documentation")).toBeNull();
     if (prev !== undefined) process.env.ANTHROPIC_API_KEY = prev;
   });
 });

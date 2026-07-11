@@ -12,7 +12,7 @@ import { getCurrentPlan } from "@/lib/plan";
 import { entitlementsFor } from "@/lib/entitlements";
 import { getAnthropicConfig } from "@/lib/llm/anthropic";
 import {
-  generateModulePlan,
+  generateModuleCopy,
   isPersonalizableModule,
   profileHash,
 } from "@/lib/llm/plan-generator";
@@ -57,7 +57,7 @@ export async function ensureModulePlan(moduleId: string): Promise<EnsurePlanResu
   const used = await countGenerationsThisMonth(sellerProfile.id);
   if (used >= ent.llmPlanRegensPerMonth) return { ok: false, reason: "limit" };
 
-  const generated = await generateModulePlan(profile, moduleId);
+  const generated = await generateModuleCopy(profile, moduleId);
   if (!generated) return { ok: false, reason: "unavailable" };
 
   const model = getAnthropicConfig()?.model ?? "unknown";

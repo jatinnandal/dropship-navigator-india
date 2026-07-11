@@ -6,11 +6,9 @@ import { getEditProfileHref } from "@/lib/profile-name";
 import { getTaskState } from "@/lib/task-progress-store";
 import { resolveTaskId } from "@/lib/tasks";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
-import { getStepDetail } from "@/lib/step-details";
-import { applyPersonalizedPlan, isPersonalizableModule, profileHash } from "@/lib/llm/plan-generator";
+import { isPersonalizableModule, profileHash } from "@/lib/llm/plan-generator";
 import { getModulePlan } from "@/lib/journey-plan-store";
 import { UpgradePanel } from "@/components/plan/upgrade-panel";
-import { PersonalizedPlanSection } from "@/components/personalized-plan-section";
 import { TaskRunner } from "./runner";
 
 type Props = {
@@ -65,11 +63,10 @@ export default async function TaskPage({ params }: Props) {
   const entitlements = entitlementsFor(plan);
   const canPersonalize =
     entitlements.personalizedPlan && isPersonalizableModule(taskId) && !!activeSellerProfile;
-  const modulePlan =
+  const personalizedCopy =
     canPersonalize && activeSellerProfile
       ? await getModulePlan(activeSellerProfile.id, taskId, profileHash(profile))
       : null;
-  const detail = applyPersonalizedPlan(getStepDetail(taskId, profile), modulePlan ?? undefined);
 
   return (
     <TaskRunner
@@ -79,11 +76,8 @@ export default async function TaskPage({ params }: Props) {
       initialAnswers={state.answers}
       initialWorkspace={workspace}
       editProfileHref={editProfileHref}
-      personalizedSlot={
-        canPersonalize ? (
-          <PersonalizedPlanSection moduleId={taskId} canPersonalize={canPersonalize} detail={detail} />
-        ) : null
-      }
+      personalizedCopy={personalizedCopy}
+      needsPersonalization={canPersonalize && !personalizedCopy}
     />
   );
 }

@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo, useState, useTransition, type ReactNode } from "react";
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { applyStepCopy, type PersonalizedModulePlan } from "@/lib/llm/plan-generator";
+import { PersonalizedPlanAutoLoader } from "@/components/personalized-plan-controls";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { ProfitCalculator } from "@/components/profit-calculator";
 import { MentorStepContent } from "@/components/mentor-step-content";
 import { JargonText } from "@/components/jargon-text";
@@ -45,7 +47,8 @@ type Props = {
   initialAnswers: Record<string, string>;
   initialWorkspace: Workspace;
   editProfileHref?: string;
-  personalizedSlot?: ReactNode;
+  personalizedCopy?: PersonalizedModulePlan | null;
+  needsPersonalization?: boolean;
 };
 
 function firstIncompleteId(steps: TaskStep[], completed: Set<string>): string | null {
@@ -76,7 +79,8 @@ export function TaskRunner({
   initialAnswers,
   initialWorkspace,
   editProfileHref = "/onboarding",
-  personalizedSlot,
+  personalizedCopy,
+  needsPersonalization = false,
 }: Props) {
   const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers ?? {});
   const [completed, setCompleted] = useState<Set<string>>(new Set(initialCompleted ?? []));
@@ -86,10 +90,16 @@ export function TaskRunner({
   const [showStuck, setShowStuck] = useState(false);
   const [showRecap, setShowRecap] = useState(true);
 
-  const task = useMemo(
-    () => buildTask(taskId, profile, answers, workspace),
-    [taskId, profile, answers, workspace],
-  );
+  const task = useMemo(() => {
+    const built = buildTask(taskId, profile, answers, workspace);
+    if (!built || !personalizedCopy) return built;
+    // Overlay LLM copy onto the static steps; interactive skeleton is preserved.
+    return {
+      ...built,
+      intro: personalizedCopy.intro || built.intro,
+      steps: applyStepCopy(built.steps, personalizedCopy),
+    };
+  }, [taskId, profile, answers, workspace, personalizedCopy]);
 
   const steps = task?.steps ?? [];
 
@@ -264,7 +274,16 @@ export function TaskRunner({
         </div>
       </header>
 
-      {personalizedSlot ? <div className="mt-6">{personalizedSlot}</div> : null}
+      {needsPersonalization ? (
+        <div className="mt-4">
+          <PersonalizedPlanAutoLoader moduleId={taskId} />
+        </div>
+      ) : personalizedCopy ? (
+        <p className="mt-4 flex items-center gap-2 text-xs text-[var(--muted)]">
+          <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+          Personalized for your setup — always verify figures with the checklist or a CA.
+        </p>
+      ) : null}
 
       <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,260px)_1fr]">
         <aside className="order-2 space-y-4 lg:order-1">
