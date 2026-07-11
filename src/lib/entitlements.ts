@@ -40,7 +40,7 @@ const ENTITLEMENTS: Record<Plan, Entitlements> = {
   },
   starter: {
     plan: "starter",
-    maxProfiles: 1,
+    maxProfiles: 2,
     reconPerMonth: 1,
     allJourneyModules: true,
     crisisProtocols: STARTER_CRISIS,

@@ -37,6 +37,7 @@ export const PLAN_CARDS: PlanCard[] = [
       "Every calculator & simulator — cashflow, ROAS, COD mix, scorecards",
       "GST filing calendar + document checker + decision wizards",
       "Crisis protocols: account suspension & supplier out-of-stock",
+      "2 seller profiles — test a second niche",
       "1 payout reconciliation per month",
       "Monday profit digest email",
     ],

@@ -10,9 +10,9 @@ import {
 } from "@/lib/entitlements";
 
 describe("entitlements", () => {
-  it("profile caps: 1/1/5", () => {
+  it("profile caps: 1/2/5", () => {
     expect(entitlementsFor("free").maxProfiles).toBe(1);
-    expect(entitlementsFor("starter").maxProfiles).toBe(1);
+    expect(entitlementsFor("starter").maxProfiles).toBe(2);
     expect(entitlementsFor("growth").maxProfiles).toBe(5);
   });
 

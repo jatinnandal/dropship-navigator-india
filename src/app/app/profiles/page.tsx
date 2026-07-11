@@ -60,7 +60,7 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
           </p>
         </div>
         <Link
-          href={atProfileCap ? "/pricing" : "/onboarding?mode=new&returnTo=/app/profiles"}
+          href={atProfileCap ? "/app/upgrade" : "/onboarding?mode=new&returnTo=/app/profiles"}
           className="btn-primary inline-flex min-h-[44px] items-center gap-[9px] rounded-[11px] px-5 text-[13.5px] font-semibold no-underline"
         >
           {atProfileCap ? "Unlock more plans" : "+ New plan"}
@@ -166,9 +166,13 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
         {/* Ghost "Start another business" card — or the profile-cap upsell */}
         {atProfileCap ? (
           <UpgradePanel
-            requiredPlan="growth"
+            requiredPlan={entitlements.plan === "free" ? "starter" : "growth"}
             compact
-            title={`Running a second niche? ${PLAN_LABELS.growth} runs 5 plans side-by-side`}
+            title={
+              entitlements.plan === "free"
+                ? `Running a second niche? ${PLAN_LABELS.starter} gives you 2 plans`
+                : `Running more niches? ${PLAN_LABELS.growth} runs 5 plans side-by-side`
+            }
             bullets={[
               "Separate journey, answers and progress per business",
               "Compare unit economics across marketplaces properly",
