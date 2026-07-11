@@ -38,13 +38,13 @@ const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 function statusColor(status: GstEvent["status"]) {
   switch (status) {
     case "done":
-      return "bg-emerald-400";
+      return "bg-[var(--success)]";
     case "overdue":
-      return "bg-rose-400";
+      return "bg-[var(--danger)]";
     case "prep":
-      return "bg-cyan-400";
+      return "bg-white/40";
     case "upcoming":
-      return "bg-amber-400";
+      return "bg-white";
   }
 }
 
@@ -180,7 +180,7 @@ export function GstCalendar({
           <p className="text-sm font-semibold text-white">
             No GSTIN yet — you have no filing obligations.
           </p>
-          <p className="mt-1 text-sm leading-6 text-slate-400">
+          <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
             These deadlines start only after your GST registration is active
             (an Enrolment ID for Meesho intra-state selling has no return
             filings either). The calendar below is a preview of what your
@@ -193,9 +193,9 @@ export function GstCalendar({
       {/* Overdue warning */}
       {hasGstin && overdueEvents.length > 0 && (
         <div className="banner-deadline flex items-start gap-3 rounded-lg p-4">
-          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-rose-400" />
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--danger)]" />
           <div>
-            <p className="text-sm font-semibold text-rose-200">
+            <p className="text-sm font-semibold text-[var(--danger)]">
               {overdueEvents.length} overdue filing
               {overdueEvents.length > 1 ? "s" : ""}
             </p>
@@ -213,8 +213,8 @@ export function GstCalendar({
           onClick={() => setIsQrmp(false)}
           className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             !isQrmp
-              ? "bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/40"
-              : "text-muted hover:text-slate-200"
+              ? "bg-white/[0.06] text-white ring-1 ring-white/25"
+              : "text-muted hover:text-[var(--body-text)]"
           }`}
         >
           Regular (Monthly)
@@ -223,8 +223,8 @@ export function GstCalendar({
           onClick={() => setIsQrmp(true)}
           className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             isQrmp
-              ? "bg-amber-500/20 text-amber-400 ring-1 ring-amber-500/40"
-              : "text-muted hover:text-slate-200"
+              ? "bg-white/[0.06] text-white ring-1 ring-white/25"
+              : "text-muted hover:text-[var(--body-text)]"
           }`}
         >
           QRMP (Quarterly)
@@ -237,17 +237,17 @@ export function GstCalendar({
         <div className="mb-4 flex items-center justify-between">
           <button
             onClick={goToPrevMonth}
-            className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-700/50 hover:text-slate-200"
+            className="rounded-md p-1.5 text-[var(--muted)] transition-colors hover:bg-white/[0.06] hover:text-[var(--body-text)]"
             aria-label="Previous month"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
-          <h3 className="font-display text-base font-semibold text-slate-100">
+          <h3 className="font-display text-base font-semibold text-white">
             {monthLabel}
           </h3>
           <button
             onClick={goToNextMonth}
-            className="rounded-md p-1.5 text-slate-400 transition-colors hover:bg-slate-700/50 hover:text-slate-200"
+            className="rounded-md p-1.5 text-[var(--muted)] transition-colors hover:bg-white/[0.06] hover:text-[var(--body-text)]"
             aria-label="Next month"
           >
             <ChevronRight className="h-5 w-5" />
@@ -298,9 +298,9 @@ export function GstCalendar({
                   onClick={() => setSelectedDay(isSelected ? null : day)}
                   className={`relative flex aspect-square flex-col items-center justify-center rounded-md text-sm transition-colors ${
                     isSelected
-                      ? "bg-amber-500/20 ring-1 ring-amber-500/50"
-                      : "hover:bg-slate-700/40"
-                  } ${isToday ? "font-bold text-amber-400" : "text-slate-300"}`}
+                      ? "bg-white/[0.06] ring-1 ring-white/25"
+                      : "hover:bg-white/[0.06]/40"
+                  } ${isToday ? "font-bold text-white" : "text-[var(--body-text)]"}`}
                 >
                   <span>{day}</span>
                   {evts && evts.length > 0 && (
@@ -330,7 +330,7 @@ export function GstCalendar({
               className="mt-4 overflow-hidden"
             >
               <div className="glass-panel-receded space-y-2 rounded-lg p-3">
-                <p className="text-xs font-semibold text-slate-300">
+                <p className="text-xs font-semibold text-[var(--body-text)]">
                   {selectedDay}{" "}
                   {new Date(currentYear, currentMonth).toLocaleString("en-IN", {
                     month: "short",
@@ -345,7 +345,7 @@ export function GstCalendar({
                     >
                       <span
                         className={
-                          done ? "text-safe line-through" : "text-slate-200"
+                          done ? "text-safe line-through" : "text-[var(--body-text)]"
                         }
                       >
                         {evt.filing.name}
@@ -353,7 +353,7 @@ export function GstCalendar({
                       {!done && (
                         <button
                           onClick={() => markDone(evt.id)}
-                          className="rounded px-2 py-0.5 text-xs text-emerald-400 ring-1 ring-emerald-500/40 transition-colors hover:bg-emerald-500/20"
+                          className="rounded px-2 py-0.5 text-xs text-[var(--success)] ring-1 ring-[var(--success)]/40 transition-colors hover:bg-[var(--success)]/20"
                         >
                           Done
                         </button>
@@ -369,8 +369,8 @@ export function GstCalendar({
 
       {/* Upcoming filings list */}
       <div className="space-y-3">
-        <h3 className="font-display flex items-center gap-2 text-base font-semibold text-slate-100">
-          <Calendar className="h-4 w-4 text-amber-400" />
+        <h3 className="font-display flex items-center gap-2 text-base font-semibold text-white">
+          <Calendar className="h-4 w-4 text-white" />
           Upcoming Filings
         </h3>
         {upcomingEvents.length === 0 && (
@@ -392,10 +392,10 @@ export function GstCalendar({
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-sm font-medium text-slate-100">
+                      <span className="text-sm font-medium text-white">
                         {evt.filing.name}
                       </span>
-                      <span className="text-muted rounded bg-slate-700/50 px-1.5 py-0.5 text-xs font-mono">
+                      <span className="text-muted rounded bg-white/[0.06] px-1.5 py-0.5 text-xs font-mono">
                         {evt.filing.form}
                       </span>
                     </div>
@@ -412,12 +412,12 @@ export function GstCalendar({
                     <span
                       className={`rounded-md px-2 py-0.5 text-xs font-medium ${statusTextClass(status)} ${
                         status === "overdue"
-                          ? "bg-rose-500/10"
+                          ? "bg-[var(--danger)]/10"
                           : status === "prep"
-                            ? "bg-cyan-500/10"
+                            ? "bg-white/[0.06]"
                             : status === "done"
-                              ? "bg-emerald-500/10"
-                              : "bg-amber-500/10"
+                              ? "bg-[var(--success)]/10"
+                              : "bg-white/[0.06]"
                       }`}
                     >
                       {daysLabel(evt.daysUntilDue, status)}
@@ -425,7 +425,7 @@ export function GstCalendar({
                     {!done && (
                       <button
                         onClick={() => markDone(evt.id)}
-                        className="rounded-md p-1 text-emerald-400 ring-1 ring-emerald-500/30 transition-colors hover:bg-emerald-500/20"
+                        className="rounded-md p-1 text-[var(--success)] ring-1 ring-[var(--success)]/30 transition-colors hover:bg-[var(--success)]/20"
                         aria-label={`Mark ${evt.filing.name} as done`}
                       >
                         <Check className="h-3.5 w-3.5" />
@@ -457,7 +457,7 @@ export function GstCalendar({
                           key={idx}
                           className="text-muted flex items-start gap-2 text-xs"
                         >
-                          <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-slate-500" />
+                          <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-white/20" />
                           {item}
                         </li>
                       ))}

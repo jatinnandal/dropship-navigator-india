@@ -102,14 +102,14 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
             {/* Recommendation */}
-            <div className="rounded-xl border border-emerald-500/40 bg-emerald-500/5 p-6">
+            <div className="rounded-xl border border-[var(--success)]/40 bg-[var(--success)]/10 p-6">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+                <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-[var(--success)]" />
                 <div>
-                  <h3 className="font-display text-base font-semibold text-emerald-300">
+                  <h3 className="font-display text-base font-semibold text-[var(--success)]">
                     Our Recommendation
                   </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-200">
+                  <p className="mt-2 text-sm leading-relaxed text-[var(--body-text)]">
                     {recommendation}
                   </p>
                 </div>
@@ -117,8 +117,8 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
             </div>
 
             {/* Journey summary */}
-            <div className="mt-6 rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
-              <h4 className="text-xs font-medium uppercase tracking-wider text-slate-400">
+            <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.03] p-4">
+              <h4 className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
                 Your path
               </h4>
               <ol className="mt-3 space-y-2">
@@ -126,12 +126,12 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
                   const node = tree.nodes.find((n) => n.id === entry.nodeId);
                   return (
                     <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-slate-700 text-xs font-medium text-slate-300">
+                      <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-xs font-medium text-[var(--body-text)]">
                         {i + 1}
                       </span>
-                      <span className="text-slate-400">
+                      <span className="text-[var(--muted)]">
                         {node?.question}{" "}
-                        <span className="font-medium text-amber-300">→ {entry.chosenLabel}</span>
+                        <span className="font-medium text-white">→ {entry.chosenLabel}</span>
                       </span>
                     </li>
                   );
@@ -169,7 +169,7 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
           >
             {/* Question */}
             <div className="mb-6">
-              <h2 className="font-display text-xl font-semibold text-slate-100">
+              <h2 className="font-display text-xl font-semibold text-white">
                 {currentNode.question}
               </h2>
               {currentNode.context && (
@@ -185,9 +185,9 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
                 <button
                   key={option.label}
                   onClick={() => handleChoice(option)}
-                  className="glass-panel group rounded-xl border p-5 text-left transition-all hover:border-amber-500/40 hover:bg-amber-500/5"
+                  className="glass-panel group rounded-xl border p-5 text-left transition-all hover:border-white/[0.16] hover:bg-white/[0.04]"
                 >
-                  <span className="font-display text-sm font-semibold text-slate-100 group-hover:text-amber-300 transition-colors">
+                  <span className="font-display text-sm font-semibold text-white group-hover:text-white transition-colors">
                     {option.label}
                   </span>
                 </button>

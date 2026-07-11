@@ -52,22 +52,22 @@ const PRODUCT_CATEGORIES: { value: ProductType; label: string }[] = [
 ];
 
 const VERDICT_CONFIG = {
-  excellent: { label: "Excellent", className: "bg-emerald-500/20 text-emerald-400 border-emerald-500/30" },
-  healthy: { label: "Healthy", className: "bg-amber-500/20 text-amber-400 border-amber-500/30" },
-  tight: { label: "Tight", className: "bg-orange-500/20 text-orange-400 border-orange-500/30" },
-  loss: { label: "Loss", className: "bg-rose-500/20 text-rose-400 border-rose-500/30" },
+  excellent: { label: "Excellent", className: "bg-[var(--success)]/20 text-[var(--success)] border-[var(--success)]/30" },
+  healthy: { label: "Healthy", className: "bg-white/[0.06] text-white border-white/[0.16]" },
+  tight: { label: "Tight", className: "bg-white/[0.06] text-white border-white/[0.16]" },
+  loss: { label: "Loss", className: "bg-[var(--danger)]/20 text-[var(--danger)] border-[var(--danger)]/30" },
 } as const;
 
 function marginColor(margin: number): string {
-  if (margin >= 25) return "text-emerald-400";
-  if (margin >= 15) return "text-amber-400";
-  return "text-rose-400";
+  if (margin >= 25) return "text-[var(--success)]";
+  if (margin >= 15) return "text-white";
+  return "text-[var(--danger)]";
 }
 
 function marginBg(margin: number): string {
-  if (margin >= 25) return "border-emerald-500/30 bg-emerald-500/5";
-  if (margin >= 15) return "border-amber-500/30 bg-amber-500/5";
-  return "border-rose-500/30 bg-rose-500/5";
+  if (margin >= 25) return "border-[var(--success)]/30 bg-[var(--success)]/10";
+  if (margin >= 15) return "border-white/[0.16] bg-white/[0.04]";
+  return "border-[var(--danger)]/30 bg-[var(--danger)]/10";
 }
 
 /* ── component ── */
@@ -156,13 +156,13 @@ export function MarginCalculator({
       <div className="grid gap-6 lg:grid-cols-[1fr,1.4fr]">
         {/* left: inputs (min-w-0: grid items must be allowed to shrink below content size) */}
         <div className="glass-panel grain min-w-0 rounded-xl p-5 sm:p-6">
-          <h2 className="font-display text-lg font-bold text-slate-100">Product Details</h2>
+          <h2 className="font-display text-lg font-bold text-white">Product Details</h2>
           <p className="text-muted mt-1 text-xs">Enter your product economics</p>
 
           <div className="mt-5 space-y-4">
             {/* Selling price */}
             <InputField
-              icon={<ShoppingCart className="h-4 w-4 text-amber-400" />}
+              icon={<ShoppingCart className="h-4 w-4 text-white" />}
               label="Selling Price"
               prefix="₹"
               value={sellingPrice}
@@ -170,7 +170,7 @@ export function MarginCalculator({
             />
             {/* Product cost */}
             <InputField
-              icon={<Package className="h-4 w-4 text-cyan-400" />}
+              icon={<Package className="h-4 w-4 text-[var(--muted)]" />}
               label="Product Cost (COGS)"
               prefix="₹"
               value={productCost}
@@ -178,9 +178,9 @@ export function MarginCalculator({
             />
             {/* Weight bracket */}
             <div>
-              <label className="text-xs font-medium text-slate-300">
+              <label className="text-xs font-medium text-[var(--body-text)]">
                 <span className="flex items-center gap-1.5">
-                  <Truck className="h-4 w-4 text-cyan-400" />
+                  <Truck className="h-4 w-4 text-[var(--muted)]" />
                   Weight Bracket
                 </span>
               </label>
@@ -195,8 +195,8 @@ export function MarginCalculator({
                     }}
                     className={`min-w-0 min-h-[40px] rounded-md border px-1.5 sm:px-2 py-1.5 text-xs font-medium transition-colors ${
                       weightBracket === w
-                        ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
-                        : "border-neutral-700 bg-neutral-900/60 text-slate-400 hover:border-neutral-500"
+                        ? "border-white/[0.16] bg-white/[0.06] text-white"
+                        : "border-white/10 bg-white/[0.03] text-[var(--muted)] hover:border-white/25"
                     }`}
                   >
                     {WEIGHT_BRACKET_LABELS[w]}
@@ -206,7 +206,7 @@ export function MarginCalculator({
             </div>
             {/* Shipping override */}
             <InputField
-              icon={<Truck className="h-4 w-4 text-slate-400" />}
+              icon={<Truck className="h-4 w-4 text-[var(--muted)]" />}
               label="Shipping Override (optional)"
               prefix="₹"
               value={shippingOverride ?? ""}
@@ -215,7 +215,7 @@ export function MarginCalculator({
             />
             {/* Ad cost */}
             <InputField
-              icon={<Megaphone className="h-4 w-4 text-rose-400" />}
+              icon={<Megaphone className="h-4 w-4 text-[var(--danger)]" />}
               label="Ad Cost per Order"
               prefix="₹"
               value={adCostPerOrder}
@@ -223,11 +223,11 @@ export function MarginCalculator({
             />
             {/* Product category */}
             <div>
-              <label className="text-xs font-medium text-slate-300">Product Category</label>
+              <label className="text-xs font-medium text-[var(--body-text)]">Product Category</label>
               <select
                 value={productCategory}
                 onChange={(e) => handleCategoryChange(e.target.value as ProductType)}
-                className="mt-1.5 w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-900/80 px-3 py-2 text-sm text-slate-200 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+                className="mt-1.5 w-full min-h-[40px] rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[var(--body-text)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
               >
                 {PRODUCT_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -238,25 +238,25 @@ export function MarginCalculator({
             </div>
             {/* RTO rate slider */}
             <SliderField
-              icon={<RotateCcw className="h-4 w-4 text-rose-400" />}
+              icon={<RotateCcw className="h-4 w-4 text-[var(--danger)]" />}
               label="RTO Rate"
               value={rtoRate}
               min={0}
               max={50}
               suffix="%"
               onChange={setRtoRate}
-              trackColor="bg-rose-500"
+              trackColor="bg-[var(--danger)]"
             />
             {/* COD percent slider */}
             <SliderField
-              icon={<Info className="h-4 w-4 text-slate-400" />}
+              icon={<Info className="h-4 w-4 text-[var(--muted)]" />}
               label="COD Orders"
               value={codPercent}
               min={0}
               max={100}
               suffix="%"
               onChange={setCodPercent}
-              trackColor="bg-amber-500"
+              trackColor="bg-white"
             />
           </div>
 
@@ -280,7 +280,7 @@ export function MarginCalculator({
         {/* right: marketplace tabs + active detail */}
         <div className="min-w-0 space-y-4">
           {/* Marketplace tab bar */}
-          <div className="flex gap-1 rounded-lg bg-neutral-900/60 p-1 border border-neutral-800">
+          <div className="flex gap-1 rounded-lg bg-white/[0.03] p-1 border border-white/10">
             {CHANNELS.map((ch, i) => (
               <button
                 key={ch.channel}
@@ -288,21 +288,21 @@ export function MarginCalculator({
                 onClick={() => setActiveTab(ch.channel)}
                 className={`relative min-w-0 flex-1 min-h-[40px] rounded-md px-2 sm:px-3 py-2 text-[13px] sm:text-sm font-medium transition-colors ${
                   activeTab === ch.channel
-                    ? "text-amber-300"
-                    : "text-slate-500 hover:text-slate-300"
+                    ? "text-white"
+                    : "text-[var(--text-faint)] hover:text-[var(--body-text)]"
                 }`}
               >
                 {activeTab === ch.channel && (
                   <motion.div
                     layoutId="activeMarketplaceTab"
-                    className="absolute inset-0 rounded-md border border-amber-500/30 bg-amber-500/10"
+                    className="absolute inset-0 rounded-md border border-white/[0.16] bg-white/[0.06]"
                     transition={{ type: "spring", bounce: 0.15, duration: 0.4 }}
                   />
                 )}
                 <span className="relative z-10 flex items-center justify-center gap-1.5">
                   {ch.name}
                   {i === bestIdx && (
-                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400" title="Best margin" />
+                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--success)]" title="Best margin" />
                   )}
                 </span>
               </button>
@@ -330,13 +330,13 @@ export function MarginCalculator({
 
           {/* Comparison grid */}
           <div className="glass-panel-receded grain rounded-xl p-5 sm:p-6">
-            <h3 className="font-display text-sm font-bold text-slate-200">
+            <h3 className="font-display text-sm font-bold text-[var(--body-text)]">
               Side-by-Side Comparison
             </h3>
             <div className="mt-3 overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="text-left text-slate-500">
+                  <tr className="text-left text-[var(--text-faint)]">
                     <th className="pb-2 pr-3 font-medium">Marketplace</th>
                     <th className="pb-2 pr-3 font-medium text-right">Commission</th>
                     <th className="pb-2 pr-3 font-medium text-right">Fees</th>
@@ -346,19 +346,19 @@ export function MarginCalculator({
                     <th className="pb-2 font-medium text-right">Margin</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-800">
+                <tbody className="divide-y divide-white/10">
                   {allResults.map(({ ch, result }, i) => (
                     <tr
                       key={ch.channel}
                       className={`${
-                        i === bestIdx ? "bg-emerald-500/5" : ""
-                      } ${ch.channel === activeTab ? "text-slate-100" : "text-slate-400"}`}
+                        i === bestIdx ? "bg-[var(--success)]/10" : ""
+                      } ${ch.channel === activeTab ? "text-white" : "text-[var(--muted)]"}`}
                     >
                       <td className="py-2.5 pr-3 font-medium">
                         <span className="flex items-center gap-1.5">
                           {ch.name}
                           {i === bestIdx && (
-                            <TrendingUp className="h-3 w-3 text-emerald-400" />
+                            <TrendingUp className="h-3 w-3 text-[var(--success)]" />
                           )}
                         </span>
                       </td>
@@ -387,8 +387,8 @@ export function MarginCalculator({
       <div className="glass-panel grain rounded-xl p-5 sm:p-6">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h3 className="font-display flex items-center gap-2 text-lg font-bold text-slate-100">
-              <BarChart3 className="h-5 w-5 text-cyan-400" />
+            <h3 className="font-display flex items-center gap-2 text-lg font-bold text-white">
+              <BarChart3 className="h-5 w-5 text-[var(--muted)]" />
               Monthly Projections
             </h3>
             <p className="text-muted mt-1 text-xs">
@@ -396,7 +396,7 @@ export function MarginCalculator({
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <label className="text-xs text-slate-400">Orders/month</label>
+            <label className="text-xs text-[var(--muted)]">Orders/month</label>
             <input
               type="range"
               min={50}
@@ -406,7 +406,7 @@ export function MarginCalculator({
               onChange={(e) => setMonthlyOrders(Number(e.target.value))}
               className="w-32 accent-white"
             />
-            <span className="min-w-[3ch] text-sm font-semibold text-slate-200">
+            <span className="min-w-[3ch] text-sm font-semibold text-[var(--body-text)]">
               {monthlyOrders}
             </span>
           </div>
@@ -421,14 +421,14 @@ export function MarginCalculator({
                 key={ch.channel}
                 className={`rounded-lg border p-4 transition-colors ${
                   i === bestIdx
-                    ? "border-emerald-500/30 bg-emerald-500/5"
-                    : "border-neutral-800 bg-neutral-900/40"
+                    ? "border-[var(--success)]/30 bg-[var(--success)]/10"
+                    : "border-white/10 bg-white/[0.03]"
                 }`}
               >
-                <p className="text-xs font-medium text-slate-400">{ch.name}</p>
+                <p className="text-xs font-medium text-[var(--muted)]">{ch.name}</p>
                 <p
                   className={`mt-1 text-xl font-bold ${
-                    positive ? "text-emerald-400" : "text-rose-400"
+                    positive ? "text-[var(--success)]" : "text-[var(--danger)]"
                   }`}
                 >
                   {positive ? "+" : ""}
@@ -443,9 +443,9 @@ export function MarginCalculator({
                 <p className="text-muted mt-1 text-xs">
                   ₹{formatINR(result.netProfit).slice(1)} × {monthlyOrders} orders
                 </p>
-                <div className="mt-2 h-2 w-full rounded-full bg-neutral-800 overflow-hidden">
+                <div className="mt-2 h-2 w-full rounded-full bg-white/[0.03] overflow-hidden">
                   <motion.div
-                    className={`h-full rounded-full ${positive ? "bg-emerald-500" : "bg-rose-500"}`}
+                    className={`h-full rounded-full ${positive ? "bg-[var(--success)]" : "bg-[var(--danger)]"}`}
                     initial={{ width: 0 }}
                     animate={{
                       width: `${Math.min(100, Math.max(2, (Math.abs(result.netMarginPercent) / 40) * 100))}%`,
@@ -460,18 +460,18 @@ export function MarginCalculator({
       </div>
 
       {/* ── KEY INSIGHT ── */}
-      <div className="glass-panel rounded-xl border-l-4 border-l-cyan-500 p-5 sm:p-6">
+      <div className="glass-panel rounded-xl border-l-4 border-l-white/25 p-5 sm:p-6">
         <div className="flex gap-3">
-          <Info className="h-5 w-5 shrink-0 text-cyan-400 mt-0.5" />
+          <Info className="h-5 w-5 shrink-0 text-[var(--muted)] mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-slate-100">The Real Margin Story</p>
+            <p className="text-sm font-semibold text-white">The Real Margin Story</p>
             <p className="text-muted mt-1.5 text-sm leading-relaxed">
               A{" "}
-              <span className="font-semibold text-slate-200">
+              <span className="font-semibold text-[var(--body-text)]">
                 {formatINR(sellingPrice)}
               </span>{" "}
               product with{" "}
-              <span className="font-semibold text-slate-200">
+              <span className="font-semibold text-[var(--body-text)]">
                 {((sellingPrice - productCost) / sellingPrice * 100).toFixed(0)}%
               </span>{" "}
               gross margin actually yields{" "}
@@ -479,11 +479,11 @@ export function MarginCalculator({
                 {allResults[bestIdx].result.netMarginPercent.toFixed(1)}%
               </span>{" "}
               net on{" "}
-              <span className="font-semibold text-slate-200">
+              <span className="font-semibold text-[var(--body-text)]">
                 {allResults[bestIdx].ch.name}
               </span>{" "}
               after all marketplace fees, shipping, and RTO losses. That is{" "}
-              <span className="font-bold text-amber-400">
+              <span className="font-bold text-white">
                 {formatINR(allResults[bestIdx].result.netProfit)}
               </span>{" "}
               per order in your pocket.
@@ -535,7 +535,7 @@ function MarketplaceDetail({
   return (
     <div>
       <div className="flex items-center justify-between">
-        <h3 className="font-display text-lg font-bold text-slate-100">{ch.name}</h3>
+        <h3 className="font-display text-lg font-bold text-white">{ch.name}</h3>
         <span
           className={`rounded-md border px-2.5 py-1 text-xs font-semibold ${vc.className}`}
         >
@@ -546,7 +546,7 @@ function MarketplaceDetail({
       {/* Hero numbers */}
       <div className="mt-4 grid grid-cols-2 gap-4">
         <div className={`rounded-lg border p-3 ${marginBg(result.netMarginPercent)}`}>
-          <p className="text-xs text-slate-400">Net Profit</p>
+          <p className="text-xs text-[var(--muted)]">Net Profit</p>
           <p className={`text-2xl font-bold ${marginColor(result.netMarginPercent)}`}>
             {result.netProfit >= 0 ? "+" : ""}
             <CountUp to={Math.round(result.netProfit)} from={0} duration={0.6} separator="," />
@@ -554,7 +554,7 @@ function MarketplaceDetail({
           <p className="text-muted text-xs">per order</p>
         </div>
         <div className={`rounded-lg border p-3 ${marginBg(result.netMarginPercent)}`}>
-          <p className="text-xs text-slate-400">Net Margin</p>
+          <p className="text-xs text-[var(--muted)]">Net Margin</p>
           <p className={`text-2xl font-bold ${marginColor(result.netMarginPercent)}`}>
             <CountUp
               to={Math.round(result.netMarginPercent * 10) / 10}
@@ -576,12 +576,12 @@ function MarketplaceDetail({
             key={row.label}
             className="flex items-center justify-between py-1.5 text-sm"
           >
-            <span className="text-slate-400">{row.label}</span>
+            <span className="text-[var(--muted)]">{row.label}</span>
             <span
               className={`font-medium tabular-nums ${
                 row.type === "revenue"
-                  ? "text-slate-100"
-                  : "text-slate-300"
+                  ? "text-white"
+                  : "text-[var(--body-text)]"
               }`}
             >
               {row.type === "cost" ? "−" : ""}
@@ -589,8 +589,8 @@ function MarketplaceDetail({
             </span>
           </div>
         ))}
-        <div className="mt-1 border-t border-neutral-700 pt-2 flex items-center justify-between text-sm font-bold">
-          <span className="text-slate-200">Net Profit</span>
+        <div className="mt-1 border-t border-white/10 pt-2 flex items-center justify-between text-sm font-bold">
+          <span className="text-[var(--body-text)]">Net Profit</span>
           <span className={marginColor(result.netMarginPercent)}>
             {result.netProfit >= 0 ? "+" : ""}
             {formatINR(result.netProfit)}
@@ -618,7 +618,7 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-300">
+      <label className="text-xs font-medium text-[var(--body-text)]">
         <span className="flex items-center gap-1.5">
           {icon}
           {label}
@@ -626,7 +626,7 @@ function InputField({
       </label>
       <div className="relative mt-1.5">
         {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--text-faint)]">
             {prefix}
           </span>
         )}
@@ -635,9 +635,9 @@ function InputField({
           value={value}
           placeholder={placeholder}
           onChange={(e) => onChange(Number(e.target.value))}
-          className={`w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-900/80 ${
+          className={`w-full min-h-[40px] rounded-md border border-white/10 bg-white/[0.03] ${
             prefix ? "pl-7" : "px-3"
-          } pr-3 py-2 text-sm text-slate-200 transition-colors focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30`}
+          } pr-3 py-2 text-sm text-[var(--body-text)] transition-colors focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25`}
         />
       </div>
     </div>
@@ -665,13 +665,13 @@ function SliderField({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-300">
+      <label className="text-xs font-medium text-[var(--body-text)]">
         <span className="flex items-center justify-between">
           <span className="flex items-center gap-1.5">
             {icon}
             {label}
           </span>
-          <span className="font-semibold text-slate-200 tabular-nums">
+          <span className="font-semibold text-[var(--body-text)] tabular-nums">
             {value}{suffix}
           </span>
         </span>
@@ -683,7 +683,7 @@ function SliderField({
         step={1}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-1.5 w-full accent-amber-500"
+        className="mt-1.5 w-full accent-white"
       />
     </div>
   );

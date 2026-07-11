@@ -76,8 +76,8 @@ export function ShippingEstimator() {
       <div className="glass-panel grain rounded-xl p-5 space-y-5 h-fit lg:sticky lg:top-6">
         {/* Weight */}
         <div>
-          <label className="text-sm font-medium text-slate-200 flex items-center gap-2">
-            <Package className="h-4 w-4 text-cyan-400" />
+          <label className="text-sm font-medium text-[var(--body-text)] flex items-center gap-2">
+            <Package className="h-4 w-4 text-[var(--muted)]" />
             Weight
           </label>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -87,8 +87,8 @@ export function ShippingEstimator() {
                 onClick={() => setWeightGrams(preset.value)}
                 className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
                   weightGrams === preset.value
-                    ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                    : "bg-slate-800/60 text-slate-300 border border-slate-700 hover:border-slate-500"
+                    ? "bg-white/[0.06] text-white border border-white/[0.16]"
+                    : "bg-white/[0.03] text-[var(--body-text)] border border-white/10 hover:border-white/25"
                 }`}
               >
                 {preset.label}
@@ -101,12 +101,12 @@ export function ShippingEstimator() {
             max={30000}
             value={weightGrams}
             onChange={(e) => setWeightGrams(Number(e.target.value) || 500)}
-            className="mt-2 w-full rounded-md border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 focus:border-cyan-500 focus:outline-none"
+            className="mt-2 w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white focus:border-white/25 focus:outline-none"
             placeholder="Custom weight (grams)"
           />
 
           {/* Volumetric weight */}
-          <p className="mt-3 text-xs font-medium text-slate-400">
+          <p className="mt-3 text-xs font-medium text-[var(--muted)]">
             Box dimensions (cm, optional) — couriers bill max(actual, L×W×H÷5000)
           </p>
           <div className="mt-1.5 grid grid-cols-3 gap-2">
@@ -119,14 +119,14 @@ export function ShippingEstimator() {
                 onChange={(e) =>
                   setDims((prev) => ({ ...prev, [d]: Number(e.target.value) || 0 }))
                 }
-                className="w-full rounded-md border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100 focus:border-cyan-500 focus:outline-none"
+                className="w-full rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white focus:border-white/25 focus:outline-none"
                 placeholder={d.toUpperCase()}
                 aria-label={`${d === "l" ? "Length" : d === "w" ? "Width" : "Height"} in cm`}
               />
             ))}
           </div>
           {volumetricGrams > weightGrams && (
-            <p className="mt-1.5 text-xs text-amber-400">
+            <p className="mt-1.5 text-xs text-white">
               Volumetric weight wins: charged as {chargeableGrams} g, not {weightGrams} g
             </p>
           )}
@@ -134,8 +134,8 @@ export function ShippingEstimator() {
 
         {/* Zone */}
         <div>
-          <label className="text-sm font-medium text-slate-200 flex items-center gap-2">
-            <Truck className="h-4 w-4 text-cyan-400" />
+          <label className="text-sm font-medium text-[var(--body-text)] flex items-center gap-2">
+            <Truck className="h-4 w-4 text-[var(--muted)]" />
             Shipping Zone
           </label>
           <div className="mt-2 grid grid-cols-2 gap-2">
@@ -145,8 +145,8 @@ export function ShippingEstimator() {
                 onClick={() => setZone(z.value)}
                 className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
                   zone === z.value
-                    ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                    : "bg-slate-800/60 text-slate-300 border border-slate-700 hover:border-slate-500"
+                    ? "bg-white/[0.06] text-white border border-white/[0.16]"
+                    : "bg-white/[0.03] text-[var(--body-text)] border border-white/10 hover:border-white/25"
                 }`}
               >
                 {z.label}
@@ -157,9 +157,9 @@ export function ShippingEstimator() {
 
         {/* Order value */}
         <div>
-          <label className="text-sm font-medium text-slate-200">Order Value</label>
+          <label className="text-sm font-medium text-[var(--body-text)]">Order Value</label>
           <div className="relative mt-2">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--muted)]">
               ₹
             </span>
             <input
@@ -167,18 +167,18 @@ export function ShippingEstimator() {
               min={0}
               value={orderValue}
               onChange={(e) => setOrderValue(Number(e.target.value) || 0)}
-              className="w-full rounded-md border border-slate-700 bg-slate-900/60 pl-7 pr-3 py-2 text-sm text-slate-100 focus:border-cyan-500 focus:outline-none"
+              className="w-full rounded-md border border-white/10 bg-white/[0.03] pl-7 pr-3 py-2 text-sm text-white focus:border-white/25 focus:outline-none"
             />
           </div>
         </div>
 
         {/* COD toggle */}
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-slate-200">Cash on Delivery</label>
+          <label className="text-sm font-medium text-[var(--body-text)]">Cash on Delivery</label>
           <button
             onClick={() => setIsCod(!isCod)}
             className={`relative h-6 w-11 rounded-full transition-colors ${
-              isCod ? "bg-amber-500" : "bg-slate-700"
+              isCod ? "bg-white" : "bg-white/[0.06]"
             }`}
           >
             <span
@@ -212,19 +212,19 @@ export function ShippingEstimator() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="glass-panel grain rounded-xl border-rose-500/40 border p-4"
+            className="glass-panel grain rounded-xl border-[var(--danger)]/40 border p-4"
           >
             <div className="flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-[var(--danger)] shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-rose-300">Real vs Advertised</p>
-                <p className="text-sm text-slate-300 mt-1">
+                <p className="text-sm font-semibold text-[var(--danger)]">Real vs Advertised</p>
+                <p className="text-sm text-[var(--body-text)] mt-1">
                   Shiprocket advertised:{" "}
-                  <span className="text-slate-100 font-medium">
+                  <span className="text-white font-medium">
                     ₹{shiprocketBase}/500g
                   </span>{" "}
                   → Actual:{" "}
-                  <span className="text-rose-300 font-semibold">
+                  <span className="text-[var(--danger)] font-semibold">
                     ₹{shiprocketActual.toFixed(0)}
                   </span>{" "}
                   after COD + GST + fuel surcharge
@@ -239,15 +239,15 @@ export function ShippingEstimator() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass-panel grain rounded-xl border-rose-500/30 border p-4"
+          className="glass-panel grain rounded-xl border-[var(--danger)]/30 border p-4"
         >
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+            <AlertTriangle className="h-5 w-5 text-[var(--danger)] shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-semibold text-rose-300">RTO costs 2x shipping</p>
-              <p className="text-sm text-slate-300 mt-1">
+              <p className="text-sm font-semibold text-[var(--danger)]">RTO costs 2x shipping</p>
+              <p className="text-sm text-[var(--body-text)] mt-1">
                 Forward AND return journey ={" "}
-                <span className="text-rose-300 font-semibold">₹{rtoAmount.toFixed(0)}</span>{" "}
+                <span className="text-[var(--danger)] font-semibold">₹{rtoAmount.toFixed(0)}</span>{" "}
                 lost per failed delivery (cheapest carrier)
               </p>
             </div>
@@ -282,7 +282,7 @@ function CarrierCard({
       exit={{ opacity: 0, y: -10 }}
       transition={{ duration: 0.25, delay: index * 0.05 }}
       className={`glass-panel grain rounded-xl p-4 ${
-        isCheapest ? "border-l-4 border-l-emerald-400 border border-emerald-500/20" : ""
+        isCheapest ? "border-l-4 border-l-[var(--success)]/50 border border-[var(--success)]/20" : ""
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -290,14 +290,14 @@ function CarrierCard({
           <span className="text-lg" aria-hidden="true">
             {carrier.emoji}
           </span>
-          <span className="text-sm font-semibold text-slate-100">{carrier.carrier}</span>
+          <span className="text-sm font-semibold text-white">{carrier.carrier}</span>
           {codUnsupported && (
-            <span className="rounded-md bg-rose-500/15 px-2 py-0.5 text-xs font-medium text-rose-400">
+            <span className="rounded-md bg-[var(--danger)]/15 px-2 py-0.5 text-xs font-medium text-[var(--danger)]">
               No COD
             </span>
           )}
           {isCheapest && (
-            <span className="rounded-md bg-emerald-500/15 px-2 py-0.5 text-xs font-medium text-emerald-400">
+            <span className="rounded-md bg-[var(--success)]/15 px-2 py-0.5 text-xs font-medium text-[var(--success)]">
               Cheapest
             </span>
           )}
@@ -305,7 +305,7 @@ function CarrierCard({
         <div className="text-right">
           <p
             className={`text-xl font-bold ${
-              isCheapest ? "text-emerald-400" : "text-slate-100"
+              isCheapest ? "text-[var(--success)]" : "text-white"
             }`}
           >
             ₹<CountUp to={result.totalCost} duration={0.6} />
@@ -314,7 +314,7 @@ function CarrierCard({
       </div>
 
       {/* Breakdown */}
-      <p className="mt-2 text-xs text-slate-400">
+      <p className="mt-2 text-xs text-[var(--muted)]">
         Base ₹{result.baseCharge} + Weight ₹{result.weightSurcharge} + COD ₹
         {result.codFee} + GST ₹{result.gst.toFixed(0)} + Fuel ₹
         {result.fuelSurcharge.toFixed(0)}
@@ -322,17 +322,17 @@ function CarrierCard({
 
       {/* Delivery + RTO */}
       <div className="mt-3 flex flex-wrap items-center gap-3">
-        <span className="flex items-center gap-1 text-xs text-cyan-400">
+        <span className="flex items-center gap-1 text-xs text-[var(--muted)]">
           <Clock className="h-3.5 w-3.5" />
           {carrier.avgDeliveryDays[zone]} days
         </span>
         <span
           className={`text-xs font-medium px-2 py-0.5 rounded-md ${
             carrier.rtoCharges === "full-round-trip"
-              ? "bg-rose-500/10 text-rose-400"
+              ? "bg-[var(--danger)]/10 text-[var(--danger)]"
               : carrier.rtoCharges === "one-way-return"
-                ? "bg-amber-500/10 text-amber-400"
-                : "bg-emerald-500/10 text-emerald-400"
+                ? "bg-white/[0.06] text-white"
+                : "bg-[var(--success)]/10 text-[var(--success)]"
           }`}
         >
           {result.rtoRiskLabel}
@@ -344,7 +344,7 @@ function CarrierCard({
         {carrier.features.map((f) => (
           <span
             key={f}
-            className="rounded-md bg-slate-800/80 px-2 py-0.5 text-xs text-slate-400 border border-slate-700/50"
+            className="rounded-md bg-white/[0.03]/80 px-2 py-0.5 text-xs text-[var(--muted)] border border-white/10"
           >
             {f}
           </span>

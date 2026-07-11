@@ -47,10 +47,10 @@ const SEASONALITY_OPTIONS: { value: SeasonalityLevel; label: string }[] = [
 ];
 
 const VERDICT_CONFIG = {
-  excellent: { label: "Excellent Pick", color: "text-emerald-400", bg: "border-emerald-500/30 bg-emerald-500/5" },
-  good: { label: "Good Potential", color: "text-amber-400", bg: "border-amber-500/30 bg-amber-500/5" },
-  risky: { label: "Risky", color: "text-orange-400", bg: "border-orange-500/30 bg-orange-500/5" },
-  avoid: { label: "Avoid", color: "text-rose-400", bg: "border-rose-500/30 bg-rose-500/5" },
+  excellent: { label: "Excellent Pick", color: "text-[var(--success)]", bg: "border-[var(--success)]/30 bg-[var(--success)]/10" },
+  good: { label: "Good Potential", color: "text-white", bg: "border-white/[0.16] bg-white/[0.04]" },
+  risky: { label: "Risky", color: "text-white", bg: "border-white/[0.16] bg-white/[0.04]" },
+  avoid: { label: "Avoid", color: "text-[var(--danger)]", bg: "border-[var(--danger)]/30 bg-[var(--danger)]/10" },
 } as const;
 
 function defaultInputs(): ScorecardInputs {
@@ -69,17 +69,17 @@ function defaultInputs(): ScorecardInputs {
 }
 
 function scoreColor(score: number): string {
-  if (score >= 75) return "text-emerald-400";
-  if (score >= 55) return "text-amber-400";
-  if (score >= 35) return "text-orange-400";
-  return "text-rose-400";
+  if (score >= 75) return "text-[var(--success)]";
+  if (score >= 55) return "text-white";
+  if (score >= 35) return "text-white";
+  return "text-[var(--danger)]";
 }
 
 function scoreBg(score: number): string {
-  if (score >= 75) return "bg-emerald-500";
-  if (score >= 55) return "bg-amber-500";
-  if (score >= 35) return "bg-orange-500";
-  return "bg-rose-500";
+  if (score >= 75) return "bg-[var(--success)]";
+  if (score >= 55) return "bg-white";
+  if (score >= 35) return "bg-white";
+  return "bg-[var(--danger)]";
 }
 
 export function ProductScorecard() {
@@ -129,7 +129,7 @@ export function ProductScorecard() {
         <button
           type="button"
           onClick={addSlot}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-neutral-700 py-4 text-sm text-slate-400 transition-colors hover:border-neutral-500 hover:text-slate-200"
+          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/10 py-4 text-sm text-[var(--muted)] transition-colors hover:border-white/25 hover:text-[var(--body-text)]"
         >
           <Plus className="h-4 w-4" />
           Compare another product ({slots.length}/3)
@@ -174,11 +174,11 @@ function ProductForm({
   return (
     <div className="glass-panel grain rounded-xl p-5 sm:p-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-base font-bold text-slate-100">
+        <h2 className="font-display text-base font-bold text-white">
           {inputs.productName || `Product ${index + 1}`}
         </h2>
         {total > 1 && (
-          <button type="button" onClick={onRemove} className="text-slate-500 hover:text-slate-300 transition-colors">
+          <button type="button" onClick={onRemove} className="text-[var(--text-faint)] hover:text-[var(--body-text)] transition-colors">
             <X className="h-4 w-4" />
           </button>
         )}
@@ -242,7 +242,7 @@ function ScoreCard({ result, rank }: { result: ScorecardResult; rank?: number })
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Target className={`h-5 w-5 ${vc.color}`} />
-          <h3 className="font-display text-base font-bold text-slate-100">
+          <h3 className="font-display text-base font-bold text-white">
             {result.productName || `Product ${rank ?? 1}`}
           </h3>
         </div>
@@ -256,7 +256,7 @@ function ScoreCard({ result, rank }: { result: ScorecardResult; rank?: number })
         <p className={`text-5xl font-bold tabular-nums ${scoreColor(result.totalScore)}`}>
           {result.totalScore}
         </p>
-        <p className="text-xs text-slate-500 mt-1">out of 100</p>
+        <p className="text-xs text-[var(--text-faint)] mt-1">out of 100</p>
       </div>
 
       {/* Axis bars */}
@@ -264,10 +264,10 @@ function ScoreCard({ result, rank }: { result: ScorecardResult; rank?: number })
         {result.axes.map((axis) => (
           <div key={axis.name}>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">{axis.name}</span>
-              <span className="font-mono text-slate-300">{axis.score}</span>
+              <span className="text-[var(--muted)]">{axis.name}</span>
+              <span className="font-mono text-[var(--body-text)]">{axis.score}</span>
             </div>
-            <div className="mt-1 h-1.5 w-full rounded-full bg-neutral-800 overflow-hidden">
+            <div className="mt-1 h-1.5 w-full rounded-full bg-white/[0.03] overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${scoreBg(axis.score)}`}
                 style={{ width: `${axis.score}%` }}
@@ -281,8 +281,8 @@ function ScoreCard({ result, rank }: { result: ScorecardResult; rank?: number })
       {result.topRisks.length > 0 && (
         <div className="mt-4 space-y-1.5">
           {result.topRisks.map((risk, i) => (
-            <div key={i} className="flex items-start gap-2 text-xs text-slate-400">
-              <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-amber-500" />
+            <div key={i} className="flex items-start gap-2 text-xs text-[var(--muted)]">
+              <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0 text-white" />
               <span>{risk}</span>
             </div>
           ))}
@@ -298,13 +298,13 @@ function CompareTable({ results }: { results: ScorecardResult[] }) {
 
   return (
     <div className="glass-panel grain rounded-xl p-5 sm:p-6">
-      <h3 className="font-display text-sm font-bold text-slate-200">
+      <h3 className="font-display text-sm font-bold text-[var(--body-text)]">
         Side-by-Side Comparison
       </h3>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="text-left text-slate-500">
+            <tr className="text-left text-[var(--text-faint)]">
               <th className="pb-2 pr-3 font-medium">Axis</th>
               {results.map((r, i) => (
                 <th key={i} className="pb-2 pr-3 text-right font-medium">
@@ -313,10 +313,10 @@ function CompareTable({ results }: { results: ScorecardResult[] }) {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-800">
+          <tbody className="divide-y divide-white/10">
             {axisNames.map((name) => (
               <tr key={name}>
-                <td className="py-2 pr-3 text-slate-400">{name}</td>
+                <td className="py-2 pr-3 text-[var(--muted)]">{name}</td>
                 {results.map((r, i) => {
                   const axis = r.axes.find((a) => a.name === name)!;
                   return (
@@ -327,10 +327,10 @@ function CompareTable({ results }: { results: ScorecardResult[] }) {
                 })}
               </tr>
             ))}
-            <tr className="border-t border-neutral-700">
-              <td className="py-2.5 pr-3 font-bold text-slate-200">Total</td>
+            <tr className="border-t border-white/10">
+              <td className="py-2.5 pr-3 font-bold text-[var(--body-text)]">Total</td>
               {results.map((r, i) => (
-                <td key={i} className={`py-2.5 pr-3 text-right text-lg font-bold tabular-nums ${scoreColor(r.totalScore)} ${i === best ? "underline decoration-emerald-500/40 underline-offset-2" : ""}`}>
+                <td key={i} className={`py-2.5 pr-3 text-right text-lg font-bold tabular-nums ${scoreColor(r.totalScore)} ${i === best ? "underline decoration-[var(--success)]/40 underline-offset-2" : ""}`}>
                   {r.totalScore}
                 </td>
               ))}
@@ -357,16 +357,16 @@ function Field({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-300">{label}</label>
+      <label className="text-xs font-medium text-[var(--body-text)]">{label}</label>
       <div className="relative mt-1">
         {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">{prefix}</span>
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--text-faint)]">{prefix}</span>
         )}
         <input
           type={type}
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className={`w-full min-h-[36px] rounded-md border border-neutral-700 bg-neutral-900/80 ${prefix ? "pl-7" : "px-3"} pr-3 py-1.5 text-sm text-slate-200 transition-colors focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30`}
+          className={`w-full min-h-[36px] rounded-md border border-white/10 bg-white/[0.03] ${prefix ? "pl-7" : "px-3"} pr-3 py-1.5 text-sm text-[var(--body-text)] transition-colors focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25`}
         />
       </div>
     </div>
@@ -386,11 +386,11 @@ function Select({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-300">{label}</label>
+      <label className="text-xs font-medium text-[var(--body-text)]">{label}</label>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full min-h-[36px] rounded-md border border-neutral-700 bg-neutral-900/80 px-2 py-1.5 text-sm text-slate-200 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+        className="mt-1 w-full min-h-[36px] rounded-md border border-white/10 bg-white/[0.03] px-2 py-1.5 text-sm text-[var(--body-text)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>{o.label}</option>
@@ -413,7 +413,7 @@ function ToggleGroup({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-300">{label}</label>
+      <label className="text-xs font-medium text-[var(--body-text)]">{label}</label>
       <div className="mt-1 grid gap-1.5" style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}>
         {options.map((o) => (
           <button
@@ -422,8 +422,8 @@ function ToggleGroup({
             onClick={() => onChange(o.value)}
             className={`min-h-[36px] rounded-md border px-2 py-1 text-xs font-medium transition-colors ${
               value === o.value
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
-                : "border-neutral-700 bg-neutral-900/60 text-slate-400 hover:border-neutral-500"
+                ? "border-white/[0.16] bg-white/[0.06] text-white"
+                : "border-white/10 bg-white/[0.03] text-[var(--muted)] hover:border-white/25"
             }`}
           >
             {o.label}

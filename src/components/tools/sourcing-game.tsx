@@ -92,27 +92,27 @@ export function SourcingGame() {
     <div className="space-y-4">
       {/* Progress bar */}
       <div className="flex items-center gap-3">
-        <div className="h-1.5 flex-1 rounded-full bg-neutral-800 overflow-hidden">
+        <div className="h-1.5 flex-1 rounded-full bg-white/[0.03] overflow-hidden">
           <div
             className="h-full rounded-full bg-white/40 transition-all duration-300"
             style={{ width: `${((currentIndex + (phase === "reveal" ? 1 : 0)) / deck.length) * 100}%` }}
           />
         </div>
-        <span className="font-mono text-xs text-slate-500">
+        <span className="font-mono text-xs text-[var(--text-faint)]">
           {currentIndex + 1}/{deck.length}
         </span>
       </div>
 
       {/* Stats row */}
       <div className="flex gap-3">
-        <div className="flex items-center gap-1.5 rounded-md border border-neutral-800 px-3 py-1.5">
-          <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
-          <span className="font-mono text-xs text-slate-300">{score}</span>
+        <div className="flex items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5">
+          <ShieldCheck className="h-3.5 w-3.5 text-[var(--success)]" />
+          <span className="font-mono text-xs text-[var(--body-text)]">{score}</span>
         </div>
         {streak > 1 && (
-          <div className="flex items-center gap-1.5 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-1.5">
-            <Flame className="h-3.5 w-3.5 text-amber-400" />
-            <span className="font-mono text-xs text-amber-300">{streak} streak</span>
+          <div className="flex items-center gap-1.5 rounded-md border border-white/[0.16] bg-white/[0.04] px-3 py-1.5">
+            <Flame className="h-3.5 w-3.5 text-white" />
+            <span className="font-mono text-xs text-white">{streak} streak</span>
           </div>
         )}
       </div>
@@ -127,22 +127,22 @@ export function SourcingGame() {
         {/* Supplier header */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="font-display text-base font-bold text-slate-100">
+            <h3 className="font-display text-base font-bold text-white">
               {card.supplierName}
             </h3>
             <div className="mt-1 flex items-center gap-2">
-              <span className="font-mono text-[10px] uppercase tracking-widest text-slate-500">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-[var(--text-faint)]">
                 {card.platform}
               </span>
-              <span className="text-slate-600">·</span>
-              <span className="text-xs text-slate-400">{card.product}</span>
+              <span className="text-[var(--text-faintest)]">·</span>
+              <span className="text-xs text-[var(--muted)]">{card.product}</span>
             </div>
           </div>
         </div>
 
         {/* Chat snippet */}
-        <div className="mt-4 rounded-lg border border-neutral-800 bg-neutral-900/60 p-4">
-          <p className="text-sm leading-relaxed text-slate-300 italic">
+        <div className="mt-4 rounded-lg border border-white/10 bg-white/[0.03] p-4">
+          <p className="text-sm leading-relaxed text-[var(--body-text)] italic">
             &ldquo;{card.chatSnippet}&rdquo;
           </p>
         </div>
@@ -152,7 +152,7 @@ export function SourcingGame() {
             <button
               type="button"
               onClick={() => handleSwipe("trap")}
-              className="flex items-center justify-center gap-2 rounded-lg border border-rose-500/30 bg-rose-500/5 py-3 text-sm font-semibold text-rose-400 transition-colors hover:bg-rose-500/10 hover:border-rose-500/50"
+              className="flex items-center justify-center gap-2 rounded-lg border border-[var(--danger)]/30 bg-[var(--danger)]/10 py-3 text-sm font-semibold text-[var(--danger)] transition-colors hover:bg-[var(--danger)]/10 hover:border-[var(--danger)]/40"
             >
               <ShieldAlert className="h-4 w-4" />
               Trap
@@ -160,7 +160,7 @@ export function SourcingGame() {
             <button
               type="button"
               onClick={() => handleSwipe("legit")}
-              className="flex items-center justify-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/5 py-3 text-sm font-semibold text-emerald-400 transition-colors hover:bg-emerald-500/10 hover:border-emerald-500/50"
+              className="flex items-center justify-center gap-2 rounded-lg border border-[var(--success)]/30 bg-[var(--success)]/10 py-3 text-sm font-semibold text-[var(--success)] transition-colors hover:bg-[var(--success)]/10 hover:border-[var(--success)]/40"
             >
               <ShieldCheck className="h-4 w-4" />
               Legit
@@ -174,15 +174,15 @@ export function SourcingGame() {
             <div
               className={`rounded-lg border p-3 text-center text-sm font-semibold ${
                 lastAnswer.correct
-                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                  : "border-rose-500/30 bg-rose-500/10 text-rose-400"
+                  ? "border-[var(--success)]/30 bg-[var(--success)]/10 text-[var(--success)]"
+                  : "border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)]"
               }`}
             >
               {lastAnswer.correct ? "Correct!" : `Wrong — this was ${lastAnswer.card.verdict === "legit" ? "a legit supplier" : "a trap"}`}
             </div>
 
             {/* Explanation */}
-            <p className="text-sm leading-relaxed text-slate-400">
+            <p className="text-sm leading-relaxed text-[var(--muted)]">
               {lastAnswer.card.explanation}
             </p>
 
@@ -191,7 +191,7 @@ export function SourcingGame() {
               {lastAnswer.card.redFlags.map((f) => (
                 <span
                   key={f}
-                  className="inline-flex items-center gap-1 rounded-full border border-rose-500/20 bg-rose-500/5 px-2.5 py-1 text-[11px] text-rose-400"
+                  className="inline-flex items-center gap-1 rounded-full border border-[var(--danger)]/20 bg-[var(--danger)]/10 px-2.5 py-1 text-[11px] text-[var(--danger)]"
                 >
                   <X className="h-3 w-3" />
                   {f}
@@ -200,7 +200,7 @@ export function SourcingGame() {
               {lastAnswer.card.greenFlags.map((f) => (
                 <span
                   key={f}
-                  className="inline-flex items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-2.5 py-1 text-[11px] text-emerald-400"
+                  className="inline-flex items-center gap-1 rounded-full border border-[var(--success)]/20 bg-[var(--success)]/10 px-2.5 py-1 text-[11px] text-[var(--success)]"
                 >
                   <ShieldCheck className="h-3 w-3" />
                   {f}
@@ -227,11 +227,11 @@ function MenuScreen({ onStart }: { onStart: () => void }) {
   return (
     <div className="mx-auto max-w-md space-y-6 text-center">
       <div className="glass-panel grain rounded-xl p-8">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-neutral-700 bg-neutral-900">
-          <ShieldAlert className="h-8 w-8 text-amber-400" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.03]">
+          <ShieldAlert className="h-8 w-8 text-white" />
         </div>
 
-        <h2 className="font-display mt-5 text-xl font-bold text-slate-100">
+        <h2 className="font-display mt-5 text-xl font-bold text-white">
           Spot the Trap
         </h2>
         <p className="text-muted mt-2 text-sm leading-relaxed">
@@ -240,17 +240,17 @@ function MenuScreen({ onStart }: { onStart: () => void }) {
         </p>
 
         <div className="mt-5 grid grid-cols-3 gap-3">
-          <div className="rounded-lg border border-neutral-800 p-3">
+          <div className="rounded-lg border border-white/10 p-3">
             <p className="font-mono text-lg font-bold text-white">20</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Cards</p>
+            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Cards</p>
           </div>
-          <div className="rounded-lg border border-neutral-800 p-3">
+          <div className="rounded-lg border border-white/10 p-3">
             <p className="font-mono text-lg font-bold text-white">~5</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Minutes</p>
+            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Minutes</p>
           </div>
-          <div className="rounded-lg border border-neutral-800 p-3">
-            <p className="font-mono text-lg font-bold text-emerald-400">10</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Legit</p>
+          <div className="rounded-lg border border-white/10 p-3">
+            <p className="font-mono text-lg font-bold text-[var(--success)]">10</p>
+            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Legit</p>
           </div>
         </div>
 
@@ -287,37 +287,37 @@ function ResultsScreen({
   let verdictColor: string;
   if (pct >= 90) {
     verdict = "Sourcing Expert";
-    verdictColor = "text-emerald-400";
+    verdictColor = "text-[var(--success)]";
   } else if (pct >= 70) {
     verdict = "Sharp Eye";
-    verdictColor = "text-amber-400";
+    verdictColor = "text-white";
   } else if (pct >= 50) {
     verdict = "Learning Fast";
-    verdictColor = "text-orange-400";
+    verdictColor = "text-white";
   } else {
     verdict = "Needs Practice";
-    verdictColor = "text-rose-400";
+    verdictColor = "text-[var(--danger)]";
   }
 
   return (
     <div className="space-y-6">
       {/* Hero result */}
       <div className="glass-panel grain rounded-xl p-6 sm:p-8 text-center">
-        <Trophy className="mx-auto h-10 w-10 text-amber-400" />
+        <Trophy className="mx-auto h-10 w-10 text-white" />
         <p className={`mt-3 text-2xl font-bold ${verdictColor}`}>{verdict}</p>
         <p className="mt-2 text-4xl font-bold text-white tabular-nums">
           {score}/{total}
         </p>
-        <p className="text-sm text-slate-500 mt-1">{pct}% accuracy</p>
+        <p className="text-sm text-[var(--text-faint)] mt-1">{pct}% accuracy</p>
 
         <div className="mt-5 grid grid-cols-2 gap-3 max-w-xs mx-auto">
-          <div className="rounded-lg border border-neutral-800 p-3">
-            <p className="font-mono text-lg font-bold text-amber-400">{bestStreak}</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Best streak</p>
+          <div className="rounded-lg border border-white/10 p-3">
+            <p className="font-mono text-lg font-bold text-white">{bestStreak}</p>
+            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Best streak</p>
           </div>
-          <div className="rounded-lg border border-neutral-800 p-3">
-            <p className="font-mono text-lg font-bold text-rose-400">{total - score}</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Missed</p>
+          <div className="rounded-lg border border-white/10 p-3">
+            <p className="font-mono text-lg font-bold text-[var(--danger)]">{total - score}</p>
+            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Missed</p>
           </div>
         </div>
 
@@ -334,24 +334,24 @@ function ResultsScreen({
       {/* Mistakes review */}
       {wrong.length > 0 && (
         <div className="glass-panel grain rounded-xl p-5 sm:p-6">
-          <h3 className="font-display text-sm font-bold text-slate-200">
+          <h3 className="font-display text-sm font-bold text-[var(--body-text)]">
             Review Your Mistakes
           </h3>
           <div className="mt-3 space-y-3">
             {wrong.map(({ card, chose }) => (
-              <div key={card.id} className="rounded-lg border border-neutral-800 p-4">
+              <div key={card.id} className="rounded-lg border border-white/10 p-4">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-slate-200">{card.supplierName}</p>
+                  <p className="text-sm font-semibold text-[var(--body-text)]">{card.supplierName}</p>
                   <div className="flex gap-2">
-                    <span className="font-mono text-[10px] text-rose-400 uppercase">
+                    <span className="font-mono text-[10px] text-[var(--danger)] uppercase">
                       you: {chose}
                     </span>
-                    <span className="font-mono text-[10px] text-emerald-400 uppercase">
+                    <span className="font-mono text-[10px] text-[var(--success)] uppercase">
                       was: {card.verdict}
                     </span>
                   </div>
                 </div>
-                <p className="mt-2 text-xs text-slate-400 leading-relaxed">
+                <p className="mt-2 text-xs text-[var(--muted)] leading-relaxed">
                   {card.explanation}
                 </p>
               </div>

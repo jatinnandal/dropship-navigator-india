@@ -12,7 +12,7 @@ function highlightPlaceholders(message: string) {
   const parts = message.split(/(\{\{[^}]+\}\})/g);
   return parts.map((part, i) =>
     part.startsWith("{{") ? (
-      <span key={i} className="text-amber-400 font-semibold">
+      <span key={i} className="text-white font-semibold">
         {part}
       </span>
     ) : (
@@ -31,38 +31,38 @@ function TemplateBubble({ template }: { template: WhatsAppTemplate }) {
   };
 
   return (
-    <div className="bg-emerald-950/40 border border-emerald-800/30 rounded-xl rounded-tl-sm p-4 space-y-3">
+    <div className="bg-[var(--success)]/10 border border-[var(--success)]/30 rounded-xl rounded-tl-sm p-4 space-y-3">
       <div className="flex items-start justify-between gap-3">
-        <h3 className="text-sm font-semibold text-slate-200">
+        <h3 className="text-sm font-semibold text-[var(--body-text)]">
           {template.title}
         </h3>
         <button
           onClick={handleCopy}
-          className="shrink-0 p-1.5 rounded-md hover:bg-slate-700/50 transition-colors text-slate-400 hover:text-slate-200"
+          className="shrink-0 p-1.5 rounded-md hover:bg-white/[0.06] transition-colors text-[var(--muted)] hover:text-[var(--body-text)]"
           aria-label="Copy template"
         >
           {copied ? (
-            <Check className="h-4 w-4 text-emerald-400" />
+            <Check className="h-4 w-4 text-[var(--success)]" />
           ) : (
             <Copy className="h-4 w-4" />
           )}
         </button>
       </div>
 
-      <p className="text-sm leading-relaxed text-slate-300">
+      <p className="text-sm leading-relaxed text-[var(--body-text)]">
         {highlightPlaceholders(template.message)}
       </p>
 
       <div className="flex items-start gap-2 pt-1">
-        <Lightbulb className="h-3.5 w-3.5 mt-0.5 shrink-0 text-cyan-400" />
-        <p className="text-xs text-cyan-400 leading-relaxed">
+        <Lightbulb className="h-3.5 w-3.5 mt-0.5 shrink-0 text-[var(--muted)]" />
+        <p className="text-xs text-[var(--muted)] leading-relaxed">
           {template.bestPractice}
         </p>
       </div>
 
       <div className="flex items-center gap-1.5">
-        <Clock className="h-3 w-3 text-slate-500" />
-        <span className="text-xs text-slate-500">{template.timing}</span>
+        <Clock className="h-3 w-3 text-[var(--text-faint)]" />
+        <span className="text-xs text-[var(--text-faint)]">{template.timing}</span>
       </div>
     </div>
   );
@@ -93,13 +93,13 @@ export function WhatsAppTemplateViewer() {
     <div className="space-y-6">
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-faint)]" />
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search templates..."
-          className="w-full rounded-lg border border-slate-700 bg-slate-900/60 py-2.5 pl-10 pr-4 text-sm text-slate-200 placeholder:text-slate-500 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+          className="w-full rounded-lg border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm text-[var(--body-text)] placeholder:text-[var(--text-faint)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
         />
       </div>
 
@@ -111,8 +111,8 @@ export function WhatsAppTemplateViewer() {
             onClick={() => setActiveCategory(cat.id)}
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
               activeCategory === cat.id
-                ? "bg-amber-500/20 text-amber-400 border border-amber-500/40"
-                : "bg-slate-800/60 text-slate-400 border border-slate-700 hover:text-slate-200"
+                ? "bg-white/[0.06] text-white border border-white/[0.16]"
+                : "bg-white/[0.03] text-[var(--muted)] border border-white/10 hover:text-[var(--body-text)]"
             }`}
           >
             {cat.label}
@@ -126,7 +126,7 @@ export function WhatsAppTemplateViewer() {
           <TemplateBubble key={t.id} template={t} />
         ))}
         {filtered.length === 0 && (
-          <p className="text-sm text-slate-500 col-span-full py-8 text-center">
+          <p className="text-sm text-[var(--text-faint)] col-span-full py-8 text-center">
             No templates match your search.
           </p>
         )}

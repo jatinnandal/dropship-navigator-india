@@ -93,7 +93,7 @@ export function CashflowSimulator() {
               onClick={() => setChannel(ch.value)}
               className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
                 channel === ch.value
-                  ? "bg-white/20 text-amber-400 border border-amber-500/40"
+                  ? "bg-white/20 text-white border border-white/[0.16]"
                   : "bg-white/[0.04] text-[var(--muted)] border border-white/[0.1] hover:text-white"
               }`}
             >
@@ -182,7 +182,7 @@ export function CashflowSimulator() {
               />
             </button>
             <span className="text-sm text-[var(--body-text)] flex items-center gap-1.5">
-              <Zap className="h-4 w-4 text-amber-400" />
+              <Zap className="h-4 w-4 text-white" />
               Festival Surge
             </span>
           </div>
@@ -239,16 +239,16 @@ export function CashflowSimulator() {
               >
                 {/* Festival zone highlight */}
                 {isFestival && (
-                  <div className="absolute inset-0 bg-white/5 border-x border-amber-500/20 rounded-sm z-0" />
+                  <div className="absolute inset-0 bg-white/5 border-x border-white/10 rounded-sm z-0" />
                 )}
 
                 {/* Bar */}
                 <div className="relative flex-1 w-full flex items-center justify-center">
                   <motion.div
                     className={`w-full max-w-[28px] rounded-sm ${
-                      isPositive ? "bg-emerald-500/70" : "bg-rose-500/70"
-                    } ${isBreakEven ? "ring-2 ring-amber-400" : ""} ${
-                      isLowest ? "ring-2 ring-rose-400" : ""
+                      isPositive ? "bg-[var(--success)]/70" : "bg-[var(--danger)]/70"
+                    } ${isBreakEven ? "ring-2 ring-white/25" : ""} ${
+                      isLowest ? "ring-2 ring-[var(--danger)]" : ""
                     }`}
                     style={{
                       height: barHeight,
@@ -271,22 +271,22 @@ export function CashflowSimulator() {
         {/* Legend */}
         <div className="flex flex-wrap gap-4 mt-4 text-xs text-[var(--muted)]">
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-emerald-500/70" /> Positive
+            <span className="h-2.5 w-2.5 rounded-sm bg-[var(--success)]/70" /> Positive
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm bg-rose-500/70" /> Negative
+            <span className="h-2.5 w-2.5 rounded-sm bg-[var(--danger)]/70" /> Negative
           </span>
           {result.breakEvenDay && (
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm ring-2 ring-amber-400 bg-transparent" /> Break-even (Day {result.breakEvenDay})
+              <span className="h-2.5 w-2.5 rounded-sm ring-2 ring-white/25 bg-transparent" /> Break-even (Day {result.breakEvenDay})
             </span>
           )}
           <span className="flex items-center gap-1.5">
-            <span className="h-2.5 w-2.5 rounded-sm ring-2 ring-rose-400 bg-transparent" /> Lowest (Day {result.lowestDay})
+            <span className="h-2.5 w-2.5 rounded-sm ring-2 ring-[var(--danger)] bg-transparent" /> Lowest (Day {result.lowestDay})
           </span>
           {festivalEnabled && (
             <span className="flex items-center gap-1.5">
-              <span className="h-2.5 w-2.5 rounded-sm bg-white/30 border border-amber-500/40" /> Festival
+              <span className="h-2.5 w-2.5 rounded-sm bg-white/30 border border-white/[0.16]" /> Festival
             </span>
           )}
         </div>
@@ -295,58 +295,58 @@ export function CashflowSimulator() {
       {/* ── Summary Metrics ── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <MetricCard
-          icon={<Calendar className="h-5 w-5 text-amber-400" />}
+          icon={<Calendar className="h-5 w-5 text-white" />}
           label="Break-even Day"
           value={result.breakEvenDay ? `Day ${result.breakEvenDay}` : "Not reached"}
-          valueColor={result.breakEvenDay ? "text-amber-400" : "text-rose-400"}
+          valueColor={result.breakEvenDay ? "text-white" : "text-[var(--danger)]"}
         />
         <MetricCard
-          icon={<Wallet className="h-5 w-5 text-cyan-400" />}
+          icon={<Wallet className="h-5 w-5 text-[var(--muted)]" />}
           label="Peak Capital Needed"
           value={formatINR(result.peakCapitalNeeded)}
-          valueColor="text-cyan-400"
+          valueColor="text-[var(--muted)]"
         />
         <MetricCard
-          icon={<TrendingUp className="h-5 w-5 text-emerald-400" />}
+          icon={<TrendingUp className="h-5 w-5 text-[var(--success)]" />}
           label="90-Day Profit"
           value={formatINR(result.totalProfit)}
-          valueColor={result.totalProfit >= 0 ? "text-emerald-400" : "text-rose-400"}
+          valueColor={result.totalProfit >= 0 ? "text-[var(--success)]" : "text-[var(--danger)]"}
         />
         <MetricCard
-          icon={<TrendingDown className="h-5 w-5 text-rose-400" />}
+          icon={<TrendingDown className="h-5 w-5 text-[var(--danger)]" />}
           label="Lowest Balance"
           value={`${formatINR(result.lowestBalance)} (Day ${result.lowestDay})`}
-          valueColor={result.lowestBalance >= 0 ? "text-white" : "text-rose-400"}
+          valueColor={result.lowestBalance >= 0 ? "text-white" : "text-[var(--danger)]"}
         />
       </div>
 
       {/* ── Key Insights ── */}
-      <div className="rounded-xl border border-cyan-500/30 bg-cyan-500/5 p-5">
-        <h3 className="text-sm font-semibold text-cyan-400 mb-3 flex items-center gap-2">
+      <div className="rounded-xl border border-white/25/30 bg-white/[0.04] p-5">
+        <h3 className="text-sm font-semibold text-[var(--muted)] mb-3 flex items-center gap-2">
           <AlertTriangle className="h-4 w-4" />
           Key Insights
         </h3>
         <ul className="space-y-2 text-sm text-[var(--body-text)]">
           <li>
-            You need <span className="font-semibold text-cyan-300">{formatINR(result.peakCapitalNeeded)}</span> to survive the settlement delay gap.
+            You need <span className="font-semibold text-[var(--muted)]">{formatINR(result.peakCapitalNeeded)}</span> to survive the settlement delay gap.
           </li>
           {result.breakEvenDay && (
             <li>
-              Break-even at <span className="font-semibold text-amber-400">Day {result.breakEvenDay}</span> — {ordersPerDay * result.breakEvenDay} orders to recover initial investment.
+              Break-even at <span className="font-semibold text-white">Day {result.breakEvenDay}</span> — {ordersPerDay * result.breakEvenDay} orders to recover initial investment.
             </li>
           )}
           {!result.breakEvenDay && (
-            <li className="text-rose-400">
+            <li className="text-[var(--danger)]">
               Break-even not reached in 90 days. Consider reducing costs or increasing orders.
             </li>
           )}
           {festivalEnabled && (
             <li>
-              Festival period boosts revenue <span className="font-semibold text-amber-400">{festivalMultiplier}x</span> but requires extra capital upfront for increased orders.
+              Festival period boosts revenue <span className="font-semibold text-white">{festivalMultiplier}x</span> but requires extra capital upfront for increased orders.
             </li>
           )}
           {result.lowestBalance < 0 && (
-            <li className="text-rose-400">
+            <li className="text-[var(--danger)]">
               Your balance goes negative on Day {result.lowestDay}. You&apos;ll need additional funding or credit.
             </li>
           )}
@@ -388,12 +388,12 @@ export function CashflowSimulator() {
                       .map((d) => (
                         <tr key={d.day} className="border-b border-white/[0.08]">
                           <td className="py-2 pr-4 text-[var(--body-text)] font-medium">Day {d.day}</td>
-                          <td className={`py-2 px-3 text-right font-mono ${d.isNegative ? "text-rose-400" : "text-emerald-400"}`}>
+                          <td className={`py-2 px-3 text-right font-mono ${d.isNegative ? "text-[var(--danger)]" : "text-[var(--success)]"}`}>
                             {formatINR(d.balance)}
                           </td>
                           <td className="py-2 px-3 text-right text-[var(--muted)]">{formatINR(d.revenue)}</td>
                           <td className="py-2 px-3 text-right text-[var(--muted)]">{formatINR(d.expenses)}</td>
-                          <td className="py-2 px-3 text-right text-cyan-400">{formatINR(d.settlementIncoming)}</td>
+                          <td className="py-2 px-3 text-right text-[var(--muted)]">{formatINR(d.settlementIncoming)}</td>
                         </tr>
                       ))}
                   </tbody>

@@ -65,7 +65,7 @@ function MarketplaceSelector({
             onClick={() => onToggle(m)}
             className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
               active
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-400"
+                ? "border-white/[0.16] bg-white/[0.06] text-white"
                 : "border-white/[0.12] bg-white/[0.04] text-[var(--muted)] hover:border-white/[0.2] hover:text-[var(--body-text)]"
             }`}
           >
@@ -141,7 +141,7 @@ function DocumentCard({
   return (
     <div
       className={`panel-chip rounded-lg p-4 transition-all ${
-        checked ? "border-emerald-500/30 bg-emerald-500/5" : ""
+        checked ? "border-[var(--success)]/30 bg-[var(--success)]/10" : ""
       }`}
     >
       <div className="flex items-start gap-3">
@@ -149,7 +149,7 @@ function DocumentCard({
           onClick={onToggle}
           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all ${
             checked
-              ? "border-emerald-500 bg-emerald-500/20 text-emerald-400"
+              ? "border-[var(--success)]/40 bg-[var(--success)]/20 text-[var(--success)]"
               : "border-white/[0.2] text-transparent hover:border-white/[0.35]"
           }`}
           aria-label={checked ? `Unmark ${doc.name}` : `Mark ${doc.name} as ready`}
@@ -176,8 +176,8 @@ function DocumentCard({
           {/* Cross-check indicators */}
           {doc.crossCheckWith && doc.crossCheckWith.length > 0 && (
             <div className="mt-2 flex items-center gap-1.5 flex-wrap">
-              <LinkIcon className="h-3 w-3 text-cyan-400" />
-              <span className="text-[10px] text-cyan-400 font-medium">
+              <LinkIcon className="h-3 w-3 text-[var(--muted)]" />
+              <span className="text-[10px] text-[var(--muted)] font-medium">
                 Must match:
               </span>
               {doc.crossCheckWith.map((id) => {
@@ -188,8 +188,8 @@ function DocumentCard({
                     key={id}
                     className={`rounded px-1.5 py-0.5 text-[10px] font-medium ${
                       missing
-                        ? "bg-rose-500/10 text-rose-400 border border-rose-500/30"
-                        : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                        ? "bg-[var(--danger)]/10 text-[var(--danger)] border border-[var(--danger)]/30"
+                        : "bg-[var(--success)]/10 text-[var(--success)] border border-[var(--success)]/30"
                     }`}
                   >
                     {linked?.name ?? id}
@@ -201,9 +201,9 @@ function DocumentCard({
 
           {/* Warning if cross-check incomplete */}
           {checked && crossCheckMissing.length > 0 && (
-            <div className="mt-2 flex items-center gap-1.5 rounded bg-rose-500/10 border border-rose-500/20 px-2 py-1.5">
-              <AlertTriangle className="h-3 w-3 text-rose-400 shrink-0" />
-              <span className="text-[10px] text-rose-400">
+            <div className="mt-2 flex items-center gap-1.5 rounded bg-[var(--danger)]/10 border border-[var(--danger)]/20 px-2 py-1.5">
+              <AlertTriangle className="h-3 w-3 text-[var(--danger)] shrink-0" />
+              <span className="text-[10px] text-[var(--danger)]">
                 Cross-check documents not ready:{" "}
                 {crossCheckMissing
                   .map((id) => DOCUMENTS.find((d) => d.id === id)?.name ?? id)
@@ -215,12 +215,12 @@ function DocumentCard({
           <ExpandableSection
             title="Common Mistakes"
             items={doc.commonMistakes}
-            accentClass="text-rose-400/80"
+            accentClass="text-[var(--danger)]/80"
           />
           <ExpandableSection
             title="Validation Tips"
             items={doc.validationTips}
-            accentClass="text-cyan-400/80"
+            accentClass="text-[var(--muted)]/80"
           />
         </div>
       </div>
@@ -233,7 +233,7 @@ function CrossCheckMatrix({ allChecked }: { allChecked: Record<string, boolean> 
   return (
     <div className="panel rounded-lg p-4">
       <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
-        <LinkIcon className="h-4 w-4 text-cyan-400" />
+        <LinkIcon className="h-4 w-4 text-[var(--muted)]" />
         Cross-Validation Matrix
       </h3>
       <div className="space-y-2">
@@ -249,23 +249,23 @@ function CrossCheckMatrix({ allChecked }: { allChecked: Record<string, boolean> 
               key={check.id}
               className={`rounded-md border px-3 py-2 ${
                 allRelatedChecked
-                  ? "border-emerald-500/30 bg-emerald-500/5"
+                  ? "border-[var(--success)]/30 bg-[var(--success)]/10"
                   : someRelatedChecked
-                  ? "border-amber-500/30 bg-amber-500/5"
-                  : "border-rose-500/30 bg-rose-500/5"
+                  ? "border-white/[0.16] bg-white/[0.04]"
+                  : "border-[var(--danger)]/30 bg-[var(--danger)]/10"
               }`}
             >
               <div className="flex items-center gap-2">
                 {check.severity === "critical" ? (
                   <AlertTriangle
                     className={`h-3.5 w-3.5 shrink-0 ${
-                      allRelatedChecked ? "text-emerald-400" : "text-rose-400"
+                      allRelatedChecked ? "text-[var(--success)]" : "text-[var(--danger)]"
                     }`}
                   />
                 ) : (
                   <AlertTriangle
                     className={`h-3.5 w-3.5 shrink-0 ${
-                      allRelatedChecked ? "text-emerald-400" : "text-amber-400"
+                      allRelatedChecked ? "text-[var(--success)]" : "text-white"
                     }`}
                   />
                 )}
@@ -275,8 +275,8 @@ function CrossCheckMatrix({ allChecked }: { allChecked: Record<string, boolean> 
                 <span
                   className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-medium ${
                     check.severity === "critical"
-                      ? "bg-rose-500/20 text-rose-400"
-                      : "bg-amber-500/20 text-amber-400"
+                      ? "bg-[var(--danger)]/20 text-[var(--danger)]"
+                      : "bg-white/[0.06] text-white"
                   }`}
                 >
                   {check.severity}
@@ -422,11 +422,11 @@ export function DocumentChecker() {
   return (
     <div className="space-y-6">
       {/* Key Insight */}
-      <div className="rounded-lg border border-rose-500/40 bg-rose-500/5 p-4">
+      <div className="rounded-lg border border-[var(--danger)]/40 bg-[var(--danger)]/10 p-4">
         <div className="flex items-start gap-3">
-          <ShieldAlert className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+          <ShieldAlert className="h-5 w-5 text-[var(--danger)] shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-rose-300">
+            <p className="text-sm font-semibold text-[var(--danger)]">
               Document name mismatches are the #1 rejection reason on Amazon India
             </p>
             <p className="text-muted mt-1 text-xs leading-relaxed">
@@ -458,26 +458,26 @@ export function DocumentChecker() {
       <div className="panel rounded-lg p-4 sticky top-4 z-10">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <FileCheck className="h-4 w-4 text-amber-400" />
+            <FileCheck className="h-4 w-4 text-white" />
             <span className="text-sm font-semibold text-white">
               {checkedCount} of {totalDocs} documents ready
             </span>
           </div>
           <div className="flex items-center gap-1.5">
             {verdict === "ready" && (
-              <span className="flex items-center gap-1 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-400">
+              <span className="flex items-center gap-1 rounded-md border border-[var(--success)]/30 bg-[var(--success)]/10 px-2 py-1 text-xs font-medium text-[var(--success)]">
                 <ShieldCheck className="h-3 w-3" />
                 Ready to submit
               </span>
             )}
             {verdict === "not-ready" && (
-              <span className="flex items-center gap-1 rounded-md border border-rose-500/30 bg-rose-500/10 px-2 py-1 text-xs font-medium text-rose-400">
+              <span className="flex items-center gap-1 rounded-md border border-[var(--danger)]/30 bg-[var(--danger)]/10 px-2 py-1 text-xs font-medium text-[var(--danger)]">
                 <ShieldX className="h-3 w-3" />
                 Not ready
               </span>
             )}
             {(verdict === "partial" || verdict === "partial-warning") && (
-              <span className="flex items-center gap-1 rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs font-medium text-amber-400">
+              <span className="flex items-center gap-1 rounded-md border border-white/[0.16] bg-white/[0.06] px-2 py-1 text-xs font-medium text-white">
                 <ShieldAlert className="h-3 w-3" />
                 Partially ready
               </span>
@@ -507,14 +507,14 @@ export function DocumentChecker() {
             {crossCheckWarnings.slice(0, 3).map((w, i) => (
               <div
                 key={i}
-                className="flex items-center gap-1.5 text-[11px] text-rose-400"
+                className="flex items-center gap-1.5 text-[11px] text-[var(--danger)]"
               >
                 <AlertTriangle className="h-3 w-3 shrink-0" />
                 {w}
               </div>
             ))}
             {crossCheckWarnings.length > 3 && (
-              <p className="text-[10px] text-rose-400/60 pl-4">
+              <p className="text-[10px] text-[var(--danger)]/60 pl-4">
                 +{crossCheckWarnings.length - 3} more warnings
               </p>
             )}
@@ -531,7 +531,7 @@ export function DocumentChecker() {
             docs.length > 0 && (
               <div key={category}>
                 <h3 className="text-sm font-semibold text-[var(--body-text)] mb-3 flex items-center gap-2">
-                  <span className="h-1 w-1 rounded-full bg-amber-400" />
+                  <span className="h-1 w-1 rounded-full bg-white" />
                   {CATEGORY_LABELS[category]}
                 </h3>
                 <div className="space-y-3">

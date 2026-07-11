@@ -87,12 +87,12 @@ export function SupplierScorecard() {
   // scorecard is not an "Avoid This Supplier" verdict.
   const verdictColor =
     answeredCount === 0
-      ? "text-slate-400 border-white/[0.14] bg-white/[0.03]"
+      ? "text-[var(--muted)] border-white/[0.14] bg-white/[0.03]"
       : result.overallVerdict === "recommended"
-        ? "text-emerald-400 border-emerald-500/40 bg-emerald-500/10"
+        ? "text-[var(--success)] border-[var(--success)]/40 bg-[var(--success)]/10"
         : result.overallVerdict === "proceed-with-caution"
-          ? "text-amber-400 border-amber-500/40 bg-amber-500/10"
-          : "text-rose-400 border-rose-500/40 bg-rose-500/10";
+          ? "text-white border-white/[0.16] bg-white/[0.06]"
+          : "text-[var(--danger)] border-[var(--danger)]/40 bg-[var(--danger)]/10";
 
   const verdictLabel =
     answeredCount === 0
@@ -105,12 +105,12 @@ export function SupplierScorecard() {
 
   const scoreColor =
     answeredCount === 0
-      ? "text-slate-500"
+      ? "text-[var(--text-faint)]"
       : result.totalScore >= 70
-        ? "text-emerald-400"
+        ? "text-[var(--success)]"
         : result.totalScore >= 40
-          ? "text-amber-400"
-          : "text-rose-400";
+          ? "text-white"
+          : "text-[var(--danger)]";
 
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
@@ -118,7 +118,7 @@ export function SupplierScorecard() {
       <div className="space-y-6">
         {/* Supplier name input */}
         <div className="glass-panel grain rounded-xl border p-4">
-          <label className="text-sm font-medium text-slate-300">
+          <label className="text-sm font-medium text-[var(--body-text)]">
             Supplier Name
           </label>
           <input
@@ -126,7 +126,7 @@ export function SupplierScorecard() {
             value={supplierName}
             onChange={(e) => setSupplierName(e.target.value)}
             placeholder="e.g., Rajesh Textiles, Surat"
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900/50 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+            className="mt-2 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-[var(--text-faint)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
           />
         </div>
 
@@ -139,21 +139,21 @@ export function SupplierScorecard() {
           return (
             <div key={cat} className="glass-panel grain rounded-xl border p-5">
               <div className="flex items-center gap-3 mb-4">
-                <div className="inline-flex rounded-lg border border-slate-700 bg-slate-800/50 p-2">
-                  <Icon className="h-5 w-5 text-amber-400" />
+                <div className="inline-flex rounded-lg border border-white/10 bg-white/[0.03] p-2">
+                  <Icon className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="font-display text-base font-semibold text-slate-100">
+                  <h2 className="font-display text-base font-semibold text-white">
                     {CATEGORY_META[cat].label}
                   </h2>
                   {catResult && (
                     <span
                       className={`text-xs font-medium ${
                         catResult.verdict === "pass"
-                          ? "text-emerald-400"
+                          ? "text-[var(--success)]"
                           : catResult.verdict === "caution"
-                            ? "text-amber-400"
-                            : "text-rose-400"
+                            ? "text-white"
+                            : "text-[var(--danger)]"
                       }`}
                     >
                       {catResult.score.toFixed(1)}/10
@@ -179,11 +179,11 @@ export function SupplierScorecard() {
         })}
 
         {/* Key insight box */}
-        <div className="rounded-xl border border-rose-500/30 bg-rose-500/5 p-5">
+        <div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/10 p-5">
           <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-rose-400 mt-0.5 shrink-0" />
-            <div className="space-y-2 text-sm text-slate-300">
-              <p className="font-medium text-rose-300">Critical Context</p>
+            <AlertTriangle className="h-5 w-5 text-[var(--danger)] mt-0.5 shrink-0" />
+            <div className="space-y-2 text-sm text-[var(--body-text)]">
+              <p className="font-medium text-[var(--danger)]">Critical Context</p>
               <ul className="list-disc pl-4 space-y-1">
                 <li>
                   IndiaMART has been on the USTR &quot;Notorious Markets&quot; list since 2018
@@ -191,7 +191,7 @@ export function SupplierScorecard() {
                 <li>
                   60-70% of early seller failures trace back to supplier issues
                 </li>
-                <li className="font-medium text-slate-100">
+                <li className="font-medium text-white">
                   ALWAYS order samples before committing to bulk — no exceptions
                 </li>
               </ul>
@@ -248,10 +248,10 @@ function CriterionRow({
   onToggle: (id: string) => void;
 }) {
   return (
-    <div className="rounded-lg border border-slate-800 bg-slate-900/30 p-3">
+    <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1">
-          <p className="text-sm font-medium text-slate-200">
+          <p className="text-sm font-medium text-[var(--body-text)]">
             {criterion.question}
           </p>
           <div className="mt-1 flex items-center gap-1">
@@ -259,18 +259,18 @@ function CriterionRow({
               <span
                 key={i}
                 className={`h-1.5 w-1.5 rounded-full ${
-                  i < criterion.weight ? "bg-amber-400" : "bg-slate-700"
+                  i < criterion.weight ? "bg-white" : "bg-white/[0.06]"
                 }`}
               />
             ))}
-            <span className="ml-1.5 text-[10px] text-slate-500">
+            <span className="ml-1.5 text-[10px] text-[var(--text-faint)]">
               weight {criterion.weight}
             </span>
           </div>
         </div>
         <button
           onClick={() => onToggle(criterion.id)}
-          className="shrink-0 rounded p-1 text-slate-500 hover:text-slate-300 transition-colors"
+          className="shrink-0 rounded p-1 text-[var(--text-faint)] hover:text-[var(--body-text)] transition-colors"
           aria-label="Toggle details"
         >
           {isExpanded ? (
@@ -292,11 +292,11 @@ function CriterionRow({
               className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-all ${
                 isSelected
                   ? opt.value >= 7.5
-                    ? "border-emerald-500/50 bg-emerald-500/20 text-emerald-300"
+                    ? "border-[var(--success)]/40 bg-[var(--success)]/20 text-[var(--success)]"
                     : opt.value >= 5
-                      ? "border-amber-500/50 bg-amber-500/20 text-amber-300"
-                      : "border-rose-500/50 bg-rose-500/20 text-rose-300"
-                  : "border-slate-700 bg-slate-800/50 text-slate-400 hover:border-slate-600 hover:text-slate-300"
+                      ? "border-white/[0.16] bg-white/[0.06] text-white"
+                      : "border-[var(--danger)]/40 bg-[var(--danger)]/20 text-[var(--danger)]"
+                  : "border-white/10 bg-white/[0.03] text-[var(--muted)] hover:border-white/10 hover:text-[var(--body-text)]"
               }`}
             >
               {opt.label}
@@ -315,19 +315,19 @@ function CriterionRow({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="mt-3 space-y-2 border-t border-slate-800 pt-3">
+            <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
               {criterion.redFlags.length > 0 && (
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-rose-400 font-medium mb-1">
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--danger)] font-medium mb-1">
                     Red Flags
                   </p>
                   <ul className="space-y-0.5">
                     {criterion.redFlags.map((flag, i) => (
                       <li
                         key={i}
-                        className="text-xs text-rose-300/80 flex items-start gap-1.5"
+                        className="text-xs text-[var(--danger)] flex items-start gap-1.5"
                       >
-                        <span className="mt-1.5 h-1 w-1 rounded-full bg-rose-400 shrink-0" />
+                        <span className="mt-1.5 h-1 w-1 rounded-full bg-[var(--danger)] shrink-0" />
                         {flag}
                       </li>
                     ))}
@@ -336,16 +336,16 @@ function CriterionRow({
               )}
               {criterion.greenFlags.length > 0 && (
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-emerald-400 font-medium mb-1">
+                  <p className="text-[10px] uppercase tracking-wider text-[var(--success)] font-medium mb-1">
                     Green Flags
                   </p>
                   <ul className="space-y-0.5">
                     {criterion.greenFlags.map((flag, i) => (
                       <li
                         key={i}
-                        className="text-xs text-emerald-300/80 flex items-start gap-1.5"
+                        className="text-xs text-[var(--success)]/80 flex items-start gap-1.5"
                       >
-                        <CheckCircle2 className="mt-0.5 h-3 w-3 text-emerald-400 shrink-0" />
+                        <CheckCircle2 className="mt-0.5 h-3 w-3 text-[var(--success)] shrink-0" />
                         {flag}
                       </li>
                     ))}
@@ -353,8 +353,8 @@ function CriterionRow({
                 </div>
               )}
               <div className="flex items-start gap-1.5 pt-1">
-                <Info className="h-3 w-3 text-cyan-400 mt-0.5 shrink-0" />
-                <p className="text-xs text-cyan-300/80">{criterion.tip}</p>
+                <Info className="h-3 w-3 text-[var(--muted)] mt-0.5 shrink-0" />
+                <p className="text-xs text-[var(--muted)]">{criterion.tip}</p>
               </div>
             </div>
           </motion.div>
@@ -388,7 +388,7 @@ function VerdictCard({
     <div className="glass-panel grain rounded-xl border p-5 space-y-4">
       {/* Overall score */}
       <div className="text-center">
-        <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">
+        <p className="text-xs text-[var(--text-faint)] uppercase tracking-wider mb-1">
           Overall Score
         </p>
         <motion.p
@@ -399,7 +399,7 @@ function VerdictCard({
           transition={{ type: "spring", stiffness: 200 }}
         >
           {answeredCount === 0 ? "—" : result.totalScore}
-          <span className="text-lg text-slate-500">/100</span>
+          <span className="text-lg text-[var(--text-faint)]">/100</span>
         </motion.p>
       </div>
 
@@ -410,22 +410,22 @@ function VerdictCard({
 
       {/* Per-category bars */}
       <div className="space-y-2">
-        <p className="text-xs text-slate-500 uppercase tracking-wider">
+        <p className="text-xs text-[var(--text-faint)] uppercase tracking-wider">
           By Category
         </p>
         {result.categories.map((cat) => {
           const barColor =
             cat.verdict === "pass"
-              ? "bg-emerald-400"
+              ? "bg-[var(--success)]"
               : cat.verdict === "caution"
-                ? "bg-amber-400"
-                : "bg-rose-400";
+                ? "bg-white"
+                : "bg-[var(--danger)]";
           return (
             <div key={cat.category} className="flex items-center gap-2">
-              <span className="text-xs text-slate-400 w-24 truncate capitalize">
+              <span className="text-xs text-[var(--muted)] w-24 truncate capitalize">
                 {cat.category}
               </span>
-              <div className="flex-1 h-2 rounded-full bg-slate-800">
+              <div className="flex-1 h-2 rounded-full bg-white/[0.03]">
                 <motion.div
                   className={`h-2 rounded-full ${barColor}`}
                   initial={{ width: 0 }}
@@ -433,7 +433,7 @@ function VerdictCard({
                   transition={{ duration: 0.4, ease: "easeOut" }}
                 />
               </div>
-              <span className="text-xs text-slate-500 w-8 text-right">
+              <span className="text-xs text-[var(--text-faint)] w-8 text-right">
                 {cat.score.toFixed(1)}
               </span>
             </div>
@@ -443,14 +443,14 @@ function VerdictCard({
 
       {/* Critical red flags */}
       {result.criticalRedFlags.length > 0 && (
-        <div className="rounded-lg border border-rose-500/30 bg-rose-500/5 p-3">
-          <p className="text-xs font-medium text-rose-400 mb-1.5">
+        <div className="rounded-lg border border-[var(--danger)]/30 bg-[var(--danger)]/10 p-3">
+          <p className="text-xs font-medium text-[var(--danger)] mb-1.5">
             Critical Concerns ({result.criticalRedFlags.length})
           </p>
           <ul className="space-y-1">
             {result.criticalRedFlags.map((flag, i) => (
-              <li key={i} className="text-xs text-rose-300/80 flex items-start gap-1.5">
-                <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0 text-rose-400" />
+              <li key={i} className="text-xs text-[var(--danger)] flex items-start gap-1.5">
+                <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0 text-[var(--danger)]" />
                 {flag}
               </li>
             ))}

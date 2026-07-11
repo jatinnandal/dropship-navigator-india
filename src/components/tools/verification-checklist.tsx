@@ -93,10 +93,10 @@ function StepCard({
       : state.status === "valid";
 
   const borderColor = isComplete
-    ? "border-emerald-500/40"
+    ? "border-[var(--success)]/40"
     : state.status === "invalid"
-    ? "border-rose-500/40"
-    : "border-slate-700/50";
+    ? "border-[var(--danger)]/40"
+    : "border-white/10";
 
   const handleInputChange = (val: string) => {
     const status = validateStep(step, val);
@@ -108,16 +108,16 @@ function StepCard({
   };
 
   return (
-    <div className={`rounded-xl border ${borderColor} bg-slate-900/30 p-5 transition-colors`}>
+    <div className={`rounded-xl border ${borderColor} bg-white/[0.03] p-5 transition-colors`}>
       <div className="flex items-start gap-3">
         {/* Status indicator */}
         <div
           className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
             isComplete
-              ? "bg-emerald-500/20 text-emerald-400"
+              ? "bg-[var(--success)]/20 text-[var(--success)]"
               : state.status === "invalid"
-              ? "bg-rose-500/20 text-rose-400"
-              : "bg-slate-700/50 text-slate-500"
+              ? "bg-[var(--danger)]/20 text-[var(--danger)]"
+              : "bg-white/[0.06] text-[var(--text-faint)]"
           }`}
         >
           {isComplete ? (
@@ -125,12 +125,12 @@ function StepCard({
           ) : state.status === "invalid" ? (
             <AlertCircle className="h-3 w-3" />
           ) : (
-            <span className="h-2 w-2 rounded-full bg-amber-400/60" />
+            <span className="h-2 w-2 rounded-full bg-white/60" />
           )}
         </div>
 
         <div className="flex-1 min-w-0">
-          <label className="block text-sm font-medium text-slate-200">{step.label}</label>
+          <label className="block text-sm font-medium text-[var(--body-text)]">{step.label}</label>
 
           {/* Input field */}
           {(step.verificationType === "text-input" || step.verificationType === "url-input") && (
@@ -140,16 +140,16 @@ function StepCard({
                 value={state.value}
                 onChange={(e) => handleInputChange(e.target.value)}
                 placeholder={step.placeholder}
-                className={`w-full rounded-lg border bg-slate-900/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:ring-1 transition-colors ${
+                className={`w-full rounded-lg border bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-[var(--text-faint)] focus:outline-none focus:ring-1 transition-colors ${
                   state.status === "invalid"
-                    ? "border-rose-500/50 focus:ring-rose-500/50"
+                    ? "border-[var(--danger)]/40 focus:ring-[var(--danger)]/40"
                     : state.status === "valid"
-                    ? "border-emerald-500/50 focus:ring-emerald-500/50"
-                    : "border-slate-700 focus:ring-amber-500/50"
+                    ? "border-[var(--success)]/40 focus:ring-[var(--success)]/40"
+                    : "border-white/10 focus:ring-white/25"
                 }`}
               />
               {state.status === "invalid" && step.validationHint && (
-                <p className="mt-1.5 text-xs text-rose-400">{step.validationHint}</p>
+                <p className="mt-1.5 text-xs text-[var(--danger)]">{step.validationHint}</p>
               )}
             </div>
           )}
@@ -162,22 +162,22 @@ function StepCard({
                 type="checkbox"
                 checked={state.confirmed}
                 onChange={(e) => handleConfirm(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-600 bg-slate-800 text-emerald-500 focus:ring-emerald-500/30"
+                className="h-4 w-4 rounded border-white/10 bg-white/[0.03] text-[var(--success)] focus:ring-[var(--success)]/30"
               />
-              <span className="text-sm text-slate-400">I confirm this is done</span>
+              <span className="text-sm text-[var(--muted)]">I confirm this is done</span>
             </label>
           )}
 
           {/* Why this matters */}
           <button
             onClick={() => setExpanded(!expanded)}
-            className="mt-2 inline-flex items-center gap-1 text-xs text-amber-400/80 hover:text-amber-300 transition-colors"
+            className="mt-2 inline-flex items-center gap-1 text-xs text-white/80 hover:text-white transition-colors"
           >
             Why this matters
             {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
           </button>
           {expanded && (
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-400">
+            <p className="mt-1.5 text-xs leading-relaxed text-[var(--muted)]">
               {step.whyItMatters}
             </p>
           )}
@@ -227,18 +227,18 @@ export function VerificationChecklist() {
   return (
     <div className="space-y-8">
       {/* Progress bar */}
-      <div className="rounded-lg border border-slate-700/50 bg-slate-900/30 p-4">
+      <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-slate-300 font-medium">
+          <span className="text-[var(--body-text)] font-medium">
             {completedSteps} of {totalSteps} verified
           </span>
           <span
             className={`font-semibold ${
               progressPercent === 100
-                ? "text-emerald-400"
+                ? "text-[var(--success)]"
                 : progressPercent > 50
-                ? "text-amber-400"
-                : "text-slate-400"
+                ? "text-white"
+                : "text-[var(--muted)]"
             }`}
           >
             {Math.round(progressPercent)}%
@@ -257,7 +257,7 @@ export function VerificationChecklist() {
         const steps = VERIFICATION_STEPS.filter((s) => s.category === category);
         return (
           <div key={category}>
-            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
               {CATEGORY_LABELS[category]}
             </h3>
             <div className="space-y-3">

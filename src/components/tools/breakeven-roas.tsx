@@ -27,15 +27,15 @@ function formatRoas(v: number): string {
 }
 
 function roasColor(v: number): string {
-  if (!Number.isFinite(v) || v > 4) return "text-rose-400";
-  if (v > 2.5) return "text-amber-400";
-  return "text-emerald-400";
+  if (!Number.isFinite(v) || v > 4) return "text-[var(--danger)]";
+  if (v > 2.5) return "text-white";
+  return "text-[var(--success)]";
 }
 
 function roasBorder(v: number): string {
-  if (!Number.isFinite(v) || v > 4) return "border-rose-500/30 bg-rose-500/5";
-  if (v > 2.5) return "border-amber-500/30 bg-amber-500/5";
-  return "border-emerald-500/30 bg-emerald-500/5";
+  if (!Number.isFinite(v) || v > 4) return "border-[var(--danger)]/30 bg-[var(--danger)]/10";
+  if (v > 2.5) return "border-white/[0.16] bg-white/[0.04]";
+  return "border-[var(--success)]/30 bg-[var(--success)]/10";
 }
 
 function roasLabel(v: number): string {
@@ -110,7 +110,7 @@ export function BreakevenRoas() {
       <div className="grid gap-6 lg:grid-cols-[1fr,1.4fr]">
         {/* Inputs */}
         <div className="glass-panel grain rounded-xl p-5 sm:p-6">
-          <h2 className="font-display text-lg font-bold text-slate-100">Unit Economics</h2>
+          <h2 className="font-display text-lg font-bold text-white">Unit Economics</h2>
           <p className="text-muted mt-1 text-xs">Your product numbers</p>
 
           <div className="mt-5 space-y-4">
@@ -118,11 +118,11 @@ export function BreakevenRoas() {
             <Field label="Product Cost (COGS)" prefix="₹" value={productCost} onChange={setProductCost} />
 
             <div>
-              <label className="text-xs font-medium text-slate-300">Channel</label>
+              <label className="text-xs font-medium text-[var(--body-text)]">Channel</label>
               <select
                 value={channel}
                 onChange={(e) => setChannel(e.target.value as PrimaryChannel)}
-                className="mt-1.5 w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-900/80 px-3 py-2 text-sm text-slate-200 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+                className="mt-1.5 w-full min-h-[40px] rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[var(--body-text)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
               >
                 {CHANNELS.map((ch) => (
                   <option key={ch.channel} value={ch.channel}>
@@ -133,11 +133,11 @@ export function BreakevenRoas() {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-300">Product Category</label>
+              <label className="text-xs font-medium text-[var(--body-text)]">Product Category</label>
               <select
                 value={category}
                 onChange={(e) => setCategory(e.target.value as ProductType)}
-                className="mt-1.5 w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-900/80 px-3 py-2 text-sm text-slate-200 focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30"
+                className="mt-1.5 w-full min-h-[40px] rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[var(--body-text)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
               >
                 {PRODUCT_CATEGORIES.map((c) => (
                   <option key={c.value} value={c.value}>
@@ -148,7 +148,7 @@ export function BreakevenRoas() {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-300">Weight Bracket</label>
+              <label className="text-xs font-medium text-[var(--body-text)]">Weight Bracket</label>
               <div className="mt-1.5 grid grid-cols-3 gap-2">
                 {(Object.keys(WEIGHT_BRACKET_LABELS) as WeightBracket[]).map((w) => (
                   <button
@@ -157,8 +157,8 @@ export function BreakevenRoas() {
                     onClick={() => setWeightBracket(w)}
                     className={`min-h-[40px] rounded-md border px-2 py-1.5 text-xs font-medium transition-colors ${
                       weightBracket === w
-                        ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
-                        : "border-neutral-700 bg-neutral-900/60 text-slate-400 hover:border-neutral-500"
+                        ? "border-white/[0.16] bg-white/[0.06] text-white"
+                        : "border-white/10 bg-white/[0.03] text-[var(--muted)] hover:border-white/25"
                     }`}
                   >
                     {WEIGHT_BRACKET_LABELS[w]}
@@ -176,7 +176,7 @@ export function BreakevenRoas() {
         <div className="space-y-4">
           {/* Hero ROAS */}
           <div className={`rounded-xl border p-6 ${roasBorder(primary.breakeven)}`}>
-            <p className="text-xs font-medium text-slate-400">Break-even ROAS</p>
+            <p className="text-xs font-medium text-[var(--muted)]">Break-even ROAS</p>
             <p className={`mt-1 text-5xl font-bold tabular-nums ${roasColor(primary.breakeven)}`}>
               {formatRoas(primary.breakeven)}
             </p>
@@ -184,18 +184,18 @@ export function BreakevenRoas() {
               {roasLabel(primary.breakeven)}
             </p>
             {primary.breakeven > 4 && Number.isFinite(primary.breakeven) && (
-              <div className="mt-3 flex items-start gap-2 rounded-lg border border-rose-500/20 bg-rose-500/5 p-3">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
-                <p className="text-xs leading-relaxed text-rose-300">
+              <div className="mt-3 flex items-start gap-2 rounded-lg border border-[var(--danger)]/20 bg-[var(--danger)]/10 p-3">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--danger)]" />
+                <p className="text-xs leading-relaxed text-[var(--danger)]">
                   Structurally unprofitable for cold Meta traffic. Consider
                   lowering COGS, switching channels, or reducing COD/RTO exposure.
                 </p>
               </div>
             )}
             {primary.contribution <= 0 && (
-              <div className="mt-3 flex items-start gap-2 rounded-lg border border-rose-500/20 bg-rose-500/5 p-3">
-                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
-                <p className="text-xs leading-relaxed text-rose-300">
+              <div className="mt-3 flex items-start gap-2 rounded-lg border border-[var(--danger)]/20 bg-[var(--danger)]/10 p-3">
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--danger)]" />
+                <p className="text-xs leading-relaxed text-[var(--danger)]">
                   Negative contribution margin — you lose money on every shipped
                   order even without ad spend. Fix unit economics first.
                 </p>
@@ -205,7 +205,7 @@ export function BreakevenRoas() {
 
           {/* Target table */}
           <div className="glass-panel grain rounded-xl p-5 sm:p-6">
-            <h3 className="font-display text-sm font-bold text-slate-200">
+            <h3 className="font-display text-sm font-bold text-[var(--body-text)]">
               ROAS Targets
             </h3>
             <div className="mt-3 space-y-1">
@@ -215,17 +215,17 @@ export function BreakevenRoas() {
                 { label: "20% net profit target", value: primary.target20 },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between py-2 text-sm">
-                  <span className="text-slate-400">{row.label}</span>
+                  <span className="text-[var(--muted)]">{row.label}</span>
                   <span className={`font-bold tabular-nums ${roasColor(row.value)}`}>
                     {formatRoas(row.value)}
                   </span>
                 </div>
               ))}
             </div>
-            <div className="mt-3 border-t border-neutral-700 pt-3">
-              <p className="text-xs text-slate-500">
+            <div className="mt-3 border-t border-white/10 pt-3">
+              <p className="text-xs text-[var(--text-faint)]">
                 Contribution per shipped order:{" "}
-                <span className="font-semibold text-slate-300">
+                <span className="font-semibold text-[var(--body-text)]">
                   ₹{Math.round(primary.contribution).toLocaleString("en-IN")}
                 </span>
               </p>
@@ -234,7 +234,7 @@ export function BreakevenRoas() {
 
           {/* Channel comparison */}
           <div className="glass-panel grain rounded-xl p-5 sm:p-6">
-            <h3 className="font-display text-sm font-bold text-slate-200">
+            <h3 className="font-display text-sm font-bold text-[var(--body-text)]">
               Break-even ROAS by Channel
             </h3>
             <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -242,14 +242,14 @@ export function BreakevenRoas() {
                 <div
                   key={r.channel}
                   className={`rounded-lg border p-3 text-center ${
-                    r.channel === channel ? roasBorder(r.breakeven) : "border-neutral-800 bg-neutral-900/40"
+                    r.channel === channel ? roasBorder(r.breakeven) : "border-white/10 bg-white/[0.03]"
                   }`}
                 >
-                  <p className="text-xs font-medium text-slate-400">{r.name}</p>
+                  <p className="text-xs font-medium text-[var(--muted)]">{r.name}</p>
                   <p className={`mt-1 text-xl font-bold tabular-nums ${roasColor(r.breakeven)}`}>
                     {formatRoas(r.breakeven)}
                   </p>
-                  <p className="text-[10px] text-slate-500 font-mono mt-0.5">
+                  <p className="text-[10px] text-[var(--text-faint)] font-mono mt-0.5">
                     ₹{Math.round(r.contribution)}/order
                   </p>
                 </div>
@@ -260,11 +260,11 @@ export function BreakevenRoas() {
       </div>
 
       {/* Insight */}
-      <div className="glass-panel rounded-xl border-l-4 border-l-cyan-500 p-5 sm:p-6">
+      <div className="glass-panel rounded-xl border-l-4 border-l-white/25 p-5 sm:p-6">
         <div className="flex gap-3">
-          <TrendingUp className="h-5 w-5 shrink-0 text-cyan-400 mt-0.5" />
+          <TrendingUp className="h-5 w-5 shrink-0 text-[var(--muted)] mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-slate-100">What This Means</p>
+            <p className="text-sm font-semibold text-white">What This Means</p>
             <p className="text-muted mt-1.5 text-sm leading-relaxed">
               {primary.contribution > 0 ? (
                 <>
@@ -307,10 +307,10 @@ function Field({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-300">{label}</label>
+      <label className="text-xs font-medium text-[var(--body-text)]">{label}</label>
       <div className="relative mt-1.5">
         {prefix && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[var(--text-faint)]">
             {prefix}
           </span>
         )}
@@ -318,9 +318,9 @@ function Field({
           type="number"
           value={value}
           onChange={(e) => onChange(Number(e.target.value))}
-          className={`w-full min-h-[40px] rounded-md border border-neutral-700 bg-neutral-900/80 ${
+          className={`w-full min-h-[40px] rounded-md border border-white/10 bg-white/[0.03] ${
             prefix ? "pl-7" : "px-3"
-          } pr-3 py-2 text-sm text-slate-200 transition-colors focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/30`}
+          } pr-3 py-2 text-sm text-[var(--body-text)] transition-colors focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25`}
         />
       </div>
     </div>
@@ -344,10 +344,10 @@ function Slider({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-slate-300">
+      <label className="text-xs font-medium text-[var(--body-text)]">
         <span className="flex items-center justify-between">
           <span>{label}</span>
-          <span className="font-semibold text-slate-200 tabular-nums">
+          <span className="font-semibold text-[var(--body-text)] tabular-nums">
             {value}{suffix}
           </span>
         </span>
@@ -359,7 +359,7 @@ function Slider({
         step={1}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        className="mt-1.5 w-full accent-amber-500"
+        className="mt-1.5 w-full accent-white"
       />
     </div>
   );
