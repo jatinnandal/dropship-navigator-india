@@ -106,7 +106,7 @@ export default function PricingPage() {
           {PLAN_CARDS.map((card) => (
             <TierCard key={card.plan} card={card}>
               {card.plan === "free" ? (
-                <Link href="/signup" className="hover:border-white/40 hover:text-white transition-colors" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#d6d6d6", textDecoration: "none", border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.03)" }}>
+                <Link href="/signup" className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
                   Start free
                 </Link>
               ) : null}
@@ -124,13 +124,6 @@ export default function PricingPage() {
           ))}
         </div>
 
-        {/* Honesty note */}
-        <div style={{ margin: "40px auto 0", maxWidth: "34rem", display: "flex", gap: 12, borderRadius: 14, padding: "16px 20px", background: "#060606", border: "1px solid rgba(255,255,255,0.1)" }}>
-          <div style={{ flexShrink: 0, display: "grid", placeItems: "center", width: 32, height: 32, borderRadius: "50%", background: "#ffffff", color: "#000", fontSize: 14 }}>🧭</div>
-          <p style={{ margin: 0, fontSize: 13, lineHeight: 1.7, color: "#b8b8b8" }}>
-            <span className="font-serif-accent" style={{ fontSize: "14.5px", color: "#ffffff" }}>&ldquo;Don&apos;t overbuy.</span> Start on Scout and prove your product with the margin calculator. Starter unlocks the full route when you&apos;re ready to launch — Growth only pays for itself once real orders flow.&rdquo;
-          </p>
-        </div>
       </main>
 
       {/* Footer */}

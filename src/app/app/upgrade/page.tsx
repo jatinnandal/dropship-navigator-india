@@ -102,18 +102,13 @@ export default async function UpgradePage({ searchParams }: Props) {
 
       {plan === "starter" && <CancelSubscriptionButton />}
 
-      {/* Honesty note */}
-      <div className="mx-auto mt-10 flex max-w-lg gap-3 rounded-[14px] border border-white/[0.1] bg-[#060606] p-4">
-        <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-sm text-black">
-          🧭
-        </div>
-        <p className="text-[13px] leading-[1.7] text-[var(--body-text)]">
-          <span className="font-serif-accent text-[14.5px] text-white">
-            &ldquo;Don&apos;t overbuy.
-          </span>{" "}
-          Starter is the full mentor for a launch. Growth only pays for itself
-          once reconciling settlements starts eating your evenings.&rdquo;
-        </p>
+      <div className="mt-10 text-center">
+        <Link
+          href="/app/plans"
+          className="inline-flex items-center gap-2 text-[13px] font-medium text-[var(--text-faint)] no-underline hover:text-white transition-colors"
+        >
+          Compare all plans →
+        </Link>
       </div>
     </div>
   );
