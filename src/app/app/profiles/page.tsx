@@ -228,7 +228,7 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
           </div>
           <div className="flex gap-2">
             <Link
-              href="/pricing"
+              href="/app/upgrade"
               className="inline-flex items-center min-h-[38px] px-4 rounded-[10px] text-[13px] font-semibold text-[#e8e8e8] no-underline hover:border-white/[0.4]"
               style={{ border: "1px solid rgba(255,255,255,0.18)" }}
             >

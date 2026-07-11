@@ -55,7 +55,7 @@ export function UpgradePrompt({ message, featureHighlight }: UpgradePromptProps)
             <span className="text-amber-300">{featureHighlight}</span> and more.
           </p>
           <Link
-            href="/pricing"
+            href="/app/upgrade"
             className="mt-2 inline-block text-xs font-medium text-amber-400 hover:text-amber-300 transition-colors"
           >
             View pricing →

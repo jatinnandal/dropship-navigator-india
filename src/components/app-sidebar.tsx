@@ -85,7 +85,7 @@ export function AppSidebar({
         {/* Footer */}
         <div className="border-t border-white/[0.08] pt-3">
           <Link
-            href="/pricing"
+            href="/app/upgrade"
             className="mb-2 mx-1 flex items-center justify-between rounded-[9px] px-2 py-1.5 no-underline hover:bg-white/[0.04] transition-colors"
           >
             <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">

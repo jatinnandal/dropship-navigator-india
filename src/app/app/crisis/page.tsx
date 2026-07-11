@@ -94,7 +94,7 @@ export default async function CrisisPage() {
               return (
                 <Link
                   key={type}
-                  href="/pricing"
+                  href="/app/upgrade"
                   className="panel block w-full rounded-[18px] p-5 no-underline transition-colors hover:border-white/[0.28] sm:p-6"
                 >
                   <span className="flex items-start gap-4">

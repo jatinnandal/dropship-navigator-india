@@ -45,7 +45,7 @@ export function UpgradePanel({
       </ul>
 
       <div className="mt-5 flex flex-wrap items-center gap-3.5">
-        <Link href="/pricing" className="btn-primary inline-flex min-h-[42px] items-center rounded-[11px] px-5 text-[13.5px]">
+        <Link href="/app/upgrade" className="btn-primary inline-flex min-h-[42px] items-center rounded-[11px] px-5 text-[13.5px]">
           Unlock with {PLAN_LABELS[requiredPlan]} — ₹{price.monthly}/mo
         </Link>
         <span className="font-mono text-[11px] text-[var(--text-faint)]">
