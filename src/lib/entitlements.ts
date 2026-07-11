@@ -11,7 +11,6 @@ export const PLAN_LABELS: Record<Plan, string> = {
 export const PLAN_PRICES = {
   starter: { monthly: 49, yearly: 399 },
   growth: { monthly: 199, yearly: 1599 },
-  foundingGrowthMonthly: 99,
 } as const;
 
 export type Entitlements = {

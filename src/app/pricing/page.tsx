@@ -1,13 +1,10 @@
 "use client";
 
-import { Suspense, useRef, useCallback } from "react";
+import { useRef, useCallback } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
-import { PLAN_PRICES } from "@/lib/entitlements";
 import { PLAN_CARDS, type PlanCard } from "@/lib/pricing-tiers";
 import { NavigatorGlyph } from "@/components/app-logo";
-import { joinWaitlist } from "./actions";
 
 function useTilt() {
   const ref = useRef<HTMLElement>(null);
@@ -66,17 +63,6 @@ function TierCard({ card, children }: { card: PlanCard; children: React.ReactNod
 
 export default function PricingPage() {
   return (
-    <Suspense fallback={null}>
-      <PricingContent />
-    </Suspense>
-  );
-}
-
-function PricingContent() {
-  const searchParams = useSearchParams();
-  const waitlistState = searchParams.get("waitlist"); // joined | invalid | error | null
-
-  return (
     <div style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2", minHeight: "100vh", overflowX: "clip" }}>
       {/* Ambient light */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 55% 45% at 50% -10%, rgba(255,255,255,0.07), transparent 60%)" }} />
@@ -125,57 +111,17 @@ function PricingContent() {
                 </Link>
               ) : null}
               {card.plan === "starter" ? (
-                <>
-                  <Link href="/signup" className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
-                    Start on Scout — upgrade in-app
-                  </Link>
-                  <p className="font-mono" style={{ margin: "12px 0 0", textAlign: "center", fontSize: 11, color: "#5a5a5a" }}>billing opens shortly · UPI AutoPay</p>
-                </>
+                <Link href="/signup" className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                  Start on Scout — upgrade in-app
+                </Link>
+              ) : null}
+              {card.plan === "growth" ? (
+                <Link href="/signup" className="hover:border-white/40 hover:text-white transition-colors" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#d6d6d6", textDecoration: "none", border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.03)" }}>
+                  Start on Scout — upgrade in-app
+                </Link>
               ) : null}
             </TierCard>
           ))}
-        </div>
-
-        {/* Waitlist — early access to paid plans */}
-        <div style={{ margin: "40px auto 0", maxWidth: "34rem", borderRadius: 20, padding: "26px 28px", background: "linear-gradient(165deg, #0c0c0c, #050505)", border: "1px solid rgba(255,255,255,0.2)", boxShadow: "0 0 50px -22px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)" }}>
-          <p className="font-mono" style={{ margin: 0, fontSize: 10.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "#ffffff" }}>Founding member offer</p>
-          <p style={{ margin: "10px 0 0", fontSize: "14.5px", lineHeight: 1.65, color: "#c9c9c9" }}>
-            Billing opens shortly. Join now and lock <strong style={{ color: "#ffffff" }}>Growth at ₹{PLAN_PRICES.foundingGrowthMonthly}/month for your first 12 months</strong> — half price, forever grandfathered for the founding cohort.
-          </p>
-          {waitlistState === "joined" ? (
-              <div style={{ marginTop: 26, borderRadius: 12, padding: "14px 16px", textAlign: "center", background: "oklch(0.72 0.13 165 / 0.08)", border: "1px solid oklch(0.72 0.13 165 / 0.25)" }}>
-                <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 600, color: "oklch(0.78 0.12 165)" }}>You&apos;re on the list.</p>
-                <p style={{ margin: "4px 0 0", fontSize: "12px", lineHeight: 1.6, color: "#8a8a8a" }}>We&apos;ll email you when Pro launches — founding members get the first-year price locked.</p>
-              </div>
-            ) : (
-              <form action={joinWaitlist} style={{ marginTop: 26 }}>
-                <label htmlFor="waitlist-email" className="font-mono" style={{ display: "block", marginBottom: 6, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a8a8a" }}>
-                  Join the Pro waitlist
-                </label>
-                <input
-                  id="waitlist-email"
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@example.com"
-                  className="focus:border-white/45"
-                  style={{ width: "100%", boxSizing: "border-box", minHeight: 46, borderRadius: 11, padding: "0 15px", fontFamily: "var(--font-sans)", fontSize: 14, color: "#ffffff", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.14)", outline: "none" }}
-                />
-                {waitlistState === "invalid" ? (
-                  <p style={{ margin: "6px 0 0", fontSize: 12, color: "oklch(0.8 0.13 20)" }}>That email doesn&apos;t look right — try again.</p>
-                ) : null}
-                {waitlistState === "error" ? (
-                  <p style={{ margin: "6px 0 0", fontSize: 12, color: "oklch(0.8 0.13 20)" }}>Couldn&apos;t save that just now — try again in a minute.</p>
-                ) : null}
-                <button
-                  type="submit"
-                  className="hover:-translate-y-px transition-transform"
-                  style={{ marginTop: 10, display: "flex", alignItems: "center", justifyContent: "center", width: "100%", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}
-                >
-                  Get early access →
-                </button>
-              </form>
-            )}
         </div>
 
         {/* Honesty note */}
