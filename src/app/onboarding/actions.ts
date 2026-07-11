@@ -9,12 +9,14 @@ import {
 import { getCurrentUserId } from "@/lib/current-user";
 import { parseOnboardingFormData } from "@/lib/parse-onboarding-form";
 import { ensureProfileWorkspace } from "@/lib/profile-workspace";
+import { getCurrentEntitlements } from "@/lib/plan";
 import {
   createSellerProfile,
   deleteSellerProfile,
   getSellerProfileById,
   isLegacyProfileId,
   legacyProfileId,
+  listSellerProfileSummaries,
   updateSellerProfile,
   upsertLegacyProfile,
 } from "@/lib/seller-profile-store";
@@ -56,6 +58,15 @@ export async function saveOnboardingProfile(formData: FormData) {
     revalidateAppShell();
     redirectAfterSave(returnTo);
     return;
+  }
+
+  // Plan gate: profile count is a paid limit (Starter 1, Growth 5).
+  const [entitlements, existingProfiles] = await Promise.all([
+    getCurrentEntitlements(),
+    listSellerProfileSummaries(userId),
+  ]);
+  if (existingProfiles.length >= entitlements.maxProfiles) {
+    redirect("/app/profiles?limit=profiles");
   }
 
   const created = await createSellerProfile(userId, profile, profileName);

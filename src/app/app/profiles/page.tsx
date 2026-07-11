@@ -11,18 +11,27 @@ import { getUserWorkspace } from "@/lib/user-workspace-store";
 import { userHasProfile } from "@/lib/auth-routing";
 import { redirect } from "next/navigation";
 import { signOut } from "@/app/login/actions";
+import { PLAN_LABELS } from "@/lib/entitlements";
+import { getCurrentEntitlements } from "@/lib/plan";
+import { UpgradePanel } from "@/components/plan/upgrade-panel";
 
-export default async function ProfilesPage() {
+type SearchParams = Promise<{ limit?: string }>;
+
+export default async function ProfilesPage({ searchParams }: { searchParams: SearchParams }) {
   const userId = await getCurrentUserId();
   if (!(await userHasProfile(userId))) {
     redirect("/app/welcome");
   }
 
-  const [profiles, activeProfileId, email] = await Promise.all([
+  const [profiles, activeProfileId, email, entitlements] = await Promise.all([
     listSellerProfiles(userId),
     getStoredActiveProfileId(userId),
     getCurrentUserEmail(),
+    getCurrentEntitlements(),
+    searchParams, // limit param only triggers the cap panel below, which shows at cap anyway
   ]);
+
+  const atProfileCap = profiles.length >= entitlements.maxProfiles;
 
   const profilesWithProgress = await Promise.all(
     profiles.map(async (profile) => {
@@ -51,10 +60,10 @@ export default async function ProfilesPage() {
           </p>
         </div>
         <Link
-          href="/onboarding?mode=new&returnTo=/app/profiles"
+          href={atProfileCap ? "/pricing" : "/onboarding?mode=new&returnTo=/app/profiles"}
           className="btn-primary inline-flex min-h-[44px] items-center gap-[9px] rounded-[11px] px-5 text-[13.5px] font-semibold no-underline"
         >
-          + New plan
+          {atProfileCap ? "Unlock more plans" : "+ New plan"}
         </Link>
       </div>
 
@@ -154,26 +163,39 @@ export default async function ProfilesPage() {
           );
         })}
 
-        {/* Ghost "Start another business" card */}
-        <Link
-          href="/onboarding?mode=new&returnTo=/app/profiles"
-          className="grid place-items-center min-h-[210px] rounded-[20px] no-underline transition-[border-color,background] duration-200 hover:bg-white/[0.02]"
-          style={{
-            background: "transparent",
-            border: "1px dashed rgba(255,255,255,0.16)",
-          }}
-        >
-          <div className="text-center">
-            <span
-              className="inline-grid place-items-center w-11 h-11 rounded-full text-xl text-[var(--muted)]"
-              style={{ border: "1px solid rgba(255,255,255,0.2)" }}
-            >
-              <Plus className="h-5 w-5" />
-            </span>
-            <p className="mt-3 text-sm font-semibold text-[var(--muted)]">Start another business</p>
-            <p className="mt-1 font-mono text-[11px] text-[var(--text-ghost)]">new route &middot; new answers</p>
-          </div>
-        </Link>
+        {/* Ghost "Start another business" card — or the profile-cap upsell */}
+        {atProfileCap ? (
+          <UpgradePanel
+            requiredPlan="growth"
+            compact
+            title={`Running a second niche? ${PLAN_LABELS.growth} runs 5 plans side-by-side`}
+            bullets={[
+              "Separate journey, answers and progress per business",
+              "Compare unit economics across marketplaces properly",
+              "Switch anytime — nothing is lost",
+            ]}
+          />
+        ) : (
+          <Link
+            href="/onboarding?mode=new&returnTo=/app/profiles"
+            className="grid place-items-center min-h-[210px] rounded-[20px] no-underline transition-[border-color,background] duration-200 hover:bg-white/[0.02]"
+            style={{
+              background: "transparent",
+              border: "1px dashed rgba(255,255,255,0.16)",
+            }}
+          >
+            <div className="text-center">
+              <span
+                className="inline-grid place-items-center w-11 h-11 rounded-full text-xl text-[var(--muted)]"
+                style={{ border: "1px solid rgba(255,255,255,0.2)" }}
+              >
+                <Plus className="h-5 w-5" />
+              </span>
+              <p className="mt-3 text-sm font-semibold text-[var(--muted)]">Start another business</p>
+              <p className="mt-1 font-mono text-[11px] text-[var(--text-ghost)]">new route &middot; new answers</p>
+            </div>
+          </Link>
+        )}
       </div>
 
       {/* Account section */}
@@ -199,7 +221,9 @@ export default async function ProfilesPage() {
             </span>
             <div>
               <p className="text-sm font-semibold text-white">{email ?? "Account"}</p>
-              <p className="mt-0.5 font-mono text-[11.5px] text-[var(--text-faint)]">free plan</p>
+              <p className="mt-0.5 font-mono text-[11.5px] text-[var(--text-faint)]">
+                {PLAN_LABELS[entitlements.plan]} plan
+              </p>
             </div>
           </div>
           <div className="flex gap-2">

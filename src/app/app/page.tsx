@@ -17,6 +17,7 @@ import { buildDashboardInsights } from "@/lib/dashboard-insights";
 import { isSubTaskDone } from "@/lib/journey-graph";
 import { getJourneyProgressStats } from "@/lib/journey-engine";
 import { getCurrentUserId, getDisplayName } from "@/lib/current-user";
+import { getCurrentEntitlements } from "@/lib/plan";
 import { getModuleMentorLine } from "@/lib/mentor-voice";
 import { STAGE_TOOLS } from "@/lib/stage-tools";
 import { getJourneyNodes } from "@/lib/journey-graph";
@@ -122,8 +123,11 @@ export default async function DashboardPage() {
       : null,
   });
 
+  const entitlements = await getCurrentEntitlements();
+
+  // Rate-change alerts are a Growth feature (the data-moat upsell).
   const ratesImpact =
-    workspace.seenRatesVersion !== CURRENT_RATES.meta.version
+    entitlements.rateAlerts && workspace.seenRatesVersion !== CURRENT_RATES.meta.version
       ? computeRatesImpact({ profile, workspace })
       : null;
 
@@ -292,8 +296,8 @@ export default async function DashboardPage() {
             </div>
           ))}
 
-          {/* Weekly review */}
-          <WeeklyReviewCard review={weeklyReview} />
+          {/* Weekly review (Starter+) */}
+          {entitlements.weeklyDigest ? <WeeklyReviewCard review={weeklyReview} /> : null}
 
           {/* Mentor card */}
           <div className="panel rounded-[18px] p-5">

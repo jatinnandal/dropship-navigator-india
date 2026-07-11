@@ -4,7 +4,8 @@ import { Suspense, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
-import { FEATURES, PRICE_INR } from "@/lib/pricing-tiers";
+import { PLAN_PRICES } from "@/lib/entitlements";
+import { PLAN_CARDS, type PlanCard } from "@/lib/pricing-tiers";
 import { NavigatorGlyph } from "@/components/app-logo";
 import { joinWaitlist } from "./actions";
 
@@ -28,8 +29,40 @@ function useTilt() {
   return { ref, onMove, onLeave };
 }
 
-const FREE_FEATURES = FEATURES.filter((f) => f.freeIncluded);
-const PRO_FEATURES = FEATURES.filter((f) => f.premiumIncluded);
+function TierCard({ card, children }: { card: PlanCard; children: React.ReactNode }) {
+  const tilt = useTilt();
+  const base: React.CSSProperties = card.highlight
+    ? { position: "relative", borderRadius: 22, padding: "32px 30px", background: "linear-gradient(165deg, #101010, #050505)", border: "1px solid rgba(255,255,255,0.28)", boxShadow: "0 0 60px -20px rgba(255,255,255,0.25), inset 0 1px 0 rgba(255,255,255,0.14)", willChange: "transform" }
+    : { position: "relative", borderRadius: 22, padding: "32px 30px", background: "#060606", border: "1px solid rgba(255,255,255,0.12)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)", willChange: "transform" };
+
+  return (
+    <section ref={tilt.ref as React.Ref<HTMLElement>} onMouseMove={tilt.onMove} onMouseLeave={tilt.onLeave} style={base}>
+      {card.highlight ? (
+        <span className="font-mono" style={{ position: "absolute", top: -12, left: 30, padding: "4px 12px", borderRadius: 999, background: "#ffffff", color: "#000", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase" }}>most popular</span>
+      ) : null}
+      <p className="font-mono" style={{ margin: 0, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: card.highlight ? "#ffffff" : "#8a8a8a" }}>{card.name}</p>
+      <p style={{ margin: "14px 0 0", fontSize: 42, fontWeight: 700, letterSpacing: "-0.04em", color: "#ffffff" }}>
+        ₹{card.priceMonthly}
+        <span style={{ fontSize: 15, fontWeight: 500, color: "#6e6e6e" }}>{card.priceMonthly === 0 ? " / forever" : " / month"}</span>
+      </p>
+      {card.priceYearly ? (
+        <p className="font-mono" style={{ margin: "6px 0 0", fontSize: 11, color: "#6e6e6e" }}>
+          or ₹{card.priceYearly}/year — save {Math.round((1 - card.priceYearly / (card.priceMonthly * 12)) * 100)}%
+        </p>
+      ) : null}
+      <p style={{ margin: "10px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>{card.tagline}</p>
+      <div style={{ margin: "22px 0 0", display: "flex", flexDirection: "column", gap: 11 }}>
+        {card.features.map((f) => (
+          <div key={f} style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
+            <Check size={13} className="shrink-0 mt-0.5" style={{ color: card.highlight ? "#ffffff" : "oklch(0.75 0.12 165)" }} />
+            <p style={{ margin: 0, fontSize: "13.5px", lineHeight: 1.55, color: "#c9c9c9" }}>{f}</p>
+          </div>
+        ))}
+      </div>
+      {children}
+    </section>
+  );
+}
 
 export default function PricingPage() {
   return (
@@ -42,8 +75,6 @@ export default function PricingPage() {
 function PricingContent() {
   const searchParams = useSearchParams();
   const waitlistState = searchParams.get("waitlist"); // joined | invalid | error | null
-  const freeTilt = useTilt();
-  const proTilt = useTilt();
 
   return (
     <div style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2", minHeight: "100vh", overflowX: "clip" }}>
@@ -76,58 +107,42 @@ function PricingContent() {
             <span style={{ display: "inline-block", width: 34, height: 1, background: "linear-gradient(90deg, #ffffff, rgba(255,255,255,0.2))" }} />
           </p>
           <h1 style={{ margin: "16px auto 0", maxWidth: "40rem", fontSize: "clamp(2.2rem, 4.5vw, 3.4rem)", fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 1.05, color: "#ffffff", textWrap: "balance" }}>
-            Free until you&apos;re earning. <span className="font-serif-accent">Fair after.</span>
+            The full mentor from ₹49. <span className="font-serif-accent">Not ₹20,000.</span>
           </h1>
           <p style={{ margin: "16px auto 0", maxWidth: "32rem", fontSize: "15.5px", lineHeight: 1.7, color: "#8a8a8a" }}>
-            The full route to your first payout costs nothing. Pro exists for when you&apos;re scaling — not before.
+            The ₹20,000 course, replaced by ₹49 a month — with math that&apos;s actually correct.
+            Scout for free, upgrade when you&apos;re ready to launch.
           </p>
         </div>
 
         {/* Tier cards */}
-        <div style={{ marginTop: 52, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 16, maxWidth: "54rem", marginLeft: "auto", marginRight: "auto" }}>
-          {/* Free */}
-          <section
-            ref={freeTilt.ref as React.Ref<HTMLElement>}
-            onMouseMove={freeTilt.onMove}
-            onMouseLeave={freeTilt.onLeave}
-            style={{ borderRadius: 22, padding: "32px 30px", background: "#060606", border: "1px solid rgba(255,255,255,0.12)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06)", willChange: "transform" }}
-          >
-            <p className="font-mono" style={{ margin: 0, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a8a8a" }}>Launch</p>
-            <p style={{ margin: "14px 0 0", fontSize: 42, fontWeight: 700, letterSpacing: "-0.04em", color: "#ffffff" }}>₹0<span style={{ fontSize: 15, fontWeight: 500, color: "#6e6e6e" }}> / forever</span></p>
-            <p style={{ margin: "10px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>Everything you need to get from zero to first payout.</p>
-            <div style={{ margin: "22px 0 0", display: "flex", flexDirection: "column", gap: 11 }}>
-              {FREE_FEATURES.map((f) => (
-                <div key={f.id} style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
-                  <Check size={13} className="shrink-0 mt-0.5" style={{ color: "oklch(0.75 0.12 165)" }} />
-                  <p style={{ margin: 0, fontSize: "13.5px", lineHeight: 1.55, color: "#c9c9c9" }}>{f.label}</p>
-                </div>
-              ))}
-            </div>
-            <Link href="/signup" className="hover:border-white/40 hover:text-white transition-colors" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#d6d6d6", textDecoration: "none", border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.03)" }}>
-              Start free
-            </Link>
-          </section>
+        <div style={{ marginTop: 52, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16 }}>
+          {PLAN_CARDS.map((card) => (
+            <TierCard key={card.plan} card={card}>
+              {card.plan === "free" ? (
+                <Link href="/signup" className="hover:border-white/40 hover:text-white transition-colors" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#d6d6d6", textDecoration: "none", border: "1px solid rgba(255,255,255,0.18)", background: "rgba(255,255,255,0.03)" }}>
+                  Start free
+                </Link>
+              ) : null}
+              {card.plan === "starter" ? (
+                <>
+                  <Link href="/signup" className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                    Start on Scout — upgrade in-app
+                  </Link>
+                  <p className="font-mono" style={{ margin: "12px 0 0", textAlign: "center", fontSize: 11, color: "#5a5a5a" }}>billing opens shortly · UPI AutoPay</p>
+                </>
+              ) : null}
+            </TierCard>
+          ))}
+        </div>
 
-          {/* Pro */}
-          <section
-            ref={proTilt.ref as React.Ref<HTMLElement>}
-            onMouseMove={proTilt.onMove}
-            onMouseLeave={proTilt.onLeave}
-            style={{ position: "relative", borderRadius: 22, padding: "32px 30px", background: "linear-gradient(165deg, #101010, #050505)", border: "1px solid rgba(255,255,255,0.28)", boxShadow: "0 0 60px -20px rgba(255,255,255,0.25), inset 0 1px 0 rgba(255,255,255,0.14)", willChange: "transform" }}
-          >
-            <span className="font-mono" style={{ position: "absolute", top: -12, left: 30, padding: "4px 12px", borderRadius: 999, background: "#ffffff", color: "#000", fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase" }}>when you&apos;re scaling</span>
-            <p className="font-mono" style={{ margin: 0, fontSize: 11, letterSpacing: "0.16em", textTransform: "uppercase", color: "#ffffff" }}>Navigator Pro</p>
-            <p style={{ margin: "14px 0 0", fontSize: 42, fontWeight: 700, letterSpacing: "-0.04em", color: "#ffffff" }}>₹{PRICE_INR}<span style={{ fontSize: 15, fontWeight: 500, color: "#6e6e6e" }}> / month</span></p>
-            <p style={{ margin: "10px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>For sellers past first payout — deeper tools, more plans, priority help.</p>
-            <div style={{ margin: "22px 0 0", display: "flex", flexDirection: "column", gap: 11 }}>
-              {PRO_FEATURES.map((f) => (
-                <div key={f.id} style={{ display: "flex", gap: 11, alignItems: "flex-start" }}>
-                  <Check size={13} className="shrink-0 mt-0.5" style={{ color: "#ffffff" }} />
-                  <p style={{ margin: 0, fontSize: "13.5px", lineHeight: 1.55, color: "#e0e0e0" }}>{f.label}</p>
-                </div>
-              ))}
-            </div>
-            {waitlistState === "joined" ? (
+        {/* Waitlist — early access to paid plans */}
+        <div style={{ margin: "40px auto 0", maxWidth: "34rem", borderRadius: 20, padding: "26px 28px", background: "linear-gradient(165deg, #0c0c0c, #050505)", border: "1px solid rgba(255,255,255,0.2)", boxShadow: "0 0 50px -22px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.1)" }}>
+          <p className="font-mono" style={{ margin: 0, fontSize: 10.5, letterSpacing: "0.16em", textTransform: "uppercase", color: "#ffffff" }}>Founding member offer</p>
+          <p style={{ margin: "10px 0 0", fontSize: "14.5px", lineHeight: 1.65, color: "#c9c9c9" }}>
+            Billing opens shortly. Join now and lock <strong style={{ color: "#ffffff" }}>Growth at ₹{PLAN_PRICES.foundingGrowthMonthly}/month for your first 12 months</strong> — half price, forever grandfathered for the founding cohort.
+          </p>
+          {waitlistState === "joined" ? (
               <div style={{ marginTop: 26, borderRadius: 12, padding: "14px 16px", textAlign: "center", background: "oklch(0.72 0.13 165 / 0.08)", border: "1px solid oklch(0.72 0.13 165 / 0.25)" }}>
                 <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 600, color: "oklch(0.78 0.12 165)" }}>You&apos;re on the list.</p>
                 <p style={{ margin: "4px 0 0", fontSize: "12px", lineHeight: 1.6, color: "#8a8a8a" }}>We&apos;ll email you when Pro launches — founding members get the first-year price locked.</p>
@@ -161,8 +176,6 @@ function PricingContent() {
                 </button>
               </form>
             )}
-            <p className="font-mono" style={{ margin: "12px 0 0", textAlign: "center", fontSize: 11, color: "#5a5a5a" }}>launching soon · founding price lock · no card for free plan</p>
-          </section>
         </div>
 
         {/* Honesty note */}

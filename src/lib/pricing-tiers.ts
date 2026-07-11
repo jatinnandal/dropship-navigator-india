@@ -1,47 +1,61 @@
-export type PricingTier = "free" | "premium";
+import { PLAN_PRICES, type Plan } from "@/lib/entitlements";
 
-export type FeatureEntry = {
-  id: string;
-  label: string;
-  freeIncluded: boolean;
-  premiumIncluded: boolean;
+export type PlanCard = {
+  plan: Plan;
+  name: string;
+  tagline: string;
+  priceMonthly: number;
+  priceYearly: number | null;
+  features: string[];
+  highlight: boolean;
 };
 
-export const FEATURES: FeatureEntry[] = [
-  // Free
-  { id: "journey", label: "Full 7-module launch journey", freeIncluded: true, premiumIncluded: true },
-  { id: "margin-calc", label: "Profit Margin Calculator", freeIncluded: true, premiumIncluded: true },
-  { id: "gst-calendar", label: "GST Filing Calendar", freeIncluded: true, premiumIncluded: true },
-  { id: "shipping-est", label: "Shipping Cost Estimator", freeIncluded: true, premiumIncluded: true },
-  { id: "doc-checker", label: "Document Checker", freeIncluded: true, premiumIncluded: true },
-  { id: "decision-trees", label: "Decision Tree Wizards", freeIncluded: true, premiumIncluded: true },
-  { id: "verification", label: "Verification Checklist", freeIncluded: true, premiumIncluded: true },
-  { id: "streaks", label: "Streak Tracker", freeIncluded: true, premiumIncluded: true },
-  // Premium only
-  { id: "cashflow-sim", label: "90-Day Cash Flow Simulator", freeIncluded: false, premiumIncluded: true },
-  { id: "cod-sim", label: "COD vs Prepaid Simulator", freeIncluded: false, premiumIncluded: true },
-  { id: "supplier-score", label: "Supplier Vetting Scorecard", freeIncluded: false, premiumIncluded: true },
-  { id: "seasonal-full", label: "Full Seasonal Calendar", freeIncluded: false, premiumIncluded: true },
-  { id: "benchmarks", label: "Seller Benchmarks & Data", freeIncluded: false, premiumIncluded: true },
-  { id: "whatsapp-all", label: "All WhatsApp Templates", freeIncluded: false, premiumIncluded: true },
-  { id: "payout-recon", label: "Unlimited payout reconciliations + history", freeIncluded: false, premiumIncluded: true },
-  { id: "rate-alerts", label: "Rate-change alerts on your saved products", freeIncluded: false, premiumIncluded: true },
+export const PLAN_CARDS: PlanCard[] = [
+  {
+    plan: "free",
+    name: "Scout",
+    tagline: "See how the mentor works — free forever.",
+    priceMonthly: 0,
+    priceYearly: null,
+    features: [
+      "Journey module 1: documents + GST, done right",
+      "Profit margin calculator (verified 2026 rate card)",
+      "GSTIN & PAN verification checklist",
+      "Seasonal sale calendar",
+      "1 seller profile",
+    ],
+    highlight: false,
+  },
+  {
+    plan: "starter",
+    name: "Starter",
+    tagline: "The full mentor, for the price of a chai.",
+    priceMonthly: PLAN_PRICES.starter.monthly,
+    priceYearly: PLAN_PRICES.starter.yearly,
+    features: [
+      "Full 7-module launch journey, personalized",
+      "Every calculator & simulator — cashflow, ROAS, COD mix, scorecards",
+      "GST filing calendar + document checker + decision wizards",
+      "Crisis protocols: account suspension & supplier out-of-stock",
+      "1 payout reconciliation per month",
+      "Monday profit digest email",
+    ],
+    highlight: true,
+  },
+  {
+    plan: "growth",
+    name: "Growth",
+    tagline: "For sellers with real order flow.",
+    priceMonthly: PLAN_PRICES.growth.monthly,
+    priceYearly: PLAN_PRICES.growth.yearly,
+    features: [
+      "Everything in Starter",
+      "5 seller profiles — run niches side-by-side",
+      "Unlimited payout reconciliations + history",
+      "Full crisis pack: payment holds, IP complaints, GST notices, courier disputes, review attacks",
+      "Rate-change alerts on your saved products",
+      "Priority support",
+    ],
+    highlight: false,
+  },
 ];
-
-export const PRICE_INR = 499;
-
-// Map tool routes to tier
-const PREMIUM_PATHS = [
-  "/app/tools/cashflow-simulator",
-  "/app/tools/cod-prepaid-simulator",
-  "/app/tools/supplier-scorecard",
-];
-
-export function getToolTier(path: string): PricingTier {
-  return PREMIUM_PATHS.some((p) => path.startsWith(p)) ? "premium" : "free";
-}
-
-export function isPremiumUser(): boolean {
-  if (typeof window === "undefined") return false;
-  return localStorage.getItem("dni-premium") === "true";
-}

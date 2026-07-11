@@ -1,8 +1,29 @@
 import Link from "next/link";
 import { Calculator, ShieldCheck } from "lucide-react";
 import { ToolCard } from "@/components/tool-card";
+import { PLAN_LABELS, planCovers, requiredPlanForTool, type Plan } from "@/lib/entitlements";
+import { getCurrentPlan } from "@/lib/plan";
 
-export default function ToolsIndexPage() {
+type CardProps = React.ComponentProps<typeof ToolCard>;
+
+function gatedCard(plan: Plan) {
+  return function GatedToolCard(props: CardProps) {
+    const slug = props.href?.split("/").pop() ?? "";
+    const required = requiredPlanForTool(slug);
+    const locked = !planCovers(plan, required);
+    return (
+      <ToolCard
+        {...props}
+        status={locked ? "locked" : props.status}
+        statusLabel={locked ? `${PLAN_LABELS[required]} plan` : props.statusLabel}
+      />
+    );
+  };
+}
+
+export default async function ToolsIndexPage() {
+  const plan = await getCurrentPlan();
+  const GatedToolCard = gatedCard(plan);
   return (
     <div style={{ maxWidth: "76rem", margin: "0 auto", padding: "0 16px 48px" }}>
       {/* ── Header ── */}
@@ -270,56 +291,56 @@ export default function ToolsIndexPage() {
             gap: 12,
           }}
         >
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/margin-calculator"
             title="Margin calculator"
             description="Fees, TCS, RTO-weighted margins per channel."
             icon="Calculator"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/cashflow-simulator"
             title="Cashflow simulator"
             description="Meta bills today, COD pays day 5-7 — see if you survive week one."
             icon="BarChart3"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/cod-prepaid-simulator"
             title="COD vs prepaid impact"
             description="Exact margin cost of your COD mix and RTO rate, in rupees."
             icon="Repeat"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/payout-reconciliation"
             title="Payout reconciliation"
             description="Upload a settlement CSV — expected vs received per order, plus unclaimed TCS."
             icon="Landmark"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/settlement-timeline"
             title="Settlement timeline"
             description="When each marketplace actually pays, and the buffer you need."
             icon="Receipt"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/shipping-estimator"
             title="Shipping estimator"
             description="Real courier costs — advertised vs. actual, across 5 carriers."
             icon="Truck"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/product-scorecard"
             title="Product scorecard"
             description="Score products on competition, margins, fragility, and returns."
             icon="Target"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/breakeven-roas"
             title="Break-even ROAS"
             description="Your ad-spend floor, computed from real unit economics."
@@ -369,35 +390,35 @@ export default function ToolsIndexPage() {
             gap: 12,
           }}
         >
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/supplier-scorecard"
             title="Supplier scorecard"
             description="Vet IndiaMART suppliers — catch the red flags systematically."
             icon="ShieldCheck"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/decision-trees"
             title="Decision wizards"
             description="Which marketplace? FBA or FBM? COD or prepaid? Answer in minutes."
             icon="GitBranch"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/whatsapp-templates"
             title="WhatsApp templates"
             description="Proven scripts for order confirmation, delivery, and reviews."
             icon="MessageSquare"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/cod-simulator"
             title="COD call simulator"
             description="Practice the confirmation call that decides ship vs. return."
             icon="Phone"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/sourcing-game"
             title="Sourcing swipe game"
             description="Real supplier chats — swipe trap or legit, learn the patterns."
@@ -447,21 +468,21 @@ export default function ToolsIndexPage() {
             gap: 12,
           }}
         >
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/gst-calendar"
             title="GST filing calendar"
             description="GSTR-1, GSTR-3B, TCS reconciliation with prep checklists."
             icon="Calendar"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/verification-checklist"
             title="Verification checklist"
             description="GSTIN and PAN format checks, cross-document name matching."
             icon="ClipboardCheck"
             status="open"
           />
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/document-checker"
             title="Document checker"
             description="Pre-submission validation — the #1 cause of KYC rejection."
@@ -511,7 +532,7 @@ export default function ToolsIndexPage() {
             gap: 12,
           }}
         >
-          <ToolCard
+          <GatedToolCard
             href="/app/tools/seasonal-calendar"
             title="Seasonal calendar"
             description="21 Indian sale events with prep timelines and budget multipliers."

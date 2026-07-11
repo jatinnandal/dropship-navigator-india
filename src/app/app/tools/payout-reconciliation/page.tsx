@@ -3,12 +3,10 @@ import { Upload, FileWarning } from "lucide-react";
 import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
 import { formatINR } from "@/lib/format";
 import { MARKETPLACE_FEES_META } from "@/lib/marketplace-fees";
+import { getCurrentEntitlements } from "@/lib/plan";
 import { getActiveSellerProfileForCurrentVisitor } from "@/lib/progress-store";
-import {
-  countUploadsThisMonth,
-  FREE_UPLOADS_PER_MONTH,
-  listUploads,
-} from "@/lib/settlement-recon-store";
+import { countUploadsThisMonth, listUploads } from "@/lib/settlement-recon-store";
+import { UpgradePanel } from "@/components/plan/upgrade-panel";
 import { uploadSettlementCsv } from "./actions";
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -19,7 +17,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   too_large: "File is over 2MB. Export a single settlement cycle and retry.",
   no_rows: "No order rows found in that file — is it the settlement/payments export?",
   store_failed: "Could not save the report. Try again.",
-  limit: `Free plan includes ${FREE_UPLOADS_PER_MONTH} reconciliation per month. Pro (coming soon) lifts this.`,
+  limit: "Monthly reconciliation limit reached on your plan.",
 };
 
 function errorMessage(code: string | undefined): string | null {
@@ -38,12 +36,18 @@ export default async function PayoutReconciliationPage({ searchParams }: { searc
     getActiveSellerProfileForCurrentVisitor(),
   ]);
 
-  const [uploads, usedThisMonth] = profile
-    ? await Promise.all([listUploads(profile.id), countUploadsThisMonth(profile.id)])
-    : [[], 0];
+  const [uploads, usedThisMonth, entitlements] = profile
+    ? await Promise.all([
+        listUploads(profile.id),
+        countUploadsThisMonth(profile.id),
+        getCurrentEntitlements(),
+      ])
+    : [[], 0, await getCurrentEntitlements()];
 
   const message = errorMessage(error);
-  const remaining = Math.max(0, FREE_UPLOADS_PER_MONTH - usedThisMonth);
+  const quota = entitlements.reconPerMonth;
+  const unlimited = !Number.isFinite(quota);
+  const remaining = unlimited ? Infinity : Math.max(0, quota - usedThisMonth);
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
@@ -88,6 +92,20 @@ export default async function PayoutReconciliationPage({ searchParams }: { searc
           drop it here. Nothing is shared — rows stay in your account.
         </p>
 
+        {remaining === 0 ? (
+          <div className="mt-5">
+            <UpgradePanel
+              requiredPlan="growth"
+              compact
+              title="This month's reconciliation is used — Growth removes the limit"
+              bullets={[
+                "Unlimited settlement uploads, every cycle of every marketplace",
+                "History trends: watch your effective fee rate month over month",
+                "Rate-change alerts on your saved products",
+              ]}
+            />
+          </div>
+        ) : (
         <form action={uploadSettlementCsv} className="mt-5 grid gap-4 sm:grid-cols-2">
           <label className="block text-sm">
             <span className="text-muted mb-1.5 block text-xs font-medium">Marketplace</span>
@@ -133,19 +151,19 @@ export default async function PayoutReconciliationPage({ searchParams }: { searc
           <div className="flex flex-wrap items-center gap-4 sm:col-span-2">
             <button
               type="submit"
-              disabled={remaining === 0}
-              className="btn-primary inline-flex min-h-[44px] items-center gap-2 px-5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary inline-flex min-h-[44px] items-center gap-2 px-5 text-sm"
             >
               <Upload className="h-4 w-4" aria-hidden="true" />
               Reconcile payout
             </button>
             <p className="font-mono text-[11px] text-[var(--text-faint)]">
-              {remaining > 0
-                ? `${remaining} of ${FREE_UPLOADS_PER_MONTH} free reconciliation${FREE_UPLOADS_PER_MONTH > 1 ? "s" : ""} left this month`
-                : "Monthly free limit used — Pro (coming soon) lifts this"}
+              {unlimited
+                ? "Unlimited reconciliations on Growth"
+                : `${remaining} of ${quota} left this month on ${entitlements.plan === "starter" ? "Starter" : "your plan"}`}
             </p>
           </div>
         </form>
+        )}
       </section>
 
       {/* History */}

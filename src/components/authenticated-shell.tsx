@@ -1,4 +1,5 @@
 import { AppShellClient } from "@/components/app-shell-client";
+import type { Plan } from "@/lib/entitlements";
 import type { SellerProfileSummary } from "@/lib/seller-profile-types";
 
 type Props = {
@@ -6,6 +7,7 @@ type Props = {
   hasProfile: boolean;
   profiles?: SellerProfileSummary[];
   activeProfileId?: string | null;
+  plan?: Plan;
   children: React.ReactNode;
 };
 
@@ -14,6 +16,7 @@ export function AuthenticatedShell({
   hasProfile,
   profiles = [],
   activeProfileId = null,
+  plan = "free",
   children,
 }: Props) {
   return (
@@ -22,6 +25,7 @@ export function AuthenticatedShell({
       hasProfile={hasProfile}
       profiles={profiles}
       activeProfileId={activeProfileId}
+      plan={plan}
     >
       {children}
     </AppShellClient>

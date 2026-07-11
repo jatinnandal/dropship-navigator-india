@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, LifeBuoy } from "lucide-react";
+import { ArrowRight, LifeBuoy, Lock } from "lucide-react";
 import { getCurrentUserId } from "@/lib/current-user";
 import { CRISIS_PROTOCOLS } from "@/lib/crisis/playbooks";
 import { CRISIS_LABELS, SELF_REPORT_CRISIS_TYPES, type CrisisType } from "@/lib/crisis/types";
+import { canUseCrisisProtocol, PLAN_LABELS, requiredPlanForCrisis } from "@/lib/entitlements";
+import { getCurrentPlan } from "@/lib/plan";
 import { getWorkspaceForCurrentVisitor } from "@/lib/workspace-store";
 import { reportCrisis, resolveCrisis } from "@/app/app/crisis/actions";
 
@@ -26,13 +28,20 @@ const CRISIS_BLURBS: Record<CrisisType, string> = {
 
 export default async function CrisisPage() {
   await getCurrentUserId();
-  const workspace = await getWorkspaceForCurrentVisitor();
+  const [workspace, plan] = await Promise.all([
+    getWorkspaceForCurrentVisitor(),
+    getCurrentPlan(),
+  ]);
   const active = workspace.activeCrisis;
 
   async function startCrisis(formData: FormData) {
     "use server";
     const type = formData.get("type") as CrisisType;
     if (!SELF_REPORT_CRISIS_TYPES.includes(type)) return;
+    const currentPlan = await getCurrentPlan();
+    if (!canUseCrisisProtocol(currentPlan, type)) {
+      redirect("/pricing");
+    }
     await reportCrisis(type);
     redirect("/app");
   }
@@ -78,6 +87,43 @@ export default async function CrisisPage() {
         <div className="mt-6 grid grid-cols-1 gap-3.5">
           {SELF_REPORT_CRISIS_TYPES.map((type) => {
             const protocol = CRISIS_PROTOCOLS[type];
+            const locked = !canUseCrisisProtocol(plan, type);
+
+            if (locked) {
+              const required = requiredPlanForCrisis(type);
+              return (
+                <Link
+                  key={type}
+                  href="/pricing"
+                  className="panel block w-full rounded-[18px] p-5 no-underline transition-colors hover:border-white/[0.28] sm:p-6"
+                >
+                  <span className="flex items-start gap-4">
+                    <span className="mt-0.5 grid h-10 w-10 flex-shrink-0 place-items-center rounded-[11px] border border-white/[0.16] bg-[#111]">
+                      <Lock className="h-4 w-4 text-white/70" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="flex flex-wrap items-center gap-2.5">
+                        <span className="block text-[16px] font-semibold text-white/80">
+                          {protocol.label}
+                        </span>
+                        <span
+                          className="rounded-full border border-white/[0.18] px-2 py-0.5 font-mono text-[9px] uppercase tracking-[0.14em] text-[var(--text-faint)]"
+                        >
+                          {PLAN_LABELS[required]}
+                        </span>
+                      </span>
+                      <span className="mt-1 block text-[13px] leading-[1.6] text-[var(--text-faint)]">
+                        {CRISIS_BLURBS[type]}
+                      </span>
+                      <span className="mono-label-sm mt-3 block text-[var(--text-faint)]">
+                        {protocol.steps.length}-step protocol · unlock with {PLAN_LABELS[required]} — 2 minutes
+                      </span>
+                    </span>
+                  </span>
+                </Link>
+              );
+            }
+
             return (
               <form key={type} action={startCrisis}>
                 <input type="hidden" name="type" value={type} />

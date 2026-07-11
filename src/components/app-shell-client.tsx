@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { AppMobileTopBar } from "@/components/app-mobile-top-bar";
 import { AppSidebar } from "@/components/app-sidebar";
+import type { Plan } from "@/lib/entitlements";
 import type { SellerProfileSummary } from "@/lib/seller-profile-types";
 
 type Props = {
@@ -10,6 +11,7 @@ type Props = {
   hasProfile: boolean;
   profiles: SellerProfileSummary[];
   activeProfileId: string | null;
+  plan: Plan;
   children: ReactNode;
 };
 
@@ -18,6 +20,7 @@ export function AppShellClient({
   hasProfile,
   profiles,
   activeProfileId,
+  plan,
   children,
 }: Props) {
   return (
@@ -30,6 +33,7 @@ export function AppShellClient({
         hasProfile={hasProfile}
         profiles={profiles}
         activeProfileId={activeProfileId}
+        plan={plan}
         collapsed={false}
         onToggleCollapsed={() => {}}
       />

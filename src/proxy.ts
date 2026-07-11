@@ -15,6 +15,8 @@ function isAuthPage(pathname: string): boolean {
 }
 
 export async function proxy(request: NextRequest) {
+  // Expose the pathname to server layouts (tools plan-gate reads it).
+  request.headers.set("x-pathname", request.nextUrl.pathname);
   let response = NextResponse.next({ request });
 
   // Dev-only auth bypass: treat every request as authenticated (no redirects

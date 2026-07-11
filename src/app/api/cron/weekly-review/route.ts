@@ -44,8 +44,16 @@ export async function GET(request: NextRequest) {
   let sent = 0;
   let skipped = 0;
 
+  // Weekly digest is a paid feature (Starter+).
+  const { data: subs } = await admin
+    .from("subscriptions")
+    .select("user_id,plan,status")
+    .in("plan", ["starter", "growth"])
+    .neq("status", "cancelled");
+  const paidUserIds = new Set((subs ?? []).map((s) => s.user_id));
+
   for (const user of userList.users) {
-    if (!user.email || !user.email_confirmed_at) {
+    if (!user.email || !user.email_confirmed_at || !paidUserIds.has(user.id)) {
       skipped++;
       continue;
     }

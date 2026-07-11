@@ -7,6 +7,7 @@ import { AppLogo } from "@/components/app-logo";
 import { ProfileSwitcher } from "@/components/profile-switcher";
 import { signOut } from "@/app/login/actions";
 import { getAppNavItems, isNavItemActive } from "@/lib/app-nav-items";
+import { PLAN_LABELS, type Plan } from "@/lib/entitlements";
 import type { SellerProfileSummary } from "@/lib/seller-profile-types";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
   hasProfile: boolean;
   profiles: SellerProfileSummary[];
   activeProfileId: string | null;
+  plan?: Plan;
   collapsed: boolean;
   onToggleCollapsed: () => void;
 };
@@ -23,6 +25,7 @@ export function AppSidebar({
   hasProfile,
   profiles,
   activeProfileId,
+  plan = "free",
 }: Props) {
   const pathname = usePathname();
   const navItems = getAppNavItems(hasProfile);
@@ -81,6 +84,17 @@ export function AppSidebar({
 
         {/* Footer */}
         <div className="border-t border-white/[0.08] pt-3">
+          <Link
+            href="/pricing"
+            className="mb-2 mx-1 flex items-center justify-between rounded-[9px] px-2 py-1.5 no-underline hover:bg-white/[0.04] transition-colors"
+          >
+            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-faint)]">
+              {PLAN_LABELS[plan]} plan
+            </span>
+            {plan !== "growth" ? (
+              <span className="font-mono text-[10px] text-white/80">Upgrade →</span>
+            ) : null}
+          </Link>
           {email ? (
             <p className="mb-2 px-2 font-mono text-[11px] text-[var(--text-faintest)] truncate">{email}</p>
           ) : null}

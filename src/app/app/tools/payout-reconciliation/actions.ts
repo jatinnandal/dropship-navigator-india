@@ -2,15 +2,12 @@
 
 import { redirect } from "next/navigation";
 import type { ProductType } from "@/lib/mvp-data";
+import { getCurrentEntitlements } from "@/lib/plan";
 import { getActiveSellerProfileForCurrentVisitor } from "@/lib/progress-store";
 import { parseSettlementCsv } from "@/lib/settlement-recon/adapters";
 import { reconcile } from "@/lib/settlement-recon/reconcile";
 import type { ReconChannel } from "@/lib/settlement-recon/types";
-import {
-  countUploadsThisMonth,
-  FREE_UPLOADS_PER_MONTH,
-  insertUpload,
-} from "@/lib/settlement-recon-store";
+import { countUploadsThisMonth, insertUpload } from "@/lib/settlement-recon-store";
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024; // 2MB ≈ well past 2,000 orders
 
@@ -34,8 +31,9 @@ export async function uploadSettlementCsv(formData: FormData) {
   if (!(file instanceof File) || file.size === 0) fail("no_file");
   if (file.size > MAX_FILE_BYTES) fail("too_large");
 
+  const entitlements = await getCurrentEntitlements();
   const used = await countUploadsThisMonth(profile.id);
-  if (used >= FREE_UPLOADS_PER_MONTH) fail("limit");
+  if (used >= entitlements.reconPerMonth) fail("limit");
 
   const text = await file.text();
   const adapter = parseSettlementCsv(channel, text);
