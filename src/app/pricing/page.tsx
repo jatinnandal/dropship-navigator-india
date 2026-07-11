@@ -1,10 +1,12 @@
 "use client";
 
-import { useRef, useCallback, useState } from "react";
+import { Suspense, useRef, useCallback } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Check } from "lucide-react";
 import { FEATURES, PRICE_INR } from "@/lib/pricing-tiers";
 import { NavigatorGlyph } from "@/components/app-logo";
+import { joinWaitlist } from "./actions";
 
 function useTilt() {
   const ref = useRef<HTMLElement>(null);
@@ -30,26 +32,23 @@ const FREE_FEATURES = FEATURES.filter((f) => f.freeIncluded);
 const PRO_FEATURES = FEATURES.filter((f) => f.premiumIncluded);
 
 export default function PricingPage() {
-  const [toast, setToast] = useState(false);
+  return (
+    <Suspense fallback={null}>
+      <PricingContent />
+    </Suspense>
+  );
+}
+
+function PricingContent() {
+  const searchParams = useSearchParams();
+  const waitlistState = searchParams.get("waitlist"); // joined | invalid | error | null
   const freeTilt = useTilt();
   const proTilt = useTilt();
-
-  function handleStartPremium() {
-    setToast(true);
-    setTimeout(() => setToast(false), 3500);
-  }
 
   return (
     <div style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2", minHeight: "100vh", overflowX: "clip" }}>
       {/* Ambient light */}
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 55% 45% at 50% -10%, rgba(255,255,255,0.07), transparent 60%)" }} />
-
-      {/* Toast */}
-      {toast && (
-        <div className="fixed left-1/2 top-6 z-50 -translate-x-1/2" style={{ borderRadius: 14, padding: "10px 20px", background: "#060606", border: "1px solid rgba(255,255,255,0.16)", boxShadow: "0 24px 48px -16px rgba(0,0,0,0.9)", fontSize: "13px", color: "#b8b8b8" }}>
-          Coming soon — launching in August 2026
-        </div>
-      )}
 
       {/* Header */}
       <header style={{ position: "sticky", top: 16, zIndex: 50, display: "flex", justifyContent: "center", padding: "0 24px" }}>
@@ -128,14 +127,41 @@ export default function PricingPage() {
                 </div>
               ))}
             </div>
-            <button
-              onClick={handleStartPremium}
-              className="hover:-translate-y-px transition-transform"
-              style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", width: "100%", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}
-            >
-              Upgrade to Pro
-            </button>
-            <p className="font-mono" style={{ margin: "12px 0 0", textAlign: "center", fontSize: 11, color: "#5a5a5a" }}>cancel anytime · no card for free plan</p>
+            {waitlistState === "joined" ? (
+              <div style={{ marginTop: 26, borderRadius: 12, padding: "14px 16px", textAlign: "center", background: "oklch(0.72 0.13 165 / 0.08)", border: "1px solid oklch(0.72 0.13 165 / 0.25)" }}>
+                <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 600, color: "oklch(0.78 0.12 165)" }}>You&apos;re on the list.</p>
+                <p style={{ margin: "4px 0 0", fontSize: "12px", lineHeight: 1.6, color: "#8a8a8a" }}>We&apos;ll email you when Pro launches — founding members get the first-year price locked.</p>
+              </div>
+            ) : (
+              <form action={joinWaitlist} style={{ marginTop: 26 }}>
+                <label htmlFor="waitlist-email" className="font-mono" style={{ display: "block", marginBottom: 6, fontSize: 10, letterSpacing: "0.12em", textTransform: "uppercase", color: "#8a8a8a" }}>
+                  Join the Pro waitlist
+                </label>
+                <input
+                  id="waitlist-email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="you@example.com"
+                  className="focus:border-white/45"
+                  style={{ width: "100%", boxSizing: "border-box", minHeight: 46, borderRadius: 11, padding: "0 15px", fontFamily: "var(--font-sans)", fontSize: 14, color: "#ffffff", background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.14)", outline: "none" }}
+                />
+                {waitlistState === "invalid" ? (
+                  <p style={{ margin: "6px 0 0", fontSize: 12, color: "oklch(0.8 0.13 20)" }}>That email doesn&apos;t look right — try again.</p>
+                ) : null}
+                {waitlistState === "error" ? (
+                  <p style={{ margin: "6px 0 0", fontSize: 12, color: "oklch(0.8 0.13 20)" }}>Couldn&apos;t save that just now — try again in a minute.</p>
+                ) : null}
+                <button
+                  type="submit"
+                  className="hover:-translate-y-px transition-transform"
+                  style={{ marginTop: 10, display: "flex", alignItems: "center", justifyContent: "center", width: "100%", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}
+                >
+                  Get early access →
+                </button>
+              </form>
+            )}
+            <p className="font-mono" style={{ margin: "12px 0 0", textAlign: "center", fontSize: 11, color: "#5a5a5a" }}>launching soon · founding price lock · no card for free plan</p>
           </section>
         </div>
 
