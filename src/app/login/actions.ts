@@ -79,6 +79,8 @@ export async function signUpWithPassword(formData: FormData) {
     .toLowerCase();
   const password = String(formData.get("signup_password") ?? formData.get("password") ?? "");
   const confirmPassword = String(formData.get("confirm_password") ?? "");
+  const rawNext = String(formData.get("next") ?? "");
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : null;
 
   if (!email) redirect("/signup?error=missing_email");
   if (!password) redirect("/signup?error=missing_password");
@@ -91,7 +93,7 @@ export async function signUpWithPassword(formData: FormData) {
     const ensured = await ensureConfirmedUserWithPassword(email, password);
 
     if (ensured.ok) {
-      await signInOrRedirect(email, password, null, "/signup");
+      await signInOrRedirect(email, password, next, "/signup");
     }
 
     if (!ensured.ok) {
@@ -109,7 +111,7 @@ export async function signUpWithPassword(formData: FormData) {
     email,
     password,
     options: {
-      emailRedirectTo: `${siteUrl()}/auth/callback?next=${encodeURIComponent("/app/welcome")}`,
+      emailRedirectTo: `${siteUrl()}/auth/callback?next=${encodeURIComponent(next ?? "/app/welcome")}`,
     },
   });
 
@@ -123,7 +125,7 @@ export async function signUpWithPassword(formData: FormData) {
   }
 
   if (data.session && data.user) {
-    await redirectAfterAuth(data.user.id, null);
+    await redirectAfterAuth(data.user.id, next);
   }
 
   redirect(`/signup?message=confirm_email_required&email=${encodeURIComponent(email)}`);

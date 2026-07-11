@@ -8,11 +8,18 @@ import { ManageSubscription } from "@/components/plan/manage-subscription";
 import { CancelSubscriptionButton } from "@/components/plan/cancel-subscription-button";
 import { getSubscriptionDetails } from "./actions";
 
-export default async function UpgradePage() {
-  const [plan, email] = await Promise.all([
+type Props = {
+  searchParams: Promise<{ plan?: string }>;
+};
+
+export default async function UpgradePage({ searchParams }: Props) {
+  const [plan, email, params] = await Promise.all([
     getCurrentPlan(),
     getCurrentUserEmail(),
+    searchParams,
   ]);
+  const intentPlan =
+    params.plan === "starter" || params.plan === "growth" ? params.plan : null;
 
   const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "";
 
@@ -72,6 +79,7 @@ export default async function UpgradePage() {
           currentPlan={plan}
           razorpayKeyId={razorpayKeyId}
           userEmail={email}
+          intentPlan={intentPlan}
         />
       ) : (
         <div className="mx-auto mt-10 max-w-md rounded-2xl border border-white/[0.16] bg-gradient-to-b from-[#0c0c0c] to-[#050505] p-8 text-center"
@@ -101,11 +109,10 @@ export default async function UpgradePage() {
         </div>
         <p className="text-[13px] leading-[1.7] text-[var(--body-text)]">
           <span className="font-serif-accent text-[14.5px] text-white">
-            &ldquo;Don&apos;t upgrade yet.
+            &ldquo;Don&apos;t overbuy.
           </span>{" "}
-          Seriously — if you haven&apos;t launched, the free plan is the whole
-          mentor. Upgrade when reconciling settlements starts eating your
-          evenings.&rdquo;
+          Starter is the full mentor for a launch. Growth only pays for itself
+          once reconciling settlements starts eating your evenings.&rdquo;
         </p>
       </div>
     </div>

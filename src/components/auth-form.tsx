@@ -201,6 +201,7 @@ export function AuthForm({ mode }: Props) {
               </form>
             ) : (
               <form action={signUpWithPassword} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <input type="hidden" name="next" value={next} />
                 <AuthField label="Email" name="signup_email" type="email" autoComplete="email" required inputStyle={inputStyle} />
                 <div>
                   <AuthField label="Password" name="signup_password" type="password" autoComplete="new-password" required onChange={(e) => setPassword(e.target.value)} inputStyle={inputStyle} />
@@ -219,7 +220,7 @@ export function AuthForm({ mode }: Props) {
                 <button type="submit" className="hover:-translate-y-px transition-transform" style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
                   Create account →
                 </button>
-                <p className="font-mono" style={{ margin: "4px 0 0", textAlign: "center", fontSize: "10.5px", lineHeight: 1.6, color: "#4a4a4a" }}>no credit card · free plan is the full mentor</p>
+                <p className="font-mono" style={{ margin: "4px 0 0", textAlign: "center", fontSize: "10.5px", lineHeight: 1.6, color: "#4a4a4a" }}>no credit card needed · start free on Scout</p>
               </form>
             )}
           </>

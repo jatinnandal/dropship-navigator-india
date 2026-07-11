@@ -34,10 +34,13 @@ export function CheckoutFlow({
   currentPlan,
   razorpayKeyId,
   userEmail,
+  intentPlan = null,
 }: {
   currentPlan: Plan;
   razorpayKeyId: string;
   userEmail: string | null;
+  /** Plan the user picked on the public pricing page — highlighted here. */
+  intentPlan?: "starter" | "growth" | null;
 }) {
   const router = useRouter();
   const [billing, setBilling] = useState<BillingPeriod>("monthly");
@@ -205,6 +208,9 @@ export function CheckoutFlow({
         }}
       >
         {upgradePlans.map((card) => {
+          const emphasized = intentPlan
+            ? card.plan === intentPlan
+            : card.highlight;
           const price =
             card.plan === "free"
               ? null
@@ -220,17 +226,17 @@ export function CheckoutFlow({
             <div
               key={card.plan}
               className={`relative rounded-[22px] p-7 ${
-                card.highlight
+                emphasized
                   ? "border border-white/[0.28] bg-gradient-to-b from-[#101010] to-[#050505]"
                   : "border border-white/[0.12] bg-[#060606]"
               }`}
               style={{
-                boxShadow: card.highlight
+                boxShadow: emphasized
                   ? "0 0 60px -20px rgba(255,255,255,0.25), inset 0 1px 0 rgba(255,255,255,0.14)"
                   : "inset 0 1px 0 rgba(255,255,255,0.06)",
               }}
             >
-              {card.highlight && (
+              {emphasized && (
                 <span
                   className="font-mono"
                   style={{
@@ -246,7 +252,7 @@ export function CheckoutFlow({
                     textTransform: "uppercase",
                   }}
                 >
-                  most popular
+                  {intentPlan ? "your pick" : "most popular"}
                 </span>
               )}
 
@@ -274,11 +280,7 @@ export function CheckoutFlow({
                     <Check
                       size={13}
                       className="mt-0.5 shrink-0"
-                      style={{
-                        color: card.highlight
-                          ? "#ffffff"
-                          : "oklch(0.75 0.12 165)",
-                      }}
+                      style={{ color: "oklch(0.75 0.12 165)" }}
                     />
                     <p className="text-[13.5px] leading-[1.55] text-[#c9c9c9]">
                       {f}
