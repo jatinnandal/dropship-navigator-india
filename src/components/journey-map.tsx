@@ -319,7 +319,7 @@ export function JourneyMap({
                 This module is part of the full 7-module guided journey. Upgrade to unlock all modules, walkthroughs, and personalized steps.
               </p>
               <Link
-                href="/app/upgrade"
+                href="/app/plans"
                 className="btn-primary mt-4 inline-flex items-center gap-2.5 rounded-[11px] px-5 py-3 text-[13.5px]"
               >
                 Upgrade to unlock

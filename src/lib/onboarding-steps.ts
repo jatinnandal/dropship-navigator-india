@@ -1,4 +1,5 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
+import { INDIA_STATES_AND_UTS } from "@/lib/india-states";
 
 export type OnboardingField =
   | "experienceLevel"
@@ -25,7 +26,7 @@ export type OnboardingStep = {
   label: string;
   why: string;
   mentorNote?: string;
-  inputType: "select" | "text";
+  inputType: "select" | "text" | "dropdown";
   options?: OnboardingStepOption[];
   placeholder?: string;
 };
@@ -154,7 +155,9 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     label: "Which state will you operate from?",
     why: "GST state code must match pickup address on every marketplace — mismatch is an instant KYC rejection.",
     mentorNote: "Your GSTIN's first two digits must match this state. Pickup address must be in the same state.",
-    inputType: "text",
+    inputType: "dropdown",
+    placeholder: "Select your state or UT",
+    options: INDIA_STATES_AND_UTS.map((s) => ({ value: s, label: s })),
   },
   {
     id: "business-type",

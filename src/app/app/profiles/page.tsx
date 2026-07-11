@@ -60,7 +60,7 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
           </p>
         </div>
         <Link
-          href={atProfileCap ? "/app/upgrade" : "/onboarding?mode=new&returnTo=/app/profiles"}
+          href={atProfileCap ? "/app/plans" : "/onboarding?mode=new&returnTo=/app/profiles"}
           className="btn-primary inline-flex min-h-[44px] items-center gap-[9px] rounded-[11px] px-5 text-[13.5px] font-semibold no-underline"
         >
           {atProfileCap ? "Unlock more plans" : "+ New plan"}
@@ -232,7 +232,7 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
           </div>
           <div className="flex gap-2">
             <Link
-              href="/app/upgrade"
+              href="/app/plans"
               className="inline-flex items-center min-h-[38px] px-4 rounded-[10px] text-[13px] font-semibold text-[#e8e8e8] no-underline hover:border-white/[0.4]"
               style={{ border: "1px solid rgba(255,255,255,0.18)" }}
             >

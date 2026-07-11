@@ -10,11 +10,14 @@ type AuthPageShellProps = {
 
 export function AuthPageShell({ children }: AuthPageShellProps) {
   return (
-    <div className="flex min-h-screen justify-center overflow-x-clip" style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2" }}>
-     <div className="grid w-full max-w-[1240px] grid-cols-1 lg:grid-cols-2">
+    <div className="flex min-h-screen items-center justify-center overflow-x-clip p-5 sm:p-8" style={{ fontFamily: "var(--font-sans)", background: "#000000", color: "#f2f2f2" }}>
+     <div
+       className="grid w-full max-w-[1040px] grid-cols-1 overflow-hidden rounded-[26px] lg:grid-cols-2"
+       style={{ minHeight: "min(620px, calc(100vh - 64px))", border: "1px solid rgba(255,255,255,0.1)", background: "#050505", boxShadow: "0 40px 90px -40px rgba(0,0,0,0.95), inset 0 1px 0 rgba(255,255,255,0.05)" }}
+     >
 
       {/* Left: brand panel */}
-      <aside className="hidden lg:flex" style={{ position: "relative", flexDirection: "column", justifyContent: "space-between", padding: "40px 48px", overflow: "hidden", borderRight: "1px solid rgba(255,255,255,0.08)", minHeight: "100vh", boxSizing: "border-box" }}>
+      <aside className="hidden lg:flex" style={{ position: "relative", flexDirection: "column", justifyContent: "space-between", padding: "40px 44px", overflow: "hidden", borderRight: "1px solid rgba(255,255,255,0.08)", boxSizing: "border-box" }}>
         <div style={{ position: "absolute", inset: 0, pointerEvents: "none", background: "radial-gradient(ellipse 70% 55% at 30% 20%, rgba(255,255,255,0.07), transparent 60%)" }} />
         <div className="grid-texture" style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
 

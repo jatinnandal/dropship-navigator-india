@@ -111,12 +111,12 @@ export default function PricingPage() {
                 </Link>
               ) : null}
               {card.plan === "starter" ? (
-                <Link href={`/signup?next=${encodeURIComponent("/app/upgrade?plan=starter")}`} className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                <Link href={`/signup?next=${encodeURIComponent("/app/plans?plan=starter")}`} className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
                   Get Starter →
                 </Link>
               ) : null}
               {card.plan === "growth" ? (
-                <Link href={`/signup?next=${encodeURIComponent("/app/upgrade?plan=growth")}`} className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                <Link href={`/signup?next=${encodeURIComponent("/app/plans?plan=growth")}`} className="hover:-translate-y-px transition-transform" style={{ marginTop: 26, display: "flex", alignItems: "center", justifyContent: "center", minHeight: 48, borderRadius: 12, fontSize: "14.5px", fontWeight: 600, color: "#000", textDecoration: "none", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
                   Get Growth →
                 </Link>
               ) : null}

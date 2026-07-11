@@ -1,13 +1,26 @@
 import Link from "next/link";
-import { ArrowLeft, Check } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { getCurrentPlan } from "@/lib/plan";
-import { PLAN_LABELS, planCovers, type Plan } from "@/lib/entitlements";
-import { PLAN_CARDS } from "@/lib/pricing-tiers";
+import { getCurrentUserEmail } from "@/lib/current-user";
+import { PLAN_LABELS } from "@/lib/entitlements";
+import { PlansBilling } from "@/components/plan/plans-billing";
+import { getSubscriptionDetails } from "@/app/app/upgrade/actions";
 
-const PLAN_ORDER: Record<Plan, number> = { free: 0, starter: 1, growth: 2 };
+type Props = {
+  searchParams: Promise<{ plan?: string }>;
+};
 
-export default async function PlansPage() {
-  const current = await getCurrentPlan();
+export default async function PlansPage({ searchParams }: Props) {
+  const [current, email, params] = await Promise.all([
+    getCurrentPlan(),
+    getCurrentUserEmail(),
+    searchParams,
+  ]);
+  const details = await getSubscriptionDetails();
+
+  const razorpayKeyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "";
+  const intentPlan =
+    params.plan === "starter" || params.plan === "growth" ? params.plan : null;
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-12">
@@ -24,112 +37,33 @@ export default async function PlansPage() {
           Currently on {PLAN_LABELS[current]}
         </p>
         <h1 className="mt-3 text-[clamp(1.6rem,3.5vw,2.4rem)] font-bold tracking-[-0.03em] text-white">
-          Every plan, side by side
+          Plans &amp; billing
         </h1>
         <p className="mt-2 text-[15px] text-[var(--muted)]">
-          See exactly what you have today and what each tier adds.
+          Every tier side by side. Upgrade, downgrade, or cancel — right here.
         </p>
       </div>
 
-      <div
-        className="mt-10 grid gap-4"
-        style={{ gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}
-      >
-        {PLAN_CARDS.map((card) => {
-          const isCurrent = card.plan === current;
-          const isUpgrade = PLAN_ORDER[card.plan] > PLAN_ORDER[current];
-          const isLower = PLAN_ORDER[card.plan] < PLAN_ORDER[current];
-
-          return (
-            <section
-              key={card.plan}
-              className={`relative rounded-[22px] p-7 ${
-                isCurrent
-                  ? "border border-white/[0.28] bg-gradient-to-b from-[#101010] to-[#050505]"
-                  : "border border-white/[0.12] bg-[#060606]"
-              }`}
-              style={{
-                boxShadow: isCurrent
-                  ? "0 0 60px -20px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.12)"
-                  : "inset 0 1px 0 rgba(255,255,255,0.06)",
-                opacity: isLower ? 0.75 : 1,
-              }}
-            >
-              {isCurrent ? (
-                <span className="font-mono absolute -top-3 left-7 rounded-full bg-white px-3 py-1 text-[10px] uppercase tracking-[0.12em] text-black">
-                  Your plan
-                </span>
-              ) : null}
-
-              <p className="font-mono text-[11px] uppercase tracking-[0.16em] text-[var(--text-faint)]">
-                {card.name}
-              </p>
-              <p className="mt-3.5 text-[42px] font-bold tracking-[-0.04em] text-white">
-                ₹{card.priceMonthly}
-                <span className="text-[15px] font-medium text-[var(--text-faint)]">
-                  {card.priceMonthly === 0 ? " / forever" : " / month"}
-                </span>
-              </p>
-              {card.priceYearly ? (
-                <p className="font-mono mt-1.5 text-[11px] text-[var(--text-faint)]">
-                  or ₹{card.priceYearly}/year
-                </p>
-              ) : null}
-              <p className="mt-2.5 text-[13.5px] leading-[1.65] text-[var(--muted)]">
-                {card.tagline}
-              </p>
-
-              <div className="mt-5 flex flex-col gap-2.5">
-                {card.features.map((f) => (
-                  <div key={f} className="flex items-start gap-2.5">
-                    <Check
-                      size={13}
-                      className="mt-0.5 shrink-0"
-                      style={{ color: "oklch(0.75 0.12 165)" }}
-                    />
-                    <p className="text-[13.5px] leading-[1.55] text-[#c9c9c9]">{f}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-6">
-                {isCurrent ? (
-                  current === "free" ? (
-                    <div className="flex min-h-[48px] items-center justify-center rounded-[12px] border border-white/[0.16] bg-white/[0.03] text-[14px] font-medium text-[var(--muted)]">
-                      Your current plan
-                    </div>
-                  ) : (
-                    <Link
-                      href="/app/upgrade"
-                      className="flex min-h-[48px] items-center justify-center rounded-[12px] border border-white/[0.16] bg-white/[0.03] text-[14px] font-medium text-[var(--muted)] no-underline transition-colors hover:text-white hover:border-white/[0.3]"
-                    >
-                      Manage plan →
-                    </Link>
-                  )
-                ) : isUpgrade ? (
-                  <Link
-                    href={`/app/upgrade?plan=${card.plan}`}
-                    className="flex min-h-[48px] items-center justify-center rounded-[12px] text-[14.5px] font-semibold text-black no-underline transition-transform hover:-translate-y-px"
-                    style={{
-                      background: "#ffffff",
-                      boxShadow:
-                        "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)",
-                    }}
-                  >
-                    Upgrade to {card.name} →
-                  </Link>
-                ) : (
-                  <div className="flex min-h-[48px] items-center justify-center rounded-[12px] border border-white/[0.1] text-[13px] font-medium text-[var(--text-faintest)]">
-                    {planCovers(current, card.plan)
-                      ? "Included in your plan"
-                      : ""}
-                  </div>
-                )}
-              </div>
-            </section>
-          );
-        })}
-      </div>
+      {razorpayKeyId ? (
+        <PlansBilling
+          currentPlan={current}
+          razorpayKeyId={razorpayKeyId}
+          userEmail={email}
+          intentPlan={intentPlan}
+          periodEnd={details.periodEnd}
+          pendingDowngrade={details.pendingDowngrade}
+        />
+      ) : (
+        <div
+          className="mx-auto mt-10 max-w-md rounded-2xl border border-white/[0.16] bg-gradient-to-b from-[#0c0c0c] to-[#050505] p-8 text-center"
+          style={{ boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)" }}
+        >
+          <p className="text-[15px] font-medium text-white">Billing opens shortly</p>
+          <p className="mt-2 text-[13px] text-[var(--muted)]">
+            UPI AutoPay subscriptions are being set up. Check back soon.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

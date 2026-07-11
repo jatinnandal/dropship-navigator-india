@@ -28,8 +28,8 @@ type Props = {
   skipIntroOnEdit?: boolean;
 };
 
-/* Only show 5 core steps in the onboarding quiz UI, matching the reference design */
-const QUIZ_STEP_IDS = ["experience", "budget", "channel", "gstin", "product"];
+/* Core steps shown in the onboarding quiz UI (rest are confirmed on the final screen). */
+const QUIZ_STEP_IDS = ["experience", "budget", "channel", "gstin", "product", "state"];
 
 export function OnboardingWizard({
   profile,
@@ -56,6 +56,8 @@ export function OnboardingWizard({
     for (const step of ONBOARDING_STEPS) {
       init[step.field] = defaultValueForField(step.field, profile);
     }
+    // Operating state is now an explicit question — don't pre-assume one on a fresh setup.
+    if (mode === "create") init.operatingState = "";
     return init;
   });
   // In create mode, defaults don't count as answers — the user must pick each one.
@@ -271,7 +273,24 @@ export function OnboardingWizard({
 
                 {/* Options */}
                 <div className="mt-6 flex flex-col gap-2.5">
-                  {step.inputType === "text" ? (
+                  {step.inputType === "dropdown" ? (
+                    <select
+                      id={step.field}
+                      value={values[step.field] ?? ""}
+                      onChange={(e) => setField(step.field, e.target.value)}
+                      className="auth-input w-full min-h-[48px] px-4 py-3 text-[15px] cursor-pointer"
+                      style={{ appearance: "auto" }}
+                    >
+                      <option value="" disabled>
+                        {step.placeholder ?? "Select an option"}
+                      </option>
+                      {step.options?.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  ) : step.inputType === "text" ? (
                     <input
                       id={step.field}
                       value={values[step.field] ?? ""}

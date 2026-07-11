@@ -1,6 +1,7 @@
 import {
   BookOpen,
   Compass,
+  Gem,
   Home,
   LayoutDashboard,
   SlidersHorizontal,
@@ -23,6 +24,7 @@ export function getAppNavItems(hasProfile: boolean): AppNavItem[] {
       { href: "/app/tools", label: "Tools", icon: Wrench },
       { href: "/app/profiles", label: "Profiles", icon: Users },
       { href: "/app/resources", label: "Resources", icon: BookOpen },
+      { href: "/app/plans", label: "Plans", icon: Gem },
     ];
   }
 
