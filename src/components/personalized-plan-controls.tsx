@@ -36,7 +36,8 @@ export function PersonalizedPlanAutoLoader({ moduleId }: { moduleId: string }) {
   return (
     <div className="text-muted flex items-center gap-2 text-xs leading-5" aria-live="polite">
       <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-      Writing your exact steps for your state, entity type, and product — about 10 seconds.
+      Tailoring this walkthrough to your state, entity type, and product — this can take up to a
+      minute. You can start reading; it&apos;ll update in place when ready.
     </div>
   );
 }

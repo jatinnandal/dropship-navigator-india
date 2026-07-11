@@ -64,7 +64,9 @@ export async function ensureModulePlan(moduleId: string): Promise<EnsurePlanResu
   const stored = await insertModulePlan(sellerProfile.id, moduleId, hash, model, generated);
   if (!stored) return { ok: false, reason: "store_failed" };
 
-  revalidatePath(`/app/journey/${moduleId}`);
+  // Personalization renders in the guided walkthrough; refresh it so the
+  // auto-loader's generation shows up in place without a manual reload.
+  revalidatePath(`/app/tasks/${moduleId}`);
   return { ok: true, state: "generated" };
 }
 
