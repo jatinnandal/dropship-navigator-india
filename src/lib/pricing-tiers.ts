@@ -24,7 +24,8 @@ export const FEATURES: FeatureEntry[] = [
   { id: "seasonal-full", label: "Full Seasonal Calendar", freeIncluded: false, premiumIncluded: true },
   { id: "benchmarks", label: "Seller Benchmarks & Data", freeIncluded: false, premiumIncluded: true },
   { id: "whatsapp-all", label: "All WhatsApp Templates", freeIncluded: false, premiumIncluded: true },
-  { id: "success-stories", label: "Full Success Stories Library", freeIncluded: false, premiumIncluded: true },
+  { id: "payout-recon", label: "Unlimited payout reconciliations + history", freeIncluded: false, premiumIncluded: true },
+  { id: "rate-alerts", label: "Rate-change alerts on your saved products", freeIncluded: false, premiumIncluded: true },
 ];
 
 export const PRICE_INR = 499;

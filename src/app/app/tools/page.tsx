@@ -518,13 +518,6 @@ export default function ToolsIndexPage() {
             icon="CalendarDays"
             status="open"
           />
-          <ToolCard
-            href="/app/tools/success-stories"
-            title="Success stories"
-            description="Worked examples with real fee math — how a first year can look."
-            icon="Flame"
-            status="open"
-          />
         </div>
       </section>
 

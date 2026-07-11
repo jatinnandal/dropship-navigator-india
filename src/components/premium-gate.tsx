@@ -52,7 +52,7 @@ export function PremiumGate({ feature, children }: PremiumGateProps) {
             </li>
             <li className="flex items-center gap-2">
               <Sparkles className="h-3 w-3 text-amber-400" />
-              All WhatsApp templates &amp; success stories
+              All WhatsApp templates &amp; rate-change alerts
             </li>
           </ul>
           <Link
