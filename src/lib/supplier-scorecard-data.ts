@@ -38,7 +38,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "legit-gstin",
     category: "legitimacy",
-    question: "Does supplier have valid GSTIN?",
+    question: "Tax legitimacy — active, verifiable GSTIN",
     weight: 5,
     redFlags: ["No GST", "GST shows inactive/cancelled"],
     greenFlags: ["Active GST, verify on gst.gov.in"],
@@ -47,7 +47,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "legit-age",
     category: "legitimacy",
-    question: "Is business registered >2 years?",
+    question: "Business track record / age",
     weight: 5,
     redFlags: ["New registration <6 months"],
     greenFlags: [">3 years active"],
@@ -56,7 +56,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "legit-address",
     category: "legitimacy",
-    question: "Does supplier have physical address you can verify?",
+    question: "Verifiable physical address",
     weight: 5,
     redFlags: ["Only virtual office", "PO Box"],
     greenFlags: ["Factory/warehouse address on Google Maps"],
@@ -65,7 +65,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "legit-references",
     category: "legitimacy",
-    question: "Can supplier provide past client references?",
+    question: "Availability of client references",
     weight: 4,
     redFlags: ["Refuses references", "Only testimonials, no contacts"],
     greenFlags: ["Provides 2-3 verifiable buyers"],
@@ -76,7 +76,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "quality-samples",
     category: "quality",
-    question: "Will supplier send samples before bulk order?",
+    question: "Willingness to provide samples before bulk",
     weight: 4,
     redFlags: ["Refuses samples", "Charges >3x for samples"],
     greenFlags: ["Free samples for orders >MOQ"],
@@ -85,7 +85,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "quality-certs",
     category: "quality",
-    question: "Does product have required certifications (BIS/FSSAI/ISI)?",
+    question: "Product certifications (BIS/FSSAI/ISI where required)",
     weight: 4,
     redFlags: ["No certification for regulated product"],
     greenFlags: ["Shows certificates with lot numbers"],
@@ -94,7 +94,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "quality-images",
     category: "quality",
-    question: "Are product images real photos or stock?",
+    question: "Authenticity of product images (real vs stock)",
     weight: 3,
     redFlags: ["Stock photos", "Watermarked images"],
     greenFlags: ["Multiple angles, factory photos"],
@@ -103,7 +103,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "quality-consistency",
     category: "quality",
-    question: "Does supplier have quality control process?",
+    question: "Quality-control process maturity",
     weight: 3,
     redFlags: ["No QC mentioned", "Ships without inspection"],
     greenFlags: ["Shares QC checklist", "Allows third-party inspection"],
@@ -114,7 +114,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "reliable-leadtime",
     category: "reliability",
-    question: "What is stated lead time?",
+    question: "Lead time (shorter, tracked = better)",
     weight: 4,
     redFlags: [">21 days", "Vague 'depends on order'"],
     greenFlags: ["7-14 days with tracking"],
@@ -123,7 +123,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "reliable-defects",
     category: "reliability",
-    question: "Does supplier offer replacement for defects?",
+    question: "Defect / replacement policy strength",
     weight: 4,
     redFlags: ["No returns policy", "Only 24hr window"],
     greenFlags: ["7-day replacement, written in contract"],
@@ -132,7 +132,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "reliable-scale",
     category: "reliability",
-    question: "Can supplier handle order volume increases?",
+    question: "Ability to scale with order volume",
     weight: 3,
     redFlags: ["Can't do >100 units"],
     greenFlags: ["Scales to 500+ with 1 week notice"],
@@ -141,7 +141,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "reliable-packaging",
     category: "reliability",
-    question: "Does supplier provide marketplace-compliant packaging?",
+    question: "Marketplace-compliant packaging",
     weight: 3,
     redFlags: ["No branded packaging", "Uses newspaper wrapping"],
     greenFlags: ["Branded boxes", "Offers white-label packaging"],
@@ -152,7 +152,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "pricing-market",
     category: "pricing",
-    question: "Is pricing significantly below market?",
+    question: "Pricing realism (not too-good-to-be-true)",
     weight: 3,
     redFlags: ["50%+ below market = likely fake/counterfeit"],
     greenFlags: ["10-20% below with clear explanation"],
@@ -161,7 +161,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "pricing-terms",
     category: "pricing",
-    question: "Are payment terms reasonable?",
+    question: "Fairness of payment terms",
     weight: 3,
     redFlags: ["100% advance, no escrow", "Only cryptocurrency"],
     greenFlags: ["50% advance + 50% on dispatch", "Accepts trade assurance"],
@@ -170,7 +170,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "pricing-hidden",
     category: "pricing",
-    question: "Are there hidden costs (packaging, GST, transport)?",
+    question: "Cost transparency (clear landed-cost quote)",
     weight: 2,
     redFlags: ["Price is 'ex-factory' without mention of other costs"],
     greenFlags: ["All-inclusive landed cost quote", "Transparent breakup provided"],
@@ -181,7 +181,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "comm-response",
     category: "communication",
-    question: "Response time to inquiries?",
+    question: "Response speed & specificity",
     weight: 3,
     redFlags: [">48 hours", "Copy-paste responses"],
     greenFlags: ["<12 hours", "Detailed, specific answers"],
@@ -190,7 +190,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "comm-contract",
     category: "communication",
-    question: "Willing to sign supply agreement?",
+    question: "Willingness to sign a supply agreement",
     weight: 3,
     redFlags: ["Refuses written contract"],
     greenFlags: ["Has standard supply agreement template"],
@@ -199,7 +199,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "comm-transparency",
     category: "communication",
-    question: "Does supplier proactively share production updates?",
+    question: "Proactive production updates",
     weight: 2,
     redFlags: ["Goes silent after payment", "Only responds when chased"],
     greenFlags: ["Sends progress photos", "WhatsApp updates at each stage"],
