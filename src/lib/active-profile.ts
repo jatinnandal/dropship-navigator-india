@@ -8,6 +8,38 @@ import { createSupabaseDataClient } from "@/lib/supabase/server";
 
 export const ACTIVE_PROFILE_COOKIE = "dni_active_profile_id";
 
+/**
+ * Resolve the active profile id from a list the caller already has, doing at
+ * most one extra query (user_preferences). Avoids the per-candidate ownership
+ * round-trips that getStoredActiveProfileId makes — the ids are validated by
+ * membership in the caller's own profile list. Used on the hot app-layout path.
+ */
+export async function resolveActiveProfileIdFromIds(
+  userId: string,
+  ownedIds: string[],
+): Promise<string | null> {
+  if (ownedIds.length === 0) return null;
+  const owned = new Set(ownedIds);
+
+  const cookieStore = await cookies();
+  const cookieId = cookieStore.get(ACTIVE_PROFILE_COOKIE)?.value;
+  if (cookieId && owned.has(cookieId)) return cookieId;
+
+  const supabase = await createSupabaseDataClient();
+  if (supabase) {
+    const { data: prefs } = await supabase
+      .from("user_preferences")
+      .select("active_profile_id")
+      .eq("user_id", userId)
+      .maybeSingle<{ active_profile_id: string | null }>();
+    if (prefs?.active_profile_id && owned.has(prefs.active_profile_id)) {
+      return prefs.active_profile_id;
+    }
+  }
+
+  return ownedIds[0];
+}
+
 export async function getStoredActiveProfileId(userId: string): Promise<string | null> {
   const supabase = await createSupabaseDataClient();
   if (!supabase) return null;
