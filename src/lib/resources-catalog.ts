@@ -160,9 +160,9 @@ export const RESOURCE_CATALOG: ResourceCategory[] = [
         description: "Profit tracking across marketplaces.",
       },
       {
-        name: "TrackEcom",
-        url: "https://trackecom.com/",
-        description: "Order and settlement analytics for sellers.",
+        name: "EasyEcom",
+        url: "https://easyecom.io/",
+        description: "Order, inventory and reconciliation analytics for multi-channel sellers.",
       },
     ],
   },
