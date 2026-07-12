@@ -33,8 +33,8 @@ export const RESOURCE_CATALOG: ResourceCategory[] = [
         description: "GST registration and compliance services.",
       },
       {
-        name: "ClearTax HSN Finder",
-        url: "https://cleartax.in/s/hsn-code-finder",
+        name: "GST HSN/SAC Search",
+        url: "https://services.gst.gov.in/services/searchhsnsac",
         description: "Look up HSN codes before listing - wrong codes trigger rejections.",
       },
     ],
@@ -99,8 +99,8 @@ export const RESOURCE_CATALOG: ResourceCategory[] = [
         description: "Large courier network - compare rates for your pin codes.",
       },
       {
-        name: "Confirmify",
-        url: "https://confirmify.in/",
+        name: "Shipway",
+        url: "https://shipway.com/",
         description: "COD order confirmation to reduce RTO before dispatch.",
       },
     ],
