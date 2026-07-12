@@ -46,7 +46,7 @@ export function LandingHero() {
         <div>
           {/* Eyebrow */}
           <p data-reveal className="eyebrow m-0">
-            India-first seller mentor
+            India-first mentor for new and growing online sellers
           </p>
 
           {/* Headline */}
@@ -77,9 +77,10 @@ export function LandingHero() {
             className="mt-6 max-w-[34rem] text-[17px] leading-[1.7] text-[var(--muted)]"
           >
             GST rejections, COD returns, supplier scams - most Indian sellers
-            quit before money ever reaches their bank. Navigator is the mentor
-            that walks you through the launch, one personalized step at a time,
-            and warns you before every trap.
+            quit before money ever reaches their bank. Not a course you forget,
+            not a YouTube rabbit hole, not an agency that owns your store -
+            Navigator is a mentor that tells you the next step, not what to
+            Google, and warns you before every trap.
           </p>
 
           {/* CTAs */}
@@ -91,7 +92,7 @@ export function LandingHero() {
               href="/signup"
               className="btn-primary inline-flex min-h-[52px] items-center gap-2.5 rounded-[13px] px-7 text-[15.5px] font-semibold"
             >
-              Chart my route
+              Chart my route - free
               <svg
                 width="16"
                 height="16"
@@ -108,13 +109,18 @@ export function LandingHero() {
               </svg>
             </MagneticButton>
             <Link
-              href="/signup"
+              href="#route"
               className="btn-ghost inline-flex min-h-[52px] items-center gap-2 rounded-[13px] px-[22px] text-[15px]"
               style={{ backdropFilter: "blur(10px)" }}
             >
-              See a live plan
+              See how it works
             </Link>
           </div>
+
+          {/* Risk reversal */}
+          <p data-reveal className="font-mono mt-3.5 text-[12.5px] text-[#5a5a5a]">
+            Free to start · no credit card · your first seller profile is free
+          </p>
 
           {/* Stats row */}
           <div
@@ -125,7 +131,7 @@ export function LandingHero() {
               <p className="font-mono m-0 text-[25px] font-medium text-white">
                 <CountUp to={17} duration={1.6} />
               </p>
-              <p className="mono-label-sm mt-1">seller tools</p>
+              <p className="mono-label-sm mt-1">seller tools · 3 free</p>
             </div>
             <div
               className="w-px"
@@ -432,6 +438,15 @@ export function LandingHero() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Trust band */}
+      <div className="mx-auto max-w-[64rem] px-10 pb-2">
+        <p className="text-center text-[14px] leading-[1.7] text-[var(--muted)]">
+          Fee math built on a real, dated 2026 marketplace rate card - not a
+          guru&apos;s guesstimate. Vendor-neutral: no supplier kickbacks, and your
+          data stays yours.
+        </p>
       </div>
 
       {/* Marquee */}

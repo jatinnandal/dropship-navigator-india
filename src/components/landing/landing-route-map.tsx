@@ -7,8 +7,9 @@ const STOPS = [
   { left: "33%", top: "14%", label: "Supplier", sub: "you are here", labelColor: "#ffffff", border: "rgba(255,255,255,0.5)", glow: "rgba(255,255,255,0.5)" },
   { left: "62%", top: "64%", label: "Docs & GST", sub: "next", labelColor: "#d6d6d6", border: "rgba(255,255,255,0.25)", glow: undefined },
   { left: "73%", top: "36%", label: "Compliance", sub: "open", labelColor: "#8a8a8a", border: "rgba(255,255,255,0.16)", glow: undefined },
-  { left: "86%", top: "8%", label: "Launch", sub: "open", labelColor: "#8a8a8a", border: "rgba(255,255,255,0.16)", glow: undefined },
-  { left: "95%", top: "42%", label: "Payout", sub: "goal", labelColor: "#6e6e6e", border: "rgba(255,255,255,0.12)", glow: undefined },
+  { left: "82%", top: "9%", label: "Launch", sub: "open", labelColor: "#8a8a8a", border: "rgba(255,255,255,0.16)", glow: undefined },
+  { left: "90%", top: "26%", label: "Ads & profit", sub: "open", labelColor: "#8a8a8a", border: "rgba(255,255,255,0.16)", glow: undefined },
+  { left: "96%", top: "44%", label: "Payout", sub: "goal", labelColor: "#6e6e6e", border: "rgba(255,255,255,0.12)", glow: undefined },
 ];
 
 export function LandingRouteMap() {
@@ -88,8 +89,9 @@ export function LandingRouteMap() {
             margin: "16px auto 0",
           }}
         >
-          Six checkpoints. Each one unlocks only after the previous is verified -
-          so you never skip ahead into a trap.
+          Seven stages, one lit path. Each unlocks only after the previous is
+          verified - a mentor you can&apos;t passively watch, so you never skip ahead
+          into a trap.
         </p>
       </div>
 

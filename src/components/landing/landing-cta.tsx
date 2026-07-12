@@ -96,7 +96,7 @@ export function LandingCta() {
           </Link>
 
           <Link
-            href="/login"
+            href="/pricing"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -112,7 +112,7 @@ export function LandingCta() {
               transition: "border-color 0.2s",
             }}
           >
-            Log in
+            See plans &amp; pricing
           </Link>
         </div>
 

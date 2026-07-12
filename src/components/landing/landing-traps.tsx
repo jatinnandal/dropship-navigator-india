@@ -5,7 +5,7 @@ import { useRef, useCallback } from "react";
 const TRAPS = [
   {
     span: 7,
-    stat: "35%",
+    stat: "20-35%",
     statLabel: "RTO rate on COD",
     title: "COD & RTO eat your margin",
     desc: "20-35 % of COD orders return unpaid. One bad confirmation call costs you ₹60-90 in forward + reverse shipping - Navigator makes you practice the call before your first real order.",
@@ -255,8 +255,8 @@ export function LandingTraps() {
             margin: 0,
           }}
         >
-          Every trap below has burned real sellers - most within their first month.
-          Navigator flags them before they cost you money.
+          Every trap below is a well-known, industry-typical failure mode for
+          new Indian sellers. Navigator flags each one before it costs you money.
         </p>
       </div>
 

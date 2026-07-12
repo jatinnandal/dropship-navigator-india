@@ -6,22 +6,26 @@ const TOOLS = [
   {
     icon: "🧮",
     title: "Profit margin calculator",
-    desc: "Real margins across Amazon, Flipkart, Meesho & Shopify - fees, TCS and RTO weighting included.",
+    desc: "Real margins across Amazon, Flipkart, Meesho & Shopify on a verified 2026 rate card - fees, TCS and RTO weighting included.",
+    free: true,
   },
   {
     icon: "📞",
     title: "COD call simulator",
     desc: "Practice the confirmation call that decides whether an order ships or returns.",
+    free: false,
   },
   {
     icon: "🛡️",
     title: "Supplier scorecard",
     desc: "Vet IndiaMART suppliers systematically, and catch the red flags before they cost you.",
+    free: false,
   },
   {
     icon: "📅",
     title: "GST filing calendar",
     desc: "GSTR-1, GSTR-3B, TCS reconciliation - with prep checklists so you never miss a deadline.",
+    free: false,
   },
 ];
 
@@ -96,6 +100,24 @@ function ToolCard({ tool }: { tool: (typeof TOOLS)[number] }) {
           {tool.icon}
         </div>
 
+        {tool.free ? (
+          <span
+            style={{
+              display: "inline-block",
+              marginBottom: 8,
+              padding: "2px 8px",
+              borderRadius: 999,
+              fontSize: 10,
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              color: "oklch(0.8 0.12 165)",
+              border: "1px solid oklch(0.72 0.13 165 / 0.4)",
+            }}
+          >
+            Free
+          </span>
+        ) : null}
         <h3
           style={{
             fontSize: 16.5,
@@ -147,7 +169,7 @@ export function LandingToolkit() {
               marginRight: 10,
             }}
           />
-          The toolkit
+          The toolkit · 4 of 17 tools
         </p>
         <h2
           style={{
@@ -163,12 +185,49 @@ export function LandingToolkit() {
           Practice the expensive lessons{" "}
           <span className="font-serif-accent">first.</span>
         </h2>
+        <p
+          style={{
+            fontSize: 14.5,
+            lineHeight: 1.6,
+            color: "#8a8a8a",
+            marginTop: 16,
+            maxWidth: 520,
+          }}
+        >
+          Three of the 17 are free to start - the margin calculator, verification
+          checklist and seasonal calendar. The simulators and scorecards below
+          unlock on a paid plan.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
         {TOOLS.map((tool) => (
           <ToolCard key={tool.title} tool={tool} />
         ))}
+      </div>
+
+      <div style={{ textAlign: "center", marginTop: 40 }}>
+        <a
+          href="/signup"
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 8,
+            padding: "13px 28px",
+            borderRadius: 11,
+            backgroundColor: "#ffffff",
+            color: "#000000",
+            fontSize: 15,
+            fontWeight: 600,
+            textDecoration: "none",
+            boxShadow: "0 0 30px -6px rgba(255,255,255,0.35)",
+          }}
+        >
+          Get started - free
+        </a>
+        <p className="font-mono" style={{ fontSize: 12, color: "#5a5a5a", marginTop: 14 }}>
+          3 tools free to start · simulators &amp; scorecards unlock on a paid plan
+        </p>
       </div>
     </section>
   );
