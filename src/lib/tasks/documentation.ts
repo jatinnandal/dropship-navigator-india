@@ -116,20 +116,13 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
     },
     {
       id: "validate-state-code",
-      title: "Check your GSTIN state code matches your pickup state",
+      title: `Confirm your GSTIN state code matches ${stateLabel(profile.operatingState)}`,
       why: "Amazon/Flipkart/Meesho require your pickup/dispatch address to be in the same state as your GSTIN. A mismatch here is a very common silent rejection.",
       how: [
-        `The first 2 digits of your GSTIN are your state code. Confirm they represent ${stateLabel(profile.operatingState)}.`,
-        "Make sure the pickup address you plan to use on the marketplace is in that same state.",
+        `You told us you operate from ${stateLabel(profile.operatingState)}, so the first 2 digits of your GSTIN should be that state's code — confirm they match.`,
+        `Make sure the pickup/dispatch address on the marketplace is also in ${stateLabel(profile.operatingState)}.`,
       ],
-      trap: "If you operate from a different state than your GSTIN, you typically need a GSTIN for that state too. Do not enter an out-of-state pickup address.",
-      kind: "input",
-      input: {
-        id: "pickup-state-input",
-        label: "Pickup / dispatch state (must match GSTIN state code)",
-        placeholder: profile.operatingState,
-        workspaceKey: "pickupState",
-      },
+      trap: `If you'll actually dispatch from a different state than ${stateLabel(profile.operatingState)}, you'd typically need a GSTIN for that state too — update your profile if your operating state has changed.`,
     },
     {
       id: "validate-name-match",
@@ -532,41 +525,24 @@ export function buildDocumentationTask(
   answers: Record<string, string>,
   workspace: Workspace,
 ): Task {
-  const hasGstin = answers.hasGstin ?? (profile.hasGstin ? "yes" : "no");
-
-  const decisionStep: TaskStep = {
-    id: "have-gstin",
-    title: "First, where do you stand with GST?",
-    why: "Your path is completely different if you already have a GSTIN. Let me route you correctly instead of wasting your time.",
-    how: ["Pick the option that matches your current situation."],
-    question: {
-      id: "hasGstin",
-      prompt: "Do you already have a valid GSTIN?",
-      options: [
-        { value: "no", label: "No, I need to register" },
-        { value: "yes", label: "Yes, I already have one" },
-      ],
-    },
-    mentorNote:
-      "Don't worry — most beginners start here. I'll tell you exactly what to do based on your answer.",
-  };
+  // Route straight from the profile — no need to re-ask what onboarding captured.
+  // To change GST status, the seller edits their profile (single source of truth).
+  const hasGstin = profile.hasGstin;
 
   const baseSteps = buildBaseDocsSteps(profile);
-  const gstSteps =
-    hasGstin === "yes"
-      ? buildValidationTrack(profile, workspace)
-      : buildRegistrationTrack(profile, answers);
+  const gstSteps = hasGstin
+    ? buildValidationTrack(profile, workspace)
+    : buildRegistrationTrack(profile, answers);
 
-  const intro =
-    hasGstin === "yes"
-      ? "We'll organize your base documents and validate your existing GSTIN for marketplace readiness."
-      : "We'll get your business documents and GST registration done step by step — avoiding the mistakes that cause 3+ rejections.";
+  const intro = hasGstin
+    ? "You already have a GSTIN, so we'll skip registration — organize your base documents and validate your GSTIN for marketplace readiness."
+    : "We'll get your business documents and GST registration done step by step — avoiding the mistakes that cause 3+ rejections.";
 
   return {
     id: "common-documentation",
     title: "Business docs + GST, done with you",
     intro,
-    steps: [decisionStep, ...baseSteps, ...gstSteps],
+    steps: [...baseSteps, ...gstSteps],
   };
 }
 
