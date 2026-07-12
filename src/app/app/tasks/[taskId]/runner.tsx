@@ -49,6 +49,7 @@ type Props = {
   editProfileHref?: string;
   personalizedCopy?: PersonalizedModulePlan | null;
   needsPersonalization?: boolean;
+  personalizeDisabledReason?: string;
 };
 
 function firstIncompleteId(steps: TaskStep[], completed: Set<string>): string | null {
@@ -81,6 +82,7 @@ export function TaskRunner({
   editProfileHref = "/onboarding",
   personalizedCopy,
   needsPersonalization = false,
+  personalizeDisabledReason,
 }: Props) {
   const [answers, setAnswers] = useState<Record<string, string>>(initialAnswers ?? {});
   const [completed, setCompleted] = useState<Set<string>>(new Set(initialCompleted ?? []));
@@ -280,7 +282,7 @@ export function TaskRunner({
             Tailor this walkthrough&apos;s steps to your exact state, entity type, GST status, and
             product category.
           </p>
-          <PersonalizePlanButton moduleId={taskId} />
+          <PersonalizePlanButton moduleId={taskId} disabledReason={personalizeDisabledReason} />
         </div>
       ) : personalizedCopy ? (
         <p className="mt-4 flex items-center gap-2 text-xs text-[var(--muted)]">

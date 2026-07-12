@@ -52,6 +52,7 @@ export function profileHash(profile: OnboardingProfile): string {
     profile.hasGstin ? "gst" : "nogst",
     profile.salesModel,
     profile.productType,
+    profile.productDecided ? "decided" : "undecided",
     profile.importsProducts ? "import" : "domestic",
     profile.sellsPrepackagedGoods ? "prepack" : "custom",
   ].join("|");

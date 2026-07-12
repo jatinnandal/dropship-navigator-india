@@ -30,6 +30,17 @@ export default async function EditProfilePage({
   ]);
   const changeCap = entitlements.materialProfileChangesPerMonth;
   const changesLeft = Math.max(0, changeCap - changesUsed);
+  // Personalization-relevant fields; locked read-only once the cap is spent.
+  const MATERIAL_FIELDS = [
+    "operatingState",
+    "businessType",
+    "hasGstin",
+    "productType",
+    "salesModel",
+    "importsProducts",
+    "sellsPrepackagedGoods",
+  ] as const;
+  const lockedFields = changesLeft <= 0 ? [...MATERIAL_FIELDS] : [];
 
   const onboardingProfile: OnboardingProfile = {
     experienceLevel: sellerProfile.experienceLevel,
@@ -38,6 +49,7 @@ export default async function EditProfilePage({
     hasGstin: sellerProfile.hasGstin,
     operatingState: sellerProfile.operatingState,
     productType: sellerProfile.productType,
+    productDecided: sellerProfile.productDecided,
     businessType: sellerProfile.businessType,
     salesModel: sellerProfile.salesModel,
     importsProducts: sellerProfile.importsProducts,
@@ -76,6 +88,7 @@ export default async function EditProfilePage({
         title="Edit launch plan"
         introDescription="Update your seller inputs. Changing marketplace affects channel launch and ads copy; your completed checkmarks stay unless you reset those modules."
         skipIntroOnEdit
+        lockedFields={lockedFields}
       />
     </main>
   );

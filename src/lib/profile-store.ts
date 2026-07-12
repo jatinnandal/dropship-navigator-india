@@ -36,6 +36,7 @@ export async function getStoredProfile(userId: string): Promise<OnboardingProfil
     hasGstin: profile.hasGstin,
     operatingState: profile.operatingState,
     productType: profile.productType,
+    productDecided: profile.productDecided,
     businessType: profile.businessType,
     salesModel: profile.salesModel,
     importsProducts: profile.importsProducts,

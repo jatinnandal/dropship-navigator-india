@@ -4,9 +4,12 @@ function readValue(formData: FormData, key: string): string {
   return String(formData.get(key) ?? "");
 }
 
+const REAL_CATEGORIES = ["fashion", "beauty", "electronics", "food", "general"];
+
 export function parseOnboardingFormData(formData: FormData): OnboardingProfile {
   const stateInput = readValue(formData, "operatingState").trim();
   const channel = readValue(formData, "primaryChannel");
+  const rawProduct = readValue(formData, "productType");
   return {
     experienceLevel: readValue(formData, "experienceLevel") === "existing_seller"
       ? "existing_seller"
@@ -22,12 +25,14 @@ export function parseOnboardingFormData(formData: FormData): OnboardingProfile {
     hasGstin: readValue(formData, "hasGstin") === "yes",
     operatingState: stateInput.length > 0 ? stateInput : "Maharashtra",
     productType:
-      readValue(formData, "productType") === "food" ||
-      readValue(formData, "productType") === "beauty" ||
-      readValue(formData, "productType") === "electronics" ||
-      readValue(formData, "productType") === "fashion"
-        ? (readValue(formData, "productType") as OnboardingProfile["productType"])
+      rawProduct === "food" ||
+      rawProduct === "beauty" ||
+      rawProduct === "electronics" ||
+      rawProduct === "fashion"
+        ? (rawProduct as OnboardingProfile["productType"])
         : "general",
+    // "general" (General merchandise) is a real choice; "not_sure" / blank isn't.
+    productDecided: REAL_CATEGORIES.includes(rawProduct),
     businessType:
       readValue(formData, "businessType") === "individual" ||
       readValue(formData, "businessType") === "partnership" ||

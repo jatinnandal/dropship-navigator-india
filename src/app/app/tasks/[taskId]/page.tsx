@@ -78,6 +78,11 @@ export default async function TaskPage({ params }: Props) {
       editProfileHref={editProfileHref}
       personalizedCopy={personalizedCopy}
       needsPersonalization={canPersonalize && !personalizedCopy}
+      personalizeDisabledReason={
+        canPersonalize && !profile.productDecided
+          ? "Choose your product first — you selected “I don’t know yet”. Pick a category in your profile to personalize."
+          : undefined
+      }
     />
   );
 }

@@ -26,6 +26,8 @@ type Props = {
   title?: string;
   introDescription?: string;
   skipIntroOnEdit?: boolean;
+  /** Fields locked read-only this edit cycle (material change cap reached). */
+  lockedFields?: OnboardingField[];
 };
 
 /* Core steps shown in the onboarding quiz UI (rest are confirmed on the final screen). */
@@ -39,7 +41,9 @@ export function OnboardingWizard({
   originalChannel,
   returnTo,
   skipIntroOnEdit = false,
+  lockedFields = [],
 }: Props) {
+  const isLocked = (field: OnboardingField) => lockedFields.includes(field);
   const reduced = useReducedMotion();
   const [stepIndex, setStepIndex] = useState(0);
   const [ackMessage, setAckMessage] = useState<string | null>(null);
@@ -90,6 +94,7 @@ export function OnboardingWizard({
   }, [ackMessage, stepIndex]);
 
   function setField(field: OnboardingField, value: string) {
+    if (isLocked(field)) return; // read-only this cycle (change cap reached)
     setValues((prev) => ({ ...prev, [field]: value }));
     setTouched((prev) => new Set(prev).add(field));
     // Show ack immediately on selection
@@ -271,8 +276,20 @@ export function OnboardingWizard({
                   {step.label}
                 </h1>
 
+                {isLocked(step.field) ? (
+                  <p className="mt-3 rounded-lg border border-white/[0.12] bg-white/[0.03] px-3 py-2 text-xs leading-5 text-[var(--muted)]">
+                    🔒 Locked this month — you&apos;ve used all your key-detail changes. This shows your
+                    current answer; it&apos;ll be editable again next month. Name and budget are still
+                    editable.
+                  </p>
+                ) : null}
+
                 {/* Options */}
-                <div className="mt-6 flex flex-col gap-2.5">
+                <div
+                  className="mt-6 flex flex-col gap-2.5"
+                  style={isLocked(step.field) ? { opacity: 0.5, pointerEvents: "none" } : undefined}
+                  aria-disabled={isLocked(step.field)}
+                >
                   {step.inputType === "dropdown" ? (
                     <select
                       id={step.field}

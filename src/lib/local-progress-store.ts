@@ -37,6 +37,7 @@ function parseProfile(raw: string | undefined): OnboardingProfile | null {
         parsed.productType === "fashion"
           ? parsed.productType
           : "general",
+      productDecided: parsed.productDecided !== false,
       businessType:
         parsed.businessType === "individual" ||
         parsed.businessType === "partnership" ||

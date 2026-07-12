@@ -14,6 +14,13 @@ export type OnboardingProfile = {
   hasGstin: boolean;
   operatingState: string;
   productType: ProductType;
+  /**
+   * Whether the seller has actually chosen a product category. False when they
+   * picked "I don't know yet" — productType is stored as "general" for the
+   * fee/RTO engines, but this flag preserves the "not decided" state so
+   * personalization stays gated until they decide.
+   */
+  productDecided: boolean;
   businessType: BusinessType;
   salesModel: SalesModel;
   importsProducts: boolean;
@@ -50,6 +57,7 @@ export const defaultProfile: OnboardingProfile = {
   hasGstin: false,
   operatingState: "Maharashtra",
   productType: "general",
+  productDecided: true,
   businessType: "proprietorship",
   salesModel: "marketplace_only",
   importsProducts: false,

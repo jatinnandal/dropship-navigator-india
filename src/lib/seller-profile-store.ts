@@ -13,6 +13,7 @@ type SellerProfileRow = {
   has_gstin: boolean;
   operating_state: string;
   product_type: OnboardingProfile["productType"];
+  product_decided?: boolean | null;
   business_type: OnboardingProfile["businessType"];
   sales_model: OnboardingProfile["salesModel"];
   imports_products: boolean;
@@ -45,6 +46,8 @@ function rowToSellerProfile(row: SellerProfileRow): SellerProfile {
     hasGstin: row.has_gstin,
     operatingState: row.operating_state,
     productType: row.product_type,
+    // Default true so pre-existing rows (column added later) aren't blocked.
+    productDecided: row.product_decided ?? true,
     businessType: row.business_type,
     salesModel: row.sales_model,
     importsProducts: row.imports_products,
@@ -64,6 +67,7 @@ function profileToRow(userId: string, profile: OnboardingProfile, name: string) 
     has_gstin: profile.hasGstin,
     operating_state: profile.operatingState,
     product_type: profile.productType,
+    product_decided: profile.productDecided,
     business_type: profile.businessType,
     sales_model: profile.salesModel,
     imports_products: profile.importsProducts,
@@ -73,7 +77,7 @@ function profileToRow(userId: string, profile: OnboardingProfile, name: string) 
 }
 
 const PROFILE_SELECT =
-  "id,user_id,name,experience_level,budget_band,primary_channel,has_gstin,operating_state,product_type,business_type,sales_model,imports_products,sells_prepackaged_goods,created_at,updated_at";
+  "id,user_id,name,experience_level,budget_band,primary_channel,has_gstin,operating_state,product_type,product_decided,business_type,sales_model,imports_products,sells_prepackaged_goods,created_at,updated_at";
 
 export function legacyProfileId(userId: string): string {
   return `legacy-${userId}`;
@@ -268,6 +272,7 @@ export function hasMaterialProfileChange(a: OnboardingProfile, b: OnboardingProf
     a.hasGstin !== b.hasGstin ||
     a.salesModel !== b.salesModel ||
     a.productType !== b.productType ||
+    a.productDecided !== b.productDecided ||
     a.importsProducts !== b.importsProducts ||
     a.sellsPrepackagedGoods !== b.sellsPrepackagedGoods
   );
@@ -318,6 +323,8 @@ async function getLegacyProfile(userId: string): Promise<OnboardingProfile | nul
     hasGstin: data.has_gstin,
     operatingState: data.operating_state ?? "Maharashtra",
     productType: data.product_type ?? "general",
+    // Legacy table doesn't track this; treat pre-migration profiles as decided.
+    productDecided: true,
     businessType: data.business_type ?? "proprietorship",
     salesModel: data.sales_model ?? "marketplace_only",
     importsProducts: data.imports_products ?? false,

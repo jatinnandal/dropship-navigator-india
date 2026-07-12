@@ -238,7 +238,8 @@ export function defaultValueForField(field: OnboardingField, profile: Onboarding
     case "hasGstin":
       return profile.hasGstin ? "yes" : "no";
     case "productType":
-      return profile.productType;
+      // Preserve the "I don't know yet" answer on re-edit (stored as general).
+      return profile.productDecided ? profile.productType : "not_sure";
     case "operatingState":
       return profile.operatingState;
     case "businessType":
