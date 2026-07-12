@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
+import { MARKETPLACE_FEES_META } from "@/lib/marketplace-fees";
 import { BreakevenRoas } from "@/components/tools/breakeven-roas";
 
 export default function BreakevenRoasPage() {
@@ -21,6 +23,7 @@ export default function BreakevenRoasPage() {
           Your ad-spend floor - the minimum ROAS needed to not lose money,
           computed from real marketplace fees, shipping, and RTO losses.
         </p>
+        <EstimateDisclaimer meta={MARKETPLACE_FEES_META} />
       </header>
 
       <section className="mt-8">

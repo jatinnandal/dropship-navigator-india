@@ -362,8 +362,8 @@ export function LandingHero() {
                 <div>
                   <p className="mono-label-sm m-0">Mentor note</p>
                   <p className="m-0 mt-1 text-[13px] leading-[1.55] text-[#c9c9c9]">
-                    Skip the sample order and there&apos;s a 60% chance your
-                    first review kills the listing. Order it today -{" "}
+                    Skip the sample order and a bad first review can quietly
+                    kill the listing. Order it today -{" "}
                     <span className="font-mono text-white">₹280, 4 days</span>.
                   </p>
                 </div>

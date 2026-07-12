@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { EstimateDisclaimer } from "@/components/estimate-disclaimer";
+import { MARKETPLACE_FEES_META } from "@/lib/marketplace-fees";
 import { MarginCalculator } from "@/components/tools/margin-calculator";
 
 export default function MarginCalculatorPage() {
@@ -20,6 +22,7 @@ export default function MarginCalculatorPage() {
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
           Compare real margins across Amazon, Flipkart, Meesho &amp; Shopify
         </p>
+        <EstimateDisclaimer meta={MARKETPLACE_FEES_META} />
       </header>
 
       <section className="mt-8">

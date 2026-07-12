@@ -18,7 +18,7 @@ export default function WhatsAppTemplatesPage() {
           WhatsApp Templates
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Copy-paste templates proven to reduce RTO and boost reviews
+          Copy-paste templates to reduce RTO and improve reviews
         </p>
       </header>
 

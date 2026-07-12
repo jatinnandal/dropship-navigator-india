@@ -409,7 +409,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/whatsapp-templates"
             title="WhatsApp templates"
-            description="Proven scripts for order confirmation, delivery, and reviews."
+            description="Scripts for order confirmation, delivery, and reviews."
             icon="MessageSquare"
             status="open"
           />
