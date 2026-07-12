@@ -226,6 +226,12 @@ export function AuthForm({ mode }: Props) {
                   Create account →
                 </SubmitButton>
                 <p className="font-mono" style={{ margin: "4px 0 0", textAlign: "center", fontSize: "10.5px", lineHeight: 1.6, color: "#4a4a4a" }}>no credit card needed · start free</p>
+                <p style={{ margin: "8px 0 0", textAlign: "center", fontSize: "11px", lineHeight: 1.6, color: "#5a5a5a" }}>
+                  By creating an account you agree to our{" "}
+                  <Link href="/terms" style={{ color: "#9a9a9a", textDecoration: "underline", textUnderlineOffset: 2 }}>Terms</Link>{" "}
+                  and{" "}
+                  <Link href="/privacy" style={{ color: "#9a9a9a", textDecoration: "underline", textUnderlineOffset: 2 }}>Privacy Policy</Link>.
+                </p>
               </form>
             )}
           </>

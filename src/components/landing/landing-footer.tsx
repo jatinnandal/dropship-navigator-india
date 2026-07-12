@@ -2,9 +2,10 @@ import Link from "next/link";
 import { NavigatorGlyph } from "@/components/app-logo";
 
 const LINKS = [
-  { label: "Log in", href: "/login" },
-  { label: "Sign up", href: "/signup" },
   { label: "Pricing", href: "/pricing" },
+  { label: "Terms", href: "/terms" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Log in", href: "/login" },
 ] as const;
 
 export function LandingFooter() {
