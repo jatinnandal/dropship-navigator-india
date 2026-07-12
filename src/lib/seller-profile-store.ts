@@ -261,12 +261,14 @@ export async function countSellerProfiles(userId: string): Promise<number> {
 }
 
 /**
- * True if any personalization-relevant field differs between old and new
- * (state, entity, GST, product category, sales model, import/pre-packaged).
- * Non-material fields (name, budget, channel, experience) are ignored.
+ * True if any onboarding ANSWER differs between old and new. Every answer is
+ * capped — only the profile name is freely editable (it isn't an answer field).
  */
 export function hasMaterialProfileChange(a: OnboardingProfile, b: OnboardingProfile): boolean {
   return (
+    a.experienceLevel !== b.experienceLevel ||
+    a.budgetBand !== b.budgetBand ||
+    a.primaryChannel !== b.primaryChannel ||
     a.operatingState !== b.operatingState ||
     a.businessType !== b.businessType ||
     a.hasGstin !== b.hasGstin ||

@@ -231,15 +231,24 @@ export function OnboardingWizard({
                               </span>
                             )}
                           </div>
+                          {isLocked(s.field) ? (
+                            <p className="text-[var(--text-faint)] mt-1 text-[11px]">
+                              🔒 Locked this month — renaming is still free.
+                            </p>
+                          ) : null}
                           {s.inputType === "text" ? (
                             <input
                               value={values[s.field] ?? ""}
                               onChange={(e) => setField(s.field, e.target.value)}
                               placeholder={s.placeholder}
                               className="auth-input mt-2 w-full min-h-[42px] px-3 py-2 text-sm"
+                              style={isLocked(s.field) ? { opacity: 0.5, pointerEvents: "none" } : undefined}
                             />
                           ) : (
-                            <div className="mt-2 flex flex-wrap gap-1.5">
+                            <div
+                              className="mt-2 flex flex-wrap gap-1.5"
+                              style={isLocked(s.field) ? { opacity: 0.5, pointerEvents: "none" } : undefined}
+                            >
                               {s.options?.map((opt) => {
                                 const selected = values[s.field] === opt.value;
                                 return (
@@ -278,9 +287,9 @@ export function OnboardingWizard({
 
                 {isLocked(step.field) ? (
                   <p className="mt-3 rounded-lg border border-white/[0.12] bg-white/[0.03] px-3 py-2 text-xs leading-5 text-[var(--muted)]">
-                    🔒 Locked this month — you&apos;ve used all your key-detail changes. This shows your
-                    current answer; it&apos;ll be editable again next month. Name and budget are still
-                    editable.
+                    🔒 Locked this month — you&apos;ve used all your profile-answer changes. This shows
+                    your current answer; it&apos;ll be editable again next month. You can still rename
+                    the profile on the last step.
                   </p>
                 ) : null}
 
@@ -414,11 +423,12 @@ export function OnboardingWizard({
                 </>
                 )}
 
-                {/* Plan name on confirm screen */}
-                {isLast && mode === "create" ? (
+                {/* Plan name on confirm screen — editable in both create and edit
+                    (renaming is always free, even when answers are locked). */}
+                {isLast ? (
                   <div className="mt-6">
                     <label htmlFor="profileName" className="text-sm font-medium text-white">
-                      Plan name (optional)
+                      Plan name {mode === "edit" ? "" : "(optional)"}
                     </label>
                     <input
                       id="profileName"
@@ -427,6 +437,12 @@ export function OnboardingWizard({
                       placeholder="e.g. Meesho fashion"
                       className="auth-input mt-2 w-full min-h-[44px] px-3 py-2 text-sm"
                     />
+                    {mode === "edit" ? (
+                      <p className="text-[var(--text-faint)] mt-1.5 text-xs">
+                        Renaming is always free — it doesn&apos;t count toward your monthly change
+                        limit.
+                      </p>
+                    ) : null}
                   </div>
                 ) : null}
               </motion.div>

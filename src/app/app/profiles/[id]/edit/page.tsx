@@ -30,17 +30,20 @@ export default async function EditProfilePage({
   ]);
   const changeCap = entitlements.materialProfileChangesPerMonth;
   const changesLeft = Math.max(0, changeCap - changesUsed);
-  // Personalization-relevant fields; locked read-only once the cap is spent.
-  const MATERIAL_FIELDS = [
-    "operatingState",
-    "businessType",
+  // Every onboarding answer is capped; only the name is freely editable.
+  const ANSWER_FIELDS = [
+    "experienceLevel",
+    "budgetBand",
+    "primaryChannel",
     "hasGstin",
     "productType",
+    "operatingState",
+    "businessType",
     "salesModel",
     "importsProducts",
     "sellsPrepackagedGoods",
   ] as const;
-  const lockedFields = changesLeft <= 0 ? [...MATERIAL_FIELDS] : [];
+  const lockedFields = changesLeft <= 0 ? [...ANSWER_FIELDS] : [];
 
   const onboardingProfile: OnboardingProfile = {
     experienceLevel: sellerProfile.experienceLevel,
@@ -67,14 +70,14 @@ export default async function EditProfilePage({
             color: "var(--body-text)",
           }}
         >
-          You&apos;ve used all {changeCap} key-detail changes for this profile this month, so your
-          last change wasn&apos;t saved. You can still edit the name and budget, come back next month,
-          or run a separate profile for a different setup.
+          You&apos;ve used all {changeCap} profile-answer changes for this profile this month, so your
+          last change wasn&apos;t saved. You can still rename the profile, come back next month, or run
+          a separate profile for a different setup.
         </div>
       ) : changeCap > 0 ? (
         <p className="text-[var(--text-faint)] mb-4 text-xs">
-          Key-detail changes left this month: {changesLeft} of {changeCap}. Name and budget edits are
-          unlimited.
+          Profile-answer changes left this month: {changesLeft} of {changeCap}. Renaming the profile
+          is always free.
         </p>
       ) : null}
 

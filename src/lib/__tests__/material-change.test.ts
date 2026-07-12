@@ -17,9 +17,15 @@ describe("hasMaterialProfileChange", () => {
     expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, sellsPrepackagedGoods: !defaultProfile.sellsPrepackagedGoods })).toBe(true);
   });
 
-  it("is false for non-material edits (name/budget/channel/experience are unlimited)", () => {
-    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, budgetBand: "above_1l" })).toBe(false);
-    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, experienceLevel: "existing_seller" })).toBe(false);
-    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, primaryChannel: "amazon" })).toBe(false);
+  it("counts every answer change — budget, experience, channel all count now", () => {
+    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, budgetBand: "above_1l" })).toBe(true);
+    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, experienceLevel: "existing_seller" })).toBe(true);
+    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, primaryChannel: "amazon" })).toBe(true);
+    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, productDecided: !defaultProfile.productDecided })).toBe(true);
+  });
+
+  it("is false when only the name changes (name isn't an answer field)", () => {
+    // name lives outside OnboardingProfile, so identical answers => no change
+    expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile })).toBe(false);
   });
 });
