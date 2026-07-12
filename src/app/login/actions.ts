@@ -183,3 +183,41 @@ export async function signOut() {
   }
   redirect("/");
 }
+
+export async function requestPasswordReset(formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email) redirect("/forgot-password?error=missing_email");
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) redirect("/forgot-password?error=unavailable");
+
+  await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${siteUrl()}/auth/callback?next=${encodeURIComponent("/reset-password")}`,
+  });
+
+  // Always report success — never reveal whether an account exists for this email.
+  redirect("/forgot-password?sent=1");
+}
+
+export async function resetPassword(formData: FormData) {
+  const password = String(formData.get("password") ?? "");
+  const confirm = String(formData.get("confirm_password") ?? "");
+  if (password.length < 6) redirect("/reset-password?error=weak_password");
+  if (password !== confirm) redirect("/reset-password?error=password_mismatch");
+
+  const supabase = await createSupabaseServerClient();
+  if (!supabase) redirect("/reset-password?error=unavailable");
+
+  // The recovery link (via /auth/callback) set a session; without it, refuse.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/reset-password?error=expired");
+
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) {
+    redirect(`/reset-password?error=${encodeError(mapSupabaseAuthErrorCode(error))}`);
+  }
+
+  redirect("/app");
+}

@@ -195,9 +195,9 @@ export function AuthForm({ mode }: Props) {
                   Log in →
                 </SubmitButton>
                 <p style={{ margin: "4px 0 0", textAlign: "center" }}>
-                  <button type="button" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12.5px", color: "#6e6e6e", fontFamily: "var(--font-sans)", borderBottom: "1px solid rgba(255,255,255,0.15)", padding: 0 }}>
+                  <Link href="/forgot-password" style={{ fontSize: "12.5px", color: "#6e6e6e", fontFamily: "var(--font-sans)", borderBottom: "1px solid rgba(255,255,255,0.15)", padding: 0, textDecoration: "none" }}>
                     Forgot password?
-                  </button>
+                  </Link>
                 </p>
               </form>
             ) : (

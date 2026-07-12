@@ -95,9 +95,13 @@ export function AppSidebar({
               {plan !== "growth" ? "Upgrade →" : "View →"}
             </span>
           </Link>
-          {email ? (
-            <p className="mb-2 px-2 font-mono text-[11px] text-[var(--text-faintest)] truncate">{email}</p>
-          ) : null}
+          <Link
+            href="/app/account"
+            className="mb-2 mx-1 flex items-center justify-between gap-2 rounded-[9px] px-2 py-1.5 no-underline hover:bg-white/[0.04] transition-colors"
+          >
+            <span className="font-mono text-[11px] text-[var(--text-faintest)] truncate">{email ?? "Account"}</span>
+            <span className="font-mono text-[10px] text-white/70 shrink-0">Account →</span>
+          </Link>
           <form action={signOut}>
             <button
               type="submit"
