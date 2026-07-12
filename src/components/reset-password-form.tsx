@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { resetPassword } from "@/app/login/actions";
 import { SubmitButton } from "@/components/submit-button";
+import { useFlash } from "@/components/use-flash";
 
 const ERRORS: Record<string, string> = {
   weak_password: "Choose a stronger password — at least 6 characters.",
@@ -34,13 +35,14 @@ export function ResetPasswordForm() {
   const params = useSearchParams();
   const errorCode = params.get("error");
   const errorMessage = errorCode && errorCode !== "expired" ? (ERRORS[errorCode] ?? ERRORS.unavailable) : null;
+  const show = useFlash(errorCode && errorCode !== "expired" ? errorCode : null);
 
   return (
     <section style={cardStyle}>
       <h2 style={{ margin: 0, fontSize: 21, fontWeight: 600, letterSpacing: "-0.025em", color: "#ffffff" }}>Choose a new password</h2>
       <p style={{ margin: "6px 0 0", fontSize: 13, color: "#6e6e6e" }}>Enter a new password for your account.</p>
 
-      {errorMessage && (
+      {show && errorMessage && (
         <div style={{ marginTop: 16, borderRadius: 11, padding: "10px 14px", fontSize: 13, lineHeight: 1.6, color: "oklch(0.8 0.13 20)", background: "oklch(0.72 0.17 20 / 0.08)", border: "1px solid oklch(0.72 0.17 20 / 0.2)" }}>{errorMessage}</div>
       )}
 

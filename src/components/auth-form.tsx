@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useFlash } from "@/components/use-flash";
 import {
   resendConfirmationEmail,
   signInWithGoogle,
@@ -62,6 +63,9 @@ export function AuthForm({ mode }: Props) {
   const [activeTab, setActiveTab] = useState<"login" | "signup">(mode);
 
   const errorMessage = errorCode ? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.signup_failed) : null;
+  // Auto-hide transient errors; don't strip the URL so the signup-confirm /
+  // resend flow (which reads the message/error params) stays intact.
+  const showError = useFlash(errorCode, 6000, false);
 
   const infoMessage = useMemo(() => {
     if (!messageCode) return null;
@@ -147,7 +151,7 @@ export function AuthForm({ mode }: Props) {
           <div style={{ marginTop: 16, borderRadius: 11, padding: "10px 14px", fontSize: 13, lineHeight: 1.6, color: "oklch(0.78 0.12 165)", background: "oklch(0.72 0.13 165 / 0.08)", border: "1px solid oklch(0.72 0.13 165 / 0.2)" }}>{infoMessage}</div>
         )}
 
-        {errorMessage && (
+        {showError && errorMessage && (
           <div style={{ marginTop: 16, borderRadius: 11, padding: "10px 14px", fontSize: 13, lineHeight: 1.6, color: "oklch(0.8 0.13 20)", background: "oklch(0.72 0.17 20 / 0.08)", border: "1px solid oklch(0.72 0.17 20 / 0.2)" }}>{errorMessage}</div>
         )}
 

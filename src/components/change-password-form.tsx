@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { changePassword } from "@/app/app/account/actions";
 import { SubmitButton } from "@/components/submit-button";
+import { useFlash } from "@/components/use-flash";
 
 const ERRORS: Record<string, string> = {
   missing_current: "Enter your current password.",
@@ -32,15 +33,16 @@ export function ChangePasswordForm() {
   const errorCode = params.get("error");
   const success = params.get("message") === "password_changed";
   const errorMessage = errorCode ? (ERRORS[errorCode] ?? ERRORS.unavailable) : null;
+  const show = useFlash(errorCode ?? (success ? "password_changed" : null));
 
   return (
     <div>
-      {success && (
+      {show && success && (
         <div className="mb-4 rounded-[11px] px-3.5 py-2.5 text-[13px] leading-6" style={{ color: "var(--success)", background: "color-mix(in oklab, var(--success) 8%, transparent)", border: "1px solid color-mix(in oklab, var(--success) 22%, transparent)" }}>
           Password updated.
         </div>
       )}
-      {errorMessage && (
+      {show && errorMessage && (
         <div className="mb-4 rounded-[11px] px-3.5 py-2.5 text-[13px] leading-6" style={{ color: "oklch(0.8 0.13 20)", background: "oklch(0.72 0.17 20 / 0.08)", border: "1px solid oklch(0.72 0.17 20 / 0.2)" }}>
           {errorMessage}
         </div>
