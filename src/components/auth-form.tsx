@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useFormStatus } from "react-dom";
 import {
   resendConfirmationEmail,
   signInWithGoogle,
@@ -16,24 +17,24 @@ const ERROR_MESSAGES: Record<string, string> = {
   password_mismatch: "Passwords do not match.",
   invalid_credentials: "Incorrect email or password. If you just signed up, confirm your email first or try again.",
   email_not_confirmed:
-    "Your account exists but email is not confirmed yet. Add SUPABASE_SERVICE_ROLE_KEY to .env.local for instant signup, or use Resend below (may hit Supabase email limits).",
+    "Your email isn't confirmed yet. Check your inbox and spam for the confirmation link, or resend it below.",
   user_already_exists: "An account with this email already exists. Sign in instead.",
   weak_password: "Choose a stronger password — at least 6 characters.",
-  invalid_email: "That email address was rejected. Use a real inbox you can access (not a placeholder domain).",
+  invalid_email: "That email address was rejected. Use a real inbox you can access.",
   email_rate_limit:
-    "Supabase blocked confirmation emails (rate limit). Add SUPABASE_SERVICE_ROLE_KEY to .env.local for instant signup without email, or wait ~1 hour and try again.",
-  unavailable: "Sign-in is temporarily unavailable. Check Supabase keys in .env.local and restart the dev server.",
-  missing_supabase_config: "Supabase is not configured. Copy .env.example to .env.local and add your project keys.",
+    "We couldn't send the confirmation email right now. Please wait a little while and try again.",
+  unavailable: "Sign-in is temporarily unavailable. Please try again in a moment.",
+  missing_supabase_config: "Sign-in is temporarily unavailable. Please try again later.",
   oauth_failed:
-    "Google sign-in failed — the provider is likely not enabled in Supabase. See the setup banner above, or use email and password.",
-  signup_failed: "We couldn't create your account. Check the setup banner above and try again.",
-  auth_failed: "Sign-in failed. Try again or request a new confirmation email.",
+    "Google sign-in didn't work. Please try again, or sign in with your email and password.",
+  signup_failed: "We couldn't create your account. Please try again.",
+  auth_failed: "Sign-in failed. Please try again, or request a new confirmation email.",
 };
 
 const INFO_MESSAGES: Record<string, string> = {
   confirm_email_required:
-    "Account created, but Supabase requires email confirmation before sign-in. Check inbox and spam — or add SUPABASE_SERVICE_ROLE_KEY to .env.local to skip email verification entirely.",
-  confirmation_resent: "If an account exists for this email, we sent another confirmation link. Check inbox and spam.",
+    "Account created! Check your inbox and spam for a confirmation link to finish signing up.",
+  confirmation_resent: "If an account exists for this email, we've sent another confirmation link. Check your inbox and spam.",
 };
 
 function getPasswordStrength(pw: string): { level: "weak" | "medium" | "strong"; width: string; color: string } {
@@ -153,9 +154,9 @@ export function AuthForm({ mode }: Props) {
         {showResend && emailParam && (
           <form action={resendConfirmationEmail} style={{ marginTop: 12 }}>
             <input type="hidden" name="email" value={decodeURIComponent(emailParam)} />
-            <button type="submit" className="hover:border-white/35 transition-colors" style={{ width: "100%", minHeight: 44, borderRadius: 11, border: "1px solid rgba(255,255,255,0.16)", background: "rgba(255,255,255,0.04)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 600, color: "#d6d6d6" }}>
+            <SubmitButton className="hover:border-white/35 transition-colors" pendingLabel="Sending…" style={{ width: "100%", minHeight: 44, borderRadius: 11, border: "1px solid rgba(255,255,255,0.16)", background: "rgba(255,255,255,0.04)", fontFamily: "var(--font-sans)", fontSize: 13, fontWeight: 600, color: "#d6d6d6" }}>
               Resend confirmation email
-            </button>
+            </SubmitButton>
           </form>
         )}
 
@@ -170,10 +171,10 @@ export function AuthForm({ mode }: Props) {
                 {/* Google */}
                 <form action={signInWithGoogle} style={{ marginTop: 22 }}>
                   <input type="hidden" name="next" value={next} />
-                  <button type="submit" className="hover:bg-white/10 hover:border-white/40 transition-colors" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, minHeight: 46, borderRadius: 11, border: "1px solid rgba(255,255,255,0.28)", background: "rgba(255,255,255,0.08)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "#ffffff" }}>
+                  <SubmitButton className="hover:bg-white/10 hover:border-white/40 transition-colors" pendingLabel="Connecting…" style={{ width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10, minHeight: 46, borderRadius: 11, border: "1px solid rgba(255,255,255,0.28)", background: "rgba(255,255,255,0.08)", fontFamily: "var(--font-sans)", fontSize: 14, fontWeight: 600, color: "#ffffff" }}>
                     <GoogleIcon />
                     Continue with Google
-                  </button>
+                  </SubmitButton>
                 </form>
 
                 {/* Divider */}
@@ -190,9 +191,9 @@ export function AuthForm({ mode }: Props) {
                 <input type="hidden" name="next" value={next} />
                 <AuthField label="Email" name="email" type="email" autoComplete="email" required defaultValue={emailParam ? decodeURIComponent(emailParam) : undefined} inputStyle={inputStyle} />
                 <AuthField label="Password" name="password" type="password" autoComplete="current-password" required inputStyle={inputStyle} />
-                <button type="submit" className="hover:-translate-y-px transition-transform" style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                <SubmitButton className="hover:-translate-y-px transition-transform" pendingLabel="Signing in…" style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
                   Log in →
-                </button>
+                </SubmitButton>
                 <p style={{ margin: "4px 0 0", textAlign: "center" }}>
                   <button type="button" style={{ background: "none", border: "none", cursor: "pointer", fontSize: "12.5px", color: "#6e6e6e", fontFamily: "var(--font-sans)", borderBottom: "1px solid rgba(255,255,255,0.15)", padding: 0 }}>
                     Forgot password?
@@ -217,10 +218,10 @@ export function AuthForm({ mode }: Props) {
                   )}
                 </div>
                 <AuthField label="Confirm password" name="confirm_password" type="password" autoComplete="new-password" required inputStyle={inputStyle} />
-                <button type="submit" className="hover:-translate-y-px transition-transform" style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", cursor: "pointer", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
+                <SubmitButton className="hover:-translate-y-px transition-transform" pendingLabel="Creating account…" style={{ marginTop: 8, display: "flex", alignItems: "center", justifyContent: "center", gap: 9, minHeight: 48, borderRadius: 11, fontSize: "14.5px", fontWeight: 600, color: "#000", border: "none", fontFamily: "var(--font-sans)", background: "#ffffff", boxShadow: "0 8px 36px -10px rgba(255,255,255,0.45), inset 0 -2px 0 rgba(0,0,0,0.12)" }}>
                   Create account →
-                </button>
-                <p className="font-mono" style={{ margin: "4px 0 0", textAlign: "center", fontSize: "10.5px", lineHeight: 1.6, color: "#4a4a4a" }}>no credit card needed · start free on Scout</p>
+                </SubmitButton>
+                <p className="font-mono" style={{ margin: "4px 0 0", textAlign: "center", fontSize: "10.5px", lineHeight: 1.6, color: "#4a4a4a" }}>no credit card needed · start free</p>
               </form>
             )}
           </>
@@ -235,6 +236,27 @@ export function AuthForm({ mode }: Props) {
         </p>
       </section>
     </div>
+  );
+}
+
+function SubmitButton({
+  children, style, className, pendingLabel,
+}: {
+  children: React.ReactNode;
+  style: React.CSSProperties;
+  className?: string;
+  pendingLabel: string;
+}) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className={className}
+      style={{ ...style, cursor: pending ? "wait" : "pointer", opacity: pending ? 0.65 : 1 }}
+    >
+      {pending ? pendingLabel : children}
+    </button>
   );
 }
 

@@ -1,6 +1,12 @@
 import { getAuthSetupIssuesWithRemoteChecks } from "@/lib/auth-setup";
 
 export async function AuthSetupBanner() {
+  // Developer setup aid only — its fixes are dashboard / .env instructions.
+  // Never surface it to real users in production.
+  if (process.env.NODE_ENV === "production") {
+    return null;
+  }
+
   const issues = await getAuthSetupIssuesWithRemoteChecks();
   if (issues.length === 0) {
     return null;
