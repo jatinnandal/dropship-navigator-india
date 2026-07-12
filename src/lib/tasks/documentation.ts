@@ -545,12 +545,3 @@ export function buildDocumentationTask(
     steps: [...baseSteps, ...gstSteps],
   };
 }
-
-/** @deprecated Use buildDocumentationTask via buildTask registry */
-export function buildGstRegistrationTask(
-  profile: OnboardingProfile,
-  answers: Record<string, string>,
-): Task {
-  const task = buildDocumentationTask(profile, answers, {});
-  return { ...task, id: "gst-registration", title: "GST registration, done with you" };
-}

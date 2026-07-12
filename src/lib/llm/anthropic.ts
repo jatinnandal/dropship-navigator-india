@@ -10,6 +10,9 @@ const ANTHROPIC_VERSION = "2023-06-01";
 /** Default model. Override with LLM_PLAN_MODEL (e.g. a cheaper tier) if needed. */
 const DEFAULT_MODEL = "claude-opus-4-8";
 
+/** Abort the Messages call after this long so a hung socket can't wedge the route. */
+const REQUEST_TIMEOUT_MS = 60_000;
+
 export type AnthropicConfig = {
   apiKey: string;
   model: string;
@@ -42,21 +45,32 @@ export async function generateStructured<T>(params: {
 }): Promise<T> {
   const { config, system, userPrompt, schema, maxTokens = 4096 } = params;
 
-  const res = await fetch(`${ANTHROPIC_BASE}/messages`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": config.apiKey,
-      "anthropic-version": ANTHROPIC_VERSION,
-    },
-    body: JSON.stringify({
-      model: config.model,
-      max_tokens: maxTokens,
-      system,
-      messages: [{ role: "user", content: userPrompt }],
-      output_config: { format: { type: "json_schema", schema } },
-    }),
-  });
+  // Hard cap the request so a stalled connection can't hang the background
+  // personalization route indefinitely — callers catch and fall back to static.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+
+  let res: Response;
+  try {
+    res = await fetch(`${ANTHROPIC_BASE}/messages`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": config.apiKey,
+        "anthropic-version": ANTHROPIC_VERSION,
+      },
+      body: JSON.stringify({
+        model: config.model,
+        max_tokens: maxTokens,
+        system,
+        messages: [{ role: "user", content: userPrompt }],
+        output_config: { format: { type: "json_schema", schema } },
+      }),
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!res.ok) {
     const text = await res.text();

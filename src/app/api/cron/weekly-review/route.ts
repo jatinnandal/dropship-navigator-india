@@ -36,9 +36,17 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "service role not configured" }, { status: 503 });
   }
 
-  const { data: userList, error } = await admin.auth.admin.listUsers({ perPage: 500 });
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  // Page through every auth user — listUsers caps each page, so a single call
+  // silently drops everyone past the first page once the user base grows.
+  const PER_PAGE = 500;
+  const users: { id: string; email?: string; email_confirmed_at?: string }[] = [];
+  for (let page = 1; ; page++) {
+    const { data, error } = await admin.auth.admin.listUsers({ page, perPage: PER_PAGE });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+    users.push(...data.users);
+    if (data.users.length < PER_PAGE) break;
   }
 
   let sent = 0;
@@ -52,7 +60,7 @@ export async function GET(request: NextRequest) {
     .neq("status", "cancelled");
   const paidUserIds = new Set((subs ?? []).map((s) => s.user_id));
 
-  for (const user of userList.users) {
+  for (const user of users) {
     if (!user.email || !user.email_confirmed_at || !paidUserIds.has(user.id)) {
       skipped++;
       continue;
@@ -110,5 +118,5 @@ export async function GET(request: NextRequest) {
     else skipped++;
   }
 
-  return NextResponse.json({ sent, skipped, total: userList.users.length });
+  return NextResponse.json({ sent, skipped, total: users.length });
 }
