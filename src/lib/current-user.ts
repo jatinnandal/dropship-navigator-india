@@ -1,9 +1,16 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { devBypassUserId } from "@/lib/dev-auth";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export async function getCurrentUser(): Promise<User | null> {
+/**
+ * Resolve the signed-in user. `auth.getUser()` verifies the JWT against the
+ * Auth server (a network round-trip), and a single page resolves the visitor
+ * many times over (every *ForCurrentVisitor store + plan lookup + display
+ * name). React `cache()` dedupes it to one call per request.
+ */
+export const getCurrentUser = cache(async (): Promise<User | null> => {
   const bypassId = devBypassUserId();
   if (bypassId) {
     return { id: bypassId, email: "dev.bypass@local.test" } as User;
@@ -19,7 +26,7 @@ export async function getCurrentUser(): Promise<User | null> {
   } = await supabase.auth.getUser();
 
   return user;
-}
+});
 
 export async function getCurrentUserId(): Promise<string> {
   const user = await getCurrentUser();
