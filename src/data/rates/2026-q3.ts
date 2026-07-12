@@ -1,7 +1,7 @@
 import type { RateCard } from "@/lib/rate-card";
 
 /**
- * 2026 Q3 card — verified 2026-07-09. Next verification pass due early
+ * 2026 Q3 card - verified 2026-07-09. Next verification pass due early
  * October 2026 (see CHANGELOG.md for the process).
  */
 export const RATES_2026_Q3: RateCard = {
@@ -15,7 +15,7 @@ export const RATES_2026_Q3: RateCard = {
       "taxguru.in (TCS 0.5% effective July 2024)",
     ],
     changelog: [
-      "Amazon: 0% referral fee for products ≤ ₹1,000 in eligible categories (apparel, beauty, grocery, home & kitchen — effective Mar 16, 2026). Electronics keeps its normal card.",
+      "Amazon: 0% referral fee for products ≤ ₹1,000 in eligible categories (apparel, beauty, grocery, home & kitchen - effective Mar 16, 2026). Electronics keeps its normal card.",
       "Amazon: referral above ₹1,000 re-verified per category (fashion 13%, beauty 7%, grocery 7%, general 11%).",
       "Flipkart, Meesho, TCS, shipping bands: re-verified, unchanged from Q1.",
     ],

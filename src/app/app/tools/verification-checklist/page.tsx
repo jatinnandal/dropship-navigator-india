@@ -15,7 +15,7 @@ export default function VerificationChecklistPage() {
           Smart Verification Checklist
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Don&apos;t just check boxes — verify your registrations are actually
+          Don&apos;t just check boxes - verify your registrations are actually
           complete and formatted correctly.
         </p>
       </header>

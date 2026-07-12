@@ -87,7 +87,7 @@ export default async function DashboardPage() {
 
   const heroWhy =
     nextAction?.isFreshStart && nextAction.subTaskId === "docs-folder-ready"
-      ? "Every expert was once exactly here. Let's get your first task done — it takes about 30 minutes and unlocks the rest of the journey."
+      ? "Every expert was once exactly here. Let's get your first task done - it takes about 30 minutes and unlocks the rest of the journey."
       : nextAction?.why;
 
   const displayName = await getDisplayName();
@@ -98,7 +98,7 @@ export default async function DashboardPage() {
         nodes.find((n) => n.id === nextAction.moduleId)?.status ?? "available",
         hasGstin,
       )
-    : "One step at a time — you're building a real business, not chasing a hack.";
+    : "One step at a time - you're building a real business, not chasing a hack.";
   const stageTools = nextAction ? STAGE_TOOLS[nextAction.moduleId] ?? [] : [];
 
   const weeklyReview = buildWeeklyReview({

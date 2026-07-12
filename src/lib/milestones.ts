@@ -7,10 +7,10 @@ export type MilestoneId =
   | "supplier-locked";
 
 export const MILESTONE_LABELS: Record<MilestoneId, string> = {
-  "gstin-saved": "GSTIN saved — you're marketplace-ready on paper",
-  "first-listing-live": "First listings live — you are officially selling",
-  "store-linked": "Store linked — payouts can flow",
-  "module-complete": "Module complete — great momentum",
+  "gstin-saved": "GSTIN saved - you're marketplace-ready on paper",
+  "first-listing-live": "First listings live - you are officially selling",
+  "store-linked": "Store linked - payouts can flow",
+  "module-complete": "Module complete - great momentum",
   "product-picked": "Hero product picked",
   "supplier-locked": "Supplier locked in",
 };

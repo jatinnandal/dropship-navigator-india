@@ -3,7 +3,7 @@ import { DataFreshness, type DataMeta } from "@/components/data-freshness";
 /** Freshness badge + the accuracy-contract disclaimer, for every money tool. */
 export function EstimateDisclaimer({
   meta,
-  note = "Estimates — fees vary by account, category and seller tier. Check your rate card in Seller Hub.",
+  note = "Estimates - fees vary by account, category and seller tier. Check your rate card in Seller Hub.",
 }: {
   meta: DataMeta;
   note?: string;

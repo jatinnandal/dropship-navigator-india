@@ -18,7 +18,7 @@ export default function ProductScorecardPage() {
           Product Scorecard
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Score any product 0–100 across six weighted axes — margin, competition,
+          Score any product 0-100 across six weighted axes - margin, competition,
           shipping risk, returns, seasonality, and capital. Compare up to three
           products side by side.
         </p>

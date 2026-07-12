@@ -88,7 +88,7 @@ export function LandingRouteMap() {
             margin: "16px auto 0",
           }}
         >
-          Six checkpoints. Each one unlocks only after the previous is verified —
+          Six checkpoints. Each one unlocks only after the previous is verified -
           so you never skip ahead into a trap.
         </p>
       </div>

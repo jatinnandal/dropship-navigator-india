@@ -6,7 +6,7 @@ const TOOLS = [
   {
     icon: "🧮",
     title: "Profit margin calculator",
-    desc: "Real margins across Amazon, Flipkart, Meesho & Shopify — fees, TCS and RTO weighting included.",
+    desc: "Real margins across Amazon, Flipkart, Meesho & Shopify - fees, TCS and RTO weighting included.",
   },
   {
     icon: "📞",
@@ -21,7 +21,7 @@ const TOOLS = [
   {
     icon: "📅",
     title: "GST filing calendar",
-    desc: "GSTR-1, GSTR-3B, TCS reconciliation — with prep checklists so you never miss a deadline.",
+    desc: "GSTR-1, GSTR-3B, TCS reconciliation - with prep checklists so you never miss a deadline.",
   },
 ];
 

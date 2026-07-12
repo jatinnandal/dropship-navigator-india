@@ -7,7 +7,7 @@ import { useFlash } from "@/components/use-flash";
 
 const ERRORS: Record<string, string> = {
   missing_current: "Enter your current password.",
-  weak_password: "Choose a stronger password — at least 6 characters.",
+  weak_password: "Choose a stronger password - at least 6 characters.",
   password_mismatch: "New passwords do not match.",
   same_password: "Your new password must be different from the current one.",
   wrong_current: "Your current password is incorrect.",

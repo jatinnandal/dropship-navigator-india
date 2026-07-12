@@ -33,7 +33,7 @@ export function AuthPageShell({ children }: AuthPageShellProps) {
             From first doubt to <span className="font-serif-accent">first payout.</span>
           </h1>
           <p style={{ margin: "16px 0 0", maxWidth: "26rem", fontSize: "14.5px", lineHeight: 1.7, color: "#8a8a8a" }}>
-            Your route, your progress, your streak — saved to your account, not a browser cookie.
+            Your route, your progress, your streak - saved to your account, not a browser cookie.
           </p>
 
           {/* Floating proof chip */}

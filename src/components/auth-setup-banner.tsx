@@ -1,7 +1,7 @@
 import { getAuthSetupIssuesWithRemoteChecks } from "@/lib/auth-setup";
 
 export async function AuthSetupBanner() {
-  // Developer setup aid only — its fixes are dashboard / .env instructions.
+  // Developer setup aid only - its fixes are dashboard / .env instructions.
   // Never surface it to real users in production.
   if (process.env.NODE_ENV === "production") {
     return null;
@@ -19,7 +19,7 @@ export async function AuthSetupBanner() {
         {issues.map((issue) => (
           <li key={issue.id}>
             <span className="font-medium">{issue.title}</span>
-            <span className="text-rose-100/90"> — {issue.fix}</span>
+            <span className="text-rose-100/90"> - {issue.fix}</span>
           </li>
         ))}
       </ul>

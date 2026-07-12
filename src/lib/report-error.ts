@@ -1,7 +1,7 @@
 /**
  * Single choke point for error reporting. Today it emits a structured line to
  * stderr, which Vercel captures in Runtime Logs (filter for "[app-error]").
- * To add Sentry/Logtail/etc. later, wire the call in one place — here.
+ * To add Sentry/Logtail/etc. later, wire the call in one place - here.
  */
 type ErrorContext = Record<string, unknown>;
 

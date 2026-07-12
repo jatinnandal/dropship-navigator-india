@@ -390,7 +390,7 @@ export function DocumentChecker() {
             const linkedDoc = DOCUMENTS.find((d) => d.id === linked);
             if (linkedDoc) {
               warnings.push(
-                `${doc.name} is ready but ${linkedDoc.name} is not — names must match`
+                `${doc.name} is ready but ${linkedDoc.name} is not - names must match`
               );
             }
           }

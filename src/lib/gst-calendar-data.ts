@@ -34,9 +34,9 @@ const GST_FILINGS: GstFiling[] = [
     form: "GSTR-1",
     frequency: "monthly",
     description:
-      "Details of outward supplies — all B2B and B2C invoices for the month.",
+      "Details of outward supplies - all B2B and B2C invoices for the month.",
     dueDay: 11,
-    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) — capped ₹2,000 if turnover ≤ ₹1.5cr (₹10,000 only above ₹5cr)",
+    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) - capped ₹2,000 if turnover ≤ ₹1.5cr (₹10,000 only above ₹5cr)",
     applicableTo: "regular",
     prepChecklist: [
       "Compile all sales invoices for the period",
@@ -54,7 +54,7 @@ const GST_FILINGS: GstFiling[] = [
     description:
       "Quarterly return of outward supplies for QRMP filers. Due 13th of the month following the quarter.",
     dueDay: 13,
-    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) — capped ₹2,000 if turnover ≤ ₹1.5cr (₹10,000 only above ₹5cr)",
+    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) - capped ₹2,000 if turnover ≤ ₹1.5cr (₹10,000 only above ₹5cr)",
     applicableTo: "qrmp",
     prepChecklist: [
       "Compile all sales invoices for the quarter",
@@ -70,9 +70,9 @@ const GST_FILINGS: GstFiling[] = [
     form: "GSTR-3B",
     frequency: "monthly",
     description:
-      "Summary return with tax payment — ITC claimed, output tax, and net tax payable.",
+      "Summary return with tax payment - ITC claimed, output tax, and net tax payable.",
     dueDay: 20,
-    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) — capped ₹2,000 if turnover ≤ ₹1.5cr — plus 18% interest on tax due",
+    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) - capped ₹2,000 if turnover ≤ ₹1.5cr - plus 18% interest on tax due",
     applicableTo: "regular",
     prepChecklist: [
       "Reconcile input tax credit (ITC) from GSTR-2B",
@@ -90,7 +90,7 @@ const GST_FILINGS: GstFiling[] = [
     description:
       "Quarterly summary return with tax payment for QRMP filers. Due 22nd or 24th based on state category.",
     dueDay: 22, // 22nd or 24th depending on state category
-    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) — capped ₹2,000 if turnover ≤ ₹1.5cr — plus 18% interest on tax due",
+    lateFeePenalty: "₹50/day (₹25 CGST + ₹25 SGST) - capped ₹2,000 if turnover ≤ ₹1.5cr - plus 18% interest on tax due",
     applicableTo: "qrmp",
     prepChecklist: [
       "Reconcile input tax credit (ITC) from GSTR-2B",
@@ -106,7 +106,7 @@ const GST_FILINGS: GstFiling[] = [
     form: "IFF",
     frequency: "monthly",
     description:
-      "Optional monthly invoice upload for QRMP filers — lets your buyers claim ITC without waiting for quarterly GSTR-1.",
+      "Optional monthly invoice upload for QRMP filers - lets your buyers claim ITC without waiting for quarterly GSTR-1.",
     dueDay: 13,
     lateFeePenalty: "No penalty (optional), but buyers lose ITC visibility",
     applicableTo: "qrmp",
@@ -122,7 +122,7 @@ const GST_FILINGS: GstFiling[] = [
     form: "TDS/TCS credit received statement",
     frequency: "monthly",
     description:
-      "Marketplaces deposit 0.5% TCS (rate since July 2024) against your GSTIN. Accept it via the 'TDS and TCS credit received' statement on the GST portal — the credit reaches your cash ledger only after you accept it.",
+      "Marketplaces deposit 0.5% TCS (rate since July 2024) against your GSTIN. Accept it via the 'TDS and TCS credit received' statement on the GST portal - the credit reaches your cash ledger only after you accept it.",
     dueDay: 28,
     lateFeePenalty: "No direct penalty, but unaccepted TCS = lost money",
     applicableTo: "all",
@@ -141,12 +141,12 @@ const GST_FILINGS: GstFiling[] = [
     description:
       "Even with zero sales, you MUST file a NIL return every period. Missing it costs ₹20/day.",
     dueDay: 11,
-    lateFeePenalty: "₹20/day (₹10 CGST + ₹10 SGST) for NIL returns — capped ₹500",
+    lateFeePenalty: "₹20/day (₹10 CGST + ₹10 SGST) for NIL returns - capped ₹500",
     applicableTo: "all",
     prepChecklist: [
       "Confirm zero transactions for the period",
       "File NIL GSTR-1 and GSTR-3B on portal",
-      "Takes ~2 minutes — just do it",
+      "Takes ~2 minutes - just do it",
     ],
   },
 ];

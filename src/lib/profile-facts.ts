@@ -1,6 +1,6 @@
 import type { OnboardingProfile } from "@/lib/mvp-data";
 
-/** Derived facts from onboarding answers — single source for rule predicates. */
+/** Derived facts from onboarding answers - single source for rule predicates. */
 export type ProfileFacts = {
   profile: OnboardingProfile;
 

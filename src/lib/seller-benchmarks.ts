@@ -17,13 +17,13 @@ export const BENCHMARKS: StageBenchmark[] = [
   {
     stage: "beginner",
     label: "Beginner",
-    monthsRange: "0–3 months",
+    monthsRange: "0-3 months",
     metrics: {
-      ordersPerDay: "1–5",
-      monthlyRevenue: "₹10K–₹50K",
-      netMargin: "10–15%",
-      rtoRate: "25–40%",
-      adSpend: "₹0–₹5K/month",
+      ordersPerDay: "1-5",
+      monthlyRevenue: "₹10K-₹50K",
+      netMargin: "10-15%",
+      rtoRate: "25-40%",
+      adSpend: "₹0-₹5K/month",
     },
     milestones: [
       "First 10 orders fulfilled",
@@ -41,13 +41,13 @@ export const BENCHMARKS: StageBenchmark[] = [
   {
     stage: "growing",
     label: "Growing",
-    monthsRange: "3–6 months",
+    monthsRange: "3-6 months",
     metrics: {
-      ordersPerDay: "5–15",
-      monthlyRevenue: "₹50K–₹2L",
-      netMargin: "15–22%",
-      rtoRate: "15–25%",
-      adSpend: "₹5K–₹20K/month",
+      ordersPerDay: "5-15",
+      monthlyRevenue: "₹50K-₹2L",
+      netMargin: "15-22%",
+      rtoRate: "15-25%",
+      adSpend: "₹5K-₹20K/month",
     },
     milestones: [
       "Consistent daily orders",
@@ -65,13 +65,13 @@ export const BENCHMARKS: StageBenchmark[] = [
   {
     stage: "established",
     label: "Established",
-    monthsRange: "6–12 months",
+    monthsRange: "6-12 months",
     metrics: {
-      ordersPerDay: "15–30",
-      monthlyRevenue: "₹2L–₹5L",
-      netMargin: "18–28%",
-      rtoRate: "10–15%",
-      adSpend: "₹20K–₹50K/month",
+      ordersPerDay: "15-30",
+      monthlyRevenue: "₹2L-₹5L",
+      netMargin: "18-28%",
+      rtoRate: "10-15%",
+      adSpend: "₹20K-₹50K/month",
     },
     milestones: [
       "Multi-channel presence",
@@ -93,8 +93,8 @@ export const BENCHMARKS: StageBenchmark[] = [
     metrics: {
       ordersPerDay: "30+",
       monthlyRevenue: "₹5L+",
-      netMargin: "15–25%",
-      rtoRate: "5–10%",
+      netMargin: "15-25%",
+      rtoRate: "5-10%",
       adSpend: "₹50K+/month",
     },
     milestones: [
@@ -104,7 +104,7 @@ export const BENCHMARKS: StageBenchmark[] = [
       "Profit reinvestment system",
     ],
     commonMistakes: [
-      "Not building a brand — staying commodity forever",
+      "Not building a brand - staying commodity forever",
       "Tax compliance gaps catching up",
       "Burning cash on branding without unit economics",
       "Founder bottleneck on all decisions",

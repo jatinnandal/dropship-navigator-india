@@ -104,7 +104,7 @@ export function SeasonalCalendar() {
                 </div>
                 {event.inPrepWindow && (
                   <p className="mt-2 text-xs text-white/80">
-                    Start preparing — {event.prepWeeks} weeks recommended lead time
+                    Start preparing - {event.prepWeeks} weeks recommended lead time
                   </p>
                 )}
               </div>

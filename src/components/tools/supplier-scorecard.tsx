@@ -83,7 +83,7 @@ export function SupplierScorecard() {
     setTimeout(() => setSaved(false), 2000);
   };
 
-  // Neutral until the user has actually scored something — an unanswered
+  // Neutral until the user has actually scored something - an unanswered
   // scorecard is not an "Avoid This Supplier" verdict.
   const verdictColor =
     answeredCount === 0
@@ -192,7 +192,7 @@ export function SupplierScorecard() {
                   60-70% of early seller failures trace back to supplier issues
                 </li>
                 <li className="font-medium text-white">
-                  ALWAYS order samples before committing to bulk — no exceptions
+                  ALWAYS order samples before committing to bulk - no exceptions
                 </li>
               </ul>
             </div>
@@ -398,7 +398,7 @@ function VerdictCard({
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 200 }}
         >
-          {answeredCount === 0 ? "—" : result.totalScore}
+          {answeredCount === 0 ? "-" : result.totalScore}
           <span className="text-lg text-[var(--text-faint)]">/100</span>
         </motion.p>
       </div>

@@ -54,7 +54,7 @@ export type JourneyNode = {
   progressPercent: number;
 };
 
-/** Legacy base catalog — kept for milestone/crisis lookups of known subtask IDs. */
+/** Legacy base catalog - kept for milestone/crisis lookups of known subtask IDs. */
 export const MODULE_SUB_TASKS: Record<TaskModuleId, JourneySubTaskDef[]> = {
   "common-documentation": [
     { id: "docs-folder-ready", moduleId: "common-documentation", label: "Master document folder created", severity: "required" },

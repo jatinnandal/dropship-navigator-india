@@ -20,7 +20,7 @@ export function PaosEditor({ profile, legalBusinessName, gstin, className }: Pro
         seller_id: "YOUR_SELLER_ID",
         gstin: gstin ?? "YOUR_GSTIN",
         suspension_date: new Date().toLocaleDateString("en-IN"),
-        suspension_reason: "Dispatch rate / policy violation — update with exact reason from email",
+        suspension_reason: "Dispatch rate / policy violation - update with exact reason from email",
         root_cause_detail: "e.g. dispatch rate dropped below 90% during a long weekend",
         action_1: "Paused affected listings and notified supplier of dispatch SLA",
         action_2: "Updated inventory sync to prevent overselling",

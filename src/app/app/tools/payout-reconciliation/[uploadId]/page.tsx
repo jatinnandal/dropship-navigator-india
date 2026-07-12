@@ -58,13 +58,13 @@ export default async function ReconReportPage({ params }: { params: Params }) {
         </p>
         <EstimateDisclaimer
           meta={MARKETPLACE_FEES_META}
-          note="Expected fees exclude shipping/weight handling (not in the CSV). Deltas near your shipping cost are usually courier charges — investigate the big ones, not the small ones."
+          note="Expected fees exclude shipping/weight handling (not in the CSV). Deltas near your shipping cost are usually courier charges - investigate the big ones, not the small ones."
         />
         {rowsPurged ? (
           <p className="text-muted mt-3 rounded-xl border border-white/[0.1] bg-white/[0.02] px-4 py-3 text-xs leading-5">
             Order-level detail for this reconciliation has passed your plan&apos;s
             retention window and was cleared to save space. The totals above are
-            kept permanently — upgrade for a longer history window.
+            kept permanently - upgrade for a longer history window.
           </p>
         ) : null}
       </header>
@@ -95,7 +95,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
               <p className="text-muted mt-1 max-w-xl text-xs leading-5">
                 The marketplace deposited this against your GSTIN. Accept it in the{" "}
                 <strong className="text-white">TDS/TCS credit received</strong> statement on the GST
-                portal — it offsets your GST payable. Most sellers never claim it.
+                portal - it offsets your GST payable. Most sellers never claim it.
               </p>
             </div>
           </div>
@@ -115,7 +115,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
         <div className="flex items-center gap-2 px-1">
           <TriangleAlert className="h-4 w-4 text-[oklch(0.8_0.13_20)]" aria-hidden="true" />
           <h2 className="text-base font-semibold text-white">
-            Flagged orders — deduction above expectation ({s.flaggedCount})
+            Flagged orders - deduction above expectation ({s.flaggedCount})
           </h2>
         </div>
 
@@ -130,7 +130,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
         ) : flagged.length === 0 ? (
           <div className="panel mt-3 rounded-2xl p-6">
             <p className="text-sm text-[var(--success)]">
-              Nothing flagged — every delivered order's deduction is within the expected band. That's
+              Nothing flagged - every delivered order's deduction is within the expected band. That's
               what a clean settlement looks like.
             </p>
           </div>
@@ -184,7 +184,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
           {rowsPurged ? (
             <p className="text-sm text-[var(--muted)]">
               {s.returnCount > 0
-                ? `${s.returnCount} return${s.returnCount > 1 ? "s" : ""} in this settlement — order-level detail has passed your plan's retention window.`
+                ? `${s.returnCount} return${s.returnCount > 1 ? "s" : ""} in this settlement - order-level detail has passed your plan's retention window.`
                 : "No returned orders in this settlement."}
             </p>
           ) : returns.length === 0 ? (
@@ -201,7 +201,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
               </p>
               <p className="text-muted mt-2 text-xs leading-5">
                 On a return you should lose at most the non-refundable fees plus round-trip shipping.
-                Commission/referral should be reversed — if a returned order shows commission still
+                Commission/referral should be reversed - if a returned order shows commission still
                 deducted, that's a ticket.
               </p>
             </>
@@ -214,7 +214,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
         <p className="text-muted mt-6 px-1 text-xs leading-5">
           Columns in your file we didn't use: {s.unmappedHeaders.slice(0, 8).join(", ")}
           {s.unmappedHeaders.length > 8 ? "…" : ""}. If the report looks off, the export format may
-          have changed — tell us.
+          have changed - tell us.
         </p>
       ) : null}
 

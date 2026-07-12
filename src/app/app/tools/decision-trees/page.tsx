@@ -26,7 +26,7 @@ export default function DecisionTreesPage() {
           Decision Tree Wizards
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Stop overthinking — answer a few questions and get a clear,
+          Stop overthinking - answer a few questions and get a clear,
           data-backed recommendation for your situation.
         </p>
         <EstimateDisclaimer meta={MARKETPLACE_FEES_META} />

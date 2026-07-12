@@ -5,7 +5,7 @@ export function isAdminAuthConfigured(): boolean {
   return createSupabaseAdminClient() !== null;
 }
 
-/** Dev/local only — auto-confirms email via admin API. Never enabled in production. */
+/** Dev/local only - auto-confirms email via admin API. Never enabled in production. */
 export function isInstantSignupEnabled(): boolean {
   if (!isAdminAuthConfigured()) {
     return false;
@@ -88,7 +88,7 @@ export async function ensureConfirmedUserWithPassword(
   return { ok: true };
 }
 
-/** If login fails, unconfirmed email is a common cause — confirm and allow retry. */
+/** If login fails, unconfirmed email is a common cause - confirm and allow retry. */
 export async function confirmExistingUserEmail(email: string): Promise<boolean> {
   const admin = createSupabaseAdminClient();
   if (!admin) return false;

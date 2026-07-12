@@ -25,7 +25,7 @@ export const SALE_EVENTS: SaleEvent[] = [
     tips: [
       "Stock 3-4x normal inventory for top SKUs",
       "Create festive bundles and combo offers",
-      "Increase ad budget 3-4x — CPCs spike but conversion rate doubles",
+      "Increase ad budget 3-4x - CPCs spike but conversion rate doubles",
       "Pre-list deals in platform deal portals by submission deadline",
       "Ensure all listings have 5+ images and A+ content",
     ],
@@ -79,7 +79,7 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Strong fashion and electronics demand",
       "Pre-monsoon clearance for seasonal goods",
       "Freedom-themed messaging works well in creatives",
-      "Back-to-school adjacent — stationery and bags move fast",
+      "Back-to-school adjacent - stationery and bags move fast",
     ],
     adBudgetMultiplier: 3,
   },
@@ -110,7 +110,7 @@ export const SALE_EVENTS: SaleEvent[] = [
     prepWeeks: 3,
     category: "major",
     tips: [
-      "Pre-festive warm-up — test your supply chain",
+      "Pre-festive warm-up - test your supply chain",
       "Good time to test new listings before Diwali rush",
       "Focus on home decor and electronics",
     ],
@@ -128,7 +128,7 @@ export const SALE_EVENTS: SaleEvent[] = [
     tips: [
       "Only Prime-eligible listings get full visibility",
       "Submit Lightning Deals 4+ weeks before",
-      "Focus on high-margin products — deep discounts expected",
+      "Focus on high-margin products - deep discounts expected",
       "Increase PPC budget 2-3x for these 48 hours",
     ],
     adBudgetMultiplier: 3,
@@ -177,7 +177,7 @@ export const SALE_EVENTS: SaleEvent[] = [
     tips: [
       "Gift-focused categories: grooming, accessories, chocolates",
       "Rakhi + gift combos are top sellers",
-      "Express delivery is a must — last-minute buyers dominate",
+      "Express delivery is a must - last-minute buyers dominate",
     ],
     adBudgetMultiplier: 2,
   },
@@ -305,7 +305,7 @@ export const SALE_EVENTS: SaleEvent[] = [
     prepWeeks: 3,
     category: "niche",
     tips: [
-      "Strong in Kerala — electronics, gold, sarees",
+      "Strong in Kerala - electronics, gold, sarees",
       "Regional targeting in ads is essential",
       "Festive home decor and kitchen items",
     ],
@@ -321,7 +321,7 @@ export const SALE_EVENTS: SaleEvent[] = [
     prepWeeks: 2,
     category: "niche",
     tips: [
-      "Strong in Tamil Nadu — clothing, kitchen, gifts",
+      "Strong in Tamil Nadu - clothing, kitchen, gifts",
       "Regional language listings improve conversion",
       "Traditional items and modern gifting combos",
     ],
@@ -355,7 +355,7 @@ export const SALE_EVENTS: SaleEvent[] = [
     tips: [
       "Jewellery, sarees, beauty products spike",
       "Gift sets and couple combos",
-      "North India focused — target accordingly",
+      "North India focused - target accordingly",
     ],
     adBudgetMultiplier: 1.5,
   },

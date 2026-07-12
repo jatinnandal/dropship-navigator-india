@@ -16,7 +16,7 @@ export type OnboardingProfile = {
   productType: ProductType;
   /**
    * Whether the seller has actually chosen a product category. False when they
-   * picked "I don't know yet" — productType is stored as "general" for the
+   * picked "I don't know yet" - productType is stored as "general" for the
    * fee/RTO engines, but this flag preserves the "not decided" state so
    * personalization stays gated until they decide.
    */

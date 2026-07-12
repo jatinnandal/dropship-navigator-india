@@ -34,7 +34,7 @@ export function buildSettlementExample(channel: PrimaryChannel, orderValue = 100
     {
       label: "TCS (Tax Collected at Source)",
       amount: -fees.tcs,
-      note: fees.tcs > 0 ? "0.5% — accept via TDS/TCS credit received statement" : "No TCS on your own website",
+      note: fees.tcs > 0 ? "0.5% - accept via TDS/TCS credit received statement" : "No TCS on your own website",
     },
     { label: "Shipping / logistics deduction", amount: -shipping, note: "If platform logistics" },
     { label: "Net payout to bank", amount: payout, note: "What actually hits your account" },
@@ -55,7 +55,7 @@ export function SettlementBreakdown({ channel, orderValue = 1000 }: Props) {
         Worked example: ₹{orderValue.toLocaleString("en-IN")} order → payout
       </p>
       <p className="text-muted mt-1 text-xs">
-        TCS is credited to your GSTIN — accept it in the TDS/TCS credit received statement. TDS on commission, if deducted, is claimed in ITR.
+        TCS is credited to your GSTIN - accept it in the TDS/TCS credit received statement. TDS on commission, if deducted, is claimed in ITR.
       </p>
       <ul className="mt-3 space-y-2">
         {lines.map((line) => (
@@ -67,7 +67,7 @@ export function SettlementBreakdown({ channel, orderValue = 1000 }: Props) {
           >
             <span className="text-white">{line.label}</span>
             <span className={line.amount >= 0 ? "text-white" : "text-rose-200"}>
-              {line.amount >= 0 ? "" : "−"}₹{Math.abs(line.amount).toFixed(0)}
+              {line.amount >= 0 ? "" : "-"}₹{Math.abs(line.amount).toFixed(0)}
             </span>
             {line.note ? <span className="text-muted w-full text-xs">{line.note}</span> : null}
           </li>

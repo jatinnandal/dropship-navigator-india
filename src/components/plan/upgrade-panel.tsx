@@ -3,7 +3,7 @@ import { Lock } from "lucide-react";
 import { PLAN_LABELS, PLAN_PRICES, type Plan } from "@/lib/entitlements";
 
 /**
- * Contextual upgrade prompt — rendered at the exact moment a plan limit is
+ * Contextual upgrade prompt - rendered at the exact moment a plan limit is
  * hit (locked tool, quota reached, profile cap). Mono Depth: white lock,
  * no decorative color.
  */
@@ -46,7 +46,7 @@ export function UpgradePanel({
 
       <div className="mt-5 flex flex-wrap items-center gap-3.5">
         <Link href="/app/plans" className="btn-primary inline-flex min-h-[42px] items-center rounded-[11px] px-5 text-[13.5px]">
-          Unlock with {PLAN_LABELS[requiredPlan]} — ₹{price.monthly}/mo
+          Unlock with {PLAN_LABELS[requiredPlan]} - ₹{price.monthly}/mo
         </Link>
         <span className="font-mono text-[11px] text-[var(--text-faint)]">
           or ₹{price.yearly}/year

@@ -115,7 +115,7 @@ export async function getSubscriptionDetails(): Promise<{
       scheduledPlan = "starter";
     }
   } catch {
-    // Razorpay fetch failed — show what DB has
+    // Razorpay fetch failed - show what DB has
   }
 
   return {

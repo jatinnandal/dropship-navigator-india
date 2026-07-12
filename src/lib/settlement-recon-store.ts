@@ -90,7 +90,7 @@ export async function insertUpload(
   if (error || !data) return null;
 
   const rows = report.rows.slice(0, MAX_STORED_ROWS);
-  // Dedupe on orderRef (composite PK) — keep the first occurrence.
+  // Dedupe on orderRef (composite PK) - keep the first occurrence.
   const seen = new Set<string>();
   const payload = rows
     .filter((r) => (seen.has(r.orderRef) ? false : (seen.add(r.orderRef), true)))

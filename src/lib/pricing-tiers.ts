@@ -14,7 +14,7 @@ export const PLAN_CARDS: PlanCard[] = [
   {
     plan: "free",
     name: "Scout",
-    tagline: "See how the mentor works — free forever.",
+    tagline: "See how the mentor works - free forever.",
     priceMonthly: 0,
     priceYearly: null,
     features: [
@@ -34,10 +34,10 @@ export const PLAN_CARDS: PlanCard[] = [
     priceYearly: PLAN_PRICES.starter.yearly,
     features: [
       "Full 7-module launch journey, personalized",
-      "Every calculator & simulator — cashflow, ROAS, COD mix, scorecards",
+      "Every calculator & simulator - cashflow, ROAS, COD mix, scorecards",
       "GST filing calendar + document checker + decision wizards",
       "Crisis protocols: account suspension & supplier out-of-stock",
-      "2 seller profiles — test a second niche",
+      "2 seller profiles - test a second niche",
       "1 payout reconciliation per month",
       "Monday profit digest email",
     ],
@@ -51,7 +51,7 @@ export const PLAN_CARDS: PlanCard[] = [
     priceYearly: PLAN_PRICES.growth.yearly,
     features: [
       "Everything in Starter",
-      "5 seller profiles — run niches side-by-side",
+      "5 seller profiles - run niches side-by-side",
       "Unlimited payout reconciliations · 12-month order-level history",
       "Full crisis pack: payment holds, IP complaints, GST notices, courier disputes, review attacks",
       "Rate-change alerts on your saved products",

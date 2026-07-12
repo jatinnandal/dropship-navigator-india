@@ -56,7 +56,7 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
             Your business <span className="font-serif-accent">plans.</span>
           </h1>
           <p className="mt-2 max-w-[38rem] text-sm leading-[1.65] text-[var(--muted)]">
-            Each plan is a separate route with its own answers, progress, and streak. Switch anytime — nothing is lost.
+            Each plan is a separate route with its own answers, progress, and streak. Switch anytime - nothing is lost.
           </p>
         </div>
         <Link
@@ -163,7 +163,7 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
           );
         })}
 
-        {/* Ghost "Start another business" card — or the profile-cap upsell */}
+        {/* Ghost "Start another business" card - or the profile-cap upsell */}
         {atProfileCap ? (
           <UpgradePanel
             requiredPlan={entitlements.plan === "free" ? "starter" : "growth"}
@@ -176,7 +176,7 @@ export default async function ProfilesPage({ searchParams }: { searchParams: Sea
             bullets={[
               "Separate journey, answers and progress per business",
               "Compare unit economics across marketplaces properly",
-              "Switch anytime — nothing is lost",
+              "Switch anytime - nothing is lost",
             ]}
           />
         ) : (

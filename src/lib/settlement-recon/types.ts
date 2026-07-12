@@ -14,7 +14,7 @@ export type CanonicalRow = {
 
 export type AdapterResult = {
   rows: CanonicalRow[];
-  /** Headers present in the file that no alias matched — drift signal. */
+  /** Headers present in the file that no alias matched - drift signal. */
   unmappedHeaders: string[];
   /** Required headers we could NOT find; non-empty means the parse failed. */
   missingFields: string[];
@@ -23,9 +23,9 @@ export type AdapterResult = {
 
 export type ReconciledRow = CanonicalRow & {
   expectedFees: number;
-  /** saleAmount − settledAmount: what the marketplace actually kept. */
+  /** saleAmount - settledAmount: what the marketplace actually kept. */
   actualDeduction: number;
-  /** actualDeduction − expectedFees (delivered rows only). */
+  /** actualDeduction - expectedFees (delivered rows only). */
   delta: number;
   flagged: boolean;
 };

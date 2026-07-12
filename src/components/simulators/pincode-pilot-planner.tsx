@@ -20,7 +20,7 @@ export function PincodePilotPlanner({ defaultState = "Maharashtra", defaultOrder
 
   const pilotPlan = useMemo(() => {
     const pincodes = [pincode1, pincode2, pincode3].filter((p) => p.trim().length === 6);
-    return `Pincode pilot plan — ${state}
+    return `Pincode pilot plan - ${state}
 
 Phase 1: Test zone (${orderTarget} orders max)
 Pilot pincodes: ${pincodes.length > 0 ? pincodes.join(", ") : "[add 3 pincodes]"}

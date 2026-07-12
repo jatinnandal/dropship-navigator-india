@@ -11,7 +11,7 @@ export function getGstFilingBanner(input: {
     id: "gst-filing",
     severity: "deadline",
     message:
-      "GST FILING DUE — GSTR-1 and GSTR-3B are monthly or quarterly obligations. Missing filings suspends your GSTIN and blocks marketplaces.",
+      "GST FILING DUE - GSTR-1 and GSTR-3B are monthly or quarterly obligations. Missing filings suspends your GSTIN and blocks marketplaces.",
     href: "/app/tasks/common-documentation",
     ctaLabel: "View GST filing calendar",
     variant: "deadline",
@@ -32,7 +32,7 @@ export function getDashboardBanners(input: CrisisDetectorInput): DashboardBanner
     banners.push({
       id: warning.id,
       severity: warning.severity,
-      message: `${warning.title} — ${warning.message}`,
+      message: `${warning.title} - ${warning.message}`,
       href: warning.href,
       ctaLabel: warning.ctaLabel,
       variant: "at-risk",

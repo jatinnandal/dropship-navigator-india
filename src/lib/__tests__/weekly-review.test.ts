@@ -15,7 +15,7 @@ const baseInput = {
 describe("buildWeeklyReview", () => {
   it("labels the Monday-anchored week", () => {
     const r = buildWeeklyReview({ ...baseInput, workspace: {} });
-    expect(r.weekLabel).toBe("Week of 6 Jul – 12 Jul");
+    expect(r.weekLabel).toBe("Week of 6 Jul - 12 Jul");
   });
 
   it("returns null unit economics when nothing is saved", () => {

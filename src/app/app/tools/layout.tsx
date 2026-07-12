@@ -7,7 +7,7 @@ const TOOL_GATE_COPY: Record<string, { title: string; bullets: string[] }> = {
   "payout-reconciliation": {
     title: "Find the money your marketplace kept",
     bullets: [
-      "Upload settlement CSVs — expected vs received, order by order",
+      "Upload settlement CSVs - expected vs received, order by order",
       "Unclaimed TCS surfaced every month (most sellers never claim it)",
       "History trends: is your effective fee rate creeping up?",
     ],
@@ -17,9 +17,9 @@ const TOOL_GATE_COPY: Record<string, { title: string; bullets: string[] }> = {
 const DEFAULT_GATE = {
   title: "This tool is part of the full mentor",
   bullets: [
-    "Every calculator, simulator and checklist — one plan",
+    "Every calculator, simulator and checklist - one plan",
     "Numbers from the same verified rate card as the margin calculator",
-    "₹49/month — less than one RTO'd parcel",
+    "₹49/month - less than one RTO'd parcel",
   ],
 };
 

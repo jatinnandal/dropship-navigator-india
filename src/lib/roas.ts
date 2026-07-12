@@ -7,7 +7,7 @@ export type RoasInputs = {
   channel: PrimaryChannel;
   category: ProductType;
   shippingCost: number;
-  /** 0–100 share of COD orders. */
+  /** 0-100 share of COD orders. */
   codMixPercent: number;
   rtoRatePercent: number;
 };

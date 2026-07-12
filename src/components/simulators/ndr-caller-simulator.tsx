@@ -24,13 +24,13 @@ const SCENARIOS: Scenario[] = [
   {
     id: "incomplete-address",
     customerMsg:
-      'New COD order: "Rahul, Near Temple, Bihar" — no house number, no pincode. Customer has not responded to messages.',
+      'New COD order: "Rahul, Near Temple, Bihar" - no house number, no pincode. Customer has not responded to messages.',
     templateKey: "address",
     requireCopyOnWrong: true,
     options: [
       {
         id: "ship",
-        label: "Ship anyway — any sale is good",
+        label: "Ship anyway - any sale is good",
         correct: false,
         feedback: "Wrong. Incomplete addresses fail delivery 70%+ of the time.",
         showLossAnimation: true,
@@ -43,7 +43,7 @@ const SCENARIOS: Scenario[] = [
       },
       {
         id: "fake",
-        label: "Cancel — probably a fake order",
+        label: "Cancel - probably a fake order",
         correct: false,
         feedback: "Only cancel after trying to verify. Real customers often give vague addresses.",
       },
@@ -55,7 +55,7 @@ const SCENARIOS: Scenario[] = [
     options: [
       {
         id: "wait",
-        label: "Wait — they'll probably accept",
+        label: "Wait - they'll probably accept",
         correct: false,
         feedback: "Wrong. After 30 min, confirmation rates drop 40%. Message NOW.",
       },
@@ -80,7 +80,7 @@ const SCENARIOS: Scenario[] = [
     options: [
       {
         id: "ignore",
-        label: "Ignore — courier will retry",
+        label: "Ignore - courier will retry",
         correct: false,
         feedback: "One retry often fails. Call/WhatsApp within 24h or it's RTO.",
       },
@@ -88,7 +88,7 @@ const SCENARIOS: Scenario[] = [
         id: "call",
         label: "Call + WhatsApp to verify address and delivery window",
         correct: true,
-        feedback: "Correct. NDR follow-up saves 30–50% of would-be RTO orders.",
+        feedback: "Correct. NDR follow-up saves 30-50% of would-be RTO orders.",
       },
       {
         id: "cancel",
@@ -112,13 +112,13 @@ const SCENARIOS: Scenario[] = [
       },
       {
         id: "verify-all",
-        label: "Pause — verify each order via call/WhatsApp before any dispatch",
+        label: "Pause - verify each order via call/WhatsApp before any dispatch",
         correct: true,
-        feedback: "Correct. Bulk fake COD is common. One verification call saves ₹60–90 per fake order.",
+        feedback: "Correct. Bulk fake COD is common. One verification call saves ₹60-90 per fake order.",
       },
       {
         id: "ignore-pattern",
-        label: "Ignore the pattern — treat as normal",
+        label: "Ignore the pattern - treat as normal",
         correct: false,
         feedback: "Same pincode + incomplete addresses = red flag. Verify first.",
       },
@@ -131,7 +131,7 @@ const SCENARIOS: Scenario[] = [
     options: [
       {
         id: "allow-open",
-        label: "Let them open — close the sale",
+        label: "Let them open - close the sale",
         correct: false,
         feedback: "Wrong. Once opened, customers often refuse damaged-looking items or haggle. RTO + product loss likely.",
         showLossAnimation: true,
@@ -244,9 +244,9 @@ export function NdrCallerSimulator({ onComplete }: Props) {
           <div className="flex items-center gap-3">
             <Truck className="h-8 w-8 text-rose-300 motion-safe:rotate-180" aria-hidden="true" />
             <div>
-              <p className="text-sm font-semibold text-rose-200">Delivery failed — RTO charge</p>
+              <p className="text-sm font-semibold text-rose-200">Delivery failed - RTO charge</p>
               <p className="text-muted mt-1 text-xs">
-                Forward + reverse shipping: ₹60–90 lost. Product may be damaged. You earned ₹0.
+                Forward + reverse shipping: ₹60-90 lost. Product may be damaged. You earned ₹0.
               </p>
             </div>
           </div>
@@ -255,7 +255,7 @@ export function NdrCallerSimulator({ onComplete }: Props) {
 
       {(scenario.templateKey === "address" || showLoss) && !done ? (
         <CopyTemplate
-          title="Address verification template — copy before continuing"
+          title="Address verification template - copy before continuing"
           text={WHATSAPP_ADDRESS_VERIFY}
         />
       ) : null}
@@ -266,7 +266,7 @@ export function NdrCallerSimulator({ onComplete }: Props) {
           onClick={handleTemplateCopied}
           className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold"
         >
-          I copied the template — continue
+          I copied the template - continue
         </button>
       ) : null}
 

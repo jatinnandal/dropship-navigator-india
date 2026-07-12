@@ -18,9 +18,9 @@ import { resetProductWorkspace } from "@/app/app/journey/actions";
 /* ── Descriptions per module for the detail panel ── */
 const MODULE_DESCRIPTIONS: Record<string, string> = {
   "common-documentation":
-    "Master document folder, GSTIN, bank match, and the GST filing calendar — the paperwork that unlocks every marketplace.",
+    "Master document folder, GSTIN, bank match, and the GST filing calendar - the paperwork that unlocks every marketplace.",
   "product-selection":
-    "Shortlist products with real margin math — marketplace fees, TCS, shipping and RTO weighting included.",
+    "Shortlist products with real margin math - marketplace fees, TCS, shipping and RTO weighting included.",
   "supplier-sourcing":
     "Vet suppliers systematically and get terms in writing before any money moves.",
   "compliance-by-product":
@@ -145,12 +145,12 @@ export function JourneyMap({
 
   const statusLabel =
     selected.status === "in_progress"
-      ? `● YOU ARE HERE — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
+      ? `● YOU ARE HERE - STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
       : selected.status === "done"
-        ? `✓ ${STATUS_TITLES.done} — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
+        ? `✓ ${STATUS_TITLES.done} - STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
         : selected.status === "locked"
-          ? `LOCKED — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
-          : `${STATUS_TITLES.available} — STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`;
+          ? `LOCKED - STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`
+          : `${STATUS_TITLES.available} - STAGE ${nodes.findIndex((n) => n.id === selected.id) + 1}`;
 
   const description =
     MODULE_DESCRIPTIONS[selected.id] ?? selectedModule?.description ?? "";
@@ -158,7 +158,7 @@ export function JourneyMap({
     selected.status === "done"
       ? getModuleCompletionMessage(selected.id)
       : mentorNotes?.[selected.id] ??
-        "One step at a time — you're building a real business, not chasing a hack.";
+        "One step at a time - you're building a real business, not chasing a hack.";
 
   return (
     <div className="space-y-0">

@@ -44,7 +44,7 @@ export function RtoRealitySlider({
 
   return (
     <div className="mt-4 space-y-5 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
-      <p className="text-sm font-semibold text-slate-100">Will I Survive? — RTO Reality Slider</p>
+      <p className="text-sm font-semibold text-slate-100">Will I Survive? - RTO Reality Slider</p>
       <p className="text-muted text-xs">
         Default RTO is set to a realistic India COD rate ({defaultRtoPercent}%). Drag it up and watch profit die.
       </p>
@@ -119,7 +119,7 @@ export function RtoRealitySlider({
           onClick={() => onComplete({ netProfit: result.netProfit, rtoRate })}
           className="btn-emerald rounded-md px-4 py-2 text-sm font-semibold"
         >
-          I understand — save RTO estimate
+          I understand - save RTO estimate
         </button>
       ) : null}
     </div>

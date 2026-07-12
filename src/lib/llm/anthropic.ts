@@ -1,5 +1,5 @@
 /**
- * Minimal Anthropic Messages API client — fetch-based, zero-dependency, to
+ * Minimal Anthropic Messages API client - fetch-based, zero-dependency, to
  * match the codebase convention (see razorpay.ts). Returns null config when
  * unset so every caller degrades gracefully to static templates.
  */
@@ -34,7 +34,7 @@ type MessagesResponse = {
 /**
  * Single structured-output completion. `schema` constrains the response to
  * valid JSON of type T via output_config.format. Throws on transport/HTTP
- * errors — callers catch and fall back to static content.
+ * errors - callers catch and fall back to static content.
  */
 export async function generateStructured<T>(params: {
   config: AnthropicConfig;
@@ -46,7 +46,7 @@ export async function generateStructured<T>(params: {
   const { config, system, userPrompt, schema, maxTokens = 4096 } = params;
 
   // Hard cap the request so a stalled connection can't hang the background
-  // personalization route indefinitely — callers catch and fall back to static.
+  // personalization route indefinitely - callers catch and fall back to static.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 

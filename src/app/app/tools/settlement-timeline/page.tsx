@@ -20,7 +20,7 @@ export default function SettlementTimelinePage() {
           Settlement Timeline
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          See when marketplaces actually pay you — plan your working capital
+          See when marketplaces actually pay you - plan your working capital
         </p>
         <EstimateDisclaimer meta={SETTLEMENT_DATA_META} />
       </header>

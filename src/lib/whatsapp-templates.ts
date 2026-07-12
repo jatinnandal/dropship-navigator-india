@@ -31,7 +31,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "oc-1",
     category: "order-confirm",
-    title: "Order Confirmed — Warm",
+    title: "Order Confirmed - Warm",
     message:
       "Hi {{name}}! 🎉 Your order #{{orderId}} for {{product}} is confirmed. We're packing it with care! You'll get tracking info within 24hrs. Questions? Reply here.",
     placeholders: ["name", "orderId", "product"],
@@ -66,12 +66,12 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "sh-1",
     category: "shipping",
-    title: "Shipped — With Courier Details",
+    title: "Shipped - With Courier Details",
     message:
       "Hi {{name}}! Your order is on the way 🚚 Tracking: {{trackingId}} via {{courier}}. Expected delivery: {{date}}. Any issues? Just reply!",
     placeholders: ["name", "trackingId", "courier", "date"],
     bestPractice:
-      "Include courier name — customers often confuse which delivery person to expect.",
+      "Include courier name - customers often confuse which delivery person to expect.",
     timing: "Within 1 hour of dispatch",
   },
   {
@@ -82,7 +82,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
       "Quick update: Your package left our warehouse. ETA {{date}}. You can track anytime: {{link}}",
     placeholders: ["date", "link"],
     bestPractice:
-      "Short and direct. Don't over-message — one shipping update is enough unless delayed.",
+      "Short and direct. Don't over-message - one shipping update is enough unless delayed.",
     timing: "When order leaves warehouse/fulfillment center",
   },
   {
@@ -90,7 +90,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
     category: "shipping",
     title: "Delay Notification",
     message:
-      "Hi {{name}}, your order is slightly delayed due to {{reason}}. New expected date: {{date}}. Sorry for the wait — we're on it! Reply if you have questions.",
+      "Hi {{name}}, your order is slightly delayed due to {{reason}}. New expected date: {{date}}. Sorry for the wait - we're on it! Reply if you have questions.",
     placeholders: ["name", "reason", "date"],
     bestPractice:
       "Proactive delay messages reduce negative reviews by 50%. Always give a new ETA.",
@@ -101,7 +101,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "dl-1",
     category: "delivery",
-    title: "Delivered — With Support Window",
+    title: "Delivered - With Support Window",
     message:
       "Delivered! ✅ Your {{product}} should be with you now. Any issues in the next {{days}} days? Just message us. Enjoy!",
     placeholders: ["product", "days"],
@@ -125,7 +125,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "rto-1",
     category: "rto-prevention",
-    title: "COD Out for Delivery — Amount Reminder",
+    title: "COD Out for Delivery - Amount Reminder",
     message:
       "Hi {{name}}! Your COD order (₹{{amount}}) is out for delivery today. Please keep the exact amount ready. If you need to reschedule, reply NOW to avoid return.",
     placeholders: ["name", "amount"],
@@ -136,7 +136,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "rto-2",
     category: "rto-prevention",
-    title: "Failed Delivery — Options",
+    title: "Failed Delivery - Options",
     message:
       "We noticed delivery couldn't be completed. Would you like to: 1️⃣ Reschedule for tomorrow 2️⃣ Change address 3️⃣ Cancel order. Reply with number!",
     placeholders: [],
@@ -147,7 +147,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "rto-3",
     category: "rto-prevention",
-    title: "Delivery Reminder — Answer the Call",
+    title: "Delivery Reminder - Answer the Call",
     message:
       "Friendly reminder: Your order arrives today! The delivery person will call. Please answer to confirm. If unavailable, we'll try again tomorrow.",
     placeholders: [],
@@ -171,7 +171,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "rv-1",
     category: "review-request",
-    title: "Review Request — Friendly",
+    title: "Review Request - Friendly",
     message:
       "Hi {{name}}! Hope you're loving your {{product}}! 🌟 Could you take 30 seconds to leave a review? It helps other buyers like you: {{link}}",
     placeholders: ["name", "product", "link"],
@@ -182,7 +182,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "rv-2",
     category: "review-request",
-    title: "Review Request — With Issue Catch",
+    title: "Review Request - With Issue Catch",
     message:
       "Hey {{name}}! How's the {{product}} working out? If happy, a quick review means the world to us: {{link}}. Issues? Reply and we'll fix it.",
     placeholders: ["name", "product", "link"],
@@ -195,7 +195,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "ro-1",
     category: "reorder",
-    title: "Reorder Reminder — With Discount",
+    title: "Reorder Reminder - With Discount",
     message:
       "Hi {{name}}! It's been {{weeks}} weeks since you got {{product}}. Running low? Reorder here with {{discount}}% off: {{link}}",
     placeholders: ["name", "weeks", "product", "discount", "link"],
@@ -206,9 +206,9 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
   {
     id: "ro-2",
     category: "reorder",
-    title: "Restock Alert — No Discount",
+    title: "Restock Alert - No Discount",
     message:
-      "Hi {{name}}! Your {{product}} might be running low. We've kept stock aside for you — reorder anytime: {{link}}",
+      "Hi {{name}}! Your {{product}} might be running low. We've kept stock aside for you - reorder anytime: {{link}}",
     placeholders: ["name", "product", "link"],
     bestPractice:
       "Don't always discount. 'Kept stock aside' creates urgency without eroding margins.",

@@ -63,7 +63,7 @@ export function RtoScenarioSlider({
 
   return (
     <div>
-      <p className="text-xs uppercase tracking-wide text-neutral-400">Try this — RTO scenario</p>
+      <p className="text-xs uppercase tracking-wide text-neutral-400">Try this - RTO scenario</p>
       <p className="text-muted mt-1 text-xs">Slide to see what your first batch of orders actually earns.</p>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -145,7 +145,7 @@ export function RtoScenarioSlider({
         onClick={handleSave}
         className="btn-primary mt-4 min-h-[44px] rounded-md px-4 py-2 text-sm font-medium"
       >
-        {pending ? "Saving…" : saved ? "Saved — refresh to update warnings" : "Save this calculation"}
+        {pending ? "Saving…" : saved ? "Saved - refresh to update warnings" : "Save this calculation"}
       </button>
     </div>
   );

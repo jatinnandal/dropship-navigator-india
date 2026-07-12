@@ -8,7 +8,7 @@ const TRAPS = [
     stat: "35%",
     statLabel: "RTO rate on COD",
     title: "COD & RTO eat your margin",
-    desc: "20–35 % of COD orders return unpaid. One bad confirmation call costs you ₹60–90 in forward + reverse shipping — Navigator makes you practice the call before your first real order.",
+    desc: "20-35 % of COD orders return unpaid. One bad confirmation call costs you ₹60-90 in forward + reverse shipping - Navigator makes you practice the call before your first real order.",
     danger: true,
   },
   {
@@ -16,7 +16,7 @@ const TRAPS = [
     stat: "₹0",
     statLabel: "hits your bank",
     title: "Revenue is not profit",
-    desc: "Marketplace fees, TCS, RTO losses, and ad spend disappear before money lands. Dashboard sales lie — the built-in profit math doesn’t.",
+    desc: "Marketplace fees, TCS, RTO losses, and ad spend disappear before money lands. Dashboard sales lie - the built-in profit math doesn’t.",
     danger: true,
   },
   {
@@ -40,7 +40,7 @@ const TRAPS = [
     stat: "D-7",
     statLabel: "cash arrives late",
     title: "Cashflow dead zone",
-    desc: "Meta bills today; COD cash arrives day 5–7. The cashflow simulator shows if you’ll survive week one.",
+    desc: "Meta bills today; COD cash arrives day 5-7. The cashflow simulator shows if you’ll survive week one.",
     danger: false,
   },
 ];
@@ -76,7 +76,7 @@ function TrapCard({
   const dotColor = trap.danger ? "oklch(0.72 0.17 20)" : "#5a5a5a";
   const accentColor = trap.danger ? "oklch(0.8 0.13 20)" : "#8a8a8a";
 
-  // Tailwind needs static class names — map the 12-col span, applied only at lg+.
+  // Tailwind needs static class names - map the 12-col span, applied only at lg+.
   const spanClass =
     trap.span === 7 ? "lg:col-span-7" : trap.span === 5 ? "lg:col-span-5" : "lg:col-span-4";
 
@@ -255,7 +255,7 @@ export function LandingTraps() {
             margin: 0,
           }}
         >
-          Every trap below has burned real sellers — most within their first month.
+          Every trap below has burned real sellers - most within their first month.
           Navigator flags them before they cost you money.
         </p>
       </div>

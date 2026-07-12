@@ -156,7 +156,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
     case "product-selection":
       return {
         plainLanguageSummary:
-          "Pick ONE hero product to launch first — easy to ship, hard to break, survives returns. Focus beats spread: one product done well outsells three half-tested ones. Keep 2 backups noted for later.",
+          "Pick ONE hero product to launch first - easy to ship, hard to break, survives returns. Focus beats spread: one product done well outsells three half-tested ones. Keep 2 backups noted for later.",
         requiredInputs: [
           {
             factor: "Product category",
@@ -217,7 +217,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
           {
             name: "Marketplace bestseller lists + Google Trends India (free)",
             whenToUse: "Your first, zero-cost demand check before paying for any tool.",
-            whatToAsk: "Cross-check bestseller ranks on your target marketplace against 12-month Google Trends (India) — steady beats spiky.",
+            whatToAsk: "Cross-check bestseller ranks on your target marketplace against 12-month Google Trends (India) - steady beats spiky.",
           },
           {
             name: "Product Scorecard (in-app)",
@@ -448,14 +448,14 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
 
       return {
         plainLanguageSummary: isMeesho
-          ? "Launch on Meesho first. Price control, catalog rank, and Valmo dispatch speed decide whether you get orders — not just listing count."
+          ? "Launch on Meesho first. Price control, catalog rank, and Valmo dispatch speed decide whether you get orders - not just listing count."
           : `Launch on ${channelName} first. One channel done well is better than weak setup on three channels.`,
         requiredInputs: [
           {
             factor: "Primary channel",
             value: profile.primaryChannel,
             impact: isMeesho
-              ? "Meesho uses price comparison — your MRP and reseller price must leave room for platform discounts."
+              ? "Meesho uses price comparison - your MRP and reseller price must leave room for platform discounts."
               : "Decides first onboarding and listing checklist.",
           },
           {
@@ -468,7 +468,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
                 {
                   factor: "Category tier",
                   value: "Tier 2/3 focus",
-                  impact: "Meesho rewards fast-moving, low-ASP categories — avoid oversaturated electronics on day 1.",
+                  impact: "Meesho rewards fast-moving, low-ASP categories - avoid oversaturated electronics on day 1.",
                 },
               ]
             : []),
@@ -484,7 +484,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
           "If listing quality is weak, improve content before scaling ads.",
           ...(isMeesho
             ? [
-                "If Meesho shows lower price from another reseller, fix supplier cost or exit the SKU — price wars erase margin.",
+                "If Meesho shows lower price from another reseller, fix supplier cost or exit the SKU - price wars erase margin.",
                 "If Valmo pickup is slow in your pincode, confirm alternate courier before pushing ads.",
                 "Focus first listings on Tier 2/3 categories where Meesho pushes discovery traffic.",
               ]
@@ -507,7 +507,7 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
               "Resolve all pending verification tasks before listing push.",
               ...(isMeesho
                 ? [
-                    "Complete Meesho KYC — bank name must match GST certificate character-for-character.",
+                    "Complete Meesho KYC - bank name must match GST certificate character-for-character.",
                     "Enable Valmo logistics and test pickup SLA from your supplier pincode.",
                     "Upload 3 hero SKUs in categories Meesho promotes (home, fashion accessories, kitchen).",
                   ]
@@ -526,9 +526,9 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
                   phase: "Phase 2 - Catalog rank + price control",
                   goal: "Win Meesho search without racing to the lowest price.",
                   tasks: [
-                    "Use Meesho price recommendation as ceiling, not target — stay above landed cost + 25%.",
+                    "Use Meesho price recommendation as ceiling, not target - stay above landed cost + 25%.",
                     "Refresh listing images weekly; Meesho rank favors CTR and dispatch speed.",
-                    "Respond to customer queries within 4 hours — response rate affects catalog visibility.",
+                    "Respond to customer queries within 4 hours - response rate affects catalog visibility.",
                   ],
                 },
               ]
@@ -546,12 +546,12 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
           `Complete ${channelName} onboarding checklist fully before listing work.`,
           "Prepare title, bullet points, image set, and pricing strategy for each SKU.",
           "Verify tax/category mapping and shipping settings.",
-          "Publish 1 hero listing first; add SKUs only after 5–10 real orders teach you what works.",
+          "Publish 1 hero listing first; add SKUs only after 5-10 real orders teach you what works.",
           ...(isMeesho
             ? [
-                "Check Meesho 'lowest price' alert daily — do not auto-match if margin breaks.",
+                "Check Meesho 'lowest price' alert daily - do not auto-match if margin breaks.",
                 "Set catalog rank goal: 3 listings in top 20 search for your niche keyword.",
-                "Practice COD confirmation — Meesho RTO still hits resellers on Valmo.",
+                "Practice COD confirmation - Meesho RTO still hits resellers on Valmo.",
               ]
             : []),
           ...(profile.primaryChannel === "shopify"

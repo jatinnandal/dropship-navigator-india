@@ -20,7 +20,7 @@ export default function CodPrepaidSimulatorPage() {
           COD vs Prepaid Impact Simulator
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          See exactly how COD mix destroys your margins — in rupees, not percentages
+          See exactly how COD mix destroys your margins - in rupees, not percentages
         </p>
         <EstimateDisclaimer meta={MARKETPLACE_FEES_META} />
       </header>

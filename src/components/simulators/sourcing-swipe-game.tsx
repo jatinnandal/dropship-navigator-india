@@ -17,7 +17,7 @@ const CARDS: SupplierCard[] = [
   {
     id: "aliexpress",
     name: "Phone case via AliExpress",
-    origin: "China — AliExpress",
+    origin: "China - AliExpress",
     deliveryDays: 25,
     isViable: false,
     explanation:
@@ -26,23 +26,23 @@ const CARDS: SupplierCard[] = [
   {
     id: "cj",
     name: "Gadget via CJ Dropshipping",
-    origin: "China — CJ Dropshipping",
+    origin: "China - CJ Dropshipping",
     deliveryDays: 18,
     isViable: false,
-    explanation: "Still cross-border. 2–3 week delivery = near 100% RTO on COD. India needs 3–5 day dispatch.",
+    explanation: "Still cross-border. 2-3 week delivery = near 100% RTO on COD. India needs 3-5 day dispatch.",
   },
   {
     id: "1688",
     name: "Home decor via 1688.com agent",
-    origin: "China — 1688 agent",
+    origin: "China - 1688 agent",
     deliveryDays: 21,
     isViable: false,
     explanation: "Bulk import looks cheap until customs, GST on imports, and 3-week COD delivery destroy conversion.",
   },
   {
     id: "unclear-gst",
-    name: "Kitchenware supplier — 'GST optional for small orders'",
-    origin: "India — WhatsApp group",
+    name: "Kitchenware supplier - 'GST optional for small orders'",
+    origin: "India - WhatsApp group",
     deliveryDays: 5,
     isViable: false,
     explanation: "No GST invoice = no input credit, marketplace compliance risk, and no legal recourse on disputes.",
@@ -50,7 +50,7 @@ const CARDS: SupplierCard[] = [
   {
     id: "trader-trap",
     name: "Electronics via 'manufacturer' on IndiaMART",
-    origin: "India — Mumbai trader",
+    origin: "India - Mumbai trader",
     deliveryDays: 6,
     isViable: false,
     explanation: "Trader posing as manufacturer. No factory visit, borrowed catalogue photos, markup hidden in 'MOQ deals'.",
@@ -58,15 +58,15 @@ const CARDS: SupplierCard[] = [
   {
     id: "indiamart",
     name: "Kitchen set via IndiaMART verified supplier",
-    origin: "India — Delhi NCR",
+    origin: "India - Delhi NCR",
     deliveryDays: 4,
     isViable: true,
-    explanation: "Domestic supplier, 3–5 day delivery. COD customer still remembers the order. Viable for beginners.",
+    explanation: "Domestic supplier, 3-5 day delivery. COD customer still remembers the order. Viable for beginners.",
   },
   {
     id: "clout",
     name: "Fashion accessory via Roposo Clout",
-    origin: "India — Roposo Clout",
+    origin: "India - Roposo Clout",
     deliveryDays: 3,
     isViable: true,
     explanation: "Indian B2B platform built for resellers. Fast dispatch, COD-friendly categories.",
@@ -74,7 +74,7 @@ const CARDS: SupplierCard[] = [
   {
     id: "glowroad",
     name: "Home decor via GlowRoad",
-    origin: "India — GlowRoad",
+    origin: "India - GlowRoad",
     deliveryDays: 3,
     isViable: true,
     explanation: "Domestic sourcing with reseller-friendly MOQs. Matches India COD expectations.",
@@ -82,31 +82,31 @@ const CARDS: SupplierCard[] = [
   {
     id: "meesho-supplier",
     name: "Ethnic wear via Meesho supplier panel",
-    origin: "India — Surat",
+    origin: "India - Surat",
     deliveryDays: 3,
     isViable: true,
     explanation: "Built for Meesho resellers. Tier 2/3 categories with Valmo-friendly dispatch.",
   },
   {
     id: "delhi-wholesale",
-    name: "Fashion jewellery — Delhi wholesale market",
-    origin: "India — Sadar Bazar, Delhi",
+    name: "Fashion jewellery - Delhi wholesale market",
+    origin: "India - Sadar Bazar, Delhi",
     deliveryDays: 2,
     isViable: true,
-    explanation: "Physical market with GST invoice. 1–2 day dispatch to NCR, 3–4 days pan-India via courier.",
+    explanation: "Physical market with GST invoice. 1-2 day dispatch to NCR, 3-4 days pan-India via courier.",
   },
   {
     id: "advance-scam",
     name: "Supplier demands 100% advance, no sample",
-    origin: "India — unknown city",
+    origin: "India - unknown city",
     deliveryDays: 7,
     isViable: false,
     explanation: "100% advance + no sample = classic scam pattern. Never pay full amount before verified dispatch.",
   },
   {
     id: "dropship-claim",
-    name: "'We dropship for Amazon sellers' — no GSTIN shared",
-    origin: "India — Telegram channel",
+    name: "'We dropship for Amazon sellers' - no GSTIN shared",
+    origin: "India - Telegram channel",
     deliveryDays: 4,
     isViable: false,
     explanation: "Legitimate suppliers share GSTIN upfront. Hidden GSTIN often means trader markup or grey-market stock.",
@@ -114,15 +114,15 @@ const CARDS: SupplierCard[] = [
   {
     id: "bangalore-d2c",
     name: "Skincare via Bangalore D2C brand wholesale",
-    origin: "India — Bangalore",
+    origin: "India - Bangalore",
     deliveryDays: 4,
     isViable: true,
-    explanation: "D2C brand with wholesale program. GST invoice, batch codes, and 3–5 day dispatch — compliance-ready.",
+    explanation: "D2C brand with wholesale program. GST invoice, batch codes, and 3-5 day dispatch - compliance-ready.",
   },
   {
     id: "shein-reseller",
     name: "Fashion dupes sourced from Shein reshipper",
-    origin: "China — reshipper",
+    origin: "China - reshipper",
     deliveryDays: 14,
     isViable: false,
     explanation: "IP risk + slow delivery. Marketplaces suspend accounts for counterfeit listings.",
@@ -130,7 +130,7 @@ const CARDS: SupplierCard[] = [
   {
     id: "tradeindia",
     name: "Storage boxes via TradeIndia verified exporter",
-    origin: "India — Ahmedabad",
+    origin: "India - Ahmedabad",
     deliveryDays: 4,
     isViable: true,
     explanation: "Domestic manufacturer with export credentials. MOQ flexible for test phase, GST invoice provided.",
@@ -178,7 +178,7 @@ export function SourcingSwipeGame({ onComplete }: Props) {
     return (
       <div className="mt-4 rounded-lg border border-emerald-400/40 bg-emerald-400/10 p-4">
         <p className="text-sm text-emerald-200">
-          Done. You got {correctCount}/{CARDS.length} right. Rule: India COD needs 3–5 day dispatch from a
+          Done. You got {correctCount}/{CARDS.length} right. Rule: India COD needs 3-5 day dispatch from a
           domestic supplier.
         </p>
         {onComplete ? (

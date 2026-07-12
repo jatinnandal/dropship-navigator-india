@@ -45,7 +45,7 @@ export const VERIFICATION_STEPS: VerificationStep[] = [
     validationHint: "9-18 digits, no spaces or dashes",
     category: "banking",
     whyItMatters:
-      "This is where your marketplace earnings land. Double-check — one wrong digit means your first settlement goes into the void and takes 7-14 days to reverse.",
+      "This is where your marketplace earnings land. Double-check - one wrong digit means your first settlement goes into the void and takes 7-14 days to reverse.",
   },
   {
     id: "listing-url",
@@ -81,7 +81,7 @@ export const VERIFICATION_STEPS: VerificationStep[] = [
     validationHint: "Numeric amount in rupees (check your settlement report)",
     category: "compliance",
     whyItMatters:
-      "TCS (Tax Collected at Source) by marketplaces counts as advance tax. Track it to claim credit in your ITR — otherwise you're paying double tax.",
+      "TCS (Tax Collected at Source) by marketplaces counts as advance tax. Track it to claim credit in your ITR - otherwise you're paying double tax.",
   },
 ];
 

@@ -6,7 +6,7 @@ import { SubmitButton } from "@/components/submit-button";
 import { useFlash } from "@/components/use-flash";
 
 const ERRORS: Record<string, string> = {
-  weak_password: "Choose a stronger password — at least 6 characters.",
+  weak_password: "Choose a stronger password - at least 6 characters.",
   password_mismatch: "Passwords do not match.",
   unavailable: "Something went wrong. Please try again in a moment.",
 };

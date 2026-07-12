@@ -4,7 +4,7 @@ import { ensureModulePlan } from "@/app/app/journey/actions";
 /**
  * Background personalization endpoint. The auto-loader hits this with a plain
  * fetch (not a server action) so a slow generation never blocks router
- * navigation — the seller can leave the page while it runs, and the fetch
+ * navigation - the seller can leave the page while it runs, and the fetch
  * survives client-side navigation. Idempotent + capped inside ensureModulePlan.
  */
 export async function POST(request: Request) {

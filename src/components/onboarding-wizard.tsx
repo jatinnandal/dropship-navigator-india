@@ -60,11 +60,11 @@ export function OnboardingWizard({
     for (const step of ONBOARDING_STEPS) {
       init[step.field] = defaultValueForField(step.field, profile);
     }
-    // Operating state is now an explicit question — don't pre-assume one on a fresh setup.
+    // Operating state is now an explicit question - don't pre-assume one on a fresh setup.
     if (mode === "create") init.operatingState = "";
     return init;
   });
-  // In create mode, defaults don't count as answers — the user must pick each one.
+  // In create mode, defaults don't count as answers - the user must pick each one.
   const [touched, setTouched] = useState<Set<OnboardingField>>(() =>
     mode === "edit" ? new Set(ONBOARDING_STEPS.map((s) => s.field)) : new Set(),
   );
@@ -150,7 +150,7 @@ export function OnboardingWizard({
         </Link>
       </header>
 
-      {/* Two-column layout — rail stacks below the quiz on mobile */}
+      {/* Two-column layout - rail stacks below the quiz on mobile */}
       <main className="grid grid-cols-1 items-start gap-[18px] pb-20 lg:[grid-template-columns:1.55fr_1fr]">
         {/* Quiz card */}
         <section
@@ -208,7 +208,7 @@ export function OnboardingWizard({
                       Confirm what we assumed.
                     </h1>
                     <p className="mt-2.5 text-[14px] leading-[1.65] text-[var(--muted)]">
-                      These shape your compliance steps and calculators. Change anything that&apos;s off — takes ten seconds.
+                      These shape your compliance steps and calculators. Change anything that&apos;s off - takes ten seconds.
                     </p>
                     <div className="mt-6 flex flex-col gap-4">
                       {assumedSteps.map((s) => (
@@ -233,7 +233,7 @@ export function OnboardingWizard({
                           </div>
                           {isLocked(s.field) ? (
                             <p className="text-[var(--text-faint)] mt-1 text-[11px]">
-                              🔒 Locked this month — renaming is still free.
+                              🔒 Locked this month - renaming is still free.
                             </p>
                           ) : null}
                           {s.inputType === "text" ? (
@@ -287,7 +287,7 @@ export function OnboardingWizard({
 
                 {isLocked(step.field) ? (
                   <p className="mt-3 rounded-lg border border-white/[0.12] bg-white/[0.03] px-3 py-2 text-xs leading-5 text-[var(--muted)]">
-                    🔒 Locked this month — you&apos;ve used all your profile-answer changes. This shows
+                    🔒 Locked this month - you&apos;ve used all your profile-answer changes. This shows
                     your current answer; it&apos;ll be editable again next month. You can still rename
                     the profile on the last step.
                   </p>
@@ -423,7 +423,7 @@ export function OnboardingWizard({
                 </>
                 )}
 
-                {/* Plan name on confirm screen — editable in both create and edit
+                {/* Plan name on confirm screen - editable in both create and edit
                     (renaming is always free, even when answers are locked). */}
                 {isLast ? (
                   <div className="mt-6">
@@ -439,7 +439,7 @@ export function OnboardingWizard({
                     />
                     {mode === "edit" ? (
                       <p className="text-[var(--text-faint)] mt-1.5 text-xs">
-                        Renaming is always free — it doesn&apos;t count toward your monthly change
+                        Renaming is always free - it doesn&apos;t count toward your monthly change
                         limit.
                       </p>
                     ) : null}

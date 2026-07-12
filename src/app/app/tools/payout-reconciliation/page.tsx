@@ -10,12 +10,12 @@ import { UpgradePanel } from "@/components/plan/upgrade-panel";
 import { uploadSettlementCsv } from "./actions";
 
 const ERROR_MESSAGES: Record<string, string> = {
-  no_profile: "Create a seller profile first — the report needs your channel context.",
+  no_profile: "Create a seller profile first - the report needs your channel context.",
   bad_channel: "Pick the marketplace the file came from.",
   bad_category: "Pick a product category.",
   no_file: "Choose a settlement CSV file to upload.",
   too_large: "File is over 2MB. Export a single settlement cycle and retry.",
-  no_rows: "No order rows found in that file — is it the settlement/payments export?",
+  no_rows: "No order rows found in that file - is it the settlement/payments export?",
   store_failed: "Could not save the report. Try again.",
   limit: "Monthly reconciliation limit reached on your plan.",
 };
@@ -61,12 +61,12 @@ export default async function PayoutReconciliationPage({ searchParams }: { searc
         <p className="eyebrow inline-block">Money tool</p>
         <h1 className="headline-gradient mt-2 text-3xl font-bold">Payout Reconciliation</h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Upload a settlement CSV — see what the marketplace kept versus what the fee card says it
+          Upload a settlement CSV - see what the marketplace kept versus what the fee card says it
           should have kept, order by order. Plus the TCS you can claim back this month.
         </p>
         <EstimateDisclaimer
           meta={MARKETPLACE_FEES_META}
-          note="Expected fees come from the estimate rate tables — shipping/weight handling isn't modelled, so small deltas are normal. Big ones are worth a Seller Support ticket."
+          note="Expected fees come from the estimate rate tables - shipping/weight handling isn't modelled, so small deltas are normal. Big ones are worth a Seller Support ticket."
         />
       </header>
 
@@ -89,7 +89,7 @@ export default async function PayoutReconciliationPage({ searchParams }: { searc
         <h2 className="text-lg font-semibold text-white">New reconciliation</h2>
         <p className="text-muted mt-1 text-sm">
           Export the payments/settlement CSV from Seller Hub, Supplier Panel or Seller Central and
-          drop it here. Nothing is shared — rows stay in your account.
+          drop it here. Nothing is shared - rows stay in your account.
         </p>
 
         {remaining === 0 ? (
@@ -97,7 +97,7 @@ export default async function PayoutReconciliationPage({ searchParams }: { searc
             <UpgradePanel
               requiredPlan="growth"
               compact
-              title="This month's reconciliation is used — Growth removes the limit"
+              title="This month's reconciliation is used - Growth removes the limit"
               bullets={[
                 "Unlimited settlement uploads, every cycle of every marketplace",
                 "History trends: watch your effective fee rate month over month",
@@ -172,7 +172,7 @@ export default async function PayoutReconciliationPage({ searchParams }: { searc
         {uploads.length === 0 ? (
           <div className="panel mt-3 rounded-2xl p-6 text-center">
             <p className="text-sm text-[var(--muted)]">
-              No reports yet. Your first upload builds the baseline — month two shows the trend.
+              No reports yet. Your first upload builds the baseline - month two shows the trend.
             </p>
           </div>
         ) : (

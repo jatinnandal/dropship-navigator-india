@@ -77,7 +77,7 @@ export function getNextAction(input: {
     if (node.status === "available" || node.status === "in_progress") {
       return {
         title: `Start ${node.title}`,
-        why: "Open the guided walkthrough — each step explains why before asking you to act.",
+        why: "Open the guided walkthrough - each step explains why before asking you to act.",
         timeEstimate: "~45 mins",
         href: `/app/tasks/${moduleId}`,
         moduleId,

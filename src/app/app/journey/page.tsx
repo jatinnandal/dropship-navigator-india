@@ -49,7 +49,7 @@ export default async function JourneyPage() {
     nodes.map((n) => [n.id, getModuleMentorLine(n.id as TaskModuleId, profile, n.status, hasGstin)]),
   ) as Record<string, string>;
 
-  // Plan names are auto-generated as "<Channel> · <Category>" — don't repeat the channel token.
+  // Plan names are auto-generated as "<Channel> · <Category>" - don't repeat the channel token.
   const channel = channelLabel(profile.primaryChannel);
   const nameHasChannel = hasProfile && activeSellerProfile
     ? activeSellerProfile.name.toLowerCase().includes(channel.toLowerCase())

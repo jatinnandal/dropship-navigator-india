@@ -18,12 +18,12 @@ export function buildAdsTask(
         "Do you know your net margin per order (after ALL costs)?",
         "Have you received at least 5-10 organic orders to validate demand?",
       ],
-      trap: "If you answered no to any of these, fix the foundation first. Ads amplify what's already working — they don't create demand from nothing.",
+      trap: "If you answered no to any of these, fix the foundation first. Ads amplify what's already working - they don't create demand from nothing.",
       question: {
         id: "ads-ready",
         prompt: "Are your listings live and do you know your net margin?",
         options: [
-          { value: "yes", label: "Yes — listings live, margin calculated" },
+          { value: "yes", label: "Yes - listings live, margin calculated" },
           { value: "partial", label: "Listings live but margin unclear" },
           { value: "no", label: "Not ready yet" },
         ],
@@ -38,7 +38,7 @@ export function buildAdsTask(
       why: "Every rupee spent on ads before product-market fit is tuition paid to Meta/Amazon.",
       how: [
         "Go back and complete: product selection (margin calc), channel launch (live listings).",
-        "Get 5-10 organic orders first — this validates demand without ad spend.",
+        "Get 5-10 organic orders first - this validates demand without ad spend.",
         "Return here once you have real conversion data.",
       ],
       trap: "Watching YouTube ads of people making lakhs with ads creates false urgency. They had margins and listings ready first.",
@@ -51,7 +51,7 @@ export function buildAdsTask(
     why: "Break-even ROAS = 1 / net margin. If margin is 20%, you need 5x ROAS just to break even. Below that, every sale loses money.",
     how: [
       "Use the calculator below with your actual product costs.",
-      "Note your break-even ROAS number — this is your floor.",
+      "Note your break-even ROAS number - this is your floor.",
       "Target 1.5-2x above break-even for sustainable profit.",
     ],
     trap: "Celebrating 2x ROAS while your break-even is 3x means you're losing money on every sale and calling it success.",
@@ -59,19 +59,19 @@ export function buildAdsTask(
     calculator: { kind: "breakeven_roas" },
     mentorNote: workspace.netMarginPercent
       ? `Your saved margin is ${workspace.netMarginPercent.toFixed(1)}%. Break-even ROAS ≈ ${(100 / Math.max(workspace.netMarginPercent, 1)).toFixed(1)}x.`
-      : "Run the margin calculator in product selection first — I'll remember the result here.",
+      : "Run the margin calculator in product selection first - I'll remember the result here.",
   });
 
   steps.push({
     id: "cod-prepaid-mix",
     title: "Model your COD vs prepaid mix",
-    why: "COD RTO ~20–26%. Prepaid returns <2%. Your payment mix is a core unit-economics driver — especially on Shopify and Meesho.",
+    why: "COD RTO ~20-26%. Prepaid returns <2%. Your payment mix is a core unit-economics driver - especially on Shopify and Meesho.",
     how: ["Adjust COD % and see how blended margin changes vs 100% prepaid."],
     kind: "simulator",
     simulator: { kind: "cod_prepaid_mix" },
     mentorNote:
       profile.primaryChannel === "meesho"
-        ? "Meesho is COD-heavy by default — focus on RTO reduction, not forcing prepaid."
+        ? "Meesho is COD-heavy by default - focus on RTO reduction, not forcing prepaid."
         : profile.primaryChannel === "shopify"
           ? "Push UPI prepaid discount on thank-you page to shift mix toward prepaid."
           : undefined,
@@ -86,13 +86,13 @@ export function buildAdsTask(
       "Selling price must be ≥ 3x land cost.",
       "If not: raise price, cut costs, or pick a different product.",
     ],
-    trap: "A ₹300 product sold at ₹599 looks profitable until ₹150 in fees + ₹100 in ads + ₹50 RTO loss = ₹99 net. That's 16% margin — break-even ROAS of 6x.",
+    trap: "A ₹300 product sold at ₹599 looks profitable until ₹150 in fees + ₹100 in ads + ₹50 RTO loss = ₹99 net. That's 16% margin - break-even ROAS of 6x.",
     question: {
       id: "markup-ok",
       prompt: "Does your product pass the 3x markup test?",
       options: [
-        { value: "yes", label: "Yes — 3x+ markup on landed cost" },
-        { value: "no", label: "No — margin too thin for ads" },
+        { value: "yes", label: "Yes - 3x+ markup on landed cost" },
+        { value: "no", label: "No - margin too thin for ads" },
       ],
     },
   });
@@ -116,12 +116,12 @@ export function buildAdsTask(
     steps.push({
       id: "marketplace-ads",
       title: `Run ${channelLabel(profile.primaryChannel)} Sponsored Ads`,
-      why: "Marketplace ads target buyers already searching for your product — higher intent than social ads.",
+      why: "Marketplace ads target buyers already searching for your product - higher intent than social ads.",
       how: [
         "Start with Sponsored Products on your best-performing listing.",
         `Daily budget: ${profile.budgetBand === "under_20k" ? "₹200-500" : "₹500-1000"} per campaign.`,
         "Run for 7 days minimum before judging performance.",
-        "Track ACOS (Ad Cost of Sale) — must be below your net margin % to profit.",
+        "Track ACOS (Ad Cost of Sale) - must be below your net margin % to profit.",
         "Pause campaigns where ACOS > net margin after 7 days.",
         "Scale winners by 20-30% budget increase per week, not doubling overnight.",
       ],
@@ -133,7 +133,7 @@ export function buildAdsTask(
         {
           name: "Amazon Ads",
           whenToUse: "For Amazon Sponsored Products/Brands campaigns.",
-          why: "Built into Seller Central — targets high-intent marketplace search traffic.",
+          why: "Built into Seller Central - targets high-intent marketplace search traffic.",
         },
       ],
     });
@@ -154,10 +154,10 @@ export function buildAdsTask(
 
     steps.push({
       id: "meta-budget",
-      title: "Start small — build account trust first",
+      title: "Start small - build account trust first",
       why:
         profile.budgetBand === "under_20k"
-          ? "With under ₹20K to work with, a ₹500/day ad burn empties your runway in 40 days — before COD cash cycles back. Start at ₹200–300/day and treat week 1 as tuition, not scale."
+          ? "With under ₹20K to work with, a ₹500/day ad burn empties your runway in 40 days - before COD cash cycles back. Start at ₹200-300/day and treat week 1 as tuition, not scale."
           : "New ad accounts spending ₹50,000/day on day 1 get flagged as suspicious. Gradual scaling builds trust.",
       how: [
         "Week 1: ₹300-500/day on one product, one ad set.",
@@ -171,7 +171,7 @@ export function buildAdsTask(
         {
           name: "Meta Ads Manager",
           whenToUse: "For Shopify/D2C traffic campaigns.",
-          why: "Highest reach in India — but requires Business Manager setup and patient scaling.",
+          why: "Highest reach in India - but requires Business Manager setup and patient scaling.",
         },
       ],
     });
@@ -180,7 +180,7 @@ export function buildAdsTask(
   steps.push({
     id: "cashflow-deadzone",
     title: "See the cashflow dead zone",
-    why: "Meta bills today. COD cash arrives day 5-7. Most beginners run out of ad budget in week 1 — not because ads failed, but because cash timing killed them.",
+    why: "Meta bills today. COD cash arrives day 5-7. Most beginners run out of ad budget in week 1 - not because ads failed, but because cash timing killed them.",
     how: ["Set your starting budget and watch the 14-day timeline."],
     kind: "simulator",
     simulator: { kind: "cashflow_timeline" },
@@ -203,7 +203,7 @@ export function buildAdsTask(
       {
         name: "Confirmify / Level",
         whenToUse: "For automated WhatsApp COD confirmation on Shopify.",
-        why: "Cuts fake COD orders by 20-30% — pays for itself within first week of ads.",
+        why: "Cuts fake COD orders by 20-30% - pays for itself within first week of ads.",
       },
     ],
   });
@@ -211,7 +211,7 @@ export function buildAdsTask(
   steps.push({
     id: "ndr-practice",
     title: "Practice COD confirmation & NDR calls",
-    why: "Calling customers scares beginners — but it is the only way to survive COD in India.",
+    why: "Calling customers scares beginners - but it is the only way to survive COD in India.",
     how: ["Walk through 2 scenarios. Pick the best response each time."],
     kind: "simulator",
     simulator: { kind: "ndr_caller" },
@@ -227,7 +227,7 @@ export function buildAdsTask(
       "Pause anything below break-even ROAS.",
       "Increase budget 20% on winners.",
       "Test one new creative per week on your best performer.",
-      "Document learnings — what worked, what didn't, why.",
+      "Document learnings - what worked, what didn't, why.",
     ],
     mentorNote:
       profile.budgetBand === "under_20k"

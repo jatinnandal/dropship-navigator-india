@@ -11,7 +11,7 @@ export const ACTIVE_PROFILE_COOKIE = "dni_active_profile_id";
 /**
  * Resolve the active profile id from a list the caller already has, doing at
  * most one extra query (user_preferences). Avoids the per-candidate ownership
- * round-trips that getStoredActiveProfileId makes — the ids are validated by
+ * round-trips that getStoredActiveProfileId makes - the ids are validated by
  * membership in the caller's own profile list. Used on the hot app-layout path.
  */
 export async function resolveActiveProfileIdFromIds(
@@ -84,7 +84,7 @@ export async function setActiveProfileId(userId: string, profileId: string): Pro
       updated_at: new Date().toISOString(),
     });
     if (error) {
-      // user_preferences table may not exist yet — cookie fallback is fine
+      // user_preferences table may not exist yet - cookie fallback is fine
     }
   }
 

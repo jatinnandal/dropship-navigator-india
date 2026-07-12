@@ -7,8 +7,8 @@ import type { EnsurePlanResult } from "@/app/app/journey/actions";
 
 const FAIL_MESSAGES: Partial<Record<Exclude<EnsurePlanResult, { ok: true }>["reason"], string>> = {
   limit: "You've hit this month's personalization limit. The standard walkthrough below still applies.",
-  unavailable: "Personalization is warming up — showing the standard walkthrough for now.",
-  store_failed: "Couldn't save the personalized copy — please try again.",
+  unavailable: "Personalization is warming up - showing the standard walkthrough for now.",
+  store_failed: "Couldn't save the personalized copy - please try again.",
   no_profile: "Set up a seller profile first.",
 };
 
@@ -17,7 +17,7 @@ type State = "idle" | "generating" | "failed";
 /**
  * Explicit "Personalize" button for the compliance walkthroughs. Manual (not
  * auto) and non-blocking: it POSTs to the fetch route so a slow generation
- * never blocks router navigation — the seller can leave the page while it runs.
+ * never blocks router navigation - the seller can leave the page while it runs.
  * On success the route revalidates + we refresh, the personalized copy renders,
  * and the page stops passing `ready` so this button disappears. It reappears
  * only when the seller's key details change (new profile hash → no cached plan).
@@ -63,7 +63,7 @@ export function PersonalizePlanButton({
     return (
       <div className="text-muted flex items-center gap-2 text-xs leading-5" aria-live="polite">
         <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
-        Tailoring this walkthrough to your details — up to a minute. You can keep using the app; it
+        Tailoring this walkthrough to your details - up to a minute. You can keep using the app; it
         updates here when ready.
       </div>
     );

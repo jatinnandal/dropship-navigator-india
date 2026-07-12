@@ -34,13 +34,13 @@ const CHANNEL_LABELS: Record<PrimaryChannel, string> = {
 function verdictLabel(verdict: ReturnType<typeof calculateProfit>["verdict"]): string {
   switch (verdict) {
     case "excellent":
-      return "Excellent margin — room for ads and returns";
+      return "Excellent margin - room for ads and returns";
     case "healthy":
-      return "Healthy margin — sustainable for growth";
+      return "Healthy margin - sustainable for growth";
     case "tight":
-      return "Tight margin — risky if RTO or ads increase";
+      return "Tight margin - risky if RTO or ads increase";
     default:
-      return "Loss at these numbers — fix before listing";
+      return "Loss at these numbers - fix before listing";
   }
 }
 
@@ -210,7 +210,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       {result.netMarginPercent < 15 && result.netMarginPercent > 0 ? (
         <div className="banner-deadline mt-4 rounded-lg p-3">
           <p className="text-sm font-medium text-rose-100">
-            Too thin to survive RTO variance — {result.netMarginPercent.toFixed(1)}% net margin leaves no buffer when
+            Too thin to survive RTO variance - {result.netMarginPercent.toFixed(1)}% net margin leaves no buffer when
             returns spike.
           </p>
         </div>
@@ -291,7 +291,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
         </label>
         {kind === "margin" ? (
           <label className="block text-sm sm:col-span-2">
-            <span className="text-muted">Monthly fixed costs (₹) — optional</span>
+            <span className="text-muted">Monthly fixed costs (₹) - optional</span>
             <input
               type="number"
               value={monthlyFixed}
@@ -320,7 +320,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
         <p className="mt-2 text-sm">{verdictLabel(result.verdict)}</p>
         <p className="mt-1 text-xs opacity-80">
           Markup: {result.markupMultiple.toFixed(1)}x landed cost
-          {result.markupMultiple < 3 ? " — below 3x, risky for paid ads" : " — passes 3x gate"}
+          {result.markupMultiple < 3 ? " - below 3x, risky for paid ads" : " - passes 3x gate"}
         </p>
       </div>
 

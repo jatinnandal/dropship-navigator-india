@@ -3,7 +3,7 @@ import { getFeesForProduct } from "@/lib/marketplace-fees";
 import type { RateCard } from "@/lib/rate-card";
 
 /**
- * Category-level average RTO rates (COD-heavy mix). Single source of truth —
+ * Category-level average RTO rates (COD-heavy mix). Single source of truth -
  * import from here, never redefine.
  */
 export const CATEGORY_RTO: Record<ProductType, number> = {
@@ -26,9 +26,9 @@ export type ProfitInputs = {
   channel: PrimaryChannel;
   category?: ProductType;
   isCod?: boolean;
-  /** 0–1. Advanced input; defaults to DEFAULT_RTO_DAMAGE_RATE. */
+  /** 0-1. Advanced input; defaults to DEFAULT_RTO_DAMAGE_RATE. */
   damageRate?: number;
-  /** Rate card override — used by the rates-impact diff. Defaults to CURRENT. */
+  /** Rate card override - used by the rates-impact diff. Defaults to CURRENT. */
   rates?: RateCard;
 };
 
@@ -49,7 +49,7 @@ export type ProfitResult = {
   deliveredProfit: number;
   /** Expected loss per shipped order attributable to RTO risk (≥ 0). */
   rtoLoss: number;
-  /** Expected profit per shipped order: (1−r)·delivered + r·rtoOutcome. */
+  /** Expected profit per shipped order: (1-r)·delivered + r·rtoOutcome. */
   netProfit: number;
   netMarginPercent: number;
   /** price / contribution-before-ads. Same definition as the ROAS tool. */
@@ -62,9 +62,9 @@ export type ProfitResult = {
 /**
  * Expected-value model per SHIPPED order:
  *
- *   delivered (prob 1−r): price − productCost − shipping − fees − adCost
- *   rto       (prob r):  −(2×shipping) − damageRate×productCost − adCost
- *                        − fees.nonRefundableOnRto
+ *   delivered (prob 1-r): price - productCost - shipping - fees - adCost
+ *   rto       (prob r):  -(2×shipping) - damageRate×productCost - adCost
+ *                        - fees.nonRefundableOnRto
  *
  * Ad money is spent whether or not the parcel delivers. Referral/TCS are
  * treated as reversed on RTO; fixed/closing/collection fees are not
@@ -96,7 +96,7 @@ export function calculateProfit(inputs: ProfitInputs): ProfitResult {
   const rtoOutcome = -(2 * shipping) - damage * productCost - adCost - fees.nonRefundableOnRto;
 
   const netProfit = (1 - r) * deliveredProfit + r * rtoOutcome;
-  const rtoLoss = deliveredProfit - netProfit; // r · (delivered − rtoOutcome)
+  const rtoLoss = deliveredProfit - netProfit; // r · (delivered - rtoOutcome)
 
   const netMarginPercent = revenue > 0 ? (netProfit / revenue) * 100 : 0;
 

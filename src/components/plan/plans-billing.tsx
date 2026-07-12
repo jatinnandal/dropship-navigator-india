@@ -82,7 +82,7 @@ export function PlansBilling({
   );
 
   // Load the Razorpay checkout script on demand (first Subscribe click) instead
-  // of eagerly on page mount — nothing loads while a user is just viewing plans.
+  // of eagerly on page mount - nothing loads while a user is just viewing plans.
   // The click handler awaits onload, so there's no false "still loading" race.
   const ensureRazorpay = useCallback(async (): Promise<boolean> => {
     if (typeof window === "undefined") return false;
@@ -323,7 +323,7 @@ export function PlansBilling({
       )}
 
       <p className="mx-auto mt-6 max-w-md text-center font-mono text-[11px] text-[var(--text-faintest)]">
-        UPI AutoPay · Cards · Net Banking — powered by Razorpay
+        UPI AutoPay · Cards · Net Banking - powered by Razorpay
       </p>
 
       {/* Manage current paid plan */}

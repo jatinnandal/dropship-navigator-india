@@ -6,7 +6,7 @@ import type { RatesImpact } from "@/lib/rates-impact";
 export function RatesUpdateBanner({ impact }: { impact: RatesImpact }) {
   const improved = impact.deltaPoints >= 0;
   const accent = improved ? "var(--success)" : "oklch(0.8 0.13 20)";
-  const sign = impact.deltaPoints >= 0 ? "+" : "−";
+  const sign = impact.deltaPoints >= 0 ? "+" : "-";
 
   return (
     <section

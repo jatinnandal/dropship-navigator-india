@@ -55,7 +55,7 @@ export type ModuleCopy = {
   deprioritized: boolean;
 };
 
-/** Base subtasks from the original catalog — rules decide inclusion and severity. */
+/** Base subtasks from the original catalog - rules decide inclusion and severity. */
 export const BASE_SUBTASK_RULES: BaseSubTaskRule[] = [
   {
     id: "docs-folder-ready",
@@ -69,7 +69,7 @@ export const BASE_SUBTASK_RULES: BaseSubTaskRule[] = [
     id: "enrolment-id-start",
     moduleId: "common-documentation",
     label: "Optional: start on Meesho without GSTIN (Enrolment ID)",
-    why: "Meesho onboards non-GST sellers with a free GST-portal Enrolment ID — intra-state sales only, under ₹40L turnover. Sell while your GSTIN application processes.",
+    why: "Meesho onboards non-GST sellers with a free GST-portal Enrolment ID - intra-state sales only, under ₹40L turnover. Sell while your GSTIN application processes.",
     severity: "recommended",
     excludeWhen: (f) => f.hasGstin || f.profile.primaryChannel !== "meesho",
   },
@@ -102,7 +102,7 @@ export const BASE_SUBTASK_RULES: BaseSubTaskRule[] = [
     id: "product-shortlist",
     moduleId: "product-selection",
     label: "1 hero product chosen, margin-checked (2 backups noted)",
-    why: "One product done well beats three half-done — margin gate before listing prevents cash burn.",
+    why: "One product done well beats three half-done - margin gate before listing prevents cash burn.",
     severity: "required",
   },
   {
@@ -130,7 +130,7 @@ export const BASE_SUBTASK_RULES: BaseSubTaskRule[] = [
     id: "samples-ordered",
     moduleId: "supplier-sourcing",
     label: "Sample ordered from vetted supplier",
-    why: "Samples catch quality issues before inventory commitment — order once you have a supplier, not before.",
+    why: "Samples catch quality issues before inventory commitment - order once you have a supplier, not before.",
     severity: "required",
     severityWhen: (f) => (f.isLeanBudget ? "recommended" : "required"),
   },
@@ -146,7 +146,7 @@ export const BASE_SUBTASK_RULES: BaseSubTaskRule[] = [
     id: "domestic-supplier-confirmed",
     moduleId: "supplier-sourcing",
     label: "Domestic supplier confirmed (not AliExpress)",
-    why: "India COD needs 3–5 day dispatch — imports kill conversion.",
+    why: "India COD needs 3-5 day dispatch - imports kill conversion.",
     severity: "required",
     excludeWhen: (f) => f.hasImportRisk,
     severityWhen: (f) => (f.hasImportRisk ? "recommended" : "required"),
@@ -242,7 +242,7 @@ export const ADDITIONAL_REQUIREMENT_RULES: RequirementRule[] = [
     id: "gst-state-code-match",
     moduleId: "common-documentation",
     label: "GST state code matches operating state",
-    why: "GSTIN first two digits must match pickup state — mismatch is instant KYC rejection.",
+    why: "GSTIN first two digits must match pickup state - mismatch is instant KYC rejection.",
     severity: "required",
     appliesWhen: (f) => Boolean(f.operatingState),
   },
@@ -282,7 +282,7 @@ export const ADDITIONAL_REQUIREMENT_RULES: RequirementRule[] = [
     id: "iec-ready",
     moduleId: "supplier-sourcing",
     label: "IEC (import export code) obtained or planned",
-    why: "Imports require IEC and customs clearance — plan before relying on cross-border stock.",
+    why: "Imports require IEC and customs clearance - plan before relying on cross-border stock.",
     severity: "required",
     appliesWhen: (f) => f.needsIec,
   },
@@ -290,7 +290,7 @@ export const ADDITIONAL_REQUIREMENT_RULES: RequirementRule[] = [
     id: "import-risk-acknowledged",
     moduleId: "supplier-sourcing",
     label: "Import vs COD risk acknowledged",
-    why: "2–3 week import shipping kills COD conversion in India.",
+    why: "2-3 week import shipping kills COD conversion in India.",
     severity: "required",
     appliesWhen: (f) => f.hasImportRisk,
   },
@@ -298,7 +298,7 @@ export const ADDITIONAL_REQUIREMENT_RULES: RequirementRule[] = [
     id: "pg-approved",
     moduleId: "channel-launch",
     label: "Payment gateway approved (Razorpay/Cashfree)",
-    why: "Own website needs PG for prepaid — individuals face higher rejection rates.",
+    why: "Own website needs PG for prepaid - individuals face higher rejection rates.",
     severity: "required",
     appliesWhen: (f) => f.needsPaymentGateway,
   },
@@ -314,7 +314,7 @@ export const ADDITIONAL_REQUIREMENT_RULES: RequirementRule[] = [
     id: "marketplace-kyc-ready",
     moduleId: "channel-launch",
     label: "Marketplace KYC packet ready",
-    why: "Amazon/Flipkart KYC is strict — prepare docs before applying.",
+    why: "Amazon/Flipkart KYC is strict - prepare docs before applying.",
     severity: "required",
     appliesWhen: (f) => f.sellsOnMarketplace && f.gstMandatory,
   },
@@ -330,7 +330,7 @@ export const ADDITIONAL_REQUIREMENT_RULES: RequirementRule[] = [
     id: "rto-calculator-done",
     moduleId: "product-selection",
     label: "RTO reality calculator completed",
-    why: "Fashion defaults to 35% RTO — model it before picking SKUs.",
+    why: "Fashion defaults to 35% RTO - model it before picking SKUs.",
     severity: "recommended",
     appliesWhen: (f) => f.highRtoCategory,
   },
@@ -372,7 +372,7 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
         return {
           title: "Validate business documentation",
           description:
-            "You already sell and have GST — quick validation of bank match, filings calendar, and marketplace KYC docs.",
+            "You already sell and have GST - quick validation of bank match, filings calendar, and marketplace KYC docs.",
           outcomes: [
             "Validate bank name matches GST legal name",
             "Confirm GST state code matches operating state",
@@ -386,7 +386,7 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
       if (facts.skipBasics) {
         return {
           title: "Validate business docs",
-          description: `Existing seller path — confirm PAN, bank, and address proofs match marketplace KYC. Operating state: ${facts.operatingState}.`,
+          description: `Existing seller path - confirm PAN, bank, and address proofs match marketplace KYC. Operating state: ${facts.operatingState}.`,
           outcomes: [
             "Confirm PAN and bank match marketplace records",
             "Validate GST state code vs pickup address",
@@ -400,7 +400,7 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
       if (facts.hasGstin) {
         return {
           title: "Validate business documentation",
-          description: "Base documentation in place — validate bank match and GST settings before listing.",
+          description: "Base documentation in place - validate bank match and GST settings before listing.",
           outcomes: [
             "Validate bank name matches legal name",
             "Confirm GST state code matches operating state",
@@ -430,7 +430,7 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
         ? " Fashion path: returns≠RTO lesson, size charts, and 35% RTO defaults."
         : "";
       const importNote = facts.hasImportRisk
-        ? " Import path flagged — margin math must include customs and longer lead times."
+        ? " Import path flagged - margin math must include customs and longer lead times."
         : "";
       return {
         title: facts.isFashion ? "Pick fashion product" : "Pick your product",
@@ -467,7 +467,7 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
             ].filter(Boolean) as string[]
           : [
               facts.gstMandatory
-                ? "Register GST — mandatory for your channel"
+                ? "Register GST - mandatory for your channel"
                 : "Register GST if required for channel/category",
               "Complete product-category compliance checklist",
               facts.needsFssai ? "Obtain FSSAI registration/license" : "Prepare category certificates if needed",
@@ -480,8 +480,8 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
 
     case "supplier-sourcing": {
       const desc = facts.hasImportRisk
-        ? "Import path — IEC, customs lead times, and COD risk. Still vet backup domestic supplier for India COD."
-        : "Domestic suppliers only for India COD — includes AliExpress trap game and pincode pilot planner.";
+        ? "Import path - IEC, customs lead times, and COD risk. Still vet backup domestic supplier for India COD."
+        : "Domestic suppliers only for India COD - includes AliExpress trap game and pincode pilot planner.";
       return {
         title: "Find suppliers",
         description: desc,
@@ -505,7 +505,7 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
     case "channel-launch": {
       const shopifyNote = facts.isOwnWebsite
         ? facts.pgRejectionRisk
-          ? " PG rejection is common for individuals — Zero-PG COD path included."
+          ? " PG rejection is common for individuals - Zero-PG COD path included."
           : " Zero-PG fallback if Razorpay/Cashfree pending."
         : "";
       const multiNote = facts.isMultiChannel
@@ -535,7 +535,7 @@ export function buildModuleCopy(moduleId: TaskModuleId, facts: ProfileFacts): Mo
       const deprioritized = facts.isLeanBudget;
       const mixNote =
         profile.primaryChannel === "meesho"
-          ? " Meesho is COD-heavy — focus on RTO reduction over prepaid push."
+          ? " Meesho is COD-heavy - focus on RTO reduction over prepaid push."
           : "";
       const description = deprioritized
         ? `Low-budget testing with strict daily caps, COD/prepaid mix simulator, and cashflow dead-zone planning.${mixNote}`
@@ -606,7 +606,7 @@ export const WARNING_RULES: WarningRule[] = [
   {
     id: "gst-compliance-beginner",
     moduleId: "compliance-by-product",
-    message: "GSTIN not saved yet — compliance steps may block marketplace listing.",
+    message: "GSTIN not saved yet - compliance steps may block marketplace listing.",
     appliesWhen: (f, r) => !r.hasGstin && f.isBeginner,
   },
   {
@@ -618,13 +618,13 @@ export const WARNING_RULES: WarningRule[] = [
   {
     id: "sourcing-swipe",
     moduleId: "supplier-sourcing",
-    message: "Recommended: play the sourcing swipe game — avoid AliExpress/CJ traps.",
+    message: "Recommended: play the sourcing swipe game - avoid AliExpress/CJ traps.",
     appliesWhen: (_f, r) => !simulatorDone(r.completedSimulators, "sourcing_swipe"),
   },
   {
     id: "import-cod-risk",
     moduleId: "supplier-sourcing",
-    message: "Imports + COD: 2–3 week shipping kills conversion. Plan domestic fulfillment or prepaid-only.",
+    message: "Imports + COD: 2-3 week shipping kills conversion. Plan domestic fulfillment or prepaid-only.",
     appliesWhen: (f) => f.hasImportRisk && f.sellsOnMarketplace,
   },
   {
@@ -648,43 +648,43 @@ export const WARNING_RULES: WarningRule[] = [
   {
     id: "ads-lean-budget",
     moduleId: "ads-growth",
-    message: "Lean budget — keep daily ad caps strict until first payout reconciled.",
+    message: "Lean budget - keep daily ad caps strict until first payout reconciled.",
     appliesWhen: (f) => f.isLeanBudget,
   },
   {
     id: "tracking-settlement",
     moduleId: "tracking-analytics",
-    message: "Reconcile your first settlement — catches payout holds and silent underpayment.",
+    message: "Reconcile your first settlement - catches payout holds and silent underpayment.",
     appliesWhen: (_f, r) => !subTaskDone(r.subTasks, "settlement-reconcile"),
   },
   {
     id: "shopify-pg-individual",
     moduleId: "channel-launch",
-    message: "Individuals face higher PG rejection — Zero-PG COD path may be needed.",
+    message: "Individuals face higher PG rejection - Zero-PG COD path may be needed.",
     appliesWhen: (f) => f.pgRejectionRisk,
   },
   {
     id: "channel-hsn",
     moduleId: "channel-launch",
-    message: "Recommended: map HSN codes before listing — wrong tax rate triggers suppression.",
+    message: "Recommended: map HSN codes before listing - wrong tax rate triggers suppression.",
     appliesWhen: (_f, r) => !subTaskDone(r.subTasks, "hsn-mapped"),
   },
   {
     id: "channel-no-gst",
     moduleId: "channel-launch",
-    message: "No GSTIN saved — most marketplaces block listing until GST is active.",
+    message: "No GSTIN saved - most marketplaces block listing until GST is active.",
     appliesWhen: (f, r) => !r.hasGstin && f.isBeginner && f.gstMandatory,
   },
   {
     id: "channel-supplier",
     moduleId: "channel-launch",
-    message: "Recommended: vet supplier before scaling listings — stockouts cause cancellation penalties.",
+    message: "Recommended: vet supplier before scaling listings - stockouts cause cancellation penalties.",
     appliesWhen: (_f, r) => !subTaskDone(r.subTasks, "supplier-vetted"),
   },
   {
     id: "legal-metrology",
     moduleId: "compliance-by-product",
-    message: "Pre-packaged goods need MRP and net quantity on label — missing labels block category approval.",
+    message: "Pre-packaged goods need MRP and net quantity on label - missing labels block category approval.",
     appliesWhen: (f) => f.needsLegalMetrology,
   },
   {

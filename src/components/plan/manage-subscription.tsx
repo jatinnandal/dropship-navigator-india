@@ -96,7 +96,7 @@ export function ManageSubscription({
       {pendingDowngrade && (
         <div className="rounded-xl border border-[oklch(0.72_0.13_165/0.25)] bg-[oklch(0.72_0.13_165/0.06)] px-4 py-3">
           <p className="text-[13px] text-[oklch(0.85_0.1_165)]">
-            Downgrade to Starter scheduled{formattedEnd ? ` — changes on ${formattedEnd}` : ""}.
+            Downgrade to Starter scheduled{formattedEnd ? ` - changes on ${formattedEnd}` : ""}.
             You keep Growth access until then.
           </p>
         </div>

@@ -89,7 +89,7 @@ export function SettlementTimeline() {
       <section className="glass-panel rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white flex items-center gap-2 mb-6">
           <Clock className="h-5 w-5 text-white" />
-          Order Lifecycle — {CHANNEL_LABELS[activeChannel]}
+          Order Lifecycle - {CHANNEL_LABELS[activeChannel]}
         </h2>
 
         {/* Desktop: horizontal timeline */}

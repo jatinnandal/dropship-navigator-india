@@ -35,7 +35,7 @@ export const RESOURCE_CATALOG: ResourceCategory[] = [
       {
         name: "ClearTax HSN Finder",
         url: "https://cleartax.in/s/hsn-code-finder",
-        description: "Look up HSN codes before listing — wrong codes trigger rejections.",
+        description: "Look up HSN codes before listing - wrong codes trigger rejections.",
       },
     ],
   },
@@ -64,12 +64,12 @@ export const RESOURCE_CATALOG: ResourceCategory[] = [
   {
     id: "sourcing",
     title: "Sourcing & suppliers",
-    description: "Find domestic suppliers and dropship partners — always verify samples first.",
+    description: "Find domestic suppliers and dropship partners - always verify samples first.",
     links: [
       {
         name: "IndiaMART",
         url: "https://www.indiamart.com/",
-        description: "B2B supplier directory — negotiate MOQ and samples before paying.",
+        description: "B2B supplier directory - negotiate MOQ and samples before paying.",
       },
       {
         name: "TradeIndia",
@@ -96,7 +96,7 @@ export const RESOURCE_CATALOG: ResourceCategory[] = [
       {
         name: "Delhivery",
         url: "https://www.delhivery.com/",
-        description: "Large courier network — compare rates for your pin codes.",
+        description: "Large courier network - compare rates for your pin codes.",
       },
       {
         name: "Confirmify",
@@ -123,14 +123,14 @@ export const RESOURCE_CATALOG: ResourceCategory[] = [
       {
         name: "Meesho Supplier Panel",
         url: "https://supplier.meesho.com/",
-        description: "Meesho supplier registration — lower barrier for beginners.",
+        description: "Meesho supplier registration - lower barrier for beginners.",
       },
     ],
   },
   {
     id: "ads",
     title: "Ads & growth",
-    description: "Paid channels — only scale after break-even ROAS is known.",
+    description: "Paid channels - only scale after break-even ROAS is known.",
     links: [
       {
         name: "Meta Ads Manager",

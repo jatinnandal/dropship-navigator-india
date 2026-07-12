@@ -15,7 +15,7 @@ Please reply YES to confirm delivery or CANCEL to cancel.
 
 Delivery address: {{address}}`;
 
-export const SUPPLIER_SLA_TEMPLATE = `Supplier SLA Agreement (WhatsApp/email — get written confirmation)
+export const SUPPLIER_SLA_TEMPLATE = `Supplier SLA Agreement (WhatsApp/email - get written confirmation)
 
 1. Dispatch timeline: All orders placed before 2 PM will be dispatched within {{hours}} hours.
 2. Packaging: Each unit in individual polybag/box with SKU label.
@@ -38,14 +38,14 @@ export const SIZE_CHART_CHECKLIST = `Size chart checklist (fashion listings)
 
 export const FASHION_PHOTO_SHOTS = `Fashion photo shot list (minimum 5 images)
 
-1. White background — front view (main image)
-2. White background — back view
-3. Lifestyle shot — model wearing product
-4. Close-up — fabric/texture detail
+1. White background - front view (main image)
+2. White background - back view
+3. Lifestyle shot - model wearing product
+4. Close-up - fabric/texture detail
 5. Size chart infographic
 6. (Optional) Flat lay with accessories`;
 
-export const RETURN_POLICY_SNIPPET = `Return & exchange policy (fashion — customize for your store)
+export const RETURN_POLICY_SNIPPET = `Return & exchange policy (fashion - customize for your store)
 
 - 7-day return window from delivery date
 - Product must be unworn, tags attached, original packaging
@@ -54,7 +54,7 @@ export const RETURN_POLICY_SNIPPET = `Return & exchange policy (fashion — cust
 - COD orders: refund via UPI/bank transfer
 - Customized/personalized items: no returns`;
 
-export const MARKETPLACE_APPEAL_TICKET = `Subject: Payout hold / settlement discrepancy — Seller ID {{seller_id}}
+export const MARKETPLACE_APPEAL_TICKET = `Subject: Payout hold / settlement discrepancy - Seller ID {{seller_id}}
 
 Dear {{marketplace}} Seller Support,
 
@@ -89,20 +89,20 @@ Please confirm in writing:
 
 We need this today to manage customer orders. Please reply on this thread.
 
-— {{store_name}}`;
+- {{store_name}}`;
 
 export const WHATSAPP_CUSTOMER_DELAY = `Hi {{name}},
 
 Thank you for your order #{{order}} from {{store}}.
 
-We're facing a brief stock delay on {{product}}. Your order is confirmed — we're working with our supplier and expect to ship within {{eta_days}} days.
+We're facing a brief stock delay on {{product}}. Your order is confirmed - we're working with our supplier and expect to ship within {{eta_days}} days.
 
 We'll update you before dispatch. Reply if you'd prefer to cancel.
 
 Sorry for the inconvenience.
-— {{store_name}}`;
+- {{store_name}}`;
 
-export const PAOS_APPEAL_TEMPLATE = `Plan of Action (POA) — Account Suspension Appeal
+export const PAOS_APPEAL_TEMPLATE = `Plan of Action (POA) - Account Suspension Appeal
 
 To: {{marketplace}} Seller Performance Team
 
@@ -135,7 +135,7 @@ We request reinstatement and commit to maintaining metrics within policy thresho
 {{legal_name}}
 {{contact}}`;
 
-export const ESCALATION_LETTER = `Formal escalation — settlement / account hold
+export const ESCALATION_LETTER = `Formal escalation - settlement / account hold
 
 To: {{marketplace}} Seller Grievance Cell
 
@@ -173,16 +173,16 @@ Test route: {{origin_pincode}} → {{dest_pincode}}
 
 Run 5 test shipments each before committing volume.`;
 
-export const IP_COMPLAINT_RESPONSE = `Subject: Response to IP complaint — Listing {{listing_id}}, Seller ID {{seller_id}}
+export const IP_COMPLAINT_RESPONSE = `Subject: Response to IP complaint - Listing {{listing_id}}, Seller ID {{seller_id}}
 
 Dear {{marketplace}} Notice Team,
 
 I received an intellectual-property complaint dated {{complaint_date}} on listing {{listing_id}}.
 
 My position (pick ONE, delete the rest):
-A) AUTHORIZED RESELLER — I source this product from {{supplier_name}}, an authorized distributor. Attached: purchase invoices with GST, supplier authorization chain.
-B) GENERIC PRODUCT — The listing is for an unbranded/generic product and does not use the complainant's brand name, logo, or images. Attached: product photos as sold, listing history.
-C) LISTING ERROR, FIXED — The flagged content was removed on {{fix_date}}. Attached: updated listing screenshots.
+A) AUTHORIZED RESELLER - I source this product from {{supplier_name}}, an authorized distributor. Attached: purchase invoices with GST, supplier authorization chain.
+B) GENERIC PRODUCT - The listing is for an unbranded/generic product and does not use the complainant's brand name, logo, or images. Attached: product photos as sold, listing history.
+C) LISTING ERROR, FIXED - The flagged content was removed on {{fix_date}}. Attached: updated listing screenshots.
 
 Immediate actions taken:
 - Listing {{action_taken}} on {{fix_date}}
@@ -192,7 +192,7 @@ I request reinstatement of the listing / withdrawal of the strike. If the compla
 
 {{legal_name}} · Seller ID {{seller_id}} · {{contact}}`;
 
-export const GST_SCN_REPLY = `DRAFT skeleton — a GST notice is a legal document. Have a CA review before submission. Reply within the deadline printed on the notice (usually 7/15/30 days) — missing it converts a query into a demand.
+export const GST_SCN_REPLY = `DRAFT skeleton - a GST notice is a legal document. Have a CA review before submission. Reply within the deadline printed on the notice (usually 7/15/30 days) - missing it converts a query into a demand.
 
 To: The Proper Officer, {{jurisdiction}}
 Ref: Notice {{notice_ref}} dated {{notice_date}} (Form {{notice_form}})
@@ -218,7 +218,7 @@ We request the proceedings be dropped / the discrepancy be treated as explained.
 
 {{legal_name}} · Authorized signatory · {{contact}}`;
 
-export const COURIER_DISPUTE_TICKET = `Subject: Dispute — AWB {{awb}}: {{dispute_type}}
+export const COURIER_DISPUTE_TICKET = `Subject: Dispute - AWB {{awb}}: {{dispute_type}}
 
 To: {{courier}} Escalation Desk / {{marketplace}} Seller Support
 
@@ -229,24 +229,24 @@ Dispute type (keep one): fake delivery (marked delivered, customer never receive
 Evidence attached:
 - Pickup scan + weight at pickup (packing video/photo with scale, if available)
 - Customer's written statement that the parcel was not received (for fake delivery)
-- POD copy requested — signature does not match customer name
+- POD copy requested - signature does not match customer name
 - Dimensions/weight photos for weight disputes
 
 Requested resolution: reverse the delivery status / refund forward+RTO freight / correct the weight slab and refund the difference / claim for declared value.
 
-Per your SLA I expect a response within 48 hours. This is dispute {{dispute_count}} on this route this month — repeated issues will move our volume.
+Per your SLA I expect a response within 48 hours. This is dispute {{dispute_count}} on this route this month - repeated issues will move our volume.
 
 {{store_name}} · {{contact}}`;
 
-export const REVIEW_RESPONSE = `Public reply template — professional, no arguing, signals to REAL buyers that you're responsive.
+export const REVIEW_RESPONSE = `Public reply template - professional, no arguing, signals to REAL buyers that you're responsive.
 
-"Hi {{name}}, sorry your experience fell short. We take quality seriously — every unit is checked before dispatch. Please reach us at {{contact}} with your order ID; we'll replace the item or refund you within 48 hours. — {{store_name}}"
+"Hi {{name}}, sorry your experience fell short. We take quality seriously - every unit is checked before dispatch. Please reach us at {{contact}} with your order ID; we'll replace the item or refund you within 48 hours. - {{store_name}}"
 
 Rules:
 - Reply within 24h, never argue, never accuse the reviewer of being fake (even when they are).
 - Offer the fix publicly, resolve privately.
-- For suspected fake/competitor reviews, do NOT reply-fight — report via the marketplace's "Report abuse" with: order-ID mismatch (reviewer never bought), burst pattern (5+ 1-stars in 48h), copy-paste text across your listings, reviewer history of only 1-star reviews.
-- Log every reported review ID — a second report referencing the first gets human eyes.`;
+- For suspected fake/competitor reviews, do NOT reply-fight - report via the marketplace's "Report abuse" with: order-ID mismatch (reviewer never bought), burst pattern (5+ 1-stars in 48h), copy-paste text across your listings, reviewer history of only 1-star reviews.
+- Log every reported review ID - a second report referencing the first gets human eyes.`;
 
 export function fillTemplate(template: string, vars: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => vars[key] ?? `{{${key}}}`);

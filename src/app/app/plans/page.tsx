@@ -40,7 +40,7 @@ export default async function PlansPage({ searchParams }: Props) {
           Plans &amp; billing
         </h1>
         <p className="mt-2 text-[15px] text-[var(--muted)]">
-          Every tier side by side. Upgrade, downgrade, or cancel — right here.
+          Every tier side by side. Upgrade, downgrade, or cancel - right here.
         </p>
       </div>
 

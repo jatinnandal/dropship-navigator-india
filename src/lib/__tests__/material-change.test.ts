@@ -17,7 +17,7 @@ describe("hasMaterialProfileChange", () => {
     expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, sellsPrepackagedGoods: !defaultProfile.sellsPrepackagedGoods })).toBe(true);
   });
 
-  it("counts every answer change — budget, experience, channel all count now", () => {
+  it("counts every answer change - budget, experience, channel all count now", () => {
     expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, budgetBand: "above_1l" })).toBe(true);
     expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, experienceLevel: "existing_seller" })).toBe(true);
     expect(hasMaterialProfileChange(defaultProfile, { ...defaultProfile, primaryChannel: "amazon" })).toBe(true);

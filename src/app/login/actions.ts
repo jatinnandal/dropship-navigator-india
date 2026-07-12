@@ -195,7 +195,7 @@ export async function requestPasswordReset(formData: FormData) {
     redirectTo: `${siteUrl()}/auth/callback?next=${encodeURIComponent("/reset-password")}`,
   });
 
-  // Always report success — never reveal whether an account exists for this email.
+  // Always report success - never reveal whether an account exists for this email.
   redirect("/forgot-password?sent=1");
 }
 

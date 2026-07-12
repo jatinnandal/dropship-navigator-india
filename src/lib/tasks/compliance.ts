@@ -14,7 +14,7 @@ export function buildComplianceTask(
       title: "Map which compliance rules apply to YOU",
       why: "Compliance is not one-size-fits-all. Your product type, sales model, and import status determine what's mandatory vs optional.",
       how: [
-        "Review your profile inputs below — each one changes your checklist.",
+        "Review your profile inputs below - each one changes your checklist.",
         `Product type: ${profile.productType}`,
         `Sales model: ${profile.salesModel}`,
         `Imports: ${profile.importsProducts ? "yes" : "no"}`,
@@ -22,7 +22,7 @@ export function buildComplianceTask(
         `State: ${stateLabel(profile.operatingState)}`,
       ],
       mentorNote: workspace.gstin
-        ? `Good — you already saved GSTIN ${workspace.gstin}. We'll validate it's configured correctly for your products.`
+        ? `Good - you already saved GSTIN ${workspace.gstin}. We'll validate it's configured correctly for your products.`
         : "Complete the documentation step first if you don't have a GSTIN yet.",
     },
   ];
@@ -55,7 +55,7 @@ export function buildComplianceTask(
       {
         name: "ClearTax HSN Finder",
         whenToUse: "When unsure of HSN code for a product.",
-        why: "Free lookup tool — prevents the most common tax mapping error.",
+        why: "Free lookup tool - prevents the most common tax mapping error.",
       },
     ],
   });
@@ -69,18 +69,18 @@ export function buildComplianceTask(
         "Determine if you need Basic Registration (turnover under ₹12L) or State/Central License.",
         "Apply at foscos.fssai.gov.in with business address proof and product category details.",
         "Display FSSAI license number on all product listings and packaging.",
-        "Keep validity date tracked — expired FSSAI blocks listings.",
+        "Keep validity date tracked - expired FSSAI blocks listings.",
       ],
       trap: "Homemade/unlabeled food sold online violates FSSAI rules even if you have GST. Proper labeling is mandatory.",
       stuck: [
         "Not sure which license type: Basic for small/local, State for ₹12L-₹20Cr, Central above ₹20Cr.",
-        "Application pending: you can list some categories with application reference number — check marketplace policy.",
+        "Application pending: you can list some categories with application reference number - check marketplace policy.",
       ],
       tools: [
         {
           name: "IndiaFilings FSSAI",
           whenToUse: "If FSSAI application process feels confusing.",
-          why: "Handles registration end-to-end with document prep — typically 7-15 days.",
+          why: "Handles registration end-to-end with document prep - typically 7-15 days.",
         },
       ],
     });
@@ -102,8 +102,8 @@ export function buildComplianceTask(
         id: "bis-needed",
         prompt: "Have you confirmed whether your electronics need BIS certification?",
         options: [
-          { value: "yes-certified", label: "Yes — product is BIS certified" },
-          { value: "yes-needed", label: "Yes — certification is needed, not yet done" },
+          { value: "yes-certified", label: "Yes - product is BIS certified" },
+          { value: "yes-needed", label: "Yes - certification is needed, not yet done" },
           { value: "no", label: "Not yet checked" },
         ],
       },
@@ -119,7 +119,7 @@ export function buildComplianceTask(
           "If listed: contact your supplier for their BIS certificate OR apply yourself (4-8 weeks, ₹25K-50K).",
           "If not listed: document your check (screenshot) for marketplace category approval.",
         ],
-        trap: "Assuming small accessories are exempt — many cables, chargers, and power banks require BIS.",
+        trap: "Assuming small accessories are exempt - many cables, chargers, and power banks require BIS.",
       });
     }
   }
@@ -146,13 +146,13 @@ export function buildComplianceTask(
       why: "Fashion has lighter regulatory burden than food/electronics, but marketplaces enforce brand authorization and return policies strictly.",
       how: [
         "Brand authorization: if selling branded goods, get authorization letter or sell own-label/unbranded.",
-        "Size chart mandatory on listing — reduces 'wrong size' returns.",
+        "Size chart mandatory on listing - reduces 'wrong size' returns.",
         "Return/exchange policy visible on listing and store page.",
-        "Accurate color and fabric description — 'not as described' is top return reason after size.",
+        "Accurate color and fabric description - 'not as described' is top return reason after size.",
         "7-day return window is standard; shorter windows reduce trust on unknown stores.",
       ],
       trap: "Using celebrity/influencer photos without rights = IP complaint and listing removal.",
-      mentorNote: "Fashion compliance is mostly about accurate listings and return clarity — not certificates.",
+      mentorNote: "Fashion compliance is mostly about accurate listings and return clarity - not certificates.",
     });
   }
 
@@ -175,7 +175,7 @@ export function buildComplianceTask(
     steps.push({
       id: "import-compliance",
       title: "Import labeling and customs compliance",
-      why: "As the importer of record, YOU are responsible for correct labeling, HSN classification, and duty payment — not your supplier.",
+      why: "As the importer of record, YOU are responsible for correct labeling, HSN classification, and duty payment - not your supplier.",
       how: [
         "Confirm correct HSN code for customs classification (affects duty rate).",
         "Add 'Imported by: [Your Business Name, Address]' on product packaging.",
@@ -189,12 +189,12 @@ export function buildComplianceTask(
   steps.push({
     id: "category-approval",
     title: "Prepare for marketplace category approval",
-    why: "Some categories are gated — you need extra documents before listings go live. Applying without them causes delays.",
+    why: "Some categories are gated - you need extra documents before listings go live. Applying without them causes delays.",
     how: [
       "Check your marketplace's category approval requirements for your product type.",
       "Prepare brand authorization letter if selling branded goods.",
       "Upload compliance certificates (FSSAI, BIS, etc.) during category application.",
-      "Allow 3-7 business days for approval — do not start ads until approved.",
+      "Allow 3-7 business days for approval - do not start ads until approved.",
     ],
     trap: "Listing in a gated category without approval gets the listing suppressed with no clear error message.",
     mentorNote: "Category approval is boring but blocking. Do it once, correctly, and never think about it again.",
@@ -208,7 +208,7 @@ export function buildComplianceTask(
       "Create a Compliance folder with subfolders per product.",
       "Each product file: HSN code, GST rate, certificates, labeling photos.",
       "Add a compliance checklist per SKU (green = ready, red = blocked).",
-      "Review monthly — certificates expire and regulations change.",
+      "Review monthly - certificates expire and regulations change.",
       "Confirm all launch SKUs have documented compliance mapping before listing.",
     ],
   });

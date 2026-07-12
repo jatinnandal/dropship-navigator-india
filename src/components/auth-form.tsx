@@ -20,7 +20,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   email_not_confirmed:
     "Your email isn't confirmed yet. Check your inbox and spam for the confirmation link, or resend it below.",
   user_already_exists: "An account with this email already exists. Sign in instead.",
-  weak_password: "Choose a stronger password — at least 6 characters.",
+  weak_password: "Choose a stronger password - at least 6 characters.",
   invalid_email: "That email address was rejected. Use a real inbox you can access.",
   email_rate_limit:
     "We couldn't send the confirmation email right now. Please wait a little while and try again.",

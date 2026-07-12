@@ -32,7 +32,7 @@ describe("margin calculator ↔ cashflow simulator parity", () => {
     });
 
     // Cash basis: costs go out for all 90 orders; settlements arrive only for
-    // orders placed before day 90 − settlementDelay.
+    // orders placed before day 90 - settlementDelay.
     const t = SETTLEMENT_TIMELINES.meesho;
     const delay = t.deliveryDays + t.prepaidSettlementDays;
     const settledOrders = 90 - delay;

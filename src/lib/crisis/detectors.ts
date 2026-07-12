@@ -60,7 +60,7 @@ export function detectRtoShock(input: CrisisDetectorInput): CrisisWarning | null
     id: "rto-shock",
     severity: "critical",
     title: "Live listing with no margin math saved",
-    message: `You listed without running the margin calculator. RTO on your first 20 COD orders could cost you ₹${loss.toLocaleString("en-IN")}–₹${Math.round(loss * 1.5).toLocaleString("en-IN")}. Run the calculator before scaling.`,
+    message: `You listed without running the margin calculator. RTO on your first 20 COD orders could cost you ₹${loss.toLocaleString("en-IN")}-₹${Math.round(loss * 1.5).toLocaleString("en-IN")}. Run the calculator before scaling.`,
     href: "/app/tasks/product-selection",
     ctaLabel: "Run margin calculator",
   };
@@ -112,7 +112,7 @@ export function detectAdBurn(input: CrisisDetectorInput): CrisisWarning | null {
     severity: "high",
     title: "Break-even ROAS not backed by calculator",
     message:
-      "You marked ROAS as known but have no saved margin calculation. Guessing ROAS leads to turning off ads that could work — or scaling ads that lose money.",
+      "You marked ROAS as known but have no saved margin calculation. Guessing ROAS leads to turning off ads that could work - or scaling ads that lose money.",
     href: "/app/tasks/ads-growth",
     ctaLabel: "Run break-even calculator",
   };
@@ -130,7 +130,7 @@ export function detectSupplierOosPreventive(input: CrisisDetectorInput): CrisisW
     severity: "medium",
     title: "No backup supplier with live listings",
     message:
-      "You have live listings but no backup supplier. When stock runs out, sellers freeze — pause listings, cancel orders, or lie to customers. All three hurt. Identify a backup now.",
+      "You have live listings but no backup supplier. When stock runs out, sellers freeze - pause listings, cancel orders, or lie to customers. All three hurt. Identify a backup now.",
     href: "/app/tasks/supplier-sourcing",
     ctaLabel: "Add backup supplier",
   };
@@ -152,9 +152,9 @@ export function detectGstTrap(input: CrisisDetectorInput): CrisisWarning | null 
   return {
     id: "gst-trap",
     severity: "high",
-    title: onMeesho ? "Selling without GSTIN — Amazon will block you later" : "Selling without GSTIN",
+    title: onMeesho ? "Selling without GSTIN - Amazon will block you later" : "Selling without GSTIN",
     message: onMeesho
-      ? "Meesho may let you start without GST, but Amazon and Flipkart require GSTIN for seller approval. Get 10–20 orders, then hit a wall when you try to expand. Register GST before scaling."
+      ? "Meesho may let you start without GST, but Amazon and Flipkart require GSTIN for seller approval. Get 10-20 orders, then hit a wall when you try to expand. Register GST before scaling."
       : "You're live or approved on a marketplace without GSTIN saved. Most channels require it for full seller access and TCS reconciliation.",
     href: "/app/tasks/compliance-by-product",
     ctaLabel: "Start GST compliance",
@@ -204,8 +204,8 @@ export function detectPayoutStale(input: CrisisDetectorInput): CrisisWarning | n
     title: daysSince === null ? "Payouts never reconciled" : `No payout reconciliation in ${daysSince} days`,
     message:
       daysSince === null
-        ? "You're receiving payouts but have never checked them against the fee card. Silent over-deductions and unclaimed TCS hide here — a settlement CSV upload takes two minutes."
-        : "Marketplace fee errors and unclaimed TCS compound while nobody looks. Upload the latest settlement CSV — two minutes, and this month's baseline is set.",
+        ? "You're receiving payouts but have never checked them against the fee card. Silent over-deductions and unclaimed TCS hide here - a settlement CSV upload takes two minutes."
+        : "Marketplace fee errors and unclaimed TCS compound while nobody looks. Upload the latest settlement CSV - two minutes, and this month's baseline is set.",
     href: "/app/tools/payout-reconciliation",
     ctaLabel: "Reconcile payouts",
   };

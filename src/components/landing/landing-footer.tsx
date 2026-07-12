@@ -40,7 +40,7 @@ export function LandingFooter() {
               color: "#6e6e6e",
             }}
           >
-            Navigator — vendor-neutral seller mentor for India
+            Navigator - vendor-neutral seller mentor for India
           </span>
         </div>
 

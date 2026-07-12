@@ -19,11 +19,11 @@ export default function PrivacyPage() {
 
       <h2>1. Data we collect</h2>
       <ul>
-        <li><strong>Account data</strong> — your email address, and (if you sign in with Google) basic profile information Google shares with us.</li>
-        <li><strong>Seller profile data</strong> — the answers you give during onboarding and profile edits (e.g. experience level, budget band, state of operation, product category, GST status, business type, sales channels). This is business information you choose to enter.</li>
-        <li><strong>Usage data</strong> — your progress through the journey, tool inputs and results you save, and settlement/reconciliation files you upload.</li>
-        <li><strong>Payment data</strong> — handled by our payment provider (Razorpay). We receive your subscription status; we do <strong>not</strong> store your full card or bank details.</li>
-        <li><strong>Support communications</strong> — messages you send us.</li>
+        <li><strong>Account data</strong> - your email address, and (if you sign in with Google) basic profile information Google shares with us.</li>
+        <li><strong>Seller profile data</strong> - the answers you give during onboarding and profile edits (e.g. experience level, budget band, state of operation, product category, GST status, business type, sales channels). This is business information you choose to enter.</li>
+        <li><strong>Usage data</strong> - your progress through the journey, tool inputs and results you save, and settlement/reconciliation files you upload.</li>
+        <li><strong>Payment data</strong> - handled by our payment provider (Razorpay). We receive your subscription status; we do <strong>not</strong> store your full card or bank details.</li>
+        <li><strong>Support communications</strong> - messages you send us.</li>
       </ul>
 
       <h2>2. How we use your data</h2>
@@ -39,8 +39,8 @@ export default function PrivacyPage() {
       <h2>3. Legal basis &amp; consent</h2>
       <p>
         We process your data to provide the Service you asked for, to pursue our legitimate interests in running and
-        improving it, to meet legal obligations, and — where required under India&rsquo;s Digital Personal Data
-        Protection Act, 2023 — with your consent. You can withdraw consent by closing your account.
+        improving it, to meet legal obligations, and - where required under India&rsquo;s Digital Personal Data
+        Protection Act, 2023 - with your consent. You can withdraw consent by closing your account.
       </p>
 
       <h2>4. Where your data is stored</h2>
@@ -52,12 +52,12 @@ export default function PrivacyPage() {
       <h2>5. Service providers we share data with</h2>
       <p>We share the minimum necessary data with trusted providers who help us run the Service:</p>
       <ul>
-        <li><strong>Supabase</strong> — database and authentication (hosting your account and app data).</li>
-        <li><strong>Vercel</strong> — application hosting and delivery.</li>
-        <li><strong>Razorpay</strong> — payment processing for subscriptions.</li>
-        <li><strong>Google</strong> — optional &ldquo;Sign in with Google&rdquo; authentication.</li>
-        <li><strong>Anthropic</strong> — the AI model that personalizes some guidance. When you use personalized plans, your non-identifying profile attributes (such as state, product category, and GST status) are sent to generate tailored copy. We do not send your name, email, or payment details for this purpose.</li>
-        <li><strong>Email delivery</strong> — a mail service is used to send account emails such as confirmation and password reset.</li>
+        <li><strong>Supabase</strong> - database and authentication (hosting your account and app data).</li>
+        <li><strong>Vercel</strong> - application hosting and delivery.</li>
+        <li><strong>Razorpay</strong> - payment processing for subscriptions.</li>
+        <li><strong>Google</strong> - optional &ldquo;Sign in with Google&rdquo; authentication.</li>
+        <li><strong>Anthropic</strong> - the AI model that personalizes some guidance. When you use personalized plans, your non-identifying profile attributes (such as state, product category, and GST status) are sent to generate tailored copy. We do not send your name, email, or payment details for this purpose.</li>
+        <li><strong>Email delivery</strong> - a mail service is used to send account emails such as confirmation and password reset.</li>
       </ul>
       <p>We do not sell your personal data.</p>
 
@@ -89,8 +89,8 @@ export default function PrivacyPage() {
 
       <h2>9. Security</h2>
       <p>
-        We use industry-standard measures — including access controls, encryption in transit, and per-user database
-        security rules — to protect your data. No method of transmission or storage is completely secure, so we cannot
+        We use industry-standard measures - including access controls, encryption in transit, and per-user database
+        security rules - to protect your data. No method of transmission or storage is completely secure, so we cannot
         guarantee absolute security. Keep your password safe and use a strong, unique one.
       </p>
 

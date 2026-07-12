@@ -7,7 +7,7 @@ import { isSupabaseConfigured, supabaseAnonKey, supabaseUrl } from "@/lib/supaba
 /**
  * Client for reading/writing user data tables. Normally the cookie-session
  * client (RLS scopes rows to the signed-in user). Under the dev auth bypass
- * there is no session, so RLS would block everything — use the service-role
+ * there is no session, so RLS would block everything - use the service-role
  * client instead; row scoping then comes from the bypass user id that
  * getCurrentUserId() feeds into every store query.
  */

@@ -31,7 +31,7 @@ export default async function TaskPage({ params }: Props) {
           The route continues on Starter
         </h1>
         <p className="mt-3 max-w-xl text-[14px] leading-[1.65] text-[var(--muted)]">
-          Module 1 (product selection) is free — you&apos;ve seen how the mentor works. The remaining
+          Module 1 (product selection) is free - you&apos;ve seen how the mentor works. The remaining
           six modules walk you from supplier sourcing to profit tracking.
         </p>
         <div className="mt-6">
@@ -80,7 +80,7 @@ export default async function TaskPage({ params }: Props) {
       needsPersonalization={canPersonalize && !personalizedCopy}
       personalizeDisabledReason={
         canPersonalize && !profile.productDecided
-          ? "Choose your product first — you selected “I don’t know yet”. Pick a category in your profile to personalize."
+          ? "Choose your product first - you selected “I don’t know yet”. Pick a category in your profile to personalize."
           : undefined
       }
     />

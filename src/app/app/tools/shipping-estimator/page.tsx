@@ -20,7 +20,7 @@ export default function ShippingEstimatorPage() {
           Shipping Cost Estimator
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Compare REAL carrier costs — not advertised rates
+          Compare REAL carrier costs - not advertised rates
         </p>
         <EstimateDisclaimer meta={SHIPPING_DATA_META} />
       </header>

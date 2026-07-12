@@ -36,7 +36,7 @@ const SUB_LABELS: Record<string, string> = {
 /* Full SVG curve base path */
 const BASE_PATH = "M60 230 C 130 230 130 80 200 80 S 290 240 370 240 S 450 100 520 100 S 590 60 660 60 S 730 170 770 170 S 830 230 880 230";
 
-/* Progress path — travelled curve up to the first in-progress or last done node */
+/* Progress path - travelled curve up to the first in-progress or last done node */
 function buildProgressPath(nodes: JourneyNode[]): string | null {
   const doneCount = nodes.filter((n) => n.status === "done").length;
   const inProgressIdx = nodes.findIndex((n) => n.status === "in_progress");

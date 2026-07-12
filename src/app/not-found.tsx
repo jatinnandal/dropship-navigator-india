@@ -6,7 +6,7 @@ export default function NotFound() {
       <div>
         <p className="font-mono text-[11px] uppercase tracking-[0.22em] text-[#6e6e6e]">404</p>
         <h1 className="mt-4 text-[clamp(2rem,5vw,3rem)] font-bold tracking-[-0.04em] text-white">
-          This route doesn&apos;t exist —{" "}
+          This route doesn&apos;t exist -{" "}
           <span className="font-serif-accent">but your launch plan does.</span>
         </h1>
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">

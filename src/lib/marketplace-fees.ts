@@ -6,7 +6,7 @@ export type { WeightBracket } from "@/lib/rate-card";
 export type PaymentMode = "prepaid" | "cod";
 
 /**
- * Freshness metadata for UI badges. Derived from the active rate card —
+ * Freshness metadata for UI badges. Derived from the active rate card -
  * bumping the card version updates every "Rates verified" badge at once.
  */
 export const MARKETPLACE_FEES_META = {
@@ -16,13 +16,13 @@ export const MARKETPLACE_FEES_META = {
 
 export const WEIGHT_BRACKET_LABELS: Record<WeightBracket, string> = {
   light: "Light (<500g)",
-  medium: "Medium (500g–1kg)",
-  heavy: "Heavy (1–5kg)",
+  medium: "Medium (500g-1kg)",
+  heavy: "Heavy (1-5kg)",
 };
 
 // Rate tables live in versioned cards under src/data/rates/ (one file per
 // quarter + CHANGELOG.md). They are estimates for the broad category buckets
-// this app models — real rate cards are subcategory-level and account-specific,
+// this app models - real rate cards are subcategory-level and account-specific,
 // so every consumer UI must label them as estimates.
 
 // ── Lookup helpers ──
@@ -47,7 +47,7 @@ export type ComputedFees = {
   channel: PrimaryChannel;
   name: string;
   referralPercent: number;
-  /** Commission/referral — typically REVERSED by the marketplace on RTO. */
+  /** Commission/referral - typically REVERSED by the marketplace on RTO. */
   referralFee: number;
   closingFee: number;
   fixedFee: number;
@@ -64,7 +64,7 @@ export type ComputedFees = {
   /**
    * Portion of totalFees NOT refunded when the order RTOs (fixed/closing/
    * collection fees + their GST). Referral + TCS are treated as reversed.
-   * Assumption is labelled in UI — actual reversal varies by platform/case.
+   * Assumption is labelled in UI - actual reversal varies by platform/case.
    */
   nonRefundableOnRto: number;
   /** Extra caveat the UI must surface (e.g. Shopify plan cost not included). */
@@ -104,7 +104,7 @@ export function getFeesForProduct(
         tcsPercent: rates.tcsPercent, tcs,
         totalFees: feesBeforeGst + gstOnFees + tcs,
         nonRefundableOnRto: closingFee * (1 + gstRate),
-        caveat: "Easy Ship assumed — FBA adds storage/pick-pack fees",
+        caveat: "Easy Ship assumed - FBA adds storage/pick-pack fees",
         typicalShipping: rates.typicalShipping.amazon,
       };
     }
@@ -131,7 +131,7 @@ export function getFeesForProduct(
         tcsPercent: rates.tcsPercent, tcs,
         totalFees: feesBeforeGst + gstOnFees + tcs,
         nonRefundableOnRto: (fixedFee + collectionFee) * (1 + gstRate),
-        caveat: "Bronze tier assumed — Gold/Silver fixed fees are lower",
+        caveat: "Bronze tier assumed - Gold/Silver fixed fees are lower",
         typicalShipping: rates.typicalShipping.flipkart,
       };
     }
@@ -170,7 +170,7 @@ export function getFeesForProduct(
         tcsPercent: 0, tcs: 0, // no TCS on your own website (no e-commerce operator)
         totalFees: paymentGatewayFee + gstOnFees,
         nonRefundableOnRto: paymentGatewayFee * (1 + gstRate),
-        caveat: "Excludes Shopify plan cost (₹1,500–2,300/mo) and the ad spend needed to buy your own traffic",
+        caveat: "Excludes Shopify plan cost (₹1,500-2,300/mo) and the ad spend needed to buy your own traffic",
         typicalShipping: rates.typicalShipping.shopify,
       };
     }

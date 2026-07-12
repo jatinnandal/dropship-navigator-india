@@ -53,8 +53,8 @@ export default async function ToolsIndexPage() {
             marginTop: 10,
           }}
         >
-          Every tool here replaces a mistake that costs ₹5,000–₹50,000 to learn
-          the hard way. Run the numbers, rehearse the calls, vet the suppliers —
+          Every tool here replaces a mistake that costs ₹5,000-₹50,000 to learn
+          the hard way. Run the numbers, rehearse the calls, vet the suppliers -
           before a single rupee leaves your account.
         </p>
       </div>
@@ -172,7 +172,7 @@ export default async function ToolsIndexPage() {
                 }}
               >
                 Plug in your product cost, marketplace fees, shipping, and RTO
-                rate — see the real margin after every deduction, across every
+                rate - see the real margin after every deduction, across every
                 channel.
               </p>
             </div>
@@ -244,8 +244,8 @@ export default async function ToolsIndexPage() {
                   color: "var(--muted)",
                 }}
               >
-                Score IndiaMART and Alibaba suppliers on 18 weighted criteria —
-                catch the red flags that cause 60–70% of early failures, before
+                Score IndiaMART and Alibaba suppliers on 18 weighted criteria -
+                catch the red flags that cause 60-70% of early failures, before
                 you pay an advance.
               </p>
             </div>
@@ -303,7 +303,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/cashflow-simulator"
             title="Cashflow simulator"
-            description="Meta bills today, COD pays day 5-7 — see if you survive week one."
+            description="Meta bills today, COD pays day 5-7 - see if you survive week one."
             icon="BarChart3"
             status="open"
           />
@@ -317,7 +317,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/payout-reconciliation"
             title="Payout reconciliation"
-            description="Upload a settlement CSV — expected vs received per order, plus unclaimed TCS."
+            description="Upload a settlement CSV - expected vs received per order, plus unclaimed TCS."
             icon="Landmark"
             status="open"
           />
@@ -331,7 +331,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/shipping-estimator"
             title="Shipping estimator"
-            description="Real courier costs — advertised vs. actual, across 5 carriers."
+            description="Real courier costs - advertised vs. actual, across 5 carriers."
             icon="Truck"
             status="open"
           />
@@ -395,7 +395,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/supplier-scorecard"
             title="Supplier scorecard"
-            description="Vet IndiaMART suppliers — catch the red flags systematically."
+            description="Vet IndiaMART suppliers - catch the red flags systematically."
             icon="ShieldCheck"
             status="open"
           />
@@ -423,7 +423,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/sourcing-game"
             title="Sourcing swipe game"
-            description="Real supplier chats — swipe trap or legit, learn the patterns."
+            description="Real supplier chats - swipe trap or legit, learn the patterns."
             icon="Gamepad2"
             status="open"
           />
@@ -487,7 +487,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/document-checker"
             title="Document checker"
-            description="Pre-submission validation — the #1 cause of KYC rejection."
+            description="Pre-submission validation - the #1 cause of KYC rejection."
             icon="FolderCheck"
             status="open"
           />

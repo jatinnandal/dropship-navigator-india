@@ -18,19 +18,19 @@ function channelConsequence(channel: PrimaryChannel, hasGstin: boolean): string 
   switch (channel) {
     case "meesho":
       return hasGstin
-        ? "Zero-commission path — scale listings while keeping GST filings current."
-        : "Easy to start here — but Amazon/Flipkart will block you until GSTIN is active.";
+        ? "Zero-commission path - scale listings while keeping GST filings current."
+        : "Easy to start here - but Amazon/Flipkart will block you until GSTIN is active.";
     case "amazon":
       return hasGstin
-        ? "Strict dispatch SLA from day one — one bad week can suspend the account."
+        ? "Strict dispatch SLA from day one - one bad week can suspend the account."
         : "Seller approval blocked until GSTIN is verified. Register before applying.";
     case "flipkart":
       return hasGstin
-        ? "Flipkart onboarding needs brand + GST docs — keep dispatch rate above 90%."
-        : "Account approval stalls without GSTIN — most rejections happen at verification.";
+        ? "Flipkart onboarding needs brand + GST docs - keep dispatch rate above 90%."
+        : "Account approval stalls without GSTIN - most rejections happen at verification.";
     case "shopify":
       return hasGstin
-        ? "Own store = full margin control — payment gateway still needs business proof."
+        ? "Own store = full margin control - payment gateway still needs business proof."
         : "Razorpay/PayU needs GST or business registration before you can collect payments.";
     default:
       return "Your channel choice shapes compliance order and ad timing.";
@@ -40,13 +40,13 @@ function channelConsequence(channel: PrimaryChannel, hasGstin: boolean): string 
 function modulesConsequence(completed: number, total: number): string {
   if (total === 0) return "Complete setup to generate your launch plan.";
   if (completed === 0) {
-    return "First sub-task unlocks the rest — most sellers quit before this step.";
+    return "First sub-task unlocks the rest - most sellers quit before this step.";
   }
   if (completed >= total) {
-    return "All modules done — refine listings, ads, and settlement tracking.";
+    return "All modules done - refine listings, ads, and settlement tracking.";
   }
   const left = total - completed;
-  return `${left} module${left === 1 ? "" : "s"} left — focus on the next action above, not everything at once.`;
+  return `${left} module${left === 1 ? "" : "s"} left - focus on the next action above, not everything at once.`;
 }
 
 export function buildDashboardInsights(input: {
@@ -71,8 +71,8 @@ export function buildDashboardInsights(input: {
       label: "GST readiness",
       value: hasGstin ? "Active" : "Not registered",
       consequence: hasGstin
-        ? "Marketplace onboarding unblocked — missing GSTR filings still suspend your GSTIN."
-        : "Amazon & Flipkart listing blocked until active. Meesho may work short-term — don't scale blind.",
+        ? "Marketplace onboarding unblocked - missing GSTR filings still suspend your GSTIN."
+        : "Amazon & Flipkart listing blocked until active. Meesho may work short-term - don't scale blind.",
       accent: hasGstin ? "safe" : "warn",
     },
     {

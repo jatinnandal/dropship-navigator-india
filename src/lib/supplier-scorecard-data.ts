@@ -38,11 +38,11 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
   {
     id: "legit-gstin",
     category: "legitimacy",
-    question: "Tax legitimacy — active, verifiable GSTIN",
+    question: "Tax legitimacy - active, verifiable GSTIN",
     weight: 5,
     redFlags: ["No GST", "GST shows inactive/cancelled"],
     greenFlags: ["Active GST, verify on gst.gov.in"],
-    tip: "Check GST status at services.gst.gov.in/services/searchtp — inactive GST = illegal invoices.",
+    tip: "Check GST status at services.gst.gov.in/services/searchtp - inactive GST = illegal invoices.",
   },
   {
     id: "legit-age",
@@ -80,7 +80,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
     weight: 4,
     redFlags: ["Refuses samples", "Charges >3x for samples"],
     greenFlags: ["Free samples for orders >MOQ"],
-    tip: "Always pay for samples rather than skip them — it's the cheapest insurance you'll buy.",
+    tip: "Always pay for samples rather than skip them - it's the cheapest insurance you'll buy.",
   },
   {
     id: "quality-certs",
@@ -118,7 +118,7 @@ export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
     weight: 4,
     redFlags: [">21 days", "Vague 'depends on order'"],
     greenFlags: ["7-14 days with tracking"],
-    tip: "Add 5-7 days buffer to stated lead time — Indian logistics routinely slips.",
+    tip: "Add 5-7 days buffer to stated lead time - Indian logistics routinely slips.",
   },
   {
     id: "reliable-defects",

@@ -11,21 +11,21 @@ export type SubTaskGuide = {
 export const SUBTASK_TIME_ESTIMATES: Record<string, string> = {
   "docs-folder-ready": "~30 mins",
   "enrolment-id-start": "~30 mins",
-  "gstin-active": "~2–5 days",
+  "gstin-active": "~2-5 days",
   "bank-matched": "~15 mins",
   "gst-filing-understood": "~15 mins",
   "product-shortlist": "~45 mins",
-  "samples-ordered": "~3–5 days",
+  "samples-ordered": "~3-5 days",
   "hsn-mapped": "~20 mins",
-  "category-certs": "~1–7 days",
-  "supplier-vetted": "~2–3 days",
+  "category-certs": "~1-7 days",
+  "supplier-vetted": "~2-3 days",
   "backup-supplier": "~1 day",
   "domestic-supplier-confirmed": "~15 mins",
-  "seller-account-live": "~3–7 days",
-  "first-listing-live": "~1–2 days",
+  "seller-account-live": "~3-7 days",
+  "first-listing-live": "~1-2 days",
   "store-linked": "~30 mins",
   "cod-practice-done": "~15 mins",
-  "first-payout-received": "~7–14 days",
+  "first-payout-received": "~7-14 days",
   "breakeven-roas-known": "~20 mins",
   "first-ad-test": "~1 day",
   "pnl-sheet-ready": "~30 mins",
@@ -33,13 +33,13 @@ export const SUBTASK_TIME_ESTIMATES: Record<string, string> = {
   "appeal-pack-ready": "~20 mins",
   "gstr8-reviewed": "~30 mins",
   "gst-state-code-match": "~15 mins",
-  "fssai-registered": "~3–7 days",
-  "bis-checked": "~1–7 days",
-  "cosmetic-label-ready": "~1–3 days",
-  "legal-metrology-label": "~1–2 days",
-  "iec-ready": "~3–5 days",
+  "fssai-registered": "~3-7 days",
+  "bis-checked": "~1-7 days",
+  "cosmetic-label-ready": "~1-3 days",
+  "legal-metrology-label": "~1-2 days",
+  "iec-ready": "~3-5 days",
   "import-risk-acknowledged": "~15 mins",
-  "pg-approved": "~3–7 days",
+  "pg-approved": "~3-7 days",
   "zero-pg-cod-fallback": "~30 mins",
   "marketplace-kyc-ready": "~1 day",
   "fashion-size-chart-ready": "~45 mins",
@@ -49,7 +49,7 @@ export const SUBTASK_TIME_ESTIMATES: Record<string, string> = {
 export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   "docs-folder-ready": {
     hint: "One Google Drive or local folder with PAN, Aadhaar, bank proof.",
-    why: "Marketplaces ask for the same documents repeatedly — one folder saves hours of hunting during KYC.",
+    why: "Marketplaces ask for the same documents repeatedly - one folder saves hours of hunting during KYC.",
     howToSteps: [
       "Create a folder named after your business.",
       "Add PAN card, Aadhaar, cancelled cheque, and address proof scans.",
@@ -58,8 +58,8 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
     walkthroughHref: "/app/tasks/common-documentation",
   },
   "enrolment-id-start": {
-    hint: "Free Enrolment ID from gst.gov.in — sell on Meesho while GSTIN processes.",
-    why: "Meesho onboards non-GST sellers with an Enrolment ID (intra-state only, under ₹40L turnover) — you don't have to wait 3–5 days doing nothing.",
+    hint: "Free Enrolment ID from gst.gov.in - sell on Meesho while GSTIN processes.",
+    why: "Meesho onboards non-GST sellers with an Enrolment ID (intra-state only, under ₹40L turnover) - you don't have to wait 3-5 days doing nothing.",
     howToSteps: [
       "On gst.gov.in choose Registration → Generate User ID for Unregistered Applicant → e-commerce enrolment.",
       "Verify PAN + Aadhaar OTP and note the 15-digit Enrolment ID.",
@@ -69,12 +69,12 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
     walkthroughHref: "/app/tasks/common-documentation",
   },
   "gstin-active": {
-    hint: "15-digit GSTIN from gst.gov.in — or start registration.",
-    why: "Amazon and Flipkart reject listings without GSTIN — registration takes 3–5 working days, so start now.",
+    hint: "15-digit GSTIN from gst.gov.in - or start registration.",
+    why: "Amazon and Flipkart reject listings without GSTIN - registration takes 3-5 working days, so start now.",
     howToSteps: [
       "Open the documentation walkthrough GST track.",
       "Register or validate your GSTIN and save it to workspace.",
-      "Wait 24–72h after new registration before marketplace verification.",
+      "Wait 24-72h after new registration before marketplace verification.",
     ],
     walkthroughHref: "/app/tasks/common-documentation",
   },
@@ -90,7 +90,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "gst-filing-understood": {
     hint: "GSTR-1 + GSTR-3B due monthly or quarterly (QRMP).",
-    why: "Missed GST filings suspend your GSTIN — and marketplaces block suspended GSTINs within days.",
+    why: "Missed GST filings suspend your GSTIN - and marketplaces block suspended GSTINs within days.",
     howToSteps: [
       "Read the GST filing calendar step in documentation.",
       "Set calendar reminders for GSTR-1 and GSTR-3B due dates.",
@@ -100,17 +100,17 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "product-shortlist": {
     hint: "1 hero SKU that passes the margin calculator (2 backups noted).",
-    why: "Don't fall in love with a product before the margin calculator says yes — 15%+ net margin is the survival gate. One hero product done well beats three half-tested ones.",
+    why: "Don't fall in love with a product before the margin calculator says yes - 15%+ net margin is the survival gate. One hero product done well beats three half-tested ones.",
     howToSteps: [
       "Run demand check on your target marketplace.",
-      "Use the margin calculator — target 15%+ net margin.",
+      "Use the margin calculator - target 15%+ net margin.",
       "Pick 1 hero product to launch first and note 2 backups in the product-selection walkthrough.",
     ],
     walkthroughHref: "/app/tasks/product-selection",
   },
   "samples-ordered": {
     hint: "Order a sample of your hero product from your vetted supplier.",
-    why: "₹200 on a sample saves you from a ₹20,000 inventory mistake — catalogue photos lie. Order it once you have a supplier, not before.",
+    why: "₹200 on a sample saves you from a ₹20,000 inventory mistake - catalogue photos lie. Order it once you have a supplier, not before.",
     howToSteps: [
       "From your vetted primary supplier, order a sample of your hero product.",
       "Do a drop test and check dispatch time.",
@@ -120,7 +120,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "hsn-mapped": {
     hint: "Each SKU needs correct HSN + GST rate.",
-    why: "Wrong HSN triggers listing suppression and GST notices — fix at listing time, not after sales start.",
+    why: "Wrong HSN triggers listing suppression and GST notices - fix at listing time, not after sales start.",
     howToSteps: [
       "Look up HSN on cbic-gst.gov.in for each product.",
       "Create a one-page HSN mapping sheet.",
@@ -130,17 +130,17 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "category-certs": {
     hint: "FSSAI, BIS, or category approval if required.",
-    why: "Gated categories block listings until certificates are approved — allow 3–7 days before you can go live.",
+    why: "Gated categories block listings until certificates are approved - allow 3-7 days before you can go live.",
     howToSteps: [
       "Check if your category is gated on your marketplace.",
       "Upload required certificates during category application.",
-      "Allow 3–7 days for approval before listing.",
+      "Allow 3-7 days for approval before listing.",
     ],
     walkthroughHref: "/app/tasks/compliance-by-product",
   },
   "supplier-vetted": {
     hint: "Verified manufacturer + written terms.",
-    why: "Your supplier IS your business — one bad batch becomes your negative reviews and account suspension.",
+    why: "Your supplier IS your business - one bad batch becomes your negative reviews and account suspension.",
     howToSteps: [
       "Complete the sourcing swipe game and red-flag screener.",
       "Order samples and confirm dispatch SLA in writing.",
@@ -159,18 +159,18 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
     walkthroughHref: "/app/tasks/supplier-sourcing",
   },
   "domestic-supplier-confirmed": {
-    hint: "Complete sourcing swipe — no AliExpress/CJ.",
-    why: "Cross-border suppliers mean 2–3 week delivery — near 100% RTO on COD in India.",
+    hint: "Complete sourcing swipe - no AliExpress/CJ.",
+    why: "Cross-border suppliers mean 2-3 week delivery - near 100% RTO on COD in India.",
     howToSteps: [
       "Play the sourcing origin swipe game.",
-      "Confirm supplier ships within 3–5 days in India.",
+      "Confirm supplier ships within 3-5 days in India.",
       "Reject cross-border suppliers for COD.",
     ],
     walkthroughHref: "/app/tasks/supplier-sourcing",
   },
   "seller-account-live": {
     hint: "Marketplace KYC approved, not pending.",
-    why: "KYC rejection from name mismatch costs weeks — get approval before investing in listings or ads.",
+    why: "KYC rejection from name mismatch costs weeks - get approval before investing in listings or ads.",
     howToSteps: [
       "Complete channel onboarding in the walkthrough.",
       "Upload GST, PAN, bank, address proof.",
@@ -179,12 +179,12 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
     walkthroughHref: "/app/tasks/channel-launch",
   },
   "first-listing-live": {
-    hint: "One hero listing published and visible — test before you expand.",
+    hint: "One hero listing published and visible - test before you expand.",
     why: "One listing lets you learn onboarding, dispatch, and COD without multiplying mistakes across a catalog.",
     howToSteps: [
-      "Pick your single best SKU from the shortlist — the one with the strongest margin.",
+      "Pick your single best SKU from the shortlist - the one with the strongest margin.",
       "Create one listing with white-bg images, size chart, and correct HSN.",
-      "Get 5–10 real orders on that SKU before adding a second listing.",
+      "Get 5-10 real orders on that SKU before adding a second listing.",
     ],
     walkthroughHref: "/app/tasks/channel-launch",
   },
@@ -200,7 +200,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "cod-practice-done": {
     hint: "Complete NDR/COD confirmation simulator.",
-    why: "One unconfirmed COD order costs 2× shipping — practice the script before your first real order.",
+    why: "One unconfirmed COD order costs 2× shipping - practice the script before your first real order.",
     howToSteps: [
       "Open channel-launch or ads walkthrough.",
       "Complete the NDR practice scenarios.",
@@ -210,7 +210,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "first-payout-received": {
     hint: "First settlement hit your bank account.",
-    why: "Dashboard revenue ≠ bank deposit — confirming your first payout proves the money flow is real.",
+    why: "Dashboard revenue ≠ bank deposit - confirming your first payout proves the money flow is real.",
     howToSteps: [
       "Download settlement report from marketplace.",
       "Compare expected vs actual bank deposit.",
@@ -220,17 +220,17 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "breakeven-roas-known": {
     hint: "Know your break-even ROAS before spending.",
-    why: "Ads amplify what's already working — if unit economics are red, ads make you lose faster.",
+    why: "Ads amplify what's already working - if unit economics are red, ads make you lose faster.",
     howToSteps: [
       "Run margin calculator in product-selection.",
       "Open ads walkthrough for break-even ROAS step.",
-      "Save result — only scale above break-even.",
+      "Save result - only scale above break-even.",
     ],
     walkthroughHref: "/app/tasks/ads-growth",
   },
   "first-ad-test": {
-    hint: "One campaign at ₹300–500/day for 7 days.",
-    why: "Judging ads before 7 days leads to killing winners early — give data time to stabilize.",
+    hint: "One campaign at ₹300-500/day for 7 days.",
+    why: "Judging ads before 7 days leads to killing winners early - give data time to stabilize.",
     howToSteps: [
       "Start with one product, one ad set.",
       "Run 7 days before judging performance.",
@@ -240,7 +240,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "pnl-sheet-ready": {
     hint: "Weekly SKU-level profit spreadsheet.",
-    why: "Aggregate revenue hides losing SKUs — weekly P&L catches silent bleed before month-end.",
+    why: "Aggregate revenue hides losing SKUs - weekly P&L catches silent bleed before month-end.",
     howToSteps: [
       "Create columns: SKU, revenue, costs, ad spend, net profit.",
       "Update every Monday from settlement reports.",
@@ -250,7 +250,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "settlement-reconcile": {
     hint: "Compare settlement report vs bank deposit.",
-    why: "Marketplaces short-pay 2–5% silently — reconciliation is how you catch it.",
+    why: "Marketplaces short-pay 2-5% silently - reconciliation is how you catch it.",
     howToSteps: [
       "Download weekly settlement from marketplace.",
       "Match orders, fees, TCS, returns line by line.",
@@ -260,7 +260,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "appeal-pack-ready": {
     hint: "Folder with GST, bank proof, return policy.",
-    why: "When account is suspended, speed matters — having docs ready cuts resolution from weeks to days.",
+    why: "When account is suspended, speed matters - having docs ready cuts resolution from weeks to days.",
     howToSteps: [
       "Assemble GST cert, PAN, bank proof, return policy screenshot.",
       "Add sample invoices and settlement reports.",
@@ -270,7 +270,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "gstr8-reviewed": {
     hint: "Match operator TCS to GSTR-2A monthly.",
-    why: "Ignoring TCS mismatches means you overpay tax by 1% on every sale — silent margin bleed.",
+    why: "Ignoring TCS mismatches means you overpay tax by 1% on every sale - silent margin bleed.",
     howToSteps: [
       "Download TCS report from marketplace.",
       "Check GSTR-2A on GST portal for credits.",
@@ -280,7 +280,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "gst-state-code-match": {
     hint: "GSTIN state code must match your operating/pickup state.",
-    why: "Marketplaces reject KYC when GST state code doesn't match pickup address — instant blocker.",
+    why: "Marketplaces reject KYC when GST state code doesn't match pickup address - instant blocker.",
     howToSteps: [
       "Check first two digits of GSTIN against your state code.",
       "Confirm pickup address is in the same state.",
@@ -290,7 +290,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "fssai-registered": {
     hint: "FSSAI Basic Registration or State/Central License.",
-    why: "Food listings are gated until FSSAI is uploaded — no certificate means no category approval.",
+    why: "Food listings are gated until FSSAI is uploaded - no certificate means no category approval.",
     howToSteps: [
       "Determine if Basic, State, or Central license applies to your turnover.",
       "Apply on foscos.fssai.gov.in with business address.",
@@ -310,7 +310,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "cosmetic-label-ready": {
     hint: "Ingredient list, MRP, manufacturer details on label.",
-    why: "Beauty/cosmetics face category gating — incomplete labels block approval.",
+    why: "Beauty/cosmetics face category gating - incomplete labels block approval.",
     howToSteps: [
       "Check marketplace cosmetic category requirements.",
       "Ensure label has ingredients, net content, and manufacturer address.",
@@ -320,7 +320,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "legal-metrology-label": {
     hint: "MRP, net quantity, manufacturer name on pre-packaged goods.",
-    why: "Legal Metrology rules require MRP and net qty on pre-packaged goods — missing labels block compliance.",
+    why: "Legal Metrology rules require MRP and net qty on pre-packaged goods - missing labels block compliance.",
     howToSteps: [
       "Add MRP in rupees and net quantity (g/ml/pcs) on every pack.",
       "Include manufacturer/importer name and address.",
@@ -330,17 +330,17 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "iec-ready": {
     hint: "Import Export Code from DGFT for cross-border sourcing.",
-    why: "Imports require IEC — without it you can't clear customs or run compliant import invoicing.",
+    why: "Imports require IEC - without it you can't clear customs or run compliant import invoicing.",
     howToSteps: [
       "Apply for IEC on DGFT portal with PAN and bank details.",
-      "Allow 2–5 working days for activation.",
+      "Allow 2-5 working days for activation.",
       "Share IEC with your customs broker or freight forwarder.",
     ],
     walkthroughHref: "/app/tasks/supplier-sourcing",
   },
   "import-risk-acknowledged": {
     hint: "Complete import vs COD risk acknowledgment.",
-    why: "2–3 week import shipping destroys COD conversion — acknowledge tradeoff before relying on imports.",
+    why: "2-3 week import shipping destroys COD conversion - acknowledge tradeoff before relying on imports.",
     howToSteps: [
       "Open supplier-sourcing walkthrough import path.",
       "Model margin with customs duty and longer lead time.",
@@ -350,7 +350,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "pg-approved": {
     hint: "Razorpay, Cashfree, or similar PG live on your store.",
-    why: "Own website needs payment gateway for prepaid orders — PG rejection is common for individuals.",
+    why: "Own website needs payment gateway for prepaid orders - PG rejection is common for individuals.",
     howToSteps: [
       "Apply with business docs matching GST legal name.",
       "If rejected, document Zero-PG COD fallback path.",
@@ -360,7 +360,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "zero-pg-cod-fallback": {
     hint: "COD-first checkout without PG if needed.",
-    why: "Individuals often get PG rejected — COD-first keeps sales flowing while PG is pending.",
+    why: "Individuals often get PG rejected - COD-first keeps sales flowing while PG is pending.",
     howToSteps: [
       "Set up manual COD order flow or Shopify COD apps.",
       "Document confirmation script for COD orders.",
@@ -370,7 +370,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "marketplace-kyc-ready": {
     hint: "GST, PAN, bank, address proof packet ready.",
-    why: "Amazon/Flipkart KYC is strict — incomplete docs mean 1–2 week rejection loops.",
+    why: "Amazon/Flipkart KYC is strict - incomplete docs mean 1-2 week rejection loops.",
     howToSteps: [
       "Gather GST cert, PAN, cancelled cheque, address proof.",
       "Ensure bank name matches GST legal name exactly.",
@@ -380,7 +380,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "fashion-size-chart-ready": {
     hint: "Size chart + return policy on listing and store.",
-    why: "Fashion RTO drops when buyers can pick the right size — size charts are non-negotiable.",
+    why: "Fashion RTO drops when buyers can pick the right size - size charts are non-negotiable.",
     howToSteps: [
       "Create size chart with measurements in cm.",
       "Add to listing images and product description.",
@@ -390,7 +390,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "rto-calculator-done": {
     hint: "Run RTO Reality slider with fashion defaults.",
-    why: "Fashion COD defaults to ~35% RTO — model it before picking SKUs or ad budgets.",
+    why: "Fashion COD defaults to ~35% RTO - model it before picking SKUs or ad budgets.",
     howToSteps: [
       "Open product-selection walkthrough.",
       "Complete RTO Reality simulator with 35% default.",
@@ -402,7 +402,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
 
 const UNLOCK_WHY: Partial<Record<string, string>> = {
   "first-listing-live":
-    "Ads need live listings — complete this before spending on traffic or you'll burn budget on nothing.",
+    "Ads need live listings - complete this before spending on traffic or you'll burn budget on nothing.",
 };
 
 export function personalizeSubTaskWhy(
@@ -411,7 +411,7 @@ export function personalizeSubTaskWhy(
   profile: OnboardingProfile,
 ): string {
   if (subTaskId === "product-shortlist" && profile.productType === "fashion") {
-    return `${why} Fashion on COD often sees 35% RTO — run the calculator with realistic defaults.`;
+    return `${why} Fashion on COD often sees 35% RTO - run the calculator with realistic defaults.`;
   }
   if (subTaskId === "seller-account-live" && profile.primaryChannel === "meesho") {
     return `${why} Meesho rejects instantly if your mobile was used on another seller account.`;
@@ -424,7 +424,7 @@ export function getSubTaskGuide(subTaskId: string, moduleId: TaskModuleId): SubT
   if (guide) return guide;
   return {
     hint: "Open the guided walkthrough for step-by-step help.",
-    why: "This step unlocks the next part of your launch — one action at a time.",
+    why: "This step unlocks the next part of your launch - one action at a time.",
     howToSteps: [
       "Click Guided walkthrough on this module.",
       "Work through steps one at a time.",
@@ -437,7 +437,7 @@ export function getSubTaskGuide(subTaskId: string, moduleId: TaskModuleId): SubT
 export function getUnlockWhy(subTaskId: string, blockLabel: string): string {
   return (
     UNLOCK_WHY[subTaskId] ??
-    `You can't proceed until "${blockLabel}" is done — skipping this causes rejections or rework later.`
+    `You can't proceed until "${blockLabel}" is done - skipping this causes rejections or rework later.`
   );
 }
 

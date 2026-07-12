@@ -209,7 +209,7 @@ export function CashflowSimulator() {
       {/* ── 90-Day Chart ── */}
       <div className="glass-panel grain rounded-xl p-6">
         <h2 className="text-lg font-semibold text-white mb-2">90-Day Cash Balance</h2>
-        <p className="text-muted text-xs mb-6">Balance over time — green above zero, red below</p>
+        <p className="text-muted text-xs mb-6">Balance over time - green above zero, red below</p>
 
         <div className="relative h-64 flex items-end gap-1.5 sm:gap-2">
           {/* Zero line */}
@@ -332,7 +332,7 @@ export function CashflowSimulator() {
           </li>
           {result.breakEvenDay && (
             <li>
-              Break-even at <span className="font-semibold text-white">Day {result.breakEvenDay}</span> — {ordersPerDay * result.breakEvenDay} orders to recover initial investment.
+              Break-even at <span className="font-semibold text-white">Day {result.breakEvenDay}</span> - {ordersPerDay * result.breakEvenDay} orders to recover initial investment.
             </li>
           )}
           {!result.breakEvenDay && (

@@ -65,9 +65,9 @@ export function CashflowTimeline({ onComplete }: Props) {
 
   return (
     <div className="mt-4 space-y-4 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
-      <p className="text-sm font-semibold text-white">Cashflow timeline — the dead zone</p>
+      <p className="text-sm font-semibold text-white">Cashflow timeline - the dead zone</p>
       <p className="text-muted text-xs">
-        Meta bills daily. COD remittance arrives day 5–7. Marketplace settlements can take 7–14 days. Plan
+        Meta bills daily. COD remittance arrives day 5-7. Marketplace settlements can take 7-14 days. Plan
         float accordingly.
       </p>
 
@@ -115,7 +115,7 @@ export function CashflowTimeline({ onComplete }: Props) {
       <div className="rounded-lg border border-amber-300/30 bg-amber-300/5 p-3">
         <p className="text-sm text-amber-200">
           Lowest balance: ₹{minBalance.toFixed(0)}
-          {minBalance < 0 ? " — you run out before COD arrives." : ""}
+          {minBalance < 0 ? " - you run out before COD arrives." : ""}
         </p>
         <p className="text-muted mt-1 text-xs">
           Recommended float buffer: ₹{recommendedBuffer.toLocaleString("en-IN")} (keep this aside for ads while
@@ -138,7 +138,7 @@ export function CashflowTimeline({ onComplete }: Props) {
         >
           <p className="text-lg font-bold text-white">Day {activeDay}</p>
           <p className="text-muted mt-1 text-sm">
-            −₹{activeRow?.adSpend} ads
+            -₹{activeRow?.adSpend} ads
             {activeRow && activeRow.codIn > 0 ? ` · +₹${activeRow.codIn.toFixed(0)} COD in` : " · no COD yet"}
           </p>
           <motion.p
@@ -149,7 +149,7 @@ export function CashflowTimeline({ onComplete }: Props) {
             ₹{activeRow?.balance.toFixed(0)}
           </motion.p>
           {activeRow?.isDeadZone ? (
-            <p className="mt-2 text-xs text-rose-200">Dead zone — cash locked in transit, ads still billing.</p>
+            <p className="mt-2 text-xs text-rose-200">Dead zone - cash locked in transit, ads still billing.</p>
           ) : null}
         </motion.div>
       </AnimatePresence>
@@ -176,7 +176,7 @@ export function CashflowTimeline({ onComplete }: Props) {
 
       {onComplete ? (
         <button type="button" onClick={onComplete} className="btn-emerald rounded-md px-4 py-2 text-sm font-semibold">
-          Got it — I will budget for the dead zone
+          Got it - I will budget for the dead zone
         </button>
       ) : null}
     </div>

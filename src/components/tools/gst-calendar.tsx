@@ -178,13 +178,13 @@ export function GstCalendar({
       {!hasGstin && (
         <div className="rounded-lg border border-white/[0.14] bg-white/[0.03] p-4">
           <p className="text-sm font-semibold text-white">
-            No GSTIN yet — you have no filing obligations.
+            No GSTIN yet - you have no filing obligations.
           </p>
           <p className="mt-1 text-sm leading-6 text-[var(--muted)]">
             These deadlines start only after your GST registration is active
             (an Enrolment ID for Meesho intra-state selling has no return
             filings either). The calendar below is a preview of what your
-            compliance rhythm will look like — deadlines shown are not yours
+            compliance rhythm will look like - deadlines shown are not yours
             yet.
           </p>
         </div>
@@ -200,7 +200,7 @@ export function GstCalendar({
               {overdueEvents.length > 1 ? "s" : ""}
             </p>
             <p className="text-muted mt-1 text-xs">
-              {overdueEvents.map((e) => e.filing.name).join(", ")} — file
+              {overdueEvents.map((e) => e.filing.name).join(", ")} - file
               immediately to minimize late fees.
             </p>
           </div>

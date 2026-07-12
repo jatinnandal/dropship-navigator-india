@@ -90,7 +90,7 @@ export function StreakTracker() {
       {atRiskStreaks.length > 0 && (
         <div className="rounded-md border border-amber-400/20 bg-amber-400/5 px-3 py-2">
           <p className="text-xs font-medium text-amber-400">
-            {atRiskStreaks.length} streak{atRiskStreaks.length > 1 ? "s" : ""} at risk — check in before the window closes
+            {atRiskStreaks.length} streak{atRiskStreaks.length > 1 ? "s" : ""} at risk - check in before the window closes
           </p>
         </div>
       )}
@@ -165,7 +165,7 @@ export function StreakTracker() {
 
       {/* Impact tooltip area */}
       <p className="text-[10px] text-slate-500">
-        Real business habits — each one protects revenue or improves performance.
+        Real business habits - each one protects revenue or improves performance.
       </p>
     </div>
   );

@@ -584,7 +584,7 @@ function MarketplaceDetail({
                   : "text-[var(--body-text)]"
               }`}
             >
-              {row.type === "cost" ? "−" : ""}
+              {row.type === "cost" ? "-" : ""}
               {formatINR(row.value)}
             </span>
           </div>

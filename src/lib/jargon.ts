@@ -12,17 +12,17 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
   },
   {
     term: "RTO",
-    short: "Return to Origin. Customer refused the COD parcel — you lose forward + reverse shipping.",
+    short: "Return to Origin. Customer refused the COD parcel - you lose forward + reverse shipping.",
     example: "26% RTO on COD is common in India; fashion can hit 40%.",
   },
   {
     term: "NDR",
-    short: "Non-Delivery Report. Courier could not deliver — you must call/WhatsApp the customer fast.",
+    short: "Non-Delivery Report. Courier could not deliver - you must call/WhatsApp the customer fast.",
     example: "Follow up within 24 hours or the order returns as RTO.",
   },
   {
     term: "COD",
-    short: "Cash on Delivery. Customer pays when the parcel arrives — high conversion, high return risk.",
+    short: "Cash on Delivery. Customer pays when the parcel arrives - high conversion, high return risk.",
   },
   {
     term: "ACOS",
@@ -55,11 +55,11 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
   },
   {
     term: "SKU",
-    short: "Stock Keeping Unit — one specific product variant you sell.",
+    short: "Stock Keeping Unit - one specific product variant you sell.",
   },
   {
     term: "COGS",
-    short: "Cost of Goods Sold — what you pay the supplier per unit.",
+    short: "Cost of Goods Sold - what you pay the supplier per unit.",
   },
   {
     term: "CTR",
@@ -71,7 +71,7 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
   },
   {
     term: "BIS",
-    short: "Bureau of Indian Standards certification — required for many electronics.",
+    short: "Bureau of Indian Standards certification - required for many electronics.",
   },
   {
     term: "GSTR-8",
@@ -87,7 +87,7 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
   },
   {
     term: "AliExpress",
-    short: "China cross-border marketplace. 2–4 week shipping — impractical for India COD dropshipping.",
+    short: "China cross-border marketplace. 2-4 week shipping - impractical for India COD dropshipping.",
   },
 ];
 

@@ -27,7 +27,7 @@ const CARDS: ProductCard[] = [
     price: 499,
     category: "Home",
     isWinner: true,
-    explanation: "Low price, light, solves daily problem — perfect for impulsive COD buyers.",
+    explanation: "Low price, light, solves daily problem - perfect for impulsive COD buyers.",
   },
   {
     id: "hoodie",
@@ -35,7 +35,7 @@ const CARDS: ProductCard[] = [
     price: 899,
     category: "Fashion",
     isWinner: false,
-    explanation: "Size issues drive 30–40% RTO on fashion. Avoid as a beginner.",
+    explanation: "Size issues drive 30-40% RTO on fashion. Avoid as a beginner.",
   },
   {
     id: "organizer",
@@ -43,7 +43,7 @@ const CARDS: ProductCard[] = [
     price: 349,
     category: "Accessories",
     isWinner: true,
-    explanation: "Light, useful, low return rate, easy to ship — strong marketplace SKU.",
+    explanation: "Light, useful, low return rate, easy to ship - strong marketplace SKU.",
   },
   {
     id: "glass",

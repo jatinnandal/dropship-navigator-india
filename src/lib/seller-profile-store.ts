@@ -262,7 +262,7 @@ export async function countSellerProfiles(userId: string): Promise<number> {
 
 /**
  * True if any onboarding ANSWER differs between old and new. Every answer is
- * capped — only the profile name is freely editable (it isn't an answer field).
+ * capped - only the profile name is freely editable (it isn't an answer field).
  */
 export function hasMaterialProfileChange(a: OnboardingProfile, b: OnboardingProfile): boolean {
   return (

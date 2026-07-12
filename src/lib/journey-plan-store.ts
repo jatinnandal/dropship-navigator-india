@@ -4,7 +4,7 @@ import type { PersonalizedModulePlan } from "@/lib/llm/plan-generator";
 /**
  * Persistence for personalized compliance-module plans. Keyed by
  * (profile_id, module_id, profile_hash) so a plan is generated once per profile
- * state and served from cache thereafter — returning users never regenerate.
+ * state and served from cache thereafter - returning users never regenerate.
  * The monthly generation count (countGenerationsThisMonth) is the abuse cap.
  */
 

@@ -50,7 +50,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     greenFlags: [],
     verdict: "trap",
     explanation:
-      "Western Union is irreversible — zero buyer protection. MOQ of 10 is unrealistically low for a manufacturer. Free DHL on tiny orders is a bait price.",
+      "Western Union is irreversible - zero buyer protection. MOQ of 10 is unrealistically low for a manufacturer. Free DHL on tiny orders is a bait price.",
   },
   {
     id: 4,
@@ -71,7 +71,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     platform: "IndiaMART",
     product: "Bluetooth earbuds",
     chatSnippet:
-      "We have exact same product as boAt. ₹120/pc. Brand name printing free. No MOQ. We handle everything — just send money to Paytm.",
+      "We have exact same product as boAt. ₹120/pc. Brand name printing free. No MOQ. We handle everything - just send money to Paytm.",
     redFlags: ["Exact copy of branded product", "No MOQ", "Paytm payment", "Brand name printing free"],
     greenFlags: [],
     verdict: "trap",
@@ -102,7 +102,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     greenFlags: [],
     verdict: "trap",
     explanation:
-      "Counterfeit Apple Watch copy — customs will seize it. No supplier can 'guarantee' customs clearance. 100% advance with no trade assurance is high risk.",
+      "Counterfeit Apple Watch copy - customs will seize it. No supplier can 'guarantee' customs clearance. 100% advance with no trade assurance is high risk.",
   },
   {
     id: 8,
@@ -175,7 +175,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     platform: "IndiaMART",
     product: "Power banks",
     chatSnippet:
-      "Imported from China. ₹199/pc flat. 10000mAh guaranteed. No BIS but nobody checks. Running offer — ends today. Minimum 1000 pcs, full advance.",
+      "Imported from China. ₹199/pc flat. 10000mAh guaranteed. No BIS but nobody checks. Running offer - ends today. Minimum 1000 pcs, full advance.",
     redFlags: ["No BIS certification", "Nobody checks claim", "Today-only urgency", "1000 pc MOQ with full advance"],
     greenFlags: [],
     verdict: "trap",
@@ -214,7 +214,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     platform: "IndiaMART",
     product: "Blue pottery home decor",
     chatSnippet:
-      "Artisan collective, 8 craftsmen. Each piece handmade, slight variations normal. MOQ 50 pcs assorted. ₹350-800/pc depending on size. GI tagged. Fragile — special packing ₹15/pc extra.",
+      "Artisan collective, 8 craftsmen. Each piece handmade, slight variations normal. MOQ 50 pcs assorted. ₹350-800/pc depending on size. GI tagged. Fragile - special packing ₹15/pc extra.",
     redFlags: [],
     greenFlags: ["Artisan collective", "GI tagged", "Honest about variations", "Fragile packing mentioned"],
     verdict: "legit",
@@ -240,7 +240,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     platform: "IndiaMART",
     product: "Brass decorative items",
     chatSnippet:
-      "3rd generation brass artisans. Export quality — we supply to Pottery Barn via agent. MOQ 200 pcs. ₹280/pc for 500g items. Can customize designs. MSME registered. Payment by cheque or NEFT.",
+      "3rd generation brass artisans. Export quality - we supply to Pottery Barn via agent. MOQ 200 pcs. ₹280/pc for 500g items. Can customize designs. MSME registered. Payment by cheque or NEFT.",
     redFlags: [],
     greenFlags: ["3rd generation", "Export quality with reference", "MSME registered", "Cheque/NEFT payment"],
     verdict: "legit",
@@ -253,7 +253,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     platform: "Alibaba",
     product: "Silicone kitchen utensils",
     chatSnippet:
-      "We are trading company, not factory. But we handle everything — sourcing, QC, shipping. MOQ 1000 pcs. $1.80/pc CIF Mumbai. FDA + LFGB certified. Alibaba Trade Assurance.",
+      "We are trading company, not factory. But we handle everything - sourcing, QC, shipping. MOQ 1000 pcs. $1.80/pc CIF Mumbai. FDA + LFGB certified. Alibaba Trade Assurance.",
     redFlags: [],
     greenFlags: ["Transparent about being trading co", "QC handling", "CIF pricing", "FDA + LFGB certified", "Trade Assurance"],
     verdict: "legit",

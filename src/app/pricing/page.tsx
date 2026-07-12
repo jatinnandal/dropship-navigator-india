@@ -44,7 +44,7 @@ function TierCard({ card, children }: { card: PlanCard; children: React.ReactNod
       </p>
       {card.priceYearly ? (
         <p className="font-mono" style={{ margin: "6px 0 0", fontSize: 11, color: "#6e6e6e" }}>
-          or ₹{card.priceYearly}/year — save {Math.round((1 - card.priceYearly / (card.priceMonthly * 12)) * 100)}%
+          or ₹{card.priceYearly}/year - save {Math.round((1 - card.priceYearly / (card.priceMonthly * 12)) * 100)}%
         </p>
       ) : null}
       <p style={{ margin: "10px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>{card.tagline}</p>
@@ -96,7 +96,7 @@ export default function PricingPage() {
             The full mentor from ₹49. <span className="font-serif-accent">Not ₹20,000.</span>
           </h1>
           <p style={{ margin: "16px auto 0", maxWidth: "32rem", fontSize: "15.5px", lineHeight: 1.7, color: "#8a8a8a" }}>
-            The ₹20,000 course, replaced by ₹49 a month — with math that&apos;s actually correct.
+            The ₹20,000 course, replaced by ₹49 a month - with math that&apos;s actually correct.
             Scout for free, upgrade when you&apos;re ready to launch.
           </p>
         </div>
@@ -129,7 +129,7 @@ export default function PricingPage() {
       {/* Footer */}
       <footer style={{ position: "relative", zIndex: 1, borderTop: "1px solid rgba(255,255,255,0.08)", padding: "36px 0" }}>
         <div style={{ maxWidth: "68rem", margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, padding: "0 32px", flexWrap: "wrap" }}>
-          <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 500, color: "#6e6e6e" }}>Navigator — vendor-neutral seller mentor for India</p>
+          <p style={{ margin: 0, fontSize: "13.5px", fontWeight: 500, color: "#6e6e6e" }}>Navigator - vendor-neutral seller mentor for India</p>
           <div style={{ display: "flex", gap: 22, fontSize: "13.5px", fontWeight: 500 }}>
             <Link href="/login" className="hover:text-white transition-colors" style={{ color: "#5a5a5a", textDecoration: "none" }}>Log in</Link>
             <Link href="/signup" className="hover:text-white transition-colors" style={{ color: "#5a5a5a", textDecoration: "none" }}>Sign up</Link>

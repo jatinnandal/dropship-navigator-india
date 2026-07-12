@@ -73,12 +73,12 @@ describe("reconcile", () => {
 
     const fees = getFeesForProduct("meesho", "fashion", 599, true);
     const r1 = report.rows[0];
-    // 599 − 560.11 = 38.89 kept; engine expects ≈ 34.85 → delta ~4, unflagged.
+    // 599 - 560.11 = 38.89 kept; engine expects ≈ 34.85 → delta ~4, unflagged.
     expect(r1.expectedFees).toBeCloseTo(fees.totalFees, 2);
     expect(r1.delta).toBeCloseTo(599 - 560.11 - fees.totalFees, 2);
     expect(r1.flagged).toBe(false);
 
-    // Row 2 kept ₹119 — way past threshold → flagged.
+    // Row 2 kept ₹119 - way past threshold → flagged.
     const r2 = report.rows[1];
     expect(r2.delta).toBeGreaterThan(flagThreshold(599));
     expect(r2.flagged).toBe(true);

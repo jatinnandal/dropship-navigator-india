@@ -42,7 +42,7 @@ export const COD_SCENARIOS: Scenario[] = [
       {
         customerMessage:
           "Haan bhai, order kiya hai maine. Phone case wala.",
-        hint: "Address is incomplete — you need a flat number and landmark",
+        hint: "Address is incomplete - you need a flat number and landmark",
         options: [
           {
             text: "Sir, delivery smooth hoga agar aap flat number aur nearby landmark bata dein. Koi alternate phone number bhi hai?",
@@ -52,7 +52,7 @@ export const COD_SCENARIOS: Scenario[] = [
               "Hmm haan, Flat 302, Sunshine Apartments hai. Temple ke saamne wali gali. Wife ka number de doon? 98XXXXXXXX.",
           },
           {
-            text: "Sir, aapka address confirm kar raha hoon — Near Shiv Temple, Sector 7, Noida — sahi hai?",
+            text: "Sir, aapka address confirm kar raha hoon - Near Shiv Temple, Sector 7, Noida - sahi hai?",
             quality: "ok",
             points: 1,
             reaction:
@@ -70,7 +70,7 @@ export const COD_SCENARIOS: Scenario[] = [
       {
         customerMessage:
           "Toh kab tak aayega? Kal chahiye mujhe.",
-        hint: "Confirm timeline and cash amount — reduce uncertainty",
+        hint: "Confirm timeline and cash amount - reduce uncertainty",
         options: [
           {
             text: "Sir, kal afternoon tak deliver hoga. ₹699 cash ready rakhiyega. Main dispatch hone pe WhatsApp pe tracking bhi bhej dunga.",
@@ -101,7 +101,7 @@ export const COD_SCENARIOS: Scenario[] = [
     returnDebrief:
       "Without a proper address, the delivery boy circled Sector 7 for 20 minutes, couldn't find the customer, and the package came back. You paid ₹130 in round-trip shipping for nothing.",
     keyTakeaway:
-      "Always get: flat/house number, landmark, alternate phone. A 30-second call saves ₹60–130 in RTO shipping.",
+      "Always get: flat/house number, landmark, alternate phone. A 30-second call saves ₹60-130 in RTO shipping.",
   },
 
   {
@@ -113,15 +113,15 @@ export const COD_SCENARIOS: Scenario[] = [
     shippingCost: 75,
     product: "Fitness tracker (budget smart band)",
     context:
-      "Customer ordered a ₹1,299 fitness tracker at 2:14 AM. It's now 10 AM and you're calling to confirm. Their voice sounds hesitant — classic impulse regret pattern.",
+      "Customer ordered a ₹1,299 fitness tracker at 2:14 AM. It's now 10 AM and you're calling to confirm. Their voice sounds hesitant - classic impulse regret pattern.",
     turns: [
       {
         customerMessage:
           "Hmm... haan maine order kiya tha... actually soch raha hoon chahiye ya nahi.",
-        hint: "Don't pressure — reduce friction and risk perception",
+        hint: "Don't pressure - reduce friction and risk perception",
         options: [
           {
-            text: "Sir, koi stress nahi. Delivery parson aayegi. Dekhiyega, pasand nahi aaya toh 7-day free return hai — no questions. Bas address confirm kar raha hoon.",
+            text: "Sir, koi stress nahi. Delivery parson aayegi. Dekhiyega, pasand nahi aaya toh 7-day free return hai - no questions. Bas address confirm kar raha hoon.",
             quality: "best",
             points: 2,
             reaction:
@@ -145,11 +145,11 @@ export const COD_SCENARIOS: Scenario[] = [
       },
       {
         customerMessage:
-          "Ek baat batao — ye original hai na? Amazon pe same ₹899 mein dikh raha hai.",
+          "Ek baat batao - ye original hai na? Amazon pe same ₹899 mein dikh raha hai.",
         hint: "Validate the concern, add value beyond price",
         options: [
           {
-            text: "Sir, 100% original hai with warranty card. Amazon pe wo purana model hai bina heart rate sensor ke. Aapka wala latest version hai with SpO2 bhi. Plus humare yahan COD hai — pay only when you see the product.",
+            text: "Sir, 100% original hai with warranty card. Amazon pe wo purana model hai bina heart rate sensor ke. Aapka wala latest version hai with SpO2 bhi. Plus humare yahan COD hai - pay only when you see the product.",
             quality: "best",
             points: 2,
             reaction:
@@ -173,9 +173,9 @@ export const COD_SCENARIOS: Scenario[] = [
     ],
     shipThreshold: 3,
     shipDebrief:
-      "You de-risked the purchase with the return policy and justified the price with product knowledge. The customer shifted from \"do I want this\" to \"where should I get it delivered\" — that's a converted order.",
+      "You de-risked the purchase with the return policy and justified the price with product knowledge. The customer shifted from \"do I want this\" to \"where should I get it delivered\" - that's a converted order.",
     returnDebrief:
-      "The customer was already on the fence. Without de-risking, they'll refuse at the door — classic RTO. You eat ₹150 in round-trip shipping plus the product may come back damaged.",
+      "The customer was already on the fence. Without de-risking, they'll refuse at the door - classic RTO. You eat ₹150 in round-trip shipping plus the product may come back damaged.",
     keyTakeaway:
       "For impulse orders: (1) never pressure, (2) lead with the return policy to reduce risk, (3) justify the price gap if they comparison-shop.",
   },
@@ -189,15 +189,15 @@ export const COD_SCENARIOS: Scenario[] = [
     shippingCost: 85,
     product: "Electric chopper (kitchen appliance)",
     context:
-      "Customer ordered a ₹1,899 kitchen chopper COD. You call to confirm. She's interested but says she doesn't have cash right now — husband brings cash in the evening.",
+      "Customer ordered a ₹1,899 kitchen chopper COD. You call to confirm. She's interested but says she doesn't have cash right now - husband brings cash in the evening.",
     turns: [
       {
         customerMessage:
           "Haan maine order kiya hai, lekin abhi mere paas cash nahi hai. Husband evening mein laayenge.",
-        hint: "Offer flexibility — don't force immediate delivery",
+        hint: "Offer flexibility - don't force immediate delivery",
         options: [
           {
-            text: "Koi baat nahi ma'am. Kab convenient hoga? Main evening slot mein schedule kar deta hoon — 5 se 7 PM chalega?",
+            text: "Koi baat nahi ma'am. Kab convenient hoga? Main evening slot mein schedule kar deta hoon - 5 se 7 PM chalega?",
             quality: "best",
             points: 2,
             reaction:
@@ -221,11 +221,11 @@ export const COD_SCENARIOS: Scenario[] = [
       },
       {
         customerMessage:
-          "Aur ek baat — chopper ka blade stainless steel hai na? Last time Amazon se liya tha, plastic nikla.",
+          "Aur ek baat - chopper ka blade stainless steel hai na? Last time Amazon se liya tha, plastic nikla.",
         hint: "Address product anxiety from past bad experience",
         options: [
           {
-            text: "Ma'am, bilkul stainless steel blades hain. Main aapko WhatsApp pe product ka actual photo bhej deta hoon unboxing ka. Aur 7-din return hai — agar quality match nahi kari toh full refund.",
+            text: "Ma'am, bilkul stainless steel blades hain. Main aapko WhatsApp pe product ka actual photo bhej deta hoon unboxing ka. Aur 7-din return hai - agar quality match nahi kari toh full refund.",
             quality: "best",
             points: 2,
             reaction:
@@ -253,7 +253,7 @@ export const COD_SCENARIOS: Scenario[] = [
     returnDebrief:
       "Customer wanted the product but needed flexibility. Forcing immediate cash or dismissing her concerns lost the sale. ₹170 round-trip shipping wasted.",
     keyTakeaway:
-      "\"Cash nahi hai\" usually means \"not right now\" — not \"I don't want it\". Offer a time slot. Confirm the amount. Send a WhatsApp reminder before delivery.",
+      "\"Cash nahi hai\" usually means \"not right now\" - not \"I don't want it\". Offer a time slot. Confirm the amount. Send a WhatsApp reminder before delivery.",
   },
 
   {
@@ -270,10 +270,10 @@ export const COD_SCENARIOS: Scenario[] = [
       {
         customerMessage:
           "Bhai ₹799 mein tha na ye? Ab ₹1,078 kyu dikha raha hai bill mein?",
-        hint: "Don't dodge — explain transparently, then reframe the value",
+        hint: "Don't dodge - explain transparently, then reframe the value",
         options: [
           {
-            text: "Sir, product ₹999 hai plus ₹79 delivery charge. Ad mein ₹799 wala offer limited stock tha. Lekin sir, MRP ₹1,499 hai — aap abhi bhi 28% less pay kar rahe hain. Aur 7-din free return hai, no risk.",
+            text: "Sir, product ₹999 hai plus ₹79 delivery charge. Ad mein ₹799 wala offer limited stock tha. Lekin sir, MRP ₹1,499 hai - aap abhi bhi 28% less pay kar rahe hain. Aur 7-din free return hai, no risk.",
             quality: "best",
             points: 2,
             reaction:
@@ -298,10 +298,10 @@ export const COD_SCENARIOS: Scenario[] = [
       {
         customerMessage:
           "Zyada lag raha hai yaar... sochna padega.",
-        hint: "Remove risk — free return is your strongest weapon",
+        hint: "Remove risk - free return is your strongest weapon",
         options: [
           {
-            text: "Sir, samajh sakta hoon. Ek kaam karte hain — deliver hone do, 2-3 din use karke dekhein. Sound quality, battery life — sab test karein. Pasand nahi aaya toh free return, poora paisa wapas. Zero risk.",
+            text: "Sir, samajh sakta hoon. Ek kaam karte hain - deliver hone do, 2-3 din use karke dekhein. Sound quality, battery life - sab test karein. Pasand nahi aaya toh free return, poora paisa wapas. Zero risk.",
             quality: "best",
             points: 2,
             reaction:
@@ -325,7 +325,7 @@ export const COD_SCENARIOS: Scenario[] = [
     ],
     shipThreshold: 3,
     shipDebrief:
-      "You acknowledged the price gap honestly, reframed the value against MRP, and used the return policy to eliminate risk. Price shock resolved — this order delivers.",
+      "You acknowledged the price gap honestly, reframed the value against MRP, and used the return policy to eliminate risk. Price shock resolved - this order delivers.",
     returnDebrief:
       "Customer felt misled by the ad price. Without reframing the value and de-risking, they'll refuse at the door. ₹158 round-trip shipping lost, plus a potential negative review.",
     keyTakeaway:
@@ -341,19 +341,19 @@ export const COD_SCENARIOS: Scenario[] = [
     shippingCost: 95,
     product: "Travel backpack (45L, cabin size)",
     context:
-      "Customer ordered a ₹2,499 travel backpack. Delivery boy tried 3 times — customer didn't answer. Package is in \"NDR\" (Non-Delivery Report) status. One more failed attempt and it auto-returns. You send a WhatsApp with order photo.",
+      "Customer ordered a ₹2,499 travel backpack. Delivery boy tried 3 times - customer didn't answer. Package is in \"NDR\" (Non-Delivery Report) status. One more failed attempt and it auto-returns. You send a WhatsApp with order photo.",
     turns: [
       {
         customerMessage:
           "Sorry bhai, meeting mein tha din bhar. Kal ho sakti hai delivery?",
-        hint: "They want the product — just need a workable time",
+        hint: "They want the product - just need a workable time",
         options: [
           {
-            text: "No problem sir! Kal ka slot book karta hoon. Morning ya afternoon — kab available honge? Ek backup phone number mil jayega toh delivery boy ke liye helpful hoga.",
+            text: "No problem sir! Kal ka slot book karta hoon. Morning ya afternoon - kab available honge? Ek backup phone number mil jayega toh delivery boy ke liye helpful hoga.",
             quality: "best",
             points: 2,
             reaction:
-              "Afternoon, 2 baje ke baad. Wife ka number le lo backup — 98XXXXXXXX.",
+              "Afternoon, 2 baje ke baad. Wife ka number le lo backup - 98XXXXXXXX.",
           },
           {
             text: "Haan sir kal re-attempt hoga.",
@@ -373,10 +373,10 @@ export const COD_SCENARIOS: Scenario[] = [
       {
         customerMessage:
           "Aur bhai, packing theek hai na? Last time Delhivery se ek bag aaya tha, zipper tuta hua tha.",
-        hint: "Pre-empt the damage objection — commit them",
+        hint: "Pre-empt the damage objection - commit them",
         options: [
           {
-            text: "Sir, double-layer bubble wrap mein packed hai. Kal delivery ke time khol ke check kar lena — zipper, compartments, sab. Agar kuch bhi issue hai toh on-the-spot return. ₹2,499 cash ready rakhiyega. Main kal subah WhatsApp pe reminder bhi bhej dunga.",
+            text: "Sir, double-layer bubble wrap mein packed hai. Kal delivery ke time khol ke check kar lena - zipper, compartments, sab. Agar kuch bhi issue hai toh on-the-spot return. ₹2,499 cash ready rakhiyega. Main kal subah WhatsApp pe reminder bhi bhej dunga.",
             quality: "best",
             points: 2,
             reaction:
@@ -402,7 +402,7 @@ export const COD_SCENARIOS: Scenario[] = [
     shipDebrief:
       "You rescued an NDR order that was one attempt away from auto-return. Backup number, time slot, WhatsApp reminder, and on-the-spot check promise sealed the delivery. ₹2,499 order saved.",
     returnDebrief:
-      "This was a ₹2,499 order — ₹190 round-trip shipping lost. The customer wanted the product; they just weren't available. A time slot and backup number would have saved it.",
+      "This was a ₹2,499 order - ₹190 round-trip shipping lost. The customer wanted the product; they just weren't available. A time slot and backup number would have saved it.",
     keyTakeaway:
       "NDR ≠ cancellation. 70% of NDR orders deliver on the next attempt IF you get: (1) a time slot, (2) a backup number, (3) a WhatsApp reminder the morning of delivery.",
   },

@@ -43,7 +43,7 @@ export default async function WelcomePage() {
         <p className="eyebrow inline-block">Your workspace</p>
         <h1 className="headline-gradient mt-3 text-3xl font-bold sm:text-4xl">Welcome, {greeting}</h1>
         <p className="text-muted mt-4 max-w-2xl text-base leading-7">
-          Dropship Navigator builds a step-by-step India launch plan around your situation — GST, channel choice,
+          Dropship Navigator builds a step-by-step India launch plan around your situation - GST, channel choice,
           sourcing, and growth. About five minutes of setup unlocks a personalized journey map.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -79,7 +79,7 @@ export default async function WelcomePage() {
       <section className="glass-panel mt-8 rounded-xl p-6 sm:p-8">
         <h2 className="text-lg font-bold text-slate-100">What you&apos;ll answer</h2>
         <p className="text-muted mt-2 text-sm leading-6">
-          Five quick questions — one at a time. We use them to order modules, surface compliance first, and skip what
+          Five quick questions - one at a time. We use them to order modules, surface compliance first, and skip what
           you already know.
         </p>
         <ul className="mt-5 grid gap-2 sm:grid-cols-2">

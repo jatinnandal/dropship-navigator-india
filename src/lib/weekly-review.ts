@@ -74,7 +74,7 @@ export function buildWeeklyReview(input: {
     };
   }
 
-  // Next two relevant GST deadlines. New sellers without GSTIN have none —
+  // Next two relevant GST deadlines. New sellers without GSTIN have none -
   // the card says so instead of showing an empty list.
   const gstEvents = hasGstin ? getUpcomingGstEvents(false).filter((e) => e.daysUntilDue >= 0).slice(0, 2) : [];
 
@@ -97,5 +97,5 @@ function formatWeekLabel(now: Date): string {
   sunday.setDate(monday.getDate() + 6);
 
   const fmt = new Intl.DateTimeFormat("en-IN", { day: "numeric", month: "short" });
-  return `Week of ${fmt.format(monday)} – ${fmt.format(sunday)}`;
+  return `Week of ${fmt.format(monday)} - ${fmt.format(sunday)}`;
 }

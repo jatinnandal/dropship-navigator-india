@@ -15,7 +15,7 @@ export default async function AccountPage() {
 
       <section className="panel mt-6 rounded-[18px] p-5">
         <p className={labelClass}>Email</p>
-        <p className="mt-1 text-sm text-white">{email ?? "—"}</p>
+        <p className="mt-1 text-sm text-white">{email ?? "-"}</p>
       </section>
 
       <section className="panel mt-4 rounded-[18px] p-5">

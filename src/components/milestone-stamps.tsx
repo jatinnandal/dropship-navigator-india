@@ -3,7 +3,7 @@ import { mergeProfileSubTaskDefaults } from "@/lib/journey-graph";
 import type { OnboardingProfile } from "@/lib/mvp-data";
 
 /**
- * Named journey checkpoints as mono "stamps" — progress as narrative, not a bare
+ * Named journey checkpoints as mono "stamps" - progress as narrative, not a bare
  * percentage. Driven entirely by existing subtask completion state (no new store).
  * The sequence traces the product's tagline: from first doubt to first payout.
  */

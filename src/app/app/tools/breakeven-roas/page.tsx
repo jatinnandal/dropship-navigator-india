@@ -18,7 +18,7 @@ export default function BreakevenRoasPage() {
           Break-even ROAS Calculator
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Your ad-spend floor — the minimum ROAS needed to not lose money,
+          Your ad-spend floor - the minimum ROAS needed to not lose money,
           computed from real marketplace fees, shipping, and RTO losses.
         </p>
       </header>

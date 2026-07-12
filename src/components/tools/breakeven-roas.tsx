@@ -196,7 +196,7 @@ export function BreakevenRoas() {
               <div className="mt-3 flex items-start gap-2 rounded-lg border border-[var(--danger)]/20 bg-[var(--danger)]/10 p-3">
                 <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--danger)]" />
                 <p className="text-xs leading-relaxed text-[var(--danger)]">
-                  Negative contribution margin — you lose money on every shipped
+                  Negative contribution margin - you lose money on every shipped
                   order even without ad spend. Fix unit economics first.
                 </p>
               </div>
@@ -277,10 +277,10 @@ export function BreakevenRoas() {
                     ? " That is very achievable with warm audiences and retargeting."
                     : primary.breakeven <= 4
                       ? " Doable with optimized campaigns, but leaves little room for error."
-                      : " This is extremely hard to sustain — most Meta campaigns average 2-3x ROAS."}
+                      : " This is extremely hard to sustain - most Meta campaigns average 2-3x ROAS."}
                 </>
               ) : (
-                "Unit economics are negative — no amount of ad spend can make this product profitable on this channel. Reduce COGS or switch to a lower-fee marketplace."
+                "Unit economics are negative - no amount of ad spend can make this product profitable on this channel. Reduce COGS or switch to a lower-fee marketplace."
               )}
             </p>
           </div>

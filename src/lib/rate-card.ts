@@ -2,7 +2,7 @@ import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 
 /**
  * A versioned marketplace rate card. All fee tables the engine uses live in
- * one immutable object per quarter under src/data/rates/ — the quarterly
+ * one immutable object per quarter under src/data/rates/ - the quarterly
  * verification pass produces a new file plus changelog entries, never an
  * in-place edit. `Infinity` marks an unbounded top band.
  */
@@ -11,7 +11,7 @@ export type FeeBand = { maxPrice: number; fee: number };
 export type WeightBracket = "light" | "medium" | "heavy";
 
 export type RateCardMeta = {
-  /** e.g. "2026-Q3" — compared against workspace.seenRatesVersion. */
+  /** e.g. "2026-Q3" - compared against workspace.seenRatesVersion. */
   version: string;
   lastVerified: string;
   sources: string[];

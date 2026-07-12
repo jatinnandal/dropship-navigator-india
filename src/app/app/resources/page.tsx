@@ -94,7 +94,7 @@ export default function ResourcesPage() {
             Field guides, <span className="font-serif-accent">not theory.</span>
           </h1>
           <p style={{ margin: "8px 0 0", maxWidth: "40rem", fontSize: 14, lineHeight: 1.65, color: "#8a8a8a" }}>
-            Vendor-neutral tools and resources referenced across your launch plan. We are not affiliated — always verify pricing and terms.
+            Vendor-neutral tools and resources referenced across your launch plan. We are not affiliated - always verify pricing and terms.
           </p>
         </div>
         {/* Filter chips */}

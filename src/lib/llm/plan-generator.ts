@@ -7,8 +7,8 @@ import { getAnthropicConfig, generateStructured } from "@/lib/llm/anthropic";
 
 /**
  * Personalizes the COMPLIANCE walkthroughs by rewriting each step's copy for the
- * seller's exact situation ("fill the template"). The interactive skeleton —
- * which steps exist, their inputs, questions, subtask/milestone wiring — is
+ * seller's exact situation ("fill the template"). The interactive skeleton -
+ * which steps exist, their inputs, questions, subtask/milestone wiring - is
  * untouched; only the title/why/how/trap text changes. The LLM never introduces
  * documents, fees, GST rates, or deadlines beyond what the step already covers.
  */
@@ -41,7 +41,7 @@ export type PersonalizedModulePlan = {
  * so generation is idempotent per (hash × module); changing product/entity/
  * state/GST/model mints one fresh personalization.
  */
-/** Bump when the generation shape changes — invalidates all prior cached rows. */
+/** Bump when the generation shape changes - invalidates all prior cached rows. */
 const PLAN_SCHEMA_VERSION = "v2";
 
 export function profileHash(profile: OnboardingProfile): string {
@@ -64,7 +64,7 @@ const SYSTEM_PROMPT = `You are an experienced Indian e-commerce mentor personali
 You are given the seller's profile and the walkthrough's existing steps (id + title + why + how + optional trap). Rewrite the TEXT of each step so it speaks directly to THIS seller's entity type, state, GST status, product category, and import/pre-packaged status.
 
 STRICT RULES:
-- Keep every step's id EXACTLY as given, and keep the same set of steps (do not add, drop, merge, or reorder). If a step asks the seller to enter or confirm something, keep that intent — only change the wording.
+- Keep every step's id EXACTLY as given, and keep the same set of steps (do not add, drop, merge, or reorder). If a step asks the seller to enter or confirm something, keep that intent - only change the wording.
 - Do NOT introduce documents, licenses, portals, fees, GST rates, thresholds, penalties, or deadlines beyond what the original step already covers. If a number would be needed, keep the original's phrasing or refer to the app's checklist.
 - "why" is 1 sentence. "how" is 2-4 short imperative bullets. "trap" (only if the original had one, or the seller's setup has a clear specific risk) is 1 sentence.
 - "intro" is 1-2 sentences framing the whole walkthrough for this seller.
@@ -180,7 +180,7 @@ export async function generateModuleCopy(
 /**
  * Overlay personalized copy onto the walkthrough's steps. Only title/why/how/trap
  * are replaced (per matching id); kind, inputs, questions, tools, and mentor
- * notes — everything interactive — are preserved. Steps without personalized
+ * notes - everything interactive - are preserved. Steps without personalized
  * copy keep their static text.
  */
 export function applyStepCopy(

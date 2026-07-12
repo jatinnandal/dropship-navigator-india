@@ -8,22 +8,22 @@ function settlementTimelineForChannel(channel: OnboardingProfile["primaryChannel
     case "amazon":
       return [
         "Amazon payment cycle: typically T+7 to T+14 from order delivery (varies by category/account age).",
-        "New seller reserve: first 7–14 days may have hold on portion of settlement.",
+        "New seller reserve: first 7-14 days may have hold on portion of settlement.",
       ];
     case "flipkart":
       return [
-        "Flipkart settlement: usually weekly cycle, 7–10 business days after order completion.",
+        "Flipkart settlement: usually weekly cycle, 7-10 business days after order completion.",
         "Check 'Payment' tab for next settlement date and hold reasons.",
       ];
     case "meesho":
       return [
-        "Meesho payment cycle: typically 7–15 days after delivery confirmation.",
-        "COD remittance may lag prepaid — track both separately.",
+        "Meesho payment cycle: typically 7-15 days after delivery confirmation.",
+        "COD remittance may lag prepaid - track both separately.",
       ];
     default:
       return [
         "Shopify/own store: PG settlement T+2 to T+3 (Razorpay/Cashfree).",
-        "COD via courier: remittance cycle 7–14 days depending on aggregator.",
+        "COD via courier: remittance cycle 7-14 days depending on aggregator.",
       ];
   }
 }
@@ -41,7 +41,7 @@ export function buildTrackingTask(
       how: [
         "Accept this: the number in your seller dashboard is NOT what hits your bank.",
         "Between that number and your bank: commission, shipping, GST on fees, TCS, returns, ad spend.",
-        "A ₹50,000 revenue month can easily be ₹5,000 net profit — or a loss.",
+        "A ₹50,000 revenue month can easily be ₹5,000 net profit - or a loss.",
       ],
       mentorNote:
         "An experienced seller checks profit weekly, not monthly. We'll set that up now.",
@@ -68,7 +68,7 @@ export function buildTrackingTask(
         {
           name: "TrackEcom",
           whenToUse: "For return/RTO tracking across channels.",
-          why: "Shows return reasons and channel-wise breakdowns — helps you fix root causes.",
+          why: "Shows return reasons and channel-wise breakdowns - helps you fix root causes.",
         },
       ],
     },
@@ -92,7 +92,7 @@ export function buildTrackingTask(
         "Track ticket status until resolved.",
         ...settlementTimelineForChannel(profile.primaryChannel),
         "Common deduction glossary: commission, fixed closing fee, shipping chargeback, TCS 1%, pick-pack fee, storage (FBA), ad spend offset.",
-        "Raise reconciliation claim: attach settlement CSV + bank statement + order-wise expected calc. One ticket with all order IDs — not one per order.",
+        "Raise reconciliation claim: attach settlement CSV + bank statement + order-wise expected calc. One ticket with all order IDs - not one per order.",
       ],
       trap: "Assuming marketplace payouts are always correct. 2-5% error rate is common, especially in first 3 months.",
     },
@@ -101,11 +101,11 @@ export function buildTrackingTask(
       title: "Understand payout holds and reserves",
       why: "New sellers often face held settlements, performance reserves, or return deductions. This can be existential for micro-sellers.",
       how: [
-        `Download settlement ledger from ${channelLabel(profile.primaryChannel)} — line by line.`,
+        `Download settlement ledger from ${channelLabel(profile.primaryChannel)} - line by line.`,
         "Identify: reserve hold, new-seller hold, return deduction, TCS line, commission line.",
-        "New seller hold: often 7–14 days on first payouts — plan cashflow accordingly.",
+        "New seller hold: often 7-14 days on first payouts - plan cashflow accordingly.",
         "Performance hold: triggered by high returns/RTO or policy violations.",
-        "Compare expected vs actual weekly — ticket if mismatch > ₹100.",
+        "Compare expected vs actual weekly - ticket if mismatch > ₹100.",
       ],
       trap: "Panicking and creating duplicate tickets slows resolution. One detailed ticket with order IDs works better.",
     },
@@ -117,7 +117,7 @@ export function buildTrackingTask(
         "Folder with: GST certificate, PAN, bank proof (name = GST legal name), return policy screenshot.",
         "Sample invoices or order screenshots showing fulfillment.",
         "Settlement reports for disputed period.",
-        "Use escalation letter template — copy from mentor resources.",
+        "Use escalation letter template - copy from mentor resources.",
         "Mark done when folder is assembled.",
       ],
     },
@@ -132,7 +132,7 @@ export function buildTrackingTask(
         "Monthly calendar: settlement report → TCS report → GSTR-2A check → GSTR-3B file.",
         "Involve CA if 2A vs marketplace mismatch persists 2+ months.",
       ],
-      trap: "Ignoring GSTR-8 mismatches means you overpay tax and lose input credit — silent 1%+ bleed.",
+      trap: "Ignoring GSTR-8 mismatches means you overpay tax and lose input credit - silent 1%+ bleed.",
       tools: [
         {
           name: "eCominess",
@@ -144,7 +144,7 @@ export function buildTrackingTask(
     {
       id: "tcs-recovery",
       title: "Track TCS and recover it in your ITR",
-      why: "Marketplaces deduct 1% TCS on every sale and deposit it against your GSTIN. This is YOUR money — recover it via GST returns and ITR.",
+      why: "Marketplaces deduct 1% TCS on every sale and deposit it against your GSTIN. This is YOUR money - recover it via GST returns and ITR.",
       how: [
         "Download TCS report from marketplace (Amazon: Tax Document Library, Flipkart: Reports section).",
         "Match TCS deducted vs TCS credit in GSTR-2A on GST portal.",
@@ -155,7 +155,7 @@ export function buildTrackingTask(
       trap: "Ignoring TCS means you're overpaying tax by 1% on every sale. On ₹10L revenue, that's ₹10,000 left on the table.",
       mentorNote: workspace.gstin
         ? `Your GSTIN ${workspace.gstin} is where TCS gets credited. Verify monthly on gst.gov.in.`
-        : "Complete GST registration first — TCS recovery requires an active GSTIN.",
+        : "Complete GST registration first - TCS recovery requires an active GSTIN.",
     },
     {
       id: "rto-tracking",
@@ -167,7 +167,7 @@ export function buildTrackingTask(
         "Return reason: wrong size / not as described / changed mind / defect (paid then returned).",
         "Weekly: RTO rate = RTO orders / total COD orders. Return rate = returns / delivered orders.",
         "Target: RTO below 15% general, below 25% fashion. Returns below 15% general, below 30% fashion.",
-        "Fix top 3 reasons per column — different fixes for RTO vs returns.",
+        "Fix top 3 reasons per column - different fixes for RTO vs returns.",
       ],
       kind: "simulator",
       simulator: { kind: "pincode_pilot" },
@@ -189,7 +189,7 @@ export function buildTrackingTask(
         id: "tracking-ready",
         prompt: "Will you commit to this weekly review?",
         options: [
-          { value: "yes", label: "Yes — I'll do this every Monday" },
+          { value: "yes", label: "Yes - I'll do this every Monday" },
           { value: "help", label: "Yes, but I want a tool to automate it" },
         ],
       },
@@ -216,7 +216,7 @@ export function buildTrackingTask(
         {
           name: "eCominess",
           whenToUse: "For GST filing automation from marketplace data.",
-          why: "Generates GSTR-1 from Amazon/Flipkart reports — saves CA fees.",
+          why: "Generates GSTR-1 from Amazon/Flipkart reports - saves CA fees.",
         },
       ],
     });
@@ -228,12 +228,12 @@ export function buildTrackingTask(
     why: "Data without action is useless. Every weekly review must produce a decision.",
     how: [
       "PAUSE: any SKU with negative margin for 2+ consecutive weeks.",
-      "FIX: SKUs with 5-15% margin — improve listing, negotiate supplier, or reduce RTO.",
-      "SCALE: SKUs with 20%+ margin and stable RTO — increase ad budget, add inventory, expand channels.",
+      "FIX: SKUs with 5-15% margin - improve listing, negotiate supplier, or reduce RTO.",
+      "SCALE: SKUs with 20%+ margin and stable RTO - increase ad budget, add inventory, expand channels.",
       "Document your decision and revisit next Monday.",
     ],
     mentorNote:
-      "The sellers who succeed are not the ones who never fail — they're the ones who catch losses in week 2, not month 6.",
+      "The sellers who succeed are not the ones who never fail - they're the ones who catch losses in week 2, not month 6.",
   });
 
   return {

@@ -73,7 +73,7 @@ export function AppSidebar({
           })}
         </nav>
 
-        {/* Streak card — no fake counts; a real streak needs recorded activity */}
+        {/* Streak card - no fake counts; a real streak needs recorded activity */}
         <div className="mx-1 mb-2.5 rounded-xl p-3 bg-white/[0.03] border border-white/[0.1] flex items-center gap-2.5">
           <Flame className="h-4 w-4 text-white shrink-0" aria-hidden="true" />
           <div>

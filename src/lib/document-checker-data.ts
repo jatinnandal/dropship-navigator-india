@@ -69,7 +69,7 @@ export const DOCUMENTS: DocumentItem[] = [
       "Inactive or suspended GST status",
     ],
     validationTips: [
-      "Download fresh certificate from GST portal — don't use old printouts",
+      "Download fresh certificate from GST portal - don't use old printouts",
       "Verify status is 'Active' before submitting",
       "Trade name should match brand name you'll use on marketplace",
       "Legal name must match PAN card character-for-character",
@@ -91,7 +91,7 @@ export const DOCUMENTS: DocumentItem[] = [
     validationTips: [
       "Use current/business account for faster approval",
       "Get statement dated within last 30 days",
-      "Account holder name must match PAN exactly — even initials matter",
+      "Account holder name must match PAN exactly - even initials matter",
       "Cancelled cheque should clearly show MICR code and account number",
     ],
     crossCheckWith: ["pan", "gstin"],
@@ -109,7 +109,7 @@ export const DOCUMENTS: DocumentItem[] = [
     ],
     validationTips: [
       "Electricity bill is most commonly accepted",
-      "Address must match GST certificate exactly — including pin code",
+      "Address must match GST certificate exactly - including pin code",
       "If rented, keep NOC from landlord ready as backup",
     ],
     crossCheckWith: ["gstin"],
@@ -124,7 +124,7 @@ export const DOCUMENTS: DocumentItem[] = [
     commonMistakes: [
       "Background not pure white (Amazon requires RGB 255,255,255)",
       "Watermarks or logos present on image",
-      "Low resolution — below 1000×1000px",
+      "Low resolution - below 1000×1000px",
       "Product not centered in frame",
     ],
     validationTips: [
@@ -160,11 +160,11 @@ export const DOCUMENTS: DocumentItem[] = [
     description:
       "Registered trademark certificate for brand registry enrollment.",
     commonMistakes: [
-      "Trademark only applied — not yet registered",
+      "Trademark only applied - not yet registered",
       "Trademark class doesn't match product category",
     ],
     validationTips: [
-      "Only 'Registered' status accepted — 'Objected' or 'Opposed' won't work",
+      "Only 'Registered' status accepted - 'Objected' or 'Opposed' won't work",
       "Ensure trademark class covers your actual product category",
       "Keep TM renewal up to date",
       "For Amazon Brand Registry, word mark preferred over logo mark",
@@ -177,14 +177,14 @@ export const CROSS_VALIDATION_CHECKS: ValidationCheck[] = [
     id: "pan-gst-name",
     label: "PAN ↔ GST Name Match",
     description:
-      "Name on PAN must exactly match the legal name on GST certificate — character for character, including case.",
+      "Name on PAN must exactly match the legal name on GST certificate - character for character, including case.",
     severity: "critical",
   },
   {
     id: "pan-bank-name",
     label: "PAN ↔ Bank Account Name Match",
     description:
-      "Name on bank account/cheque must exactly match PAN — even 'KUMAR' vs 'Kumar' triggers rejection.",
+      "Name on bank account/cheque must exactly match PAN - even 'KUMAR' vs 'Kumar' triggers rejection.",
     severity: "critical",
   },
   {

@@ -6,7 +6,7 @@ describe("Amazon fees", () => {
     const f = getFeesForProduct("amazon", "fashion", 999);
     expect(f.referralPercent).toBe(0);
     expect(f.referralFee).toBe(0);
-    expect(f.closingFee).toBe(30); // ₹500–1,000 band
+    expect(f.closingFee).toBe(30); // ₹500-1,000 band
     expect(f.paymentGatewayFee).toBe(0); // no invented PG fee
     expect(f.gstOnFees).toBeCloseTo(30 * 0.18, 2);
     expect(f.tcs).toBeCloseTo(999 * 0.005, 2);
@@ -34,7 +34,7 @@ describe("Amazon fees", () => {
 describe("Flipkart fees", () => {
   it("charges ONE collection fee: COD slab for COD orders", () => {
     const cod = getFeesForProduct("flipkart", "general", 800, true);
-    expect(cod.codCollectionFee).toBe(20); // ₹500–1,000 slab
+    expect(cod.codCollectionFee).toBe(20); // ₹500-1,000 slab
     expect(cod.paymentGatewayFee).toBe(0); // no double-count
   });
 
@@ -44,7 +44,7 @@ describe("Flipkart fees", () => {
     expect(prepaid.paymentGatewayFee).toBeCloseTo(16, 2); // 2% of 800
   });
 
-  it("fixed fee stays inside published ₹8–35 band", () => {
+  it("fixed fee stays inside published ₹8-35 band", () => {
     for (const price of [100, 400, 900, 5000]) {
       const f = getFeesForProduct("flipkart", "general", price);
       expect(f.fixedFee).toBeGreaterThanOrEqual(8);

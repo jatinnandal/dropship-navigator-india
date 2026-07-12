@@ -57,7 +57,7 @@ export function simulate90DayCashFlow(inputs: CashFlowInputs): CashFlowResult {
   const prepaidFraction = 1 - codFraction;
   const rtoFraction = rtoPercent / 100;
 
-  // Same fee source as every other money tool — settlement = price − fees.
+  // Same fee source as every other money tool - settlement = price - fees.
   const codFees = getFeesForProduct(channel, category, sellingPrice, true);
   const prepaidFees = getFeesForProduct(channel, category, sellingPrice, false);
   const netPerCodOrder = Math.max(0, sellingPrice - codFees.totalFees);

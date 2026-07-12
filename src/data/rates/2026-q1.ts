@@ -1,7 +1,7 @@
 import type { RateCard } from "@/lib/rate-card";
 
 /**
- * 2026 Q1 card — the state of play BEFORE Amazon's Mar 16, 2026 zero-referral
+ * 2026 Q1 card - the state of play BEFORE Amazon's Mar 16, 2026 zero-referral
  * program. Kept so saved calculator snapshots can be diffed across versions.
  */
 export const RATES_2026_Q1: RateCard = {

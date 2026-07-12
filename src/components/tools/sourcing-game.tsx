@@ -178,7 +178,7 @@ export function SourcingGame() {
                   : "border-[var(--danger)]/30 bg-[var(--danger)]/10 text-[var(--danger)]"
               }`}
             >
-              {lastAnswer.correct ? "Correct!" : `Wrong — this was ${lastAnswer.card.verdict === "legit" ? "a legit supplier" : "a trap"}`}
+              {lastAnswer.correct ? "Correct!" : `Wrong - this was ${lastAnswer.card.verdict === "legit" ? "a legit supplier" : "a trap"}`}
             </div>
 
             {/* Explanation */}

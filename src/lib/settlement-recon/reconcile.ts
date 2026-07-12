@@ -10,7 +10,7 @@ import type {
 /**
  * Delta threshold before a delivered order is flagged. Shipping / weight
  * handling is deliberately NOT modelled (we can't know per-order weight from
- * the CSV), so small positive deltas are normal — the threshold absorbs them
+ * the CSV), so small positive deltas are normal - the threshold absorbs them
  * and the report says so explicitly.
  */
 export function flagThreshold(saleAmount: number): number {
@@ -69,7 +69,7 @@ export function reconcile(
     totalActualDeductions,
     totalDelta: totalActualDeductions - totalExpectedFees,
     flaggedCount: rows.filter((r) => r.flagged).length,
-    // TCS (0.5%) the marketplace collected on delivered sales — claimable via
+    // TCS (0.5%) the marketplace collected on delivered sales - claimable via
     // the "TDS/TCS credit received" statement on the GST portal.
     tcsEstimate: grossSales * 0.005,
     unmappedHeaders: adapter.unmappedHeaders,

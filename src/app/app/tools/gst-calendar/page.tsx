@@ -26,11 +26,11 @@ export default async function GstCalendarPage() {
           GST Filing Calendar
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Never miss a deadline — personalized for your filing frequency
+          Never miss a deadline - personalized for your filing frequency
         </p>
         <EstimateDisclaimer
           meta={GST_DATA_META}
-          note="Dates follow current CBIC notifications — due dates can shift by notification; the portal is authoritative."
+          note="Dates follow current CBIC notifications - due dates can shift by notification; the portal is authoritative."
         />
       </header>
 

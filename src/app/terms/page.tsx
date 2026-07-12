@@ -20,7 +20,7 @@ export default function TermsPage() {
 
       <div className="legal-callout">
         <p>
-          <strong>Important — please read this first.</strong> Navigator is an educational and guidance tool. All
+          <strong>Important - please read this first.</strong> Navigator is an educational and guidance tool. All
           information, plans, checklists, calculators, tax and GST guidance, marketplace fees, timelines, and
           suggestions are provided on a <strong>best-of-knowledge, best-effort basis</strong>. They may be incomplete,
           outdated, or inaccurate, and rules, rates, and marketplace policies change frequently.
@@ -48,7 +48,7 @@ export default function TermsPage() {
         <li>We may suspend or close accounts that breach these Terms or that we reasonably believe are being misused.</li>
       </ul>
 
-      <h2>3. What Navigator does — and does not — do</h2>
+      <h2>3. What Navigator does - and does not - do</h2>
       <p>
         Navigator helps first-time and growing Indian e-commerce sellers plan their launch: step-by-step guidance,
         checklists, calculators, and reference information. It is a <strong>mentor and organizer, not an authority</strong>.

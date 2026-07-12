@@ -31,7 +31,7 @@ function addressProofStep(premises: string, profile: OnboardingProfile): TaskSte
       ],
       trap: `Note: GST accepts a rent agreement, but later Amazon often wants a utility bill under 60 days as primary proof. Keep both ready for ${stateLabel(profile.operatingState)}.`,
       mentorNote:
-        "Treat address proof like a puzzle — every document must show the same address, spelled the same way.",
+        "Treat address proof like a puzzle - every document must show the same address, spelled the same way.",
     };
   }
 
@@ -119,10 +119,10 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       title: `Confirm your GSTIN state code matches ${stateLabel(profile.operatingState)}`,
       why: "Amazon/Flipkart/Meesho require your pickup/dispatch address to be in the same state as your GSTIN. A mismatch here is a very common silent rejection.",
       how: [
-        `You told us you operate from ${stateLabel(profile.operatingState)}, so the first 2 digits of your GSTIN should be that state's code — confirm they match.`,
+        `You told us you operate from ${stateLabel(profile.operatingState)}, so the first 2 digits of your GSTIN should be that state's code - confirm they match.`,
         `Make sure the pickup/dispatch address on the marketplace is also in ${stateLabel(profile.operatingState)}.`,
       ],
-      trap: `If you'll actually dispatch from a different state than ${stateLabel(profile.operatingState)}, you'd typically need a GSTIN for that state too — update your profile if your operating state has changed.`,
+      trap: `If you'll actually dispatch from a different state than ${stateLabel(profile.operatingState)}, you'd typically need a GSTIN for that state too - update your profile if your operating state has changed.`,
     },
     {
       id: "validate-name-match",
@@ -143,7 +143,7 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       },
       mentorNote: workspace.legalBusinessName
         ? `You told me your legal name is "${workspace.legalBusinessName}". Your bank name must match this exactly.`
-        : "Lock your legal name first — then copy-paste it everywhere, never re-type.",
+        : "Lock your legal name first - then copy-paste it everywhere, never re-type.",
     },
     {
       id: "validate-marketplace-tax",
@@ -159,19 +159,19 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
     {
       id: "gst-filing-calendar",
       title: "Know your GST filing calendar (GSTR-1 + GSTR-3B)",
-      why: "Missing filings suspends your GSTIN — and marketplaces block suspended GSTINs instantly. This is not optional after registration.",
+      why: "Missing filings suspends your GSTIN - and marketplaces block suspended GSTINs instantly. This is not optional after registration.",
       how: [
         "Monthly filers: GSTR-1 by 11th, GSTR-3B by 20th (next month).",
         "QRMP (turnover under ₹5 crore): quarterly GSTR-1 + monthly GSTR-3B via challan.",
         "Set phone reminders 3 days before each due date.",
         "Consequence chain: missed filing → GSTIN suspended → marketplace listing blocked.",
       ],
-      trap: "Assuming your CA will remind you. YOU are liable — set your own calendar regardless of who files.",
+      trap: "Assuming your CA will remind you. YOU are liable - set your own calendar regardless of who files.",
       tools: [
         {
           name: "ClearTax",
           whenToUse: "If you want guided GSTR-1/3B filing with marketplace import.",
-          why: "Reduces manual errors — vendor-neutral option alongside any CA.",
+          why: "Reduces manual errors - vendor-neutral option alongside any CA.",
         },
         {
           name: "Taxbuddy",
@@ -227,7 +227,7 @@ function buildRegistrationTrack(
           ],
     trap: "Selling on a marketplace without a valid GSTIN can get your account suspended and TCS recovered. Do not list first and register later.",
     mentorNote:
-      "Most beginners think GST is optional under ₹20L turnover. On marketplaces, it is mandatory from day one — no exceptions.",
+      "Most beginners think GST is optional under ₹20L turnover. On marketplaces, it is mandatory from day one - no exceptions.",
   });
 
   steps.push({
@@ -253,16 +253,16 @@ function buildRegistrationTrack(
   steps.push({
     id: "scan-quality",
     title: "Scan documents the right way (most rejections start here)",
-    why: "Blurry phone photos in bad lighting are the #1 reason Meesho/Flipkart reject KYC in the first attempt — before anyone even reads your details.",
+    why: "Blurry phone photos in bad lighting are the #1 reason Meesho/Flipkart reject KYC in the first attempt - before anyone even reads your details.",
     how: [
-      "Use a scanner app or good daylight — not a dark room photo.",
+      "Use a scanner app or good daylight - not a dark room photo.",
       "All four corners visible, no fingers, no glare.",
       "Full colour, not black-and-white.",
       "PDF for multi-page docs; JPEG under 2 MB for single pages.",
       "Name files clearly: PAN_John_Doe.pdf, Cancelled_Cheque.pdf.",
     ],
     trap: '"Sharma Textiles Pvt Ltd" on GST but "Sharma Textiles Private Limited" on bank fails even though they mean the same thing. Exact match only.',
-    mentorNote: "Spend 10 extra minutes on scan quality now — it saves days of rejection loops later.",
+    mentorNote: "Spend 10 extra minutes on scan quality now - it saves days of rejection loops later.",
   });
 
   steps.push({
@@ -271,7 +271,7 @@ function buildRegistrationTrack(
     why: "Using a number already linked to another seller account (even a deactivated one) triggers an instant security rejection on Meesho and Amazon.",
     how: [
       "Use a dedicated business mobile number you control long-term.",
-      "Confirm DND is off — OTPs for GST and marketplace signup need to arrive.",
+      "Confirm DND is off - OTPs for GST and marketplace signup need to arrive.",
       "Never reuse a number from a previous failed seller attempt.",
     ],
     trap: "If OTP does not arrive, send START to 1909 to deactivate DND, then retry after 2 minutes.",
@@ -279,8 +279,8 @@ function buildRegistrationTrack(
       id: "mobile-fresh",
       prompt: "Is this mobile number already used on any seller account?",
       options: [
-        { value: "no", label: "No — it is fresh / only for this business" },
-        { value: "yes", label: "Yes — it was used before" },
+        { value: "no", label: "No - it is fresh / only for this business" },
+        { value: "yes", label: "Yes - it was used before" },
       ],
     },
   });
@@ -289,7 +289,7 @@ function buildRegistrationTrack(
     steps.push({
       id: "mobile-fix",
       title: "Get a new number before you apply",
-      why: "Reusing a flagged number causes silent rejections with no clear error message. A new SIM costs ₹200 — much cheaper than weeks of frustration.",
+      why: "Reusing a flagged number causes silent rejections with no clear error message. A new SIM costs ₹200 - much cheaper than weeks of frustration.",
       how: [
         "Get a new prepaid SIM in your name.",
         "Link it to Aadhaar for OTP services.",
@@ -449,7 +449,7 @@ function buildRegistrationTrack(
       {
         name: "ClearTax",
         whenToUse: "If you want assisted GST registration with filing support.",
-        why: "Handles REG-03 responses and ongoing GSTR filing — good if compliance feels overwhelming.",
+        why: "Handles REG-03 responses and ongoing GSTR filing - good if compliance feels overwhelming.",
       },
       {
         name: "TheGSTCo",
@@ -466,9 +466,9 @@ function buildRegistrationTrack(
     how: [
       "Mark GSTR-1 and GSTR-3B due dates on your calendar.",
       "If turnover under ₹5 crore, check QRMP eligibility on gst.gov.in.",
-      "Plan who files: you, ClearTax, or a CA — but YOU stay liable.",
+      "Plan who files: you, ClearTax, or a CA - but YOU stay liable.",
     ],
-    trap: "New sellers forget first filing and get suspended within 90 days — before they even scale.",
+    trap: "New sellers forget first filing and get suspended within 90 days - before they even scale.",
   });
 
   return steps;
@@ -507,7 +507,7 @@ function buildBaseDocsSteps(profile: OnboardingProfile): TaskStep[] {
       how: [
         "Open a current account in your exact legal business name (or verify existing one matches).",
         "Get a cancelled cheque or stamped bank statement showing name + IFSC.",
-        "Confirm IFSC is current — bank mergers changed many codes in 2024-25.",
+        "Confirm IFSC is current - bank mergers changed many codes in 2024-25.",
       ],
       trap: "Using a personal savings account while GST is in a business name blocks marketplace payout setup.",
       kind: "input",
@@ -525,7 +525,7 @@ export function buildDocumentationTask(
   answers: Record<string, string>,
   workspace: Workspace,
 ): Task {
-  // Route straight from the profile — no need to re-ask what onboarding captured.
+  // Route straight from the profile - no need to re-ask what onboarding captured.
   // To change GST status, the seller edits their profile (single source of truth).
   const hasGstin = profile.hasGstin;
 
@@ -535,8 +535,8 @@ export function buildDocumentationTask(
     : buildRegistrationTrack(profile, answers);
 
   const intro = hasGstin
-    ? "You already have a GSTIN, so we'll skip registration — organize your base documents and validate your GSTIN for marketplace readiness."
-    : "We'll get your business documents and GST registration done step by step — avoiding the mistakes that cause 3+ rejections.";
+    ? "You already have a GSTIN, so we'll skip registration - organize your base documents and validate your GSTIN for marketplace readiness."
+    : "We'll get your business documents and GST registration done step by step - avoiding the mistakes that cause 3+ rejections.";
 
   return {
     id: "common-documentation",

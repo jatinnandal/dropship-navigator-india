@@ -19,7 +19,7 @@ export default function CodSimulatorPage() {
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
           Practice the confirmation call that decides whether an order ships or
-          returns. Each scenario is based on a real RTO pattern — wrong address,
+          returns. Each scenario is based on a real RTO pattern - wrong address,
           impulse regret, cash not ready, price shock, unreachable buyer.
         </p>
       </header>

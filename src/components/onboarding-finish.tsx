@@ -23,7 +23,7 @@ export function OnboardingFinishOverlay() {
           <span className="font-display text-info font-bold">
             <CountUp to={100} duration={1.2} />%
           </span>{" "}
-          personalized — opening your journey map…
+          personalized - opening your journey map…
         </p>
       </section>
     </div>

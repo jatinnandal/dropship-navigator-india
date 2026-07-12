@@ -76,7 +76,7 @@ export function LandingHero() {
             data-reveal
             className="mt-6 max-w-[34rem] text-[17px] leading-[1.7] text-[var(--muted)]"
           >
-            GST rejections, COD returns, supplier scams — most Indian sellers
+            GST rejections, COD returns, supplier scams - most Indian sellers
             quit before money ever reaches their bank. Navigator is the mentor
             that walks you through the launch, one personalized step at a time,
             and warns you before every trap.
@@ -157,7 +157,7 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* Right column — 3D hero card */}
+        {/* Right column - 3D hero card */}
         <div style={{ perspective: "1400px", position: "relative" }}>
           <div
             ref={heroCardRef}
@@ -363,7 +363,7 @@ export function LandingHero() {
                   <p className="mono-label-sm m-0">Mentor note</p>
                   <p className="m-0 mt-1 text-[13px] leading-[1.55] text-[#c9c9c9]">
                     Skip the sample order and there&apos;s a 60% chance your
-                    first review kills the listing. Order it today —{" "}
+                    first review kills the listing. Order it today -{" "}
                     <span className="font-mono text-white">₹280, 4 days</span>.
                   </p>
                 </div>

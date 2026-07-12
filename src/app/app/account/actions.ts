@@ -23,7 +23,7 @@ export async function changePassword(formData: FormData) {
 
   // Re-verify the current password before allowing a change (defence against a
   // walk-up on an unlocked session). Google-only accounts have no password and
-  // will fail here — expected.
+  // will fail here - expected.
   const { error: verifyError } = await supabase.auth.signInWithPassword({ email, password: current });
   if (verifyError) redirect("/app/account?error=wrong_current");
 

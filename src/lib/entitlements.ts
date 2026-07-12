@@ -32,12 +32,12 @@ export type Entitlements = {
   /**
    * Cap on total personalized-plan generations per calendar month per profile.
    * Auto-generation is idempotent per (profile-state × module), so this only
-   * bites on profile/product thrash — a pure abuse backstop. Sized so normal
+   * bites on profile/product thrash - a pure abuse backstop. Sized so normal
    * use (2 modules + a few genuine profile/product changes) never hits it.
    */
   llmPlanRegensPerMonth: number;
   /**
-   * Cap on material profile edits per calendar month, per profile — changes to
+   * Cap on material profile edits per calendar month, per profile - changes to
    * the personalization-relevant fields (state, entity, GST, product category,
    * sales model, import/pre-packaged). Stops cycling one profile through many
    * configs to fake multiple profiles. Non-material edits (name, budget) are

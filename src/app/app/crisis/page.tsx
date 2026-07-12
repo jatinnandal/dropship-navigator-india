@@ -15,13 +15,13 @@ const CRISIS_BLURBS: Record<CrisisType, string> = {
   supplier_oos:
     "Your supplier can't fulfil and orders are pending. The first hour decides how much this costs you.",
   payment_hold:
-    "Settlement date passed, bank account empty. Find the hold reason before the ticket — and protect cashflow meanwhile.",
+    "Settlement date passed, bank account empty. Find the hold reason before the ticket - and protect cashflow meanwhile.",
   ip_complaint:
     "Brand or IP complaint on a listing. What you do before replying decides whether it's one strike or a suspension.",
   gst_notice:
-    "A notice from the GST department. Usually a mechanical mismatch — deadly only if ignored or answered carelessly.",
+    "A notice from the GST department. Usually a mechanical mismatch - deadly only if ignored or answered carelessly.",
   courier_dispute:
-    "Marked delivered but customer never got it, RTO never returned, or weight overcharge. Evidence expires — move fast.",
+    "Marked delivered but customer never got it, RTO never returned, or weight overcharge. Evidence expires - move fast.",
   review_bombing:
     "A burst of 1-star reviews tanking your listing. Separate real quality signal from an attack, then respond in order.",
 };
@@ -59,7 +59,7 @@ export default async function CrisisPage() {
         What went <span className="font-serif-accent">wrong?</span>
       </h1>
       <p className="mt-3 max-w-xl text-[14.5px] leading-[1.65] text-[var(--body-text)]">
-        Take a breath. Pick the situation below — you&apos;ll get a step-by-step protocol with
+        Take a breath. Pick the situation below - you&apos;ll get a step-by-step protocol with
         timers and templates, not a lecture.
       </p>
 
@@ -116,7 +116,7 @@ export default async function CrisisPage() {
                         {CRISIS_BLURBS[type]}
                       </span>
                       <span className="mono-label-sm mt-3 block text-[var(--text-faint)]">
-                        {protocol.steps.length}-step protocol · unlock with {PLAN_LABELS[required]} — 2 minutes
+                        {protocol.steps.length}-step protocol · unlock with {PLAN_LABELS[required]} - 2 minutes
                       </span>
                     </span>
                   </span>

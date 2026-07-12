@@ -18,7 +18,7 @@ export default function DocumentCheckerPage() {
           Document Preparation Checker
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Validate your documents before marketplace submission — avoid the #1
+          Validate your documents before marketplace submission - avoid the #1
           rejection reason
         </p>
       </header>

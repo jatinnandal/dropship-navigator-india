@@ -60,7 +60,7 @@ export function LandingCta() {
           }}
         >
           A mentor that tells you what to do next, not what to Google. Free to
-          start — no credit card required.
+          start - no credit card required.
         </p>
 
         <div
@@ -92,7 +92,7 @@ export function LandingCta() {
               textDecoration: "none",
             }}
           >
-            Chart my route — free
+            Chart my route - free
           </Link>
 
           <Link

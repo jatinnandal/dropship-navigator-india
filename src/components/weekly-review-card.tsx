@@ -91,7 +91,7 @@ export function WeeklyReviewCard({ review }: { review: WeeklyReview }) {
           <Link href="/app/tools/payout-reconciliation" className="group flex items-start gap-2.5">
             <Receipt className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--text-faint)]" aria-hidden="true" />
             <p className="text-[12.5px] leading-[1.6] text-[var(--muted)] group-hover:text-[var(--body-text)] transition-colors">
-              No payout reconciled yet — upload last settlement's CSV and see what the
+              No payout reconciled yet - upload last settlement's CSV and see what the
               marketplace kept.
             </p>
           </Link>

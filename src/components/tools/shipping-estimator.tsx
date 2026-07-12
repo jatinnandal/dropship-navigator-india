@@ -107,7 +107,7 @@ export function ShippingEstimator() {
 
           {/* Volumetric weight */}
           <p className="mt-3 text-xs font-medium text-[var(--muted)]">
-            Box dimensions (cm, optional) — couriers bill max(actual, L×W×H÷5000)
+            Box dimensions (cm, optional) - couriers bill max(actual, L×W×H÷5000)
           </p>
           <div className="mt-1.5 grid grid-cols-3 gap-2">
             {(["l", "w", "h"] as const).map((d) => (

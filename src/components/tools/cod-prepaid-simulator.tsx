@@ -432,7 +432,7 @@ export function CodPrepaidSimulator() {
           <div className="rounded-lg bg-white/[0.03] border border-[var(--success)]/20 p-4">
             <p className="text-sm text-[var(--success)] flex items-center gap-2">
               <TrendingUp className="h-4 w-4" />
-              Your current COD mix is already efficient — no significant penalty detected.
+              Your current COD mix is already efficient - no significant penalty detected.
             </p>
           </div>
         )}

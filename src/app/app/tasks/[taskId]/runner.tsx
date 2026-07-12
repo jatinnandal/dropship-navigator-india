@@ -287,7 +287,7 @@ export function TaskRunner({
       ) : personalizedCopy ? (
         <p className="mt-4 flex items-center gap-2 text-xs text-[var(--muted)]">
           <Sparkles className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-          Personalized for your setup — always verify figures with the checklist or a CA.
+          Personalized for your setup - always verify figures with the checklist or a CA.
         </p>
       ) : null}
 
@@ -624,7 +624,7 @@ export function TaskRunner({
                       </ul>
                     ) : (
                       <p className="text-muted text-sm leading-6">
-                        <JargonText text="Re-read the trap above first — it covers the most common blocker. If the official portal looks different from these steps, it usually means a sync delay. Wait a few hours and retry before changing anything." />
+                        <JargonText text="Re-read the trap above first - it covers the most common blocker. If the official portal looks different from these steps, it usually means a sync delay. Wait a few hours and retry before changing anything." />
                       </p>
                     )}
                   </div>

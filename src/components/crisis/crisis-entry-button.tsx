@@ -52,7 +52,7 @@ export function CrisisEntryButton({ className }: Props) {
                   What happened?
                 </h2>
                 <p className="text-muted mt-1 text-sm">
-                  We&apos;ll switch to a step-by-step recovery plan — not a document wall.
+                  We&apos;ll switch to a step-by-step recovery plan - not a document wall.
                 </p>
               </div>
             </div>

@@ -9,7 +9,7 @@ export type RatesImpact = {
   toVersion: string;
   oldNetMarginPercent: number;
   newNetMarginPercent: number;
-  /** newMargin − oldMargin, in percentage points. */
+  /** newMargin - oldMargin, in percentage points. */
   deltaPoints: number;
   oldNetProfit: number;
   newNetProfit: number;
@@ -50,7 +50,7 @@ export function computeRatesImpact(input: {
   const changes = describeFeeChanges(input);
   const deltaPoints = newResult.netMarginPercent - oldResult.netMarginPercent;
 
-  // Nothing moved for this user — stay silent.
+  // Nothing moved for this user - stay silent.
   if (changes.length === 0 && Math.abs(deltaPoints) < 0.05) return null;
 
   return {
