@@ -108,7 +108,7 @@ export function LandingHero() {
               </svg>
             </MagneticButton>
             <Link
-              href="/dashboard"
+              href="/signup"
               className="btn-ghost inline-flex min-h-[52px] items-center gap-2 rounded-[13px] px-[22px] text-[15px]"
               style={{ backdropFilter: "blur(10px)" }}
             >
@@ -125,7 +125,7 @@ export function LandingHero() {
               <p className="font-mono m-0 text-[25px] font-medium text-white">
                 <CountUp to={17} duration={1.6} />
               </p>
-              <p className="mono-label-sm mt-1">free seller tools</p>
+              <p className="mono-label-sm mt-1">seller tools</p>
             </div>
             <div
               className="w-px"

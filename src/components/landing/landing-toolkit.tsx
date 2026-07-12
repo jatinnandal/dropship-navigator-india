@@ -16,7 +16,7 @@ const TOOLS = [
   {
     icon: "🛡️",
     title: "Supplier scorecard",
-    desc: "Vet IndiaMART suppliers systematically — catch the red flags that kill 60% of sellers.",
+    desc: "Vet IndiaMART suppliers systematically, and catch the red flags before they cost you.",
   },
   {
     icon: "📅",
@@ -161,7 +161,7 @@ export function LandingToolkit() {
           }}
         >
           Practice the expensive lessons{" "}
-          <span className="font-serif-accent">for free.</span>
+          <span className="font-serif-accent">first.</span>
         </h2>
       </div>
 
