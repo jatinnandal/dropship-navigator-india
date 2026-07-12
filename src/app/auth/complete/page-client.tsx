@@ -28,7 +28,7 @@ export default function AuthCompleteClient() {
       const supabase = createSupabaseBrowserClient();
       if (!supabase) {
         if (isMounted) {
-          setError("Missing Supabase configuration.");
+          setError("Sign-in is temporarily unavailable. Please try again in a moment.");
         }
         return;
       }
