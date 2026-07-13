@@ -1,17 +1,107 @@
-import type { OnboardingProfile } from "@/lib/mvp-data";
+import type { OnboardingProfile, PrimaryChannel } from "@/lib/mvp-data";
 import type { Workspace } from "@/lib/workspace";
 import type { Task, TaskStep } from "@/lib/tasks/types";
+
+/**
+ * Channel-exact demand validation. The profile already tells us WHERE the
+ * seller will sell, so each channel gets that marketplace's actual demand
+ * signals and click paths - never "open your target marketplace".
+ */
+const DEMAND_CHECK: Record<
+  PrimaryChannel,
+  { title: string; how: string[]; tools: NonNullable<TaskStep["tools"]> }
+> = {
+  meesho: {
+    title: "Validate demand on Meesho with real data (not gut feeling)",
+    how: [
+      "Open the Meesho app and type your category into the search bar one word at a time. The autocomplete suggestions are ranked by real buyer searches - write down 5-10 suggested phrases. That list is your demand map.",
+      "Open the top 5 listings for your product idea. Meesho has no public best-seller list, so review count is your demand proxy: listings with thousands of reviews = proven repeat demand; a first page full of sub-100-review listings = unproven niche.",
+      "Note the first-page price band. Meesho buyers are extremely price-sensitive - if the page sells at ₹250-350 and your costs need ₹400+, change the product, not the price.",
+      "Check Google Trends with region set to India: you want stable or rising 12-month interest, not a one-week spike.",
+      "Count sellers offering the exact same item (rule of thumb): 50+ = oversaturated, under 20 = room to differentiate.",
+    ],
+    tools: [
+      {
+        name: "Google Trends",
+        whenToUse: "Before shortlisting any product.",
+        why: "Free demand signal - shows if interest is growing, stable, or dying in India.",
+      },
+    ],
+  },
+  amazon: {
+    title: "Validate demand on Amazon.in with real data (not gut feeling)",
+    how: [
+      "Open amazon.in/gp/bestsellers, pick your category, then drill into the subcategory. These top-100 lists are public and update through the day - your shortlist starts here, not on Instagram.",
+      "Open 3-5 top listings: check review recency (reviews posted in the last few weeks = selling right now, not a stale hit) and the Best Sellers Rank on the product page - a low, steady BSR means consistent sales.",
+      "Type your category into the Amazon search bar one word at a time and note the autocomplete suggestions - that's what buyers actually search, in ranked order.",
+      "Check Google Trends with region set to India: you want stable or rising 12-month interest, not a one-week spike.",
+      "Count sellers on the exact SKU (rule of thumb): 50+ = oversaturated, under 20 = room to differentiate.",
+    ],
+    tools: [
+      {
+        name: "Google Trends",
+        whenToUse: "Before shortlisting any product.",
+        why: "Free demand signal - shows if interest is growing, stable, or dying in India.",
+      },
+      {
+        name: "Helium 10",
+        whenToUse: "If you want keyword-level data on Amazon India.",
+        why: "Keyword volume, competitor sales estimates, and listing quality scores.",
+      },
+    ],
+  },
+  flipkart: {
+    title: "Validate demand on Flipkart with real data (not gut feeling)",
+    how: [
+      "Search your category on Flipkart and sort by Popularity. Review and rating counts across the first page are your demand proxy - thousands of ratings = proven demand.",
+      "Type the category into the search bar one word at a time and note the autocomplete suggestions - they're ranked by real buyer queries.",
+      "Count how many first-page listings carry the Flipkart Assured badge. Many Assured listings = established competitors with fulfilment advantages - check you can match their price before committing.",
+      "Check Google Trends with region set to India: you want stable or rising 12-month interest, not a one-week spike.",
+      "Count sellers on the exact same item (rule of thumb): 50+ = oversaturated, under 20 = room to differentiate.",
+    ],
+    tools: [
+      {
+        name: "Google Trends",
+        whenToUse: "Before shortlisting any product.",
+        why: "Free demand signal - shows if interest is growing, stable, or dying in India.",
+      },
+    ],
+  },
+  shopify: {
+    title: "Validate demand before betting your own store on it",
+    how: [
+      "Your own store gives you no demand data - borrow the marketplaces'. Search your category on Amazon.in and Meesho and use their review counts as your India demand proxy: thousands of reviews = proven demand.",
+      "Open the Meta Ad Library (facebook.com/ads/library), set country to India, and search your product. A competitor running the same ad for weeks is telling you it converts - note their angles and pricing.",
+      "Count how many Indian stores are running ads for the exact product: a handful = room to enter; dozens = you'll pay a premium ad cost to break in.",
+      "Check Google Trends with region set to India: you want stable or rising 12-month interest, not a one-week spike.",
+    ],
+    tools: [
+      {
+        name: "Google Trends",
+        whenToUse: "Before shortlisting any product.",
+        why: "Free demand signal - shows if interest is growing, stable, or dying in India.",
+      },
+      {
+        name: "Meta Ad Library",
+        whenToUse: "Before committing to a product for your own store.",
+        why: "Free - shows every ad a competitor runs in India and how long it has been running (long-running = converting).",
+      },
+    ],
+  },
+};
 
 export function buildProductSelectionTask(
   profile: OnboardingProfile,
   answers: Record<string, string>,
   _workspace: Workspace,
 ): Task {
+  const demandCheck = DEMAND_CHECK[profile.primaryChannel];
+
   const steps: TaskStep[] = [
     {
       id: "mindset",
       title: "Stop picking products you like - pick products that profit",
-      why: "90% of Indian dropshipping failures come from random product selection. Viral Instagram products often have terrible margins and high RTO.",
+      why: "Random product selection is the single biggest killer of new Indian dropshipping businesses. Viral Instagram products often have terrible margins and high RTO.",
       how: [
         "Forget what you personally want to sell.",
         "Look for products with proven demand on marketplaces, not just social media.",
@@ -23,27 +113,11 @@ export function buildProductSelectionTask(
     },
     {
       id: "demand-check",
-      title: "Validate demand with real data (not gut feeling)",
+      title: demandCheck.title,
       why: "Listing without demand validation wastes your onboarding effort and first ad budget.",
-      how: [
-        "Open your target marketplace and search your product category.",
-        "Check best-seller lists and search suggestions (autocomplete).",
-        "Use Google Trends for India - look for stable or rising interest, not one-week spikes.",
-        "Count competitors: 50+ sellers on the exact SKU = oversaturated; under 20 = opportunity.",
-      ],
+      how: demandCheck.how,
       trap: "Copying a competitor's exact product at a slightly lower price is not a strategy. Find gaps they miss (better packaging, faster dispatch, clearer listing).",
-      tools: [
-        {
-          name: "Google Trends",
-          whenToUse: "Before shortlisting any product.",
-          why: "Free demand signal - shows if interest is growing, stable, or dying in India.",
-        },
-        {
-          name: "Helium 10",
-          whenToUse: "If launching on Amazon India.",
-          why: "Keyword volume, competitor sales estimates, and listing quality scores.",
-        },
-      ],
+      tools: demandCheck.tools,
     },
     {
       id: "product-swipe-game",
@@ -256,7 +330,7 @@ export function buildProductSelectionTask(
         "Switch to a lighter product with lower shipping cost.",
         "Drop this SKU and pick from your shortlist alternatives.",
       ],
-      trap: "Hoping to 'make it up on volume' with thin margins is how 90% of sellers fail in India.",
+      trap: "Hoping to 'make it up on volume' with thin margins is how thin-margin sellers quietly bleed out in India.",
     });
   }
 
