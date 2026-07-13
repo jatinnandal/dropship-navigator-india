@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
+import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { RESOURCE_CATALOG } from "@/lib/resources-catalog";
 
@@ -131,11 +132,11 @@ export default function ResourcesPage() {
         <div className="grid-texture" style={{ position: "absolute", inset: 0, pointerEvents: "none" }} />
         <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
           <div style={{ maxWidth: "36rem" }}>
-            <p className="font-mono" style={{ margin: 0, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a8a8a" }}>Featured · for your stage</p>
-            <h2 style={{ margin: "10px 0 0", fontSize: 21, fontWeight: 600, letterSpacing: "-0.025em", color: "#ffffff" }}>The hero SKU playbook: picking a first product that survives COD</h2>
-            <p style={{ margin: "8px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>Why boring products win, the 500g rule, RTO-weighted margin floors, and the ₹280 sample order that saves your listing.</p>
+            <p className="font-mono" style={{ margin: 0, fontSize: 10, letterSpacing: "0.16em", textTransform: "uppercase", color: "#8a8a8a" }}>Featured · guided module</p>
+            <h2 style={{ margin: "10px 0 0", fontSize: 21, fontWeight: 600, letterSpacing: "-0.025em", color: "#ffffff" }}>Pick a first product that survives COD</h2>
+            <p style={{ margin: "8px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>Demand checks with real data, RTO screening, margin floors and the sample-order step - walked through one step at a time.</p>
           </div>
-          <a href="#" className="btn-primary" style={{ flexShrink: 0, gap: 9, minHeight: 44, padding: "0 20px", borderRadius: 11, fontSize: "13.5px" }}>Read · 8 min →</a>
+          <Link href="/app/tasks/product-selection" className="btn-primary" style={{ flexShrink: 0, gap: 9, minHeight: 44, padding: "0 20px", borderRadius: 11, fontSize: "13.5px" }}>Start the module →</Link>
         </div>
       </section>
 
