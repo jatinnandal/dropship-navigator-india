@@ -85,7 +85,13 @@ export function buildTrackingTask(
       title: "Reconcile marketplace settlements weekly",
       why: "Marketplaces sometimes short-pay, miss TCS credits, or deduct wrong fees. Without reconciliation, you lose 2-5% silently.",
       how: [
-        `Download weekly settlement report from ${channelLabel(profile.primaryChannel)}.`,
+        profile.primaryChannel === "meesho"
+          ? "Download the payments statement: Meesho Supplier Panel → Payments → Previous Payments."
+          : profile.primaryChannel === "flipkart"
+            ? "Download the settlement report: Flipkart Seller Hub → Payments section."
+            : profile.primaryChannel === "amazon"
+              ? "Download the settlement report: Seller Central → Payments → Reports Repository."
+              : `Download weekly settlement report from ${channelLabel(profile.primaryChannel)}.`,
         "Compare: expected payout (orders × price - fees) vs actual bank deposit.",
         "Check for: missing orders, wrong commission, unprocessed returns, TCS deductions.",
         "If mismatch > ₹100: raise a support ticket with order IDs and expected vs actual.",
@@ -146,7 +152,7 @@ export function buildTrackingTask(
       title: "Track TCS and recover it in your ITR",
       why: "Marketplaces deduct 1% TCS on every sale and deposit it against your GSTIN. This is YOUR money - recover it via GST returns and ITR.",
       how: [
-        "Download TCS report from marketplace (Amazon: Tax Document Library, Flipkart: Reports section).",
+        "Download TCS report from marketplace (Amazon: Tax Document Library, Flipkart: Reports section, Meesho: Supplier Panel → Payments, tax/TCS reports).",
         "Match TCS deducted vs TCS credit in GSTR-2A on GST portal.",
         "Claim input credit in GSTR-3B monthly filing.",
         "Excess TCS beyond GST liability is refundable via ITR.",

@@ -130,11 +130,23 @@ export function buildAdsTask(
           ? "₹500/day on a 12% margin product means you need 8x ROAS to break even. Most beginners hit 2x and call it a win while bleeding cash."
           : "Killing ads after 2 days because of no sales. The algorithm needs 5-7 days and 15+ clicks to optimize.",
       tools: [
-        {
-          name: "Amazon Ads",
-          whenToUse: "For Amazon Sponsored Products/Brands campaigns.",
-          why: "Built into Seller Central - targets high-intent marketplace search traffic.",
-        },
+        profile.primaryChannel === "meesho"
+          ? {
+              name: "Meesho Ads",
+              whenToUse: "In the Meesho supplier panel: Advertisements → create campaign on your live catalogs.",
+              why: "Meesho's own CPC ads - the only paid placement inside the app your buyers use.",
+            }
+          : profile.primaryChannel === "flipkart"
+            ? {
+                name: "Flipkart Ads (PLA)",
+                whenToUse: "In the Flipkart seller hub: Advertising → Product Listing Ads on your best sellers.",
+                why: "Targets high-intent Flipkart search traffic from inside the seller hub.",
+              }
+            : {
+                name: "Amazon Ads",
+                whenToUse: "For Amazon Sponsored Products/Brands campaigns.",
+                why: "Built into Seller Central - targets high-intent marketplace search traffic.",
+              },
       ],
     });
   } else {
@@ -188,30 +200,44 @@ export function buildAdsTask(
 
   steps.push({
     id: "cod-rto-ads",
-    title: "Cut RTO before scaling ads (COD confirmation)",
-    why: "COD orders return at ~26% nationally. Every RTO eats forward + reverse shipping. COD confirmation within 30 min cuts RTO to 12-18%.",
-    how: [
-      "Set up WhatsApp COD confirmation: message customer within 30 min of order.",
-      "Ask them to confirm or cancel with one tap.",
-      "Only ship confirmed orders.",
-      "For high-value orders: call to verify address and intent.",
-    ],
+    title: isMarketplace
+      ? "Cut RTO before scaling ads (it starts at the listing)"
+      : "Cut RTO before scaling ads (COD confirmation)",
+    why: "COD RTO of 20-35% is industry-typical, and every RTO eats forward + reverse shipping. Cutting it BEFORE you scale ads is the highest-leverage move in this module.",
+    how: isMarketplace
+      ? [
+          `${channelLabel(profile.primaryChannel)} masks buyer phone numbers - you cannot call or WhatsApp customers, so RTO control happens BEFORE the order.`,
+          "Make listings brutally accurate: real photos, size charts, exact specs - mismatch at the door is the top refusal driver.",
+          "Dispatch on time, every time: late deliveries get refused far more often.",
+          "Keep pricing honest - surprise charges at delivery are an instant refusal.",
+        ]
+      : [
+          "Set up WhatsApp COD confirmation: message customer within 30 min of order.",
+          "Ask them to confirm or cancel with one tap.",
+          "Only ship confirmed orders.",
+          "For high-value orders: call to verify address and intent.",
+        ],
     trap: "Scaling ad spend while RTO is above 20% means you're paying to generate returns. Fix RTO before scaling.",
     kind: "calculator",
     calculator: { kind: "rto_impact" },
-    tools: [
-      {
-        name: "Confirmify / Level",
-        whenToUse: "For automated WhatsApp COD confirmation on Shopify.",
-        why: "Cuts fake COD orders by 20-30% - pays for itself within first week of ads.",
-      },
-    ],
+    tools: isMarketplace
+      ? []
+      : [
+          {
+            name: "Shipway / GoKwik",
+            whenToUse: "For automated WhatsApp COD confirmation on Shopify.",
+            why: "Catches fake and unsure COD orders before you pay to ship them.",
+          },
+        ],
   });
 
   steps.push({
     id: "ndr-practice",
     title: "Practice COD confirmation & NDR calls",
-    why: "Calling customers scares beginners - but it is the only way to survive COD in India.",
+    why:
+      profile.primaryChannel === "meesho"
+        ? "Meesho's courier handles delivery contact - but these scenarios teach you WHY orders fail at the door, the exact patterns your listings must defend against. And when you add your own store later, you'll run these calls yourself."
+        : "Calling customers scares beginners - but it is the only way to survive COD in India.",
     how: ["Walk through 2 scenarios. Pick the best response each time."],
     kind: "simulator",
     simulator: { kind: "ndr_caller" },

@@ -222,14 +222,37 @@ function buildRegistrationTrack(
             "If you only sell on your own website, you may stay under the threshold initially.",
             "If you will ever sell on Amazon/Flipkart/Meesho, plan to register now.",
           ]
-        : [
-            "Accept that GSTIN is needed before listing on the marketplace.",
-            "The only exception is if every product you sell is GST-exempt (rare).",
-          ],
+        : profile.primaryChannel === "meesho"
+          ? [
+              "Plan for a GSTIN - you'll need it to sell inter-state or scale.",
+              "Meesho carve-out: intra-state selling under the threshold works with a free Enrolment ID while your GSTIN processes - the next step shows how.",
+            ]
+          : [
+              "Accept that GSTIN is needed before listing on the marketplace.",
+              "The only exception is if every product you sell is GST-exempt (rare).",
+            ],
     trap: "Selling on a marketplace without a valid GSTIN can get your account suspended and TCS recovered. Do not list first and register later.",
     mentorNote:
-      "Most beginners think GST is optional under ₹20L turnover. On marketplaces, it is mandatory from day one - no exceptions.",
+      profile.primaryChannel === "meesho"
+        ? "Most beginners think GST is optional under ₹20L turnover. On Amazon/Flipkart it is mandatory from day one. Meesho has one legal carve-out - the Enrolment ID for intra-state sellers - covered in the next step."
+        : "Most beginners think GST is optional under ₹20L turnover. On marketplaces, it is mandatory from day one - no exceptions.",
   });
+
+  if (profile.primaryChannel === "meesho") {
+    steps.push({
+      id: "enrolment-id-fast-path",
+      title: "Start selling on Meesho NOW with an Enrolment ID (no GSTIN wait)",
+      why: "Meesho onboards non-GST sellers with a free Enrolment ID (intra-state only, under the turnover threshold) - you don't have to spend the 3-5 GSTIN-processing days doing nothing.",
+      how: [
+        "On gst.gov.in choose Registration → Generate User ID for Unregistered Applicant → e-commerce enrolment.",
+        "Verify PAN + Aadhaar OTP and note the 15-digit Enrolment ID.",
+        "Enter it in Meesho seller signup - you can list and sell within your own state immediately.",
+        "Keep the GSTIN application below moving in parallel; switch to it before selling inter-state or crossing the threshold.",
+      ],
+      trap: "The Enrolment ID limits you to buyers in YOUR state, and Amazon/Flipkart do not accept it - this fast path is Meesho-specific.",
+      mentorNote: "Do this today and list products this week instead of waiting for the GSTIN. Same-state buyers are enough to validate your first product.",
+    });
+  }
 
   steps.push({
     id: "lock-name",
