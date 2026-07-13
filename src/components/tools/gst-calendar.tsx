@@ -13,10 +13,12 @@ import {
   getGstEventsForMonth,
   getUpcomingGstEvents,
   getEventsForDate,
+  quarterlyGstr3bDueDay,
   type GstEvent,
 } from "@/lib/gst-calendar-data";
 
 const STORAGE_KEY = "dni-gst-completed";
+const SCHEME_KEY = "dni-gst-scheme";
 
 function getCompletedIds(): Set<string> {
   if (typeof window === "undefined") return new Set();
@@ -71,11 +73,14 @@ function daysLabel(days: number, status: GstEvent["status"]) {
 export function GstCalendar({
   defaultIsQrmp = false,
   hasGstin = true,
+  operatingState,
 }: {
   defaultIsQrmp?: boolean;
   hasGstin?: boolean;
+  operatingState?: string;
 }) {
   const [isQrmp, setIsQrmp] = useState(defaultIsQrmp);
+  const [showChooser, setShowChooser] = useState(false);
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
@@ -84,17 +89,37 @@ export function GstCalendar({
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
 
   useEffect(() => {
-    setCompletedIds(getCompletedIds());
+    // Hydrate persisted state after mount (async so hydration markup matches SSR).
+    const t = setTimeout(() => {
+      setCompletedIds(getCompletedIds());
+      try {
+        const savedScheme = localStorage.getItem(SCHEME_KEY);
+        if (savedScheme === "qrmp") setIsQrmp(true);
+        if (savedScheme === "regular") setIsQrmp(false);
+      } catch {
+        // localStorage unavailable - keep default
+      }
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  const setScheme = useCallback((qrmp: boolean) => {
+    setIsQrmp(qrmp);
+    try {
+      localStorage.setItem(SCHEME_KEY, qrmp ? "qrmp" : "regular");
+    } catch {
+      // localStorage unavailable - state still updates for this session
+    }
   }, []);
 
   const monthEvents = useMemo(
-    () => getGstEventsForMonth(currentYear, currentMonth, isQrmp),
-    [currentYear, currentMonth, isQrmp],
+    () => getGstEventsForMonth(currentYear, currentMonth, isQrmp, operatingState),
+    [currentYear, currentMonth, isQrmp, operatingState],
   );
 
   const upcomingEvents = useMemo(
-    () => getUpcomingGstEvents(isQrmp, completedIds).slice(0, 5),
-    [isQrmp, completedIds],
+    () => getUpcomingGstEvents(isQrmp, completedIds, operatingState).slice(0, 5),
+    [isQrmp, completedIds, operatingState],
   );
 
   const overdueEvents = useMemo(
@@ -107,8 +132,8 @@ export function GstCalendar({
 
   const selectedDayEvents = useMemo(() => {
     if (selectedDay === null) return [];
-    return getEventsForDate(currentYear, currentMonth, selectedDay, isQrmp);
-  }, [currentYear, currentMonth, selectedDay, isQrmp]);
+    return getEventsForDate(currentYear, currentMonth, selectedDay, isQrmp, operatingState);
+  }, [currentYear, currentMonth, selectedDay, isQrmp, operatingState]);
 
   const markDone = useCallback(
     (id: string) => {
@@ -207,28 +232,76 @@ export function GstCalendar({
         </div>
       )}
 
-      {/* QRMP toggle */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={() => setIsQrmp(false)}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-            !isQrmp
-              ? "bg-white/[0.06] text-white ring-1 ring-white/25"
-              : "text-muted hover:text-[var(--body-text)]"
-          }`}
-        >
-          Regular (Monthly)
-        </button>
-        <button
-          onClick={() => setIsQrmp(true)}
-          className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
-            isQrmp
-              ? "bg-white/[0.06] text-white ring-1 ring-white/25"
-              : "text-muted hover:text-[var(--body-text)]"
-          }`}
-        >
-          QRMP (Quarterly)
-        </button>
+      {/* Filing scheme */}
+      <div className="glass-panel-receded space-y-3 rounded-lg p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-muted text-xs font-medium uppercase tracking-wider">
+            Your filing scheme
+          </span>
+          <button
+            onClick={() => setScheme(false)}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              !isQrmp
+                ? "bg-white/[0.06] text-white ring-1 ring-white/25"
+                : "text-muted hover:text-[var(--body-text)]"
+            }`}
+          >
+            Regular (Monthly)
+          </button>
+          <button
+            onClick={() => setScheme(true)}
+            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+              isQrmp
+                ? "bg-white/[0.06] text-white ring-1 ring-white/25"
+                : "text-muted hover:text-[var(--body-text)]"
+            }`}
+          >
+            QRMP (Quarterly)
+          </button>
+          <button
+            onClick={() => setShowChooser((s) => !s)}
+            className="text-info text-xs hover:underline"
+          >
+            {showChooser ? "Hide help" : "Not sure which you're on?"}
+          </button>
+        </div>
+
+        <p className="text-muted text-xs leading-5">
+          {isQrmp ? (
+            <>
+              QRMP: GSTR-1 and GSTR-3B are filed once a quarter (tax is still
+              paid monthly via PMT-06)
+              {operatingState
+                ? `. In ${operatingState}, quarterly GSTR-3B is due the ${quarterlyGstr3bDueDay(operatingState)}th of the month after the quarter.`
+                : ". Quarterly GSTR-3B is due the 22nd or 24th depending on your state."}
+            </>
+          ) : (
+            <>
+              Regular: GSTR-1 (sales detail, 11th) and GSTR-3B (summary + tax
+              payment, 20th) are filed every month.
+            </>
+          )}
+        </p>
+
+        {showChooser && (
+          <div className="space-y-2 rounded-md border border-white/[0.1] bg-white/[0.02] p-3 text-xs leading-5 text-[var(--body-text)]">
+            <p>
+              <span className="font-semibold text-white">1. Turnover above ₹5 crore last year?</span>{" "}
+              Then QRMP isn&apos;t available to you - select <span className="font-medium">Regular</span>.
+            </p>
+            <p>
+              <span className="font-semibold text-white">2. At or under ₹5 crore?</span>{" "}
+              You can be on either - it depends on what was chosen on the GST
+              portal. Check <span className="font-mono">Services → Returns → Opt-in for Quarterly Return</span>{" "}
+              on gst.gov.in and match this toggle to what the portal shows.
+              QRMP means fewer filings; Regular means monthly ones.
+            </p>
+            <p className="text-muted">
+              This toggle only changes which deadlines the calendar shows - it
+              does not change your scheme on the portal.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Calendar */}

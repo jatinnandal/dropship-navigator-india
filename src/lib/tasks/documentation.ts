@@ -162,11 +162,12 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       why: "Missing filings suspends your GSTIN - and marketplaces block suspended GSTINs instantly. This is not optional after registration.",
       how: [
         "Monthly filers: GSTR-1 by 11th, GSTR-3B by 20th (next month).",
-        "QRMP (turnover under ₹5 crore): quarterly GSTR-1 + monthly GSTR-3B via challan.",
+        "QRMP (turnover up to ₹5 crore): GSTR-1 and GSTR-3B quarterly, tax paid monthly via PMT-06 challan.",
+        "Zero sales this period? You still MUST file - NIL returns are mandatory from month 1, or it's ₹20/day in late fees.",
         "Set phone reminders 3 days before each due date.",
         "Consequence chain: missed filing → GSTIN suspended → marketplace listing blocked.",
       ],
-      trap: "Assuming your CA will remind you. YOU are liable - set your own calendar regardless of who files.",
+      trap: "Assuming your CA will remind you. YOU are liable - set your own calendar regardless of who files. And NIL months still need filings - new sellers get burned by this in their very first month.",
       tools: [
         {
           name: "ClearTax",

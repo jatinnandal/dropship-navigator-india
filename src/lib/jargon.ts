@@ -78,6 +78,49 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
     short: "Monthly return filed by e-commerce operators showing TCS collected on your sales. Match with your GSTR-2A.",
   },
   {
+    term: "GSTR-1",
+    short: "Your sales-detail return: every invoice for the period. Monthly (due 11th) or quarterly under QRMP (due 13th).",
+    example: "Marketplace sales reports are your source data - reconcile before filing.",
+  },
+  {
+    term: "GSTR-3B",
+    short: "Your summary return where tax is actually paid: output tax minus input credit. Monthly (due 20th) or quarterly under QRMP (22nd/24th by state).",
+  },
+  {
+    term: "GSTR-2A",
+    short: "Auto-generated statement of purchases where suppliers reported YOU as buyer. Read-only - use it to verify your input tax credit.",
+  },
+  {
+    term: "GSTR-2B",
+    short: "Monthly frozen snapshot of the input tax credit you can claim. Reconcile against it before filing GSTR-3B.",
+  },
+  {
+    term: "QRMP",
+    short: "Quarterly Return, Monthly Payment scheme for turnover up to ₹5 crore: file GSTR-1/3B quarterly, pay tax monthly via PMT-06.",
+    example: "Fewer filings, same tax. Opt in on the GST portal under Services → Returns.",
+  },
+  {
+    term: "ARN",
+    short: "Application Reference Number - your GST application's tracking ID. Use it to check registration status on the portal.",
+  },
+  {
+    term: "TRN",
+    short: "Temporary Reference Number issued mid-way through GST registration. Lets you resume a saved application for 15 days.",
+  },
+  {
+    term: "REG-03",
+    short: "Notice asking for clarification/extra documents on your GST application. Reply within 7 working days or it's rejected.",
+  },
+  {
+    term: "Valmo",
+    short: "Meesho's own logistics network. Meesho assigns the courier - you don't pick or negotiate shipping.",
+  },
+  {
+    term: "Enrolment ID",
+    short: "Meesho's no-GSTIN path for sellers of GST-exempt goods or intra-state supplies under the threshold - register with just a PAN.",
+    example: "Lets you start selling while your GSTIN application is in progress.",
+  },
+  {
     term: "wardrobing",
     short: "Buying clothes, wearing them once with tags, then returning. A major fashion return fraud pattern.",
   },

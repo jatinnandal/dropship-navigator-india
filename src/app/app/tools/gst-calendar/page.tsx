@@ -34,7 +34,7 @@ export default async function GstCalendarPage() {
         />
       </header>
 
-      <GstCalendar hasGstin={hasGstin} />
+      <GstCalendar hasGstin={hasGstin} operatingState={profile.operatingState} />
     </main>
   );
 }

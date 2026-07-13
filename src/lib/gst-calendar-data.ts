@@ -27,6 +27,41 @@ export const GST_DATA_META = {
   ],
 } as const;
 
+/**
+ * QRMP quarterly GSTR-3B has two state categories (CBIC notification):
+ * Category A (south/west) files by the 22nd, Category B (north/east) by the
+ * 24th of the month after the quarter. Everything not in this set is 22nd.
+ */
+const GSTR3B_DAY24_STATES = new Set<string>([
+  "Himachal Pradesh",
+  "Punjab",
+  "Uttarakhand",
+  "Haryana",
+  "Rajasthan",
+  "Uttar Pradesh",
+  "Bihar",
+  "Sikkim",
+  "Arunachal Pradesh",
+  "Nagaland",
+  "Manipur",
+  "Mizoram",
+  "Tripura",
+  "Meghalaya",
+  "Assam",
+  "West Bengal",
+  "Jharkhand",
+  "Odisha",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Chandigarh",
+  "Delhi",
+]);
+
+export function quarterlyGstr3bDueDay(operatingState?: string): 22 | 24 {
+  if (operatingState && GSTR3B_DAY24_STATES.has(operatingState)) return 24;
+  return 22;
+}
+
 const GST_FILINGS: GstFiling[] = [
   {
     id: "gstr1-monthly",
@@ -135,11 +170,11 @@ const GST_FILINGS: GstFiling[] = [
   },
   {
     id: "nil-return",
-    name: "NIL Return",
+    name: "NIL Return (only if zero sales)",
     form: "GSTR-1 / GSTR-3B",
     frequency: "monthly",
     description:
-      "Even with zero sales, you MUST file a NIL return every period. Missing it costs ₹20/day.",
+      "Applies only when you had ZERO sales this period - and then it's mandatory: file NIL GSTR-1/GSTR-3B or pay ₹20/day. If you had sales, your normal returns cover this.",
     dueDay: 11,
     lateFeePenalty: "₹20/day (₹10 CGST + ₹10 SGST) for NIL returns - capped ₹500",
     applicableTo: "all",
@@ -193,6 +228,7 @@ export function getGstEventsForMonth(
   year: number,
   month: number, // 0-indexed
   isQrmp: boolean,
+  operatingState?: string,
 ): GstEvent[] {
   const today = new Date();
   const events: GstEvent[] = [];
@@ -218,7 +254,12 @@ export function getGstEventsForMonth(
       // Always show as a reminder
     }
 
-    const dueDate = new Date(year, month, filing.dueDay);
+    // Quarterly GSTR-3B due day is state-dependent (22nd vs 24th).
+    const dueDay =
+      filing.id === "gstr3b-quarterly"
+        ? quarterlyGstr3bDueDay(operatingState)
+        : filing.dueDay;
+    const dueDate = new Date(year, month, dueDay);
     const daysUntilDue = daysBetween(today, dueDate);
     const status = computeStatus(dueDate, today);
 
@@ -237,6 +278,7 @@ export function getGstEventsForMonth(
 export function getUpcomingGstEvents(
   isQrmp: boolean,
   completedIds: Set<string> = new Set(),
+  operatingState?: string,
 ): GstEvent[] {
   const today = new Date();
   const events: GstEvent[] = [];
@@ -248,6 +290,7 @@ export function getUpcomingGstEvents(
       targetDate.getFullYear(),
       targetDate.getMonth(),
       isQrmp,
+      operatingState,
     );
 
     for (const evt of monthEvents) {
@@ -279,7 +322,8 @@ export function getEventsForDate(
   month: number,
   day: number,
   isQrmp: boolean,
+  operatingState?: string,
 ): GstEvent[] {
-  const monthEvents = getGstEventsForMonth(year, month, isQrmp);
+  const monthEvents = getGstEventsForMonth(year, month, isQrmp, operatingState);
   return monthEvents.filter((e) => e.dueDate.getDate() === day);
 }
