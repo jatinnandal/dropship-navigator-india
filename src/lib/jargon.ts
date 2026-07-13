@@ -13,7 +13,7 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
   {
     term: "RTO",
     short: "Return to Origin. Customer refused the COD parcel - you lose forward + reverse shipping.",
-    example: "26% RTO on COD is common in India; fashion can hit 40%.",
+    example: "COD RTO of 20-35% is industry-typical in India; fashion runs at the high end.",
   },
   {
     term: "NDR",

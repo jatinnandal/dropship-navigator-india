@@ -189,7 +189,7 @@ export function SupplierScorecard() {
                   IndiaMART has been on the USTR &quot;Notorious Markets&quot; list since 2018
                 </li>
                 <li>
-                  60-70% of early seller failures trace back to supplier issues
+                  Supplier issues are among the most common reasons early sellers fail
                 </li>
                 <li className="font-medium text-white">
                   ALWAYS order samples before committing to bulk - no exceptions

@@ -404,6 +404,6 @@ export const COD_SCENARIOS: Scenario[] = [
     returnDebrief:
       "This was a ₹2,499 order - ₹190 round-trip shipping lost. The customer wanted the product; they just weren't available. A time slot and backup number would have saved it.",
     keyTakeaway:
-      "NDR ≠ cancellation. 70% of NDR orders deliver on the next attempt IF you get: (1) a time slot, (2) a backup number, (3) a WhatsApp reminder the morning of delivery.",
+      "NDR ≠ cancellation. Most NDR orders can still deliver on the next attempt IF you get: (1) a time slot, (2) a backup number, (3) a WhatsApp reminder the morning of delivery.",
   },
 ];

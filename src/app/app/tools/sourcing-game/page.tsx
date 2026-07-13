@@ -18,9 +18,9 @@ export default function SourcingGamePage() {
           Sourcing Swipe Game
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Real supplier conversations from IndiaMART and Alibaba - can you
-          spot the traps before your money disappears? Each card teaches a
-          pattern that cost real sellers real money.
+          Realistic supplier chats modeled on documented IndiaMART and Alibaba
+          scam patterns - can you spot the traps before your money disappears?
+          Each card teaches a pattern that has genuinely burned sellers.
         </p>
       </header>
 

@@ -235,8 +235,9 @@ function MenuScreen({ onStart }: { onStart: () => void }) {
           Spot the Trap
         </h2>
         <p className="text-muted mt-2 text-sm leading-relaxed">
-          20 real supplier conversations from IndiaMART, Alibaba, and more.
-          Read the chat, decide: legit supplier or trap? Build a streak to prove your eye.
+          20 realistic supplier chats modeled on documented scam patterns from
+          IndiaMART, Alibaba, and more. Read the chat, decide: legit supplier or
+          trap? Build a streak to prove your eye.
         </p>
 
         <div className="mt-5 grid grid-cols-3 gap-3">
@@ -249,8 +250,8 @@ function MenuScreen({ onStart }: { onStart: () => void }) {
             <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Minutes</p>
           </div>
           <div className="rounded-lg border border-white/10 p-3">
-            <p className="font-mono text-lg font-bold text-[var(--success)]">10</p>
-            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Legit</p>
+            <p className="font-mono text-lg font-bold text-[var(--success)]">?</p>
+            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Traps</p>
           </div>
         </div>
 

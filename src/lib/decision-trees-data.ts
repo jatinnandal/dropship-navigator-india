@@ -131,7 +131,7 @@ export const DECISION_TREES: DecisionTree[] = [
             label: "Under 500g (accessories, small items)",
             nextId: null,
             recommendation:
-              "FBA is worth it - storage is cheap for light items, and you get Prime badge which boosts conversion 20-30%. The math works in your favor.",
+              "FBA is worth it - storage is cheap for light items, and the Prime badge is a meaningful conversion booster. The math works in your favor.",
           },
           {
             label: "Over 1kg (electronics, kitchenware)",
@@ -151,7 +151,7 @@ export const DECISION_TREES: DecisionTree[] = [
             label: "Yes - I have a team or 3PL partner",
             nextId: null,
             recommendation:
-              "Self-fulfill - you'll save 15-20% on fulfillment costs vs FBA, and you maintain control over packaging and customer experience. Use a reliable 3PL like Delhivery/Shiprocket.",
+              "Self-fulfill - fulfillment usually costs meaningfully less than FBA at this scale, and you keep control over packaging and customer experience. Use a reliable 3PL like Delhivery/Shiprocket.",
           },
           {
             label: "No - I'm a solo operator",
@@ -235,7 +235,7 @@ export const DECISION_TREES: DecisionTree[] = [
             label: "High - I'm okay with volatility for bigger wins",
             nextId: null,
             recommendation:
-              "Trending and seasonal products can 3-5x your money fast - but timing is everything. Watch social media trends, festival seasons, and IPL/cricket merchandise windows. Keep 30% of stock as evergreen backup.",
+              "Trending and seasonal products can multiply your money fast - but timing is everything. Watch social media trends, festival seasons, and IPL/cricket merchandise windows. Keep a meaningful share of stock as evergreen backup.",
           },
         ],
       },
@@ -259,7 +259,7 @@ export const DECISION_TREES: DecisionTree[] = [
             label: "Under ₹300",
             nextId: null,
             recommendation:
-              "COD is almost mandatory at this price - conversion drops 60% without it. Buyers won't prepay for cheap items they haven't tried. Factor in 15-20% RTO cost and price accordingly.",
+              "COD is almost mandatory at this price - conversion falls off a cliff without it. Buyers won't prepay for cheap items they haven't tried. Budget a 15-20% RTO cost and price accordingly.",
           },
           { label: "₹300 - ₹1,000", nextId: "mid-category" },
           {

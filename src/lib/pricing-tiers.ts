@@ -39,7 +39,7 @@ export const PLAN_CARDS: PlanCard[] = [
       "Crisis protocols: account suspension & supplier out-of-stock",
       "2 seller profiles - test a second niche",
       "1 payout reconciliation per month",
-      "Monday profit digest email",
+      "Weekly profit review on your dashboard",
     ],
     highlight: true,
   },

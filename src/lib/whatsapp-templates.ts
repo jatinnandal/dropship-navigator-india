@@ -47,7 +47,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
       "Thank you {{name}}! Payment received for {{product}}. Dispatching within {{hours}} hours. Track here: {{link}}",
     placeholders: ["name", "product", "hours", "link"],
     bestPractice:
-      "Setting clear dispatch expectations reduces 'where is my order' messages by 40%.",
+      "Setting clear dispatch expectations sharply cuts 'where is my order' messages.",
     timing: "Immediately after payment confirmation",
   },
   {
@@ -93,7 +93,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
       "Hi {{name}}, your order is slightly delayed due to {{reason}}. New expected date: {{date}}. Sorry for the wait - we're on it! Reply if you have questions.",
     placeholders: ["name", "reason", "date"],
     bestPractice:
-      "Proactive delay messages reduce negative reviews by 50%. Always give a new ETA.",
+      "Proactive delay messages help prevent negative reviews. Always give a new ETA.",
     timing: "As soon as delay is detected",
   },
 
@@ -130,7 +130,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
       "Hi {{name}}! Your COD order (₹{{amount}}) is out for delivery today. Please keep the exact amount ready. If you need to reschedule, reply NOW to avoid return.",
     placeholders: ["name", "amount"],
     bestPractice:
-      "This single message can reduce RTO by 15-20%. Send morning of delivery day.",
+      "One of the highest-impact RTO reducers a seller controls. Send morning of delivery day.",
     timing: "Morning of delivery day (7-9 AM)",
   },
   {
@@ -141,7 +141,7 @@ export const WHATSAPP_TEMPLATES: WhatsAppTemplate[] = [
       "We noticed delivery couldn't be completed. Would you like to: 1️⃣ Reschedule for tomorrow 2️⃣ Change address 3️⃣ Cancel order. Reply with number!",
     placeholders: [],
     bestPractice:
-      "Give clear numbered options. 60% of failed deliveries convert when you offer reschedule.",
+      "Give clear numbered options. Many failed deliveries still convert when you offer a reschedule.",
     timing: "Within 1 hour of failed delivery attempt",
   },
   {

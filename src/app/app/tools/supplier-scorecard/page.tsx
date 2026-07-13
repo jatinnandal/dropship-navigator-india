@@ -18,7 +18,7 @@ export default function SupplierScorecardPage() {
           Supplier Vetting Scorecard
         </h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
-          Evaluate suppliers systematically - avoid the mistakes that kill 60% of new sellers
+          Evaluate suppliers systematically - avoid the supplier mistakes that sink new sellers
         </p>
       </header>
 
