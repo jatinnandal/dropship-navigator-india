@@ -149,8 +149,8 @@ export const SOURCING_CARDS: SupplierCard[] = [
     platform: "JustDial",
     product: "Yoga mats",
     chatSnippet:
-      "WhatsApp pe baat karo sir. JustDial pe detail nahi de sakte. Hamara number 98XXX-XXXXX. Sab best price milega, trust karo.",
-    redFlags: ["Moves conversation off-platform", "No details shared", "Trust karo pressure"],
+      "Talk on WhatsApp sir. Cannot give details on JustDial. Our number 98XXX-XXXXX. You will get best price for everything, just trust us.",
+    redFlags: ["Moves conversation off-platform", "No details shared", "\"Just trust us\" pressure"],
     greenFlags: [],
     verdict: "trap",
     explanation:
@@ -266,7 +266,7 @@ export const SOURCING_CARDS: SupplierCard[] = [
     platform: "IndiaMART",
     product: "USB cables",
     chatSnippet:
-      "Sir we have all types cables. MRP ₹299 wala cable ₹12 me milega. Printing ready with barcode. No BIS needed for cables. 100% advance. We are based in Gaffar Market.",
+      "Sir we have all types cables. MRP ₹299 cable you will get at ₹12 only. Printing ready with barcode. No BIS needed for cables. 100% advance. We are based in Gaffar Market.",
     redFlags: ["₹12 for MRP ₹299 product", "Gaffar Market (grey market)", "No BIS claim", "MRP manipulation"],
     greenFlags: [],
     verdict: "trap",

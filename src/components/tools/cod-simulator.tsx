@@ -12,11 +12,22 @@ import {
   MessageSquare,
   Star,
 } from "lucide-react";
-import { COD_SCENARIOS, type Scenario, type ReplyOption } from "@/lib/cod-scenarios";
+import {
+  COD_SCENARIOS,
+  type Scenario,
+  type ReplyOption,
+  type Localized,
+  type ScenarioLanguage,
+} from "@/lib/cod-scenarios";
+
+const LANG_KEY = "dni-scenario-lang";
+
+/** Wrap language-invariant text (context, coaching) in the Localized shape. */
+const asLocalized = (s: string): Localized => ({ en: s, hinglish: s });
 
 type ChatMessage = {
   role: "customer" | "seller" | "system";
-  text: string;
+  text: Localized;
   quality?: ReplyOption["quality"];
 };
 
@@ -53,6 +64,22 @@ export function CodSimulator() {
       return new Set();
     }
   });
+  const [lang, setLang] = useState<ScenarioLanguage>(() => {
+    if (typeof window === "undefined") return "en";
+    try {
+      return localStorage.getItem(LANG_KEY) === "hinglish" ? "hinglish" : "en";
+    } catch {
+      return "en";
+    }
+  });
+  const changeLang = useCallback((l: ScenarioLanguage) => {
+    setLang(l);
+    try {
+      localStorage.setItem(LANG_KEY, l);
+    } catch {
+      // localStorage unavailable - session-only preference
+    }
+  }, []);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -69,7 +96,7 @@ export function CodSimulator() {
       messages: [
         {
           role: "system",
-          text: scenario.context,
+          text: asLocalized(scenario.context),
         },
         {
           role: "customer",
@@ -128,7 +155,6 @@ export function CodSimulator() {
           }, 800);
         } else {
           setTimeout(() => {
-            const shipped = newScore >= scenario.shipThreshold;
             setState((prev) =>
               prev
                 ? {
@@ -166,6 +192,8 @@ export function CodSimulator() {
       <ScenarioSelector
         onSelect={startScenario}
         completedIds={completedIds}
+        lang={lang}
+        onLangChange={changeLang}
       />
     );
   }
@@ -200,17 +228,19 @@ export function CodSimulator() {
                 letterSpacing: "-0.01em",
               }}
             >
-              {scenario.title}
+              {scenario.title[lang]}
             </p>
             <p
               className="font-mono"
               style={{ fontSize: 10, color: "var(--text-faint)", letterSpacing: "0.08em" }}
             >
-              {scenario.product} · ₹{scenario.orderValue.toLocaleString("en-IN")}
+              {scenario.product} · ₹{scenario.orderValue.toLocaleString("en-IN")} · ship at{" "}
+              {scenario.shipThreshold}+/{state.maxScore} pts
             </p>
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <LangToggle lang={lang} onChange={changeLang} />
           <span
             className="font-mono"
             style={{
@@ -258,7 +288,7 @@ export function CodSimulator() {
       >
         <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
           {state.messages.map((msg, i) => (
-            <ChatBubble key={i} message={msg} />
+            <ChatBubble key={i} message={msg} lang={lang} />
           ))}
           <div ref={chatEndRef} />
         </div>
@@ -312,7 +342,7 @@ export function CodSimulator() {
                 >
                   <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                     <ChevronRight size={14} style={{ color: "var(--text-faint)", flexShrink: 0 }} />
-                    {opt.text}
+                    {opt.text[lang]}
                   </span>
                 </button>
               ))}
@@ -344,7 +374,6 @@ export function CodSimulator() {
           score={state.score}
           maxScore={state.maxScore}
           shipped={shipped}
-          chosenOptions={state.chosenOptions}
           onRestart={() => startScenario(scenario)}
           onExit={reset}
         />
@@ -353,7 +382,48 @@ export function CodSimulator() {
   );
 }
 
-function ChatBubble({ message }: { message: ChatMessage }) {
+function LangToggle({
+  lang,
+  onChange,
+}: {
+  lang: ScenarioLanguage;
+  onChange: (l: ScenarioLanguage) => void;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        gap: 2,
+        padding: 2,
+        borderRadius: 8,
+        border: "1px solid rgba(255,255,255,0.12)",
+        background: "rgba(255,255,255,0.03)",
+      }}
+    >
+      {(["en", "hinglish"] as const).map((l) => (
+        <button
+          key={l}
+          onClick={() => onChange(l)}
+          style={{
+            padding: "4px 10px",
+            borderRadius: 6,
+            border: "none",
+            cursor: "pointer",
+            fontSize: 11,
+            fontWeight: 600,
+            fontFamily: "var(--font-instrument-sans), system-ui, sans-serif",
+            background: lang === l ? "rgba(255,255,255,0.12)" : "transparent",
+            color: lang === l ? "#fff" : "var(--muted)",
+          }}
+        >
+          {l === "en" ? "English" : "Hinglish"}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function ChatBubble({ message, lang }: { message: ChatMessage; lang: ScenarioLanguage }) {
   if (message.role === "system") {
     return (
       <div
@@ -372,7 +442,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
           size={12}
           style={{ display: "inline", marginRight: 6, verticalAlign: "middle", color: "var(--text-faint)" }}
         />
-        {message.text}
+        {message.text[lang]}
       </div>
     );
   }
@@ -436,7 +506,7 @@ function ChatBubble({ message }: { message: ChatMessage }) {
             </span>
           )}
         </span>
-        {message.text}
+        {message.text[lang]}
       </div>
     </div>
   );
@@ -447,7 +517,6 @@ function OutcomeCard({
   score,
   maxScore,
   shipped,
-  chosenOptions,
   onRestart,
   onExit,
 }: {
@@ -455,7 +524,6 @@ function OutcomeCard({
   score: number;
   maxScore: number;
   shipped: boolean;
-  chosenOptions: ReplyOption[];
   onRestart: () => void;
   onExit: () => void;
 }) {
@@ -662,14 +730,49 @@ function OutcomeCard({
 function ScenarioSelector({
   onSelect,
   completedIds,
+  lang,
+  onLangChange,
 }: {
   onSelect: (s: Scenario) => void;
   completedIds: Set<string>;
+  lang: ScenarioLanguage;
+  onLangChange: (l: ScenarioLanguage) => void;
 }) {
   const totalCompleted = COD_SCENARIOS.filter((s) => completedIds.has(s.id)).length;
 
   return (
     <div className="space-y-5">
+      {/* Why this exists + language */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: 16,
+          padding: "16px 18px",
+          borderRadius: 14,
+          background: "#060606",
+          border: "1px solid rgba(255,255,255,0.1)",
+        }}
+      >
+        <div>
+          <p
+            className="font-mono"
+            style={{ fontSize: 10, letterSpacing: "0.12em", color: "var(--text-faint)", marginBottom: 6 }}
+          >
+            WHY THIS EXISTS
+          </p>
+          <p style={{ fontSize: 12.5, lineHeight: 1.6, color: "var(--muted)", maxWidth: "42rem" }}>
+            COD customers can refuse at the door - and you pay shipping both ways.
+            A 30-second confirmation call before dispatch is how sellers catch bad
+            addresses, cash problems and buyer&apos;s remorse early. Each scenario is one
+            real refusal pattern. Best replies score 2 points, weak ones 0 - reach a
+            scenario&apos;s ship threshold and the order delivers.
+          </p>
+        </div>
+        <LangToggle lang={lang} onChange={onLangChange} />
+      </div>
+
       {/* Progress bar */}
       {totalCompleted > 0 && (
         <div
@@ -782,7 +885,7 @@ function ScenarioSelector({
                   lineHeight: 1.3,
                 }}
               >
-                {scenario.title}
+                {scenario.title[lang]}
               </h3>
               <p
                 className="font-mono"
