@@ -5,7 +5,6 @@ import { formatINR } from "@/lib/format";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   TrendingUp,
-  TrendingDown,
   Package,
   ShoppingCart,
   Truck,
@@ -16,7 +15,11 @@ import {
   Info,
   BarChart3,
 } from "lucide-react";
-import { calculateProfit, defaultRtoForProductType } from "@/lib/profit-math";
+import {
+  calculateBlendedProfitResult,
+  defaultRtoForProductType,
+  DEFAULT_PREPAID_RETURN_PERCENT,
+} from "@/lib/profit-math";
 import type { ProfitResult } from "@/lib/profit-math";
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 import {
@@ -99,23 +102,25 @@ export function MarginCalculator({
     setRtoRate(defaultRtoForProductType(cat));
   }
 
-  /* compute results for all 4 marketplaces */
+  /* compute results for all 4 marketplaces, blended across the COD/prepaid mix */
   const allResults = useMemo(() => {
     return CHANNELS.map((ch) => {
       const shipping =
         shippingOverride ?? ch.typicalShipping[weightBracket];
-      const result = calculateProfit({
+      const result = calculateBlendedProfitResult({
         sellingPrice,
         productCost,
         shippingCost: shipping,
         adCostPerOrder,
-        rtoRatePercent: rtoRate,
+        codPercent,
+        codRtoPercent: rtoRate,
+        prepaidReturnPercent: DEFAULT_PREPAID_RETURN_PERCENT,
         channel: ch.channel,
         category: productCategory,
       });
       return { ch, result, shipping };
     });
-  }, [sellingPrice, productCost, weightBracket, shippingOverride, adCostPerOrder, rtoRate, productCategory]);
+  }, [sellingPrice, productCost, weightBracket, shippingOverride, adCostPerOrder, rtoRate, codPercent, productCategory]);
 
   const bestIdx = useMemo(() => {
     let best = 0;
@@ -211,7 +216,8 @@ export function MarginCalculator({
               prefix="₹"
               value={shippingOverride ?? ""}
               placeholder={`Auto: ₹${activeResult.shipping}`}
-              onChange={(v) => setShippingOverride(v === 0 ? null : v || null)}
+              onChange={(v, raw) => setShippingOverride(raw === "" ? null : Math.max(0, v))}
+              hint="Clear the field to use each marketplace's typical rate. ₹0 is respected (e.g. free-shipping programs)."
             />
             {/* Ad cost */}
             <InputField
@@ -220,6 +226,7 @@ export function MarginCalculator({
               prefix="₹"
               value={adCostPerOrder}
               onChange={setAdCostPerOrder}
+              hint="Organic only? Keep 0. Running ads: monthly ad spend ÷ orders that came from ads."
             />
             {/* Product category */}
             <div>
@@ -239,13 +246,12 @@ export function MarginCalculator({
             {/* RTO rate slider */}
             <SliderField
               icon={<RotateCcw className="h-4 w-4 text-[var(--danger)]" />}
-              label="RTO Rate"
+              label="RTO Rate (COD orders)"
               value={rtoRate}
               min={0}
               max={50}
               suffix="%"
               onChange={setRtoRate}
-              trackColor="bg-[var(--danger)]"
             />
             {/* COD percent slider */}
             <SliderField
@@ -256,7 +262,7 @@ export function MarginCalculator({
               max={100}
               suffix="%"
               onChange={setCodPercent}
-              trackColor="bg-white"
+              hint={`Blends the fee stacks and risk: COD share carries your RTO rate, prepaid share assumes ~${DEFAULT_PREPAID_RETURN_PERCENT}% returns.`}
             />
           </div>
 
@@ -608,13 +614,16 @@ function InputField({
   value,
   placeholder,
   onChange,
+  hint,
 }: {
   icon: React.ReactNode;
   label: string;
   prefix?: string;
   value: number | string;
   placeholder?: string;
-  onChange: (v: number) => void;
+  /** raw is the untouched input string - lets callers tell a cleared field from a typed 0. */
+  onChange: (v: number, raw: string) => void;
+  hint?: string;
 }) {
   return (
     <div>
@@ -634,12 +643,13 @@ function InputField({
           type="number"
           value={value}
           placeholder={placeholder}
-          onChange={(e) => onChange(Number(e.target.value))}
+          onChange={(e) => onChange(Number(e.target.value), e.target.value)}
           className={`w-full min-h-[40px] rounded-md border border-white/10 bg-white/[0.03] ${
             prefix ? "pl-7" : "px-3"
           } pr-3 py-2 text-sm text-[var(--body-text)] transition-colors focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25`}
         />
       </div>
+      {hint && <p className="mt-1 text-[11px] leading-4 text-[var(--text-faint)]">{hint}</p>}
     </div>
   );
 }
@@ -652,7 +662,7 @@ function SliderField({
   max,
   suffix,
   onChange,
-  trackColor,
+  hint,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -661,7 +671,7 @@ function SliderField({
   max: number;
   suffix: string;
   onChange: (v: number) => void;
-  trackColor: string;
+  hint?: string;
 }) {
   return (
     <div>
@@ -685,6 +695,7 @@ function SliderField({
         onChange={(e) => onChange(Number(e.target.value))}
         className="mt-1.5 w-full accent-white"
       />
+      {hint && <p className="mt-1 text-[11px] leading-4 text-[var(--text-faint)]">{hint}</p>}
     </div>
   );
 }

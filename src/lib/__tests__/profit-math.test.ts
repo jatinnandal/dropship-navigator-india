@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getFeesForProduct } from "@/lib/marketplace-fees";
 import {
+  calculateBlendedProfitResult,
   calculateBlendedUnitEconomics,
   calculateProfit,
   DEFAULT_RTO_DAMAGE_RATE,
@@ -101,5 +102,60 @@ describe("blended economics", () => {
       isCod: false,
     });
     expect(blended.netProfit).toBeCloseTo(prepaid.netProfit, 6);
+  });
+});
+
+describe("calculateBlendedProfitResult (margin calculator COD slider)", () => {
+  const inputs = {
+    sellingPrice: 999,
+    productCost: 300,
+    shippingCost: 70,
+    adCostPerOrder: 50,
+    codRtoPercent: 35,
+    prepaidReturnPercent: 2,
+    channel: "flipkart" as const,
+    category: "fashion" as const,
+  };
+
+  it("100% COD equals the COD-only ProfitResult", () => {
+    const blended = calculateBlendedProfitResult({ ...inputs, codPercent: 100 });
+    const cod = calculateProfit({
+      sellingPrice: 999, productCost: 300, shippingCost: 70, adCostPerOrder: 50,
+      rtoRatePercent: 35, channel: "flipkart", category: "fashion", isCod: true,
+    });
+    expect(blended.netProfit).toBeCloseTo(cod.netProfit, 6);
+    expect(blended.codCollectionFee).toBeCloseTo(cod.codCollectionFee, 6);
+    expect(blended.verdict).toBe(cod.verdict);
+  });
+
+  it("0% COD equals the prepaid-only ProfitResult (no COD collection fee)", () => {
+    const blended = calculateBlendedProfitResult({ ...inputs, codPercent: 0 });
+    const pre = calculateProfit({
+      sellingPrice: 999, productCost: 300, shippingCost: 70, adCostPerOrder: 50,
+      rtoRatePercent: 2, channel: "flipkart", category: "fashion", isCod: false,
+    });
+    expect(blended.netProfit).toBeCloseTo(pre.netProfit, 6);
+    expect(blended.codCollectionFee).toBeCloseTo(pre.codCollectionFee, 6);
+  });
+
+  it("60% COD is the exact weighted average of the two modes", () => {
+    const blended = calculateBlendedProfitResult({ ...inputs, codPercent: 60 });
+    const cod = calculateProfit({
+      sellingPrice: 999, productCost: 300, shippingCost: 70, adCostPerOrder: 50,
+      rtoRatePercent: 35, channel: "flipkart", category: "fashion", isCod: true,
+    });
+    const pre = calculateProfit({
+      sellingPrice: 999, productCost: 300, shippingCost: 70, adCostPerOrder: 50,
+      rtoRatePercent: 2, channel: "flipkart", category: "fashion", isCod: false,
+    });
+    expect(blended.netProfit).toBeCloseTo(0.6 * cod.netProfit + 0.4 * pre.netProfit, 6);
+    expect(blended.rtoLoss).toBeCloseTo(0.6 * cod.rtoLoss + 0.4 * pre.rtoLoss, 6);
+    expect(blended.fees.totalFees).toBeCloseTo(0.6 * cod.fees.totalFees + 0.4 * pre.fees.totalFees, 6);
+  });
+
+  it("moving the mix toward prepaid improves margin (COD carries RTO risk)", () => {
+    const mostlyCod = calculateBlendedProfitResult({ ...inputs, codPercent: 90 });
+    const mostlyPrepaid = calculateBlendedProfitResult({ ...inputs, codPercent: 10 });
+    expect(mostlyPrepaid.netMarginPercent).toBeGreaterThan(mostlyCod.netMarginPercent);
   });
 });

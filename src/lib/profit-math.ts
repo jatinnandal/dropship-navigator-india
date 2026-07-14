@@ -148,6 +148,83 @@ export type BlendedEconomicsInputs = {
   category?: ProductType;
 };
 
+/** Journey guidance: prepaid-only orders see ~2% post-delivery returns. */
+export const DEFAULT_PREPAID_RETURN_PERCENT = 2;
+
+/**
+ * Full ProfitResult blended across the COD/prepaid order mix. Every rupee
+ * field is the codShare-weighted average of the COD and prepaid results -
+ * all are linear per-order expectations, so the blend is exact. Margin,
+ * break-even ROAS, markup and verdict are recomputed from the blended
+ * figures rather than averaged. Feeds the margin calculator so its COD%
+ * slider drives real numbers (fee stacks differ per payment mode).
+ */
+export function calculateBlendedProfitResult(
+  inputs: BlendedEconomicsInputs & { damageRate?: number; rates?: RateCard },
+): ProfitResult {
+  const codShare = Math.min(100, Math.max(0, inputs.codPercent)) / 100;
+  const base = {
+    sellingPrice: inputs.sellingPrice,
+    productCost: inputs.productCost,
+    shippingCost: inputs.shippingCost,
+    adCostPerOrder: inputs.adCostPerOrder,
+    channel: inputs.channel,
+    category: inputs.category,
+    damageRate: inputs.damageRate,
+    rates: inputs.rates,
+  };
+  const cod = calculateProfit({ ...base, rtoRatePercent: inputs.codRtoPercent, isCod: true });
+  const pre = calculateProfit({ ...base, rtoRatePercent: inputs.prepaidReturnPercent, isCod: false });
+  const mix = (a: number, b: number) => codShare * a + (1 - codShare) * b;
+
+  const revenue = cod.revenue;
+  const netProfit = mix(cod.netProfit, pre.netProfit);
+  const netMarginPercent = revenue > 0 ? (netProfit / revenue) * 100 : 0;
+  const adCost = mix(cod.adCost, pre.adCost);
+  const contributionBeforeAds = netProfit + adCost;
+  const breakEvenRoas = contributionBeforeAds > 0 ? revenue / contributionBeforeAds : 99;
+
+  let verdict: ProfitResult["verdict"] = "loss";
+  if (netMarginPercent >= 25) verdict = "excellent";
+  else if (netMarginPercent >= 15) verdict = "healthy";
+  else if (netMarginPercent >= 5) verdict = "tight";
+
+  return {
+    revenue,
+    marketplaceCommission: mix(cod.marketplaceCommission, pre.marketplaceCommission),
+    closingFee: mix(cod.closingFee, pre.closingFee),
+    fixedFee: mix(cod.fixedFee, pre.fixedFee),
+    codCollectionFee: mix(cod.codCollectionFee, pre.codCollectionFee),
+    platformFee: mix(cod.platformFee, pre.platformFee),
+    paymentFee: mix(cod.paymentFee, pre.paymentFee),
+    gstOnFees: mix(cod.gstOnFees, pre.gstOnFees),
+    tcs: mix(cod.tcs, pre.tcs),
+    shipping: cod.shipping,
+    productCost: cod.productCost,
+    adCost,
+    deliveredProfit: mix(cod.deliveredProfit, pre.deliveredProfit),
+    rtoLoss: mix(cod.rtoLoss, pre.rtoLoss),
+    netProfit,
+    netMarginPercent,
+    breakEvenRoas: Number.isFinite(breakEvenRoas) ? breakEvenRoas : 99,
+    markupMultiple: cod.markupMultiple,
+    verdict,
+    fees: {
+      ...cod.fees,
+      referralFee: mix(cod.fees.referralFee, pre.fees.referralFee),
+      closingFee: mix(cod.fees.closingFee, pre.fees.closingFee),
+      fixedFee: mix(cod.fees.fixedFee, pre.fees.fixedFee),
+      codCollectionFee: mix(cod.fees.codCollectionFee, pre.fees.codCollectionFee),
+      platformFee: mix(cod.fees.platformFee, pre.fees.platformFee),
+      paymentGatewayFee: mix(cod.fees.paymentGatewayFee, pre.fees.paymentGatewayFee),
+      gstOnFees: mix(cod.fees.gstOnFees, pre.fees.gstOnFees),
+      tcs: mix(cod.fees.tcs, pre.fees.tcs),
+      totalFees: mix(cod.fees.totalFees, pre.fees.totalFees),
+      nonRefundableOnRto: mix(cod.fees.nonRefundableOnRto, pre.fees.nonRefundableOnRto),
+    },
+  };
+}
+
 export type BlendedEconomicsResult = {
   blendedRtoPercent: number;
   codShare: number;
