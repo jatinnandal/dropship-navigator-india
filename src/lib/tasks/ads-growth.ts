@@ -3,6 +3,77 @@ import type { Workspace } from "@/lib/workspace";
 import { channelLabel } from "@/lib/tasks/shared";
 import type { Task, TaskStep } from "@/lib/tasks/types";
 
+function sponsoredAdsTitle(channel: OnboardingProfile["primaryChannel"]): string {
+  switch (channel) {
+    case "amazon":
+      return "Run Amazon Sponsored Products on your hero listing";
+    case "flipkart":
+      return "Run Flipkart PLA (Product Listing Ads) on your hero listing";
+    default:
+      return "Run Meesho Ads from the Supplier Panel";
+  }
+}
+
+function sponsoredAdsHow(
+  channel: OnboardingProfile["primaryChannel"],
+  budgetBand: OnboardingProfile["budgetBand"],
+): string[] {
+  const dailyBudget = budgetBand === "under_20k" ? "₹200-500" : "₹500-1000";
+  switch (channel) {
+    case "amazon":
+      return [
+        "In Seller Central, open the menu → Advertising → Campaign Manager → Create campaign → Sponsored Products. Advertise your hero listing only - one product, one campaign.",
+        "Pick Automatic targeting for campaign 1 - Amazon mines buyer search terms for you. You graduate to manual keywords once the search term report shows what actually converts.",
+        `Set daily budget to ${dailyBudget} and stay near Amazon's suggested bid - resist the urge to out-bid everyone on day 1.`,
+        "Day 3 read (Campaign Manager, date range set to last 3 days): impressions and clicks. Near-zero impressions = bid too low or listing not retail-ready - nudge the bid, don't touch budget. Clicks but no orders = the listing is leaking - fix images, price, or reviews before spending more.",
+        "Day 7 read: ACOS per campaign. ACOS above your net margin % = every ad sale loses money - pause it. ACOS below your margin = profitable - raise budget 20-30% per week, never double overnight.",
+        "Weekly: open Reports → Advertising reports → Search term report. Move converting search terms into a manual campaign; add irrelevant ones as negative keywords so they stop eating your clicks.",
+      ];
+    case "flipkart":
+      return [
+        "In Seller Hub (seller.flipkart.com), open Advertising and create a Product Listing Ads (PLA) campaign. Advertise your hero listing only - one product, one campaign.",
+        "PLA is pay-per-click: placement depends on your bid AND listing quality, so a strong listing lowers your effective cost per sale.",
+        `Set daily budget to ${dailyBudget} and start near the suggested bid.`,
+        "Day 3 read (Advertising dashboard, last 3 days): views and clicks. Near-zero views = uncompetitive bid or weak listing quality - fix the listing first, the bid second. Clicks but no orders = the listing is leaking - fix images, price, or offers before spending more.",
+        "Day 7 read: spend vs ad revenue on the campaign dashboard. ROAS = ad revenue ÷ spend - compare it against the break-even ROAS you calculated above. Below break-even = pause; above = raise budget 20-30% per week.",
+      ];
+    default:
+      return [
+        "In the Supplier Panel (supplier.meesho.com), open the Advertisements section and create a campaign on your live catalog. Advertise your hero catalog only - one catalog, one campaign. If you don't see it there, check the Promotions section of the panel.",
+        "Meesho Ads is pay-per-click: you set a daily budget and pay when a buyer taps your promoted catalog.",
+        `Set daily budget to ${dailyBudget}. Meesho buyers are price-first - your first image and price do the converting, the ad only buys the eyeballs.`,
+        "Day 3 read (Advertisements dashboard, last 3 days): views and clicks. Views but few clicks = your first image or price is losing the tap - fix the catalog, not the bid. Clicks but no orders = page-level mismatch - photos and price must deliver what the ad promised.",
+        "Day 7 read: ad spend vs orders from ads in the dashboard. ROAS = ad revenue ÷ spend - compare it against the break-even ROAS you calculated above. Below break-even = pause and fix the catalog; above = raise budget 20-30% per week.",
+      ];
+  }
+}
+
+function listingLiveCheck(channel: OnboardingProfile["primaryChannel"]): string {
+  switch (channel) {
+    case "amazon":
+      return "Is your listing actually live? Seller Central → Inventory → Manage All Inventory - status must say Active, not Inactive or Suppressed. An ad pointing at a suppressed listing spends money on a dead page.";
+    case "flipkart":
+      return "Is your listing actually live? Seller Hub → Listings - it must show as Active with stock, not Inactive or Blocked. Ads on a blocked listing burn budget for nothing.";
+    case "shopify":
+      return "Is your product page actually live? Open your store as a customer (incognito window, not admin preview) - product visible, price right, checkout works end to end.";
+    default:
+      return "Is your catalog actually live? It must be past QC in the Supplier Panel (supplier.meesho.com) and visible to buyers - search your own product in the Meesho buyer app to confirm.";
+  }
+}
+
+function weeklyAdDataSource(channel: OnboardingProfile["primaryChannel"]): string {
+  switch (channel) {
+    case "amazon":
+      return "Seller Central → Advertising → Campaign Manager, date range set to last 7 days";
+    case "flipkart":
+      return "Seller Hub → Advertising dashboard, date range set to last 7 days";
+    case "shopify":
+      return "Meta Ads Manager → Campaigns tab, date range set to last 7 days";
+    default:
+      return "the Advertisements section of the Meesho Supplier Panel, last 7 days view";
+  }
+}
+
 export function buildAdsTask(
   profile: OnboardingProfile,
   answers: Record<string, string>,
@@ -14,9 +85,9 @@ export function buildAdsTask(
       title: "Are you ready for ads? (honest check)",
       why: "Running ads before product-market fit is the #2 money burner after RTO. Most beginners lose their entire ad budget in week 1.",
       how: [
-        "Do you have at least 1 live listing with good images and a complete description?",
-        "Do you know your net margin per order (after ALL costs)?",
-        "Have you received at least 5-10 organic orders to validate demand?",
+        listingLiveCheck(profile.primaryChannel),
+        "Do you know your net margin per order after ALL costs (fees, shipping, RTO)? If not, run the margin calculator in the product selection module first - the break-even ROAS step below reuses that number.",
+        "Have you received at least 5-10 organic orders? Check your Orders tab - if buyers never convert for free, paying for clicks only speeds up the loss.",
       ],
       trap: "If you answered no to any of these, fix the foundation first. Ads amplify what's already working - they don't create demand from nothing.",
       question: {
@@ -115,16 +186,9 @@ export function buildAdsTask(
   if (isMarketplace) {
     steps.push({
       id: "marketplace-ads",
-      title: `Run ${channelLabel(profile.primaryChannel)} Sponsored Ads`,
-      why: "Marketplace ads target buyers already searching for your product - higher intent than social ads.",
-      how: [
-        "Start with Sponsored Products on your best-performing listing.",
-        `Daily budget: ${profile.budgetBand === "under_20k" ? "₹200-500" : "₹500-1000"} per campaign.`,
-        "Run for 7 days minimum before judging performance.",
-        "Track ACOS (Ad Cost of Sale) - must be below your net margin % to profit.",
-        "Pause campaigns where ACOS > net margin after 7 days.",
-        "Scale winners by 20-30% budget increase per week, not doubling overnight.",
-      ],
+      title: sponsoredAdsTitle(profile.primaryChannel),
+      why: `${channelLabel(profile.primaryChannel)} ads target buyers already searching inside the app - higher intent than social ads, and no pixel or creative production needed to start.`,
+      how: sponsoredAdsHow(profile.primaryChannel, profile.budgetBand),
       trap:
         profile.budgetBand === "under_20k"
           ? "₹500/day on a 12% margin product means you need 8x ROAS to break even. Most beginners hit 2x and call it a win while bleeding cash."
@@ -155,11 +219,12 @@ export function buildAdsTask(
       title: "Set up Meta Business Manager correctly",
       why: "Running ads from a personal Facebook profile is the #1 cause of ad account bans in India. Business Manager is mandatory.",
       how: [
-        "Create account at business.facebook.com (NOT from personal profile).",
-        "Verify business with GST certificate and PAN.",
-        "Add a payment method + backup card.",
-        "Install Meta Pixel + Conversions API on your Shopify store.",
-        "Enable two-factor authentication on all accounts.",
+        "Go to business.facebook.com → Create account. You sign in with your personal Facebook login, but the Business Manager is a separate business asset - ads never show your profile.",
+        "Create the ad account inside it: Business Settings (gear icon) → Accounts → Ad accounts → Add → Create a new ad account. Set currency to INR and time zone to Kolkata - both are permanent for that ad account.",
+        "Verify the business: Business Settings → Security Centre → Start verification, using your GST certificate and PAN. Verified accounts survive the review flags that kill unverified ones.",
+        "Add a payment method plus a backup card under Billing & payments - one failed charge can pause every campaign.",
+        "Install the Pixel + Conversions API without code: in Shopify admin → Settings → Apps and sales channels, add the Facebook & Instagram channel and connect it to this Business Manager - it sets up both.",
+        "Turn on two-factor authentication: Business Settings → Security Centre → set two-factor to Everyone. Hijacked ad accounts get drained in hours.",
       ],
       trap: "Creating a new account after a ban triggers permanent restriction. Always appeal the original account first.",
     });
@@ -172,11 +237,11 @@ export function buildAdsTask(
           ? "With under ₹20K to work with, a ₹500/day ad burn empties your runway in 40 days - before COD cash cycles back. Start at ₹200-300/day and treat week 1 as tuition, not scale."
           : "New ad accounts spending ₹50,000/day on day 1 get flagged as suspicious. Gradual scaling builds trust.",
       how: [
-        "Week 1: ₹300-500/day on one product, one ad set.",
-        "Week 2: if ROAS > break-even, increase to ₹700-1000/day.",
-        "Never increase budget more than 30% per day.",
-        "Test 3-5 creative variations (different images/videos/hooks).",
-        "Kill underperformers after 7 days; scale winners gradually.",
+        "Week 1: ₹300-500/day on one product, one campaign, one ad set. In Ads Manager, choose the Sales objective so Meta optimizes for purchases, not cheap clicks.",
+        "Test 3-5 creative variations inside that one ad set (different images/videos/hooks) - Meta shifts spend to the winner automatically.",
+        "Day 3 read (Ads Manager → Campaigns tab, date set to last 3 days): ads delivering but almost no link clicks = creative problem, swap the image or hook. Clicks but no add-to-carts or purchases = product page problem - fix price, photos, or trust signals before touching budget.",
+        "Day 7 read: add the Purchase ROAS column (Columns → Customize columns) and compare each ad set against the break-even ROAS you calculated above. Below break-even = kill it. At or above = scale toward ₹700-1000/day.",
+        "Never increase budget more than 30% per day - sharp jumps reset Meta's learning phase.",
       ],
       trap: "Chargebacks against Meta payments cause permanent bans in 80%+ of cases. Always resolve billing through Help Center, never your bank.",
       tools: [
@@ -248,12 +313,13 @@ export function buildAdsTask(
     title: "Set up your weekly ad review ritual",
     why: "Ads are not set-and-forget. Weekly review prevents slow budget bleed on underperformers.",
     how: [
-      "Every Monday: export last 7 days ad data.",
-      "For each campaign: note spend, orders, revenue, ROAS/ACOS.",
-      "Pause anything below break-even ROAS.",
-      "Increase budget 20% on winners.",
+      `Every Monday: open ${weeklyAdDataSource(profile.primaryChannel)}. For each campaign, note spend, orders, and revenue, then compute ROAS = revenue ÷ spend${profile.primaryChannel === "amazon" ? " (or read ACOS directly)" : ""}.`,
+      workspace.breakEvenRoas
+        ? `Pause anything below your break-even ROAS - you saved it as ${workspace.breakEvenRoas.toFixed(1)}x in the calculator above. That number is your floor, not your target.`
+        : "Pause anything below the break-even ROAS you calculated above - that number is your floor, not your target.",
+      "Increase budget 20% on winners - one increase per week, not per day.",
       "Test one new creative per week on your best performer.",
-      "Document learnings - what worked, what didn't, why.",
+      "Document learnings - what worked, what didn't, why. Next Monday's decisions get faster every week you write this down.",
     ],
     mentorNote:
       profile.budgetBand === "under_20k"

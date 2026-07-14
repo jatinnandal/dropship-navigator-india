@@ -7,6 +7,82 @@ import {
 } from "@/lib/tasks/shared";
 import type { Task, TaskStep } from "@/lib/tasks/types";
 
+function panelLabel(channel: OnboardingProfile["primaryChannel"]): string {
+  switch (channel) {
+    case "amazon":
+      return "Amazon Seller Central";
+    case "flipkart":
+      return "Flipkart Seller Hub";
+    case "shopify":
+      return "your Shopify admin";
+    default:
+      return "the Meesho Supplier Panel";
+  }
+}
+
+/** Where the seller's bank account gets entered on their chosen channel - so the
+ * proof they prepare now is scanned once and reused there. */
+function bankPanelPath(channel: OnboardingProfile["primaryChannel"]): string {
+  switch (channel) {
+    case "amazon":
+      return "This exact account is what you'll enter later in Seller Central -> Settings (gear icon) -> Account Info -> Payment Information -> Deposit Methods. Amazon pays only into the account entered there.";
+    case "flipkart":
+      return "This exact account is what you'll enter later in Flipkart Seller Hub (seller.flipkart.com) -> your profile icon -> Manage Profile -> Bank Details. Payouts go only to the account verified there.";
+    case "shopify":
+      return "Shopify itself never pays you - your payment gateway (Razorpay/Cashfree) does. This exact account goes into the gateway's dashboard during its KYC, and the holder name must match your legal name there too.";
+    default:
+      return "This exact account is what you'll enter later in the Meesho Supplier Panel (supplier.meesho.com) -> Settings -> Bank Details. Meesho settles payouts only to the account verified there.";
+  }
+}
+
+/** Where the pickup/dispatch address lives on the seller's chosen channel. */
+function pickupAddressPath(channel: OnboardingProfile["primaryChannel"]): string {
+  switch (channel) {
+    case "amazon":
+      return "Your ship-from address will live in Seller Central -> Settings (gear icon) -> Shipping Settings. Set it in the GSTIN's state when you onboard - Amazon checks the two against each other.";
+    case "flipkart":
+      return "Your pickup address will live in Flipkart Seller Hub under your profile icon -> Manage Profile. Set it in the GSTIN's state when you onboard - Flipkart rejects a state mismatch automatically.";
+    case "shopify":
+      return "Your fulfilment address will live in your Shopify admin under Settings -> Locations. Your courier picks up there, and for clean GST invoicing it should sit in your GSTIN's state.";
+    default:
+      return "Your pickup address will live in the Meesho Supplier Panel (supplier.meesho.com) under Settings. Set it in the GSTIN's state when you onboard - Meesho checks it against your GSTIN's state code.";
+  }
+}
+
+/** Channel-exact GST/tax setup inside the seller panel - never "open your seller panel". */
+function gstTaxPanelSteps(channel: OnboardingProfile["primaryChannel"]): string[] {
+  switch (channel) {
+    case "amazon":
+      return [
+        "Log in at sellercentral.amazon.in, click the Settings gear (top right) -> Account Info, and open the tax information section. Enter your GSTIN with no spaces and save.",
+        "Still under Settings, open Tax Settings and set the default Product Tax Code (PTC) matching your main category's GST rate - listings without their own code fall back to this default, so get it right.",
+        "Enter the correct HSN code on every listing as you create it. When Amazon generates tax invoices on your behalf (FBA and Easy Ship do; pure self-ship sellers print their own), the HSN drives the tax - wrong code means wrong tax on every order.",
+        "Proceed when Account Info shows your GSTIN accepted. If a freshly issued GSTIN keeps failing, wait 24-72h for government data to sync and re-check it on gst.gov.in (Search Taxpayer) before contacting Seller Support.",
+      ];
+    case "flipkart":
+      return [
+        "Log in at seller.flipkart.com, click your profile icon (top right) -> Manage Profile, and open Business Details. Enter your GSTIN with no spaces and save.",
+        "Flipkart validates the GSTIN against government records automatically - the field shows as verified once it matches.",
+        "Enter the correct HSN code on each listing while creating it - Flipkart applies the GST rate from the HSN you pick.",
+        "Proceed when Business Details accepts the GSTIN AND your pickup address state matches the GSTIN state code. A fresh GSTIN can take 24-72h to sync - wait and retry, don't re-register.",
+      ];
+    case "shopify":
+      return [
+        "In your Shopify admin (yourstore.myshopify.com/admin) open Settings -> Taxes and duties -> India and add your GST registration.",
+        "Shopify does not map HSN codes or file GST for you - keep an HSN-to-GST-rate sheet for your products and apply it on every invoice.",
+        "If you use an invoicing app from the Shopify App Store, enter your GSTIN and HSN codes there too - the invoice, not the storefront, is the legal document.",
+        "Proceed when a test order generates an invoice showing your GSTIN, the HSN, and the correct GST rate. If it doesn't, fix the tax settings before taking real orders.",
+      ];
+    default:
+      return [
+        "Log in at supplier.meesho.com, open Settings from the menu, and find the business/GST details section. Enter your GSTIN with no spaces and save.",
+        "Meesho checks the GSTIN against government records - it must show Active on gst.gov.in (Search Taxpayer -> Search by GSTIN/UIN) or the panel rejects it.",
+        "Enter the correct HSN code on each catalog you upload - Meesho uses it for the GST rate on your order invoices.",
+        "Proceed when the panel accepts the GSTIN without error. A fresh GSTIN can take 24-72h to sync - wait and retry, never create a second account.",
+      ];
+  }
+}
+
 function addressProofStep(premises: string, profile: OnboardingProfile): TaskStep {
   const base = {
     id: "gather-address",
@@ -24,10 +100,11 @@ function addressProofStep(premises: string, profile: OnboardingProfile): TaskSte
         "A recent utility bill (electricity/water) for the address",
       ],
       how: [
-        "Collect the signed rent agreement.",
-        "Get a signed NOC/consent letter from the owner allowing business use.",
-        "Attach the owner's ID and a recent utility bill that shows the same address.",
-        "Make sure the address text is identical across all of them.",
+        "Collect the signed rent agreement - every page, not just the first.",
+        "Get the NOC from the owner: a short signed letter naming the owner, you/your business, the full address, and a line permitting business use and GST registration there, with signature and date.",
+        "Attach the owner's ID and a recent utility bill for the same address - if your latest paper bill is old, download a fresh bill PDF from the electricity provider's website or app.",
+        "Read the address on the agreement, the NOC, and the bill side by side - all three must be word-for-word what you will type under Principal Place of Business in Part B of the GST form, down to Rd vs Road.",
+        "Scan each as a clear colour PDF. The Part B upload screen states its own file-size limit - compress to fit, never crop corners off.",
       ],
       trap: `Note: GST accepts a rent agreement, but later Amazon often wants a utility bill under 60 days as primary proof. Keep both ready for ${stateLabel(profile.operatingState)}.`,
       mentorNote:
@@ -45,9 +122,10 @@ function addressProofStep(premises: string, profile: OnboardingProfile): TaskSte
         "Recent utility bill in the owner's name",
       ],
       how: [
-        "Get a signed consent letter from the owner.",
-        "Attach the owner's ID and a recent utility bill for the address.",
-        "Keep the address spelling identical across documents and the form.",
+        "Get a signed consent letter from the owner: their name, your name, the full address, and a line permitting business use and GST registration there, signed and dated.",
+        "Attach the owner's ID proof and a recent utility bill in the owner's name - download a fresh bill PDF from the provider's website or app if the paper one is old.",
+        "Check the address on the letter, the ID, and the bill against what you will type under Principal Place of Business in Part B - identical spelling, including abbreviations like Rd vs Road.",
+        "Scan as clear colour PDFs. The Part B upload screen states its file-size limit - compress to fit rather than cropping.",
       ],
       trap: "An electricity bill not in your name without a consent letter is a guaranteed clarification notice.",
     };
@@ -63,9 +141,10 @@ function addressProofStep(premises: string, profile: OnboardingProfile): TaskSte
         "Provider's utility bill or ownership proof",
       ],
       how: [
-        "Get the workspace agreement plus a signed NOC from the provider.",
-        "Attach the provider's ownership/utility proof for the address.",
-        "Confirm the provider allows GST registration at that address.",
+        "Ask the provider in writing BEFORE paying: 'Do you support GST registration at this address, and do you issue an NOC and address proof for it?' Providers that do this routinely include the documents in a GST/compliance plan.",
+        "Collect the workspace agreement plus a signed NOC from the provider naming you/your business and the full address including unit or desk number.",
+        "Attach the provider's ownership proof or utility bill for the address - ask their support desk if it's not in your welcome pack.",
+        "Match the address text across agreement, NOC, and proof with what you'll type under Principal Place of Business - providers often write unit/floor numbers differently on different documents.",
       ],
       trap: "Some virtual-office addresses are flagged. Confirm the provider supports GST registration before relying on it.",
     };
@@ -79,9 +158,9 @@ function addressProofStep(premises: string, profile: OnboardingProfile): TaskSte
       "Document should clearly show the full address",
     ],
     how: [
-      "Pick one recent ownership proof (electricity bill/property tax/khata).",
-      "Confirm the address text matches what you will type in the form.",
-      "Scan it clearly in full colour.",
+      "Pick one recent ownership proof: latest electricity bill, property tax receipt, or municipal khata. A fresh bill PDF downloaded from your electricity provider's website or app beats a photographed paper bill - it's dated, legible, and uncropped.",
+      "Confirm the address text matches character for character what you will type under Principal Place of Business in Part B of the GST form.",
+      "Scan or export in full colour with all four corners visible. The Part B upload screen states its file-size limit - compress to fit if needed.",
     ],
     trap: "An outdated or partially cropped bill is treated as invalid. Use a recent, full, legible copy.",
   };
@@ -119,8 +198,9 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       title: `Confirm your GSTIN state code matches ${stateLabel(profile.operatingState)}`,
       why: "Amazon/Flipkart/Meesho require your pickup/dispatch address to be in the same state as your GSTIN. A mismatch here is a very common silent rejection.",
       how: [
-        `You told us you operate from ${stateLabel(profile.operatingState)}, so the first 2 digits of your GSTIN should be that state's code - confirm they match.`,
-        `Make sure the pickup/dispatch address on the marketplace is also in ${stateLabel(profile.operatingState)}.`,
+        `You told us you operate from ${stateLabel(profile.operatingState)}, so the first 2 digits of your GSTIN should be that state's code. Not sure of the code? The Search Taxpayer result on gst.gov.in shows your state jurisdiction on the same screen - that settles it.`,
+        pickupAddressPath(profile.primaryChannel),
+        "Both in the same state = proceed. If your real dispatch state and GSTIN state differ, stop here and fix it before onboarding - the marketplace check is automated and the rejection message rarely names the cause.",
       ],
       trap: `If you'll actually dispatch from a different state than ${stateLabel(profile.operatingState)}, you'd typically need a GSTIN for that state too - update your profile if your operating state has changed.`,
     },
@@ -130,9 +210,10 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       why: "Automated verification fails on tiny differences. Rahul S. Sharma vs Rahul Sharma, or Street vs St., is enough to get rejected.",
       needs: ["Bank account proof (cancelled cheque or stamped statement)"],
       how: [
-        "Write down the legal/trade name exactly as on the GST portal.",
-        "Confirm your bank account holder name matches it character for character.",
-        "Confirm IFSC is current (bank mergers change IFSC codes).",
+        "Open gst.gov.in -> Search Taxpayer -> Search by GSTIN/UIN and copy the Legal Name of Business exactly as shown there into a note - that string is your master record.",
+        "Compare it with your bank account holder name read off a cancelled cheque or your netbanking profile page - character for character, including initials, dots, and spacing. Never compare from memory.",
+        "Verify the IFSC by searching it on your bank's website or the RBI's IFSC directory - the code printed on an old cheque book can be stale after a bank merger.",
+        "Exact match = proceed to marketplace onboarding. Any difference at all = stop and fix the bank name (or open a matching account) first - automated verification will not forgive it.",
       ],
       trap: "A savings account in your personal name while GST is in a business name is the #1 mismatch. Fix the name or use a matching account before onboarding.",
       kind: "input",
@@ -147,14 +228,10 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
     },
     {
       id: "validate-marketplace-tax",
-      title: "Set GST correctly inside each marketplace",
+      title: `Set GST correctly inside ${panelLabel(profile.primaryChannel)}`,
       why: "Having a GSTIN is not enough. It must be entered in the seller panel and mapped to correct HSN/tax rates, or your listings can be blocked or mis-taxed.",
-      how: [
-        "In each seller panel, open the GST/Tax section and enter your GSTIN (no spaces).",
-        "Map each product to the correct HSN code and GST rate.",
-        "Save and confirm the panel shows GST as verified.",
-      ],
-      trap: "Wrong HSN/GST rate causes compliance issues later even if onboarding succeeds. Get the mapping right at listing time, not after sales start.",
+      how: gstTaxPanelSteps(profile.primaryChannel),
+      trap: "Wrong HSN/GST rate causes compliance issues later even if onboarding succeeds. Get the mapping right at listing time, not after sales start. If a panel section has moved, search the panel's own help for 'GSTIN' rather than guessing.",
     },
     {
       id: "gst-filing-calendar",
@@ -259,8 +336,10 @@ function buildRegistrationTrack(
     title: "Lock ONE exact legal name you will reuse everywhere",
     why: "Every platform later must match your GST name character for character. Decide it once, now, and never deviate.",
     how: [
-      "Write your business/legal name in the EXACT format you will use forever.",
-      "Use the same capitalization, spacing, and initials across PAN, bank, GST and marketplace.",
+      profile.businessType === "individual" || profile.businessType === "proprietorship"
+        ? "You don't get to invent this name: for an individual/proprietor, the GST portal pulls your legal name straight from the PAN database. So your master name is the name printed on your PAN card - copy it from the card, character for character."
+        : "You don't get to invent this name: it's the entity name on your Certificate of Incorporation or deed. Copy it from that document, character for character - including 'Private Limited' vs 'Pvt Ltd' exactly as printed.",
+      "Use that same capitalization, spacing, and initials across bank, GST and marketplace - every later form must match it.",
       "Save it in a note you will copy-paste from, so you never re-type it.",
     ],
     trap: "Manually retyping the name on each platform is how mismatches happen. Copy-paste from one source of truth.",
@@ -344,9 +423,10 @@ function buildRegistrationTrack(
     why: "Bank name mismatch and wrong IFSC are top rejection causes at both GST and marketplace stages.",
     needs: ["Cancelled cheque OR bank statement/passbook first page showing name + IFSC"],
     how: [
-      "Confirm the account holder name matches your locked legal name.",
-      "Confirm the IFSC is current (recent bank mergers changed many IFSC codes).",
+      "Read the account holder name off the cancelled cheque or your netbanking profile page and compare with your locked legal name character for character - never from memory.",
+      "Verify the IFSC by searching it on your bank's website or the RBI's IFSC directory - the code printed on an old cheque book can be stale after a bank merger.",
       "Prefer a current account in the business name; a stamped physical statement is trusted more for new sellers.",
+      bankPanelPath(profile.primaryChannel),
     ],
     trap: "A personal savings account while GST is in a business name will fail later marketplace checks even if GST accepts it.",
     kind: "input",
@@ -364,9 +444,10 @@ function buildRegistrationTrack(
     needs: ["PAN", "Mobile number (Aadhaar-linked, DND off)", "Email you control"],
     how: [
       "Open gst.gov.in -> Services -> Registration -> New Registration.",
-      "Select taxpayer type, your state, PAN, email and mobile.",
+      "In the 'I am a' dropdown pick Taxpayer, then select your state and district, enter your legal name exactly as per PAN, then PAN, email and mobile.",
       "Enter the OTPs sent to mobile and email to generate your TRN (Temporary Reference Number).",
-      "Save the TRN safely; you will log back in with it to finish Part B.",
+      "Note the TRN AND the expiry date the portal shows with it - Part B must be finished inside that window or the TRN lapses and you start over.",
+      "To resume later: same New Registration page -> select the Temporary Reference Number option -> enter TRN + captcha -> a fresh OTP opens your saved application.",
     ],
     trap: "If your number has DND active, OTPs may not arrive. Send START to 1909 (or check DND) before this step.",
     stuck: [
@@ -381,11 +462,12 @@ function buildRegistrationTrack(
     why: "Vague business activity or wrong HSN codes is a frequent clarification trigger.",
     needs: ["TRN login", "All documents from earlier steps", "Your main product HSN codes"],
     how: [
-      "Log in with your TRN and continue the saved application.",
-      "Enter trade name, constitution, and date of commencement.",
-      "Add Principal Place of Business with the matching address proof from your premises step.",
-      "Clearly describe what you sell and add correct HSN codes for your products.",
-      "Add bank details exactly as on your proof.",
+      "Log in with your TRN; your saved application appears under My Saved Applications - click the edit (pencil) icon to open Part B.",
+      "Work through the tabs left to right - they include Business Details, Promoter/Partners, Authorized Signatory, Principal Place of Business, Goods and Services, State Specific Information, and finally Verification (the portal may show a few more depending on your answers). Save each tab before moving on - the portal marks a tab complete once saved.",
+      "In Business Details enter trade name, constitution, and date of commencement of business.",
+      "In Principal Place of Business type the address exactly as on the proof from your premises step, pick the correct nature of possession (owned/rented/consented/shared), and upload that proof - the upload screen states its own file-size limit.",
+      "In Goods and Services describe what you actually sell and add the HSN codes for your main products. Not sure of a code? Use Services -> User Services -> Search HSN Code on the same portal.",
+      "If the form asks for bank details, enter them exactly as on your proof. If it doesn't, the portal will demand them shortly after approval - same exact-match rule applies then.",
     ],
     trap: "Describe real goods with correct HSN. A vague description like general trading with mismatched HSN invites a REG-03 notice.",
   });
@@ -395,8 +477,9 @@ function buildRegistrationTrack(
     title: "Complete Aadhaar authentication",
     why: "Aadhaar e-KYC speeds approval and often avoids physical verification. Failed auth usually means slower, manual review.",
     how: [
-      "Choose Aadhaar authentication for the promoter/authorized signatory when prompted.",
-      "Open the authentication link sent to the Aadhaar-linked mobile/email and complete OTP e-KYC.",
+      "Choose Aadhaar authentication for the promoter/authorized signatory when prompted in the application.",
+      "The authentication link arrives by SMS/email on the Aadhaar-linked contact - open it, enter the Aadhaar number, and complete the OTP e-KYC there.",
+      "Come back to the application and confirm the Aadhaar authentication status shows as authenticated before you submit - a pending status here means the link was never completed.",
     ],
     trap: "If the Aadhaar-linked mobile is wrong or unavailable, authentication fails and the officer may demand physical verification. Fix the linked mobile first if possible.",
   });
@@ -428,9 +511,12 @@ function buildRegistrationTrack(
     title: "Track your ARN and watch for a clarification notice",
     why: "An officer reviews within a few working days. If they want clarity, they issue REG-03. Most beginners miss it and get auto-rejected.",
     how: [
-      "Go to gst.gov.in -> Services -> Track Application Status and enter your ARN.",
-      "Check this every day for the first week.",
-      "If status becomes Pending for Clarification, act immediately (next step).",
+      "Go to gst.gov.in -> Services -> Registration -> Track Application Status, enter your ARN, and check it every day for the first week.",
+      "'Pending for Processing' = your application is in the officer's queue. No action needed - keep checking.",
+      "'Validation Error' = your PAN/Aadhaar data didn't match government records. Reopen the application and fix the exact field the error names.",
+      "'Pending for Clarification' = a REG-03 notice has been issued. Act the same day - the next step shows exactly how to reply.",
+      "'Approved' = your GSTIN plus first-time login credentials arrive on your registered email. Move to the certificate step.",
+      "'Rejected' = a REG-05 order was passed. Read the order for the stated reason - you can apply fresh once the actual issue is fixed, but never resubmit the identical application.",
     ],
     trap: "A REG-03 clarification is NOT a rejection. But you only get 7 working days to reply via REG-04, or it auto-rejects (REG-05).",
   });
@@ -457,9 +543,10 @@ function buildRegistrationTrack(
     title: "Get your GSTIN and prepare for marketplace sync",
     why: "Approval gives you a GSTIN, but marketplaces may still not see it for 24-72 hours.",
     how: [
-      "Download your GST certificate (REG-06), including all annexures.",
-      "Re-confirm the legal name and address on the certificate; this is now your master record.",
-      "When you enter it on a marketplace and it fails, wait 24-72h and retry before panicking.",
+      "Check the email on your application: approval brings your GSTIN plus a temporary username/password for your first gst.gov.in login. Log in and set your own credentials.",
+      "Download the certificate: Services -> User Services -> View/Download Certificates -> REG-06. Save the PDF with all annexures into your Seller-Docs/GST folder.",
+      "Re-confirm the legal name and address printed on the certificate - this is now your master record for every marketplace form.",
+      "When you enter the GSTIN on a marketplace and verification fails, wait 24-72h and retry before panicking - marketplace databases lag the GST portal for fresh registrations.",
     ],
     trap: "Enter the GSTIN with no spaces or special characters on every platform. Match your seller pickup state to the GSTIN state code.",
     kind: "input",
@@ -488,9 +575,10 @@ function buildRegistrationTrack(
     title: "Set up your post-registration filing calendar",
     why: "Your GSTIN is only useful if you keep it active. Filings start the month after registration.",
     how: [
-      "Mark GSTR-1 and GSTR-3B due dates on your calendar.",
-      "If turnover under ₹5 crore, check QRMP eligibility on gst.gov.in.",
-      "Plan who files: you, ClearTax, or a CA - but YOU stay liable.",
+      "Mark GSTR-1 and GSTR-3B due dates on your phone calendar with reminders 3 days before each.",
+      "Turnover under ₹5 crore? You can opt into QRMP for quarterly returns: gst.gov.in -> Services -> Returns -> Opt-in for Quarterly Return. Fewer filings, but tax is still paid monthly.",
+      "Zero sales in a period changes nothing - NIL returns are still mandatory from month 1. File them.",
+      "Plan who files: you, ClearTax, or a CA - but YOU stay liable regardless of who presses submit.",
     ],
     trap: "New sellers forget first filing and get suspended within 90 days - before they even scale.",
   });
@@ -529,9 +617,10 @@ function buildBaseDocsSteps(profile: OnboardingProfile): TaskStep[] {
       title: "Open or verify your business bank account",
       why: "Marketplaces pay you via NEFT to this account. Name mismatch is the #1 payout failure.",
       how: [
-        "Open a current account in your exact legal business name (or verify existing one matches).",
-        "Get a cancelled cheque or stamped bank statement showing name + IFSC.",
-        "Confirm IFSC is current - bank mergers changed many codes in 2024-25.",
+        "Open a current account in your exact legal business name - or read your existing account's holder name off netbanking/a cancelled cheque and confirm it matches character for character.",
+        "Get a cancelled cheque or stamped bank statement showing name + IFSC; scan it once, clearly, into your Seller-Docs/Bank folder.",
+        "Confirm IFSC is current by searching it on your bank's website or the RBI's IFSC directory - bank mergers changed many codes in 2024-25.",
+        bankPanelPath(profile.primaryChannel),
       ],
       trap: "Using a personal savings account while GST is in a business name blocks marketplace payout setup.",
       kind: "input",
