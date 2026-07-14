@@ -31,17 +31,17 @@ describe("margin calculator ↔ cashflow simulator parity", () => {
       category: inputs.category,
     });
 
-    // Cash basis: costs go out for all 90 orders; settlements arrive only for
-    // orders placed before day 90 - settlementDelay.
+    // True parity: profit counts receivables still in transit, so 90 orders
+    // at rto=0/ads=0 must equal 90x the margin calculator's per-order profit.
     const t = SETTLEMENT_TIMELINES.meesho;
     const delay = t.deliveryDays + t.prepaidSettlementDays;
-    const settledOrders = 90 - delay;
     const fees = getFeesForProduct("meesho", "fashion", 599, false);
     const netSettlement = 599 - fees.totalFees;
-    const expectedTotal =
-      settledOrders * netSettlement - 90 * (inputs.productCost + inputs.shippingCost);
 
-    expect(sim.totalProfit).toBeCloseTo(expectedTotal, 0);
+    expect(sim.totalProfit).toBeCloseTo(90 * perOrder.netProfit, 0);
+
+    // The in-transit money is exactly the tail orders' settlements.
+    expect(sim.pendingReceivables).toBeCloseTo(delay * netSettlement, 0);
 
     // And the settled per-order economics equal the margin calculator's.
     expect(netSettlement - inputs.productCost - inputs.shippingCost).toBeCloseTo(
@@ -63,8 +63,7 @@ describe("margin calculator ↔ cashflow simulator parity", () => {
       startingCapital: 0,
     });
     const fees = getFeesForProduct("meesho", "general", 1000, false);
-    const t = SETTLEMENT_TIMELINES.meesho;
-    const settledOrders = 90 - (t.deliveryDays + t.prepaidSettlementDays);
-    expect(withOrders.totalProfit).toBeCloseTo(settledOrders * (1000 - fees.totalFees), 0);
+    // Receivables included: all 90 orders' settlements count as earned.
+    expect(withOrders.totalProfit).toBeCloseTo(90 * (1000 - fees.totalFees), 0);
   });
 });

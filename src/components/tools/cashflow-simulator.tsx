@@ -69,6 +69,18 @@ export function CashflowSimulator() {
 
   const result = useMemo(() => simulate90DayCashFlow(inputs), [inputs]);
 
+  // Same inputs run once per channel: settlement speed is the decision this
+  // tool exists to inform, so show the capital requirement side by side.
+  const channelComparison = useMemo(() => {
+    const rows = CHANNELS.map((ch) => ({
+      channel: ch.value,
+      label: ch.label,
+      peak: simulate90DayCashFlow({ ...inputs, channel: ch.value }).peakCapitalNeeded,
+    }));
+    const minPeak = Math.min(...rows.map((r) => r.peak));
+    return { rows, minPeak };
+  }, [inputs]);
+
   // Chart data: pick sample days
   const chartDays = useMemo(() => {
     return SAMPLE_DAYS.map((d) => result.days[d - 1]).filter(Boolean);
@@ -320,6 +332,43 @@ export function CashflowSimulator() {
         />
       </div>
 
+      {/* ── Per-channel capital comparison ── */}
+      <div className="glass-panel-receded grain rounded-xl p-5">
+        <h3 className="text-sm font-semibold text-[var(--muted)]">
+          Capital needed to run these exact numbers, per channel
+        </h3>
+        <p className="text-muted mt-1 text-xs">
+          Same product, same orders - only the settlement speed and fee stack change.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {channelComparison.rows.map((row) => {
+            const isActive = row.channel === channel;
+            const isCheapest = row.peak === channelComparison.minPeak;
+            return (
+              <button
+                key={row.channel}
+                onClick={() => setChannel(row.channel)}
+                className={`rounded-lg border p-3 text-left transition-colors ${
+                  isActive
+                    ? "border-white/[0.3] bg-white/[0.08]"
+                    : "border-white/[0.1] bg-white/[0.03] hover:border-white/25"
+                }`}
+              >
+                <p className="text-xs font-medium text-[var(--muted)]">
+                  {row.label}
+                  {isCheapest && (
+                    <span className="ml-1.5 text-[10px] font-semibold text-[var(--success)]">least capital</span>
+                  )}
+                </p>
+                <p className={`mt-1 text-lg font-bold tabular-nums ${isCheapest ? "text-[var(--success)]" : "text-white"}`}>
+                  {formatINR(row.peak)}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* ── Key Insights ── */}
       <div className="rounded-xl border border-white/25/30 bg-white/[0.04] p-5">
         <h3 className="text-sm font-semibold text-[var(--muted)] mb-3 flex items-center gap-2">
@@ -330,6 +379,11 @@ export function CashflowSimulator() {
           <li>
             You need <span className="font-semibold text-[var(--muted)]">{formatINR(result.peakCapitalNeeded)}</span> to survive the settlement delay gap.
           </li>
+          {result.pendingReceivables > 0 && (
+            <li>
+              <span className="font-semibold text-white">{formatINR(result.pendingReceivables)}</span> earned in this window is still in transit (settles after day 90) - counted in the 90-day profit, not in the balance curve.
+            </li>
+          )}
           {result.breakEvenDay && (
             <li>
               Break-even at <span className="font-semibold text-white">Day {result.breakEvenDay}</span> - {ordersPerDay * result.breakEvenDay} orders to recover initial investment.

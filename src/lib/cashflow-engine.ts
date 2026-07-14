@@ -33,7 +33,15 @@ export type CashFlowResult = {
   lowestBalance: number;
   lowestDay: number;
   totalRevenue: number;
+  /**
+   * Economic profit over the window: end cash + receivables still in transit
+   * minus starting capital. Without the receivables term, every settlement
+   * scheduled past day 90 silently vanished and slow-settling channels looked
+   * artificially unprofitable.
+   */
   totalProfit: number;
+  /** Settlements earned in the window that arrive after day 90. */
+  pendingReceivables: number;
   peakCapitalNeeded: number;
 };
 
@@ -156,7 +164,14 @@ export function simulate90DayCashFlow(inputs: CashFlowInputs): CashFlowResult {
     });
   }
 
-  const totalProfit = balance - startingCapital;
+  // Settlements earned inside the window but landing after day 90. Cash-flow
+  // outputs (balance curve, break-even, peak capital) stay cash-true; profit
+  // counts this money as earned, not lost.
+  const pendingReceivables = pendingSettlements
+    .filter((s) => s.arrivalDay > 90)
+    .reduce((sum, s) => sum + s.amount, 0);
+
+  const totalProfit = balance + pendingReceivables - startingCapital;
   const peakCapitalNeeded = lowestBalance < 0 ? Math.abs(lowestBalance) + startingCapital : startingCapital - lowestBalance;
 
   return {
@@ -166,6 +181,7 @@ export function simulate90DayCashFlow(inputs: CashFlowInputs): CashFlowResult {
     lowestDay,
     totalRevenue: Math.round(totalRevenue),
     totalProfit: Math.round(totalProfit),
+    pendingReceivables: Math.round(pendingReceivables),
     peakCapitalNeeded: Math.round(peakCapitalNeeded),
   };
 }
