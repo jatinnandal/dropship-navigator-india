@@ -34,7 +34,12 @@ export default async function GstCalendarPage() {
         />
       </header>
 
-      <GstCalendar hasGstin={hasGstin} operatingState={profile.operatingState} />
+      <GstCalendar
+        hasGstin={hasGstin}
+        operatingState={profile.operatingState}
+        initialDoneIds={workspace.gstFilingsDone ?? []}
+        initialScheme={workspace.gstScheme ?? null}
+      />
     </main>
   );
 }

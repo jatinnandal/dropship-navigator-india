@@ -164,8 +164,12 @@ export function detectGstTrap(input: CrisisDetectorInput): CrisisWarning | null 
 export function detectGstrDeadline(input: CrisisDetectorInput): CrisisWarning | null {
   if (!input.hasGstin) return null;
 
-  // Monthly filing assumed (QRMP status isn't persisted); dismissal snoozes.
-  const urgent = getUpcomingGstEvents(false).find(
+  // Respect the scheme and the filings the user marked done in the calendar
+  // (now account-synced), so a filed return never nags and QRMP users get
+  // quarterly dates, not monthly ones.
+  const isQrmp = input.workspace.gstScheme === "qrmp";
+  const doneIds = new Set(input.workspace.gstFilingsDone ?? []);
+  const urgent = getUpcomingGstEvents(isQrmp, doneIds).find(
     (e) => e.status !== "done" && e.daysUntilDue >= 0 && e.daysUntilDue <= 2,
   );
   if (!urgent) return null;

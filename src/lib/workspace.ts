@@ -30,6 +30,10 @@ export type Workspace = {
   dismissedWarnings?: Record<string, string>;
   /** Rate-card version whose "rates updated" banner the user dismissed. */
   seenRatesVersion?: string;
+  /** GST filing event ids the user has marked filed (account-synced, cross-device). */
+  gstFilingsDone?: string[];
+  /** Which GST scheme the user picked in the calendar. */
+  gstScheme?: "regular" | "qrmp";
 };
 
 export const emptyWorkspace: Workspace = {};
@@ -98,6 +102,13 @@ export function parseWorkspace(raw: string | Record<string, unknown> | undefined
       dismissedWarnings:
         parsed.dismissedWarnings && typeof parsed.dismissedWarnings === "object"
           ? (parsed.dismissedWarnings as Record<string, string>)
+          : undefined,
+      gstFilingsDone: Array.isArray(parsed.gstFilingsDone)
+        ? parsed.gstFilingsDone.filter((id): id is string => typeof id === "string")
+        : undefined,
+      gstScheme:
+        parsed.gstScheme === "regular" || parsed.gstScheme === "qrmp"
+          ? parsed.gstScheme
           : undefined,
     };
   } catch {

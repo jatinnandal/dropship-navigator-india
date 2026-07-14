@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useTransition } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Calendar,
@@ -18,24 +18,7 @@ import {
   type GstEvent,
 } from "@/lib/gst-calendar-data";
 import { JargonText } from "@/components/jargon-text";
-
-const STORAGE_KEY = "dni-gst-completed";
-const SCHEME_KEY = "dni-gst-scheme";
-
-function getCompletedIds(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return new Set();
-    return new Set(JSON.parse(raw) as string[]);
-  } catch {
-    return new Set();
-  }
-}
-
-function saveCompletedIds(ids: Set<string>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...ids]));
-}
+import { setGstFilingDone, setGstScheme } from "@/app/app/tools/gst-calendar/actions";
 
 const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -76,43 +59,37 @@ export function GstCalendar({
   defaultIsQrmp = false,
   hasGstin = true,
   operatingState,
+  initialDoneIds = [],
+  initialScheme = null,
 }: {
   defaultIsQrmp?: boolean;
   hasGstin?: boolean;
   operatingState?: string;
+  initialDoneIds?: string[];
+  initialScheme?: "regular" | "qrmp" | null;
 }) {
-  const [isQrmp, setIsQrmp] = useState(defaultIsQrmp);
+  const [isQrmp, setIsQrmp] = useState(
+    initialScheme ? initialScheme === "qrmp" : defaultIsQrmp,
+  );
   const [showChooser, setShowChooser] = useState(false);
   const [currentYear, setCurrentYear] = useState(() => new Date().getFullYear());
   const [currentMonth, setCurrentMonth] = useState(() => new Date().getMonth());
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
-  const [completedIds, setCompletedIds] = useState<Set<string>>(new Set());
+  // Seeded from the account (SSR-consistent); persisted server-side on change.
+  const [completedIds, setCompletedIds] = useState<Set<string>>(() => new Set(initialDoneIds));
   const [direction, setDirection] = useState(0);
   const [expandedEvent, setExpandedEvent] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
 
-  useEffect(() => {
-    // Hydrate persisted state after mount (async so hydration markup matches SSR).
-    const t = setTimeout(() => {
-      setCompletedIds(getCompletedIds());
-      try {
-        const savedScheme = localStorage.getItem(SCHEME_KEY);
-        if (savedScheme === "qrmp") setIsQrmp(true);
-        if (savedScheme === "regular") setIsQrmp(false);
-      } catch {
-        // localStorage unavailable - keep default
-      }
-    }, 0);
-    return () => clearTimeout(t);
-  }, []);
-
-  const setScheme = useCallback((qrmp: boolean) => {
-    setIsQrmp(qrmp);
-    try {
-      localStorage.setItem(SCHEME_KEY, qrmp ? "qrmp" : "regular");
-    } catch {
-      // localStorage unavailable - state still updates for this session
-    }
-  }, []);
+  const setScheme = useCallback(
+    (qrmp: boolean) => {
+      setIsQrmp(qrmp);
+      startTransition(() => {
+        setGstScheme(qrmp ? "qrmp" : "regular");
+      });
+    },
+    [],
+  );
 
   const monthEvents = useMemo(
     () => getGstEventsForMonth(currentYear, currentMonth, isQrmp, operatingState),
@@ -157,12 +134,16 @@ export function GstCalendar({
 
   const markDone = useCallback(
     (id: string) => {
-      const next = new Set(completedIds);
-      next.add(id);
-      setCompletedIds(next);
-      saveCompletedIds(next);
+      setCompletedIds((prev) => {
+        const next = new Set(prev);
+        next.add(id);
+        return next;
+      });
+      startTransition(() => {
+        setGstFilingDone(id, true);
+      });
     },
-    [completedIds],
+    [],
   );
 
   const goToPrevMonth = () => {
