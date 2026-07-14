@@ -18,6 +18,19 @@ function toNumber(v: unknown): number {
   return Number.isFinite(n) ? n : 0;
 }
 
+/**
+ * Like toNumber but null for blank/unparseable - distinguishes "payout not
+ * posted yet" from an explicit 0. A typed 0 stays 0 (suspicious, in scope).
+ */
+function toNumberOrNull(v: unknown): number | null {
+  if (typeof v === "number") return Number.isFinite(v) ? v : null;
+  if (typeof v !== "string") return null;
+  const trimmed = v.trim();
+  if (trimmed === "") return null;
+  const n = Number(trimmed.replace(/[₹,\s]/g, ""));
+  return Number.isFinite(n) ? n : null;
+}
+
 type FieldSpec = {
   field: "orderRef" | "orderDate" | "saleAmount" | "settledAmount" | "status";
   aliases: string[];
@@ -147,13 +160,15 @@ export function parseSettlementCsv(channel: ReconChannel, csvText: string): Adap
   for (const row of parsed.data) {
     const orderRef = (get(row, "orderRef") ?? "").trim();
     if (!orderRef) continue;
+    const settledRaw = toNumberOrNull(get(row, "settledAmount"));
     const mapped: CanonicalRow = {
       orderRef,
       orderDate: get(row, "orderDate")?.trim() || undefined,
       saleAmount: toNumber(get(row, "saleAmount")),
-      settledAmount: toNumber(get(row, "settledAmount")),
+      settledAmount: settledRaw ?? 0,
       status: get(row, "status")?.trim() || undefined,
       isReturn: false,
+      settlementPending: settledRaw === null,
     };
     mapped.isReturn = spec.isReturn(row, mapped);
     raw.push(mapped);
@@ -180,6 +195,8 @@ function aggregateAmazon(rows: CanonicalRow[]): CanonicalRow[] {
     existing.saleAmount += r.saleAmount > 0 ? r.saleAmount : 0;
     existing.settledAmount += r.settledAmount;
     existing.isReturn = existing.isReturn || r.isReturn;
+    // An order is only pending if every one of its transaction rows was blank.
+    existing.settlementPending = existing.settlementPending && r.settlementPending;
     if (!existing.status && r.status) existing.status = r.status;
   }
   return Array.from(byOrder.values());

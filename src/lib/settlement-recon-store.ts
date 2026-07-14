@@ -31,6 +31,11 @@ export type StoredSummary = {
   tcsEstimate: number;
   unmappedHeaders: string[];
   rowsTruncated: boolean;
+  /** Optional: absent on uploads stored before the pending/shipping-aware engine. */
+  pendingCount?: number;
+  pendingSales?: number;
+  shippingAllowancePerOrder?: number;
+  flaggedReturnCount?: number;
 };
 
 export async function countUploadsThisMonth(profileId: string): Promise<number> {
@@ -70,6 +75,10 @@ export async function insertUpload(
     tcsEstimate: report.tcsEstimate,
     unmappedHeaders: report.unmappedHeaders,
     rowsTruncated: report.rows.length > MAX_STORED_ROWS,
+    pendingCount: report.pendingCount,
+    pendingSales: report.pendingSales,
+    shippingAllowancePerOrder: report.shippingAllowancePerOrder,
+    flaggedReturnCount: report.flaggedReturnCount,
   };
 
   const { data, error } = await supabase
@@ -181,6 +190,9 @@ export async function getUpload(profileId: string, uploadId: string): Promise<St
       settledAmount: Number(r.settled_amount),
       status: r.status ?? undefined,
       isReturn: r.is_return,
+      // Not persisted per-row; pending counts live in the summary. Stored rows
+      // are a point-in-time snapshot, so treat them as settled on read.
+      settlementPending: false,
       expectedFees: Number(r.expected_fees),
       actualDeduction: Number(r.actual_deduction),
       delta: Number(r.delta),

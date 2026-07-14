@@ -72,6 +72,8 @@ describe("reconcile", () => {
     expect(report.returnCount).toBe(2);
 
     const fees = getFeesForProduct("meesho", "fashion", 599, true);
+    // Meesho doesn't settle shipping inside the payout - no allowance.
+    expect(report.shippingAllowancePerOrder).toBe(0);
     const r1 = report.rows[0];
     // 599 - 560.11 = 38.89 kept; engine expects ≈ 34.85 → delta ~4, unflagged.
     expect(r1.expectedFees).toBeCloseTo(fees.totalFees, 2);
@@ -86,8 +88,12 @@ describe("reconcile", () => {
     expect(report.flaggedCount).toBe(1);
     // TCS on delivered gross (2 × 599)
     expect(report.tcsEstimate).toBeCloseTo(1198 * 0.005, 2);
-    // Returns never flagged
+    // RTO charged ₹80 - inside the non-refundable + round-trip band → clean.
+    expect(report.rows[2].actualDeduction).toBeCloseTo(80, 2);
     expect(report.rows[2].flagged).toBe(false);
+    // Return settled at 0 - clean reversal, nothing charged.
+    expect(report.rows[3].actualDeduction).toBe(0);
+    expect(report.rows[3].flagged).toBe(false);
   });
 
   it("gross sales excludes returned orders", () => {
@@ -95,5 +101,56 @@ describe("reconcile", () => {
     const report = reconcile("flipkart", "general", adapter);
     expect(report.grossSales).toBe(800);
     expect(report.totalSettled).toBeCloseTo(690 - 120, 2);
+  });
+
+  it("folds a shipping allowance into expected deductions on amazon/flipkart", () => {
+    const adapter = parseSettlementCsv("flipkart", FLIPKART_CSV);
+    const report = reconcile("flipkart", "general", adapter);
+    const fees = getFeesForProduct("flipkart", "general", 800, true);
+    expect(report.shippingAllowancePerOrder).toBe(fees.typicalShipping.light);
+    // FK1 kept ₹110; fees + ₹55 shipping ≈ expected → not flagged (previously
+    // every delivered flipkart order flagged because shipping wasn't modelled).
+    const fk1 = report.rows[0];
+    expect(fk1.expectedFees).toBeCloseTo(fees.totalFees + fees.typicalShipping.light, 2);
+    expect(fk1.flagged).toBe(false);
+  });
+
+  it("routes blank settlement amounts to the pending bucket, not 100%-kept", () => {
+    const csv = `Sub Order No,Live Order Status,Total Sale Amount (Incl. Commission & GST),Final Settlement Amount
+P1,Delivered,599,
+P2,Delivered,599,560.11
+`;
+    const adapter = parseSettlementCsv("meesho", csv);
+    expect(adapter.rows[0].settlementPending).toBe(true);
+    expect(adapter.rows[1].settlementPending).toBe(false);
+
+    const report = reconcile("meesho", "fashion", adapter);
+    expect(report.pendingCount).toBe(1);
+    expect(report.pendingSales).toBe(599);
+    expect(report.deliveredCount).toBe(1);
+    expect(report.grossSales).toBe(599);
+    expect(report.flaggedCount).toBe(0);
+    // An explicit 0 is NOT pending - that's a real "kept everything" signal.
+    const zeroCsv = `Sub Order No,Live Order Status,Total Sale Amount (Incl. Commission & GST),Final Settlement Amount
+Z1,Delivered,599,0
+`;
+    const zeroReport = reconcile("meesho", "fashion", parseSettlementCsv("meesho", zeroCsv));
+    expect(zeroReport.pendingCount).toBe(0);
+    expect(zeroReport.flaggedCount).toBe(1);
+  });
+
+  it("flags returns charged beyond non-refundable fees + round-trip shipping", () => {
+    const csv = `Sub Order No,Live Order Status,Total Sale Amount (Incl. Commission & GST),Final Settlement Amount
+R1,Return,999,-599
+R2,Return,999,-90
+`;
+    const report = reconcile("meesho", "fashion", parseSettlementCsv("meesho", csv));
+    const fees = getFeesForProduct("meesho", "fashion", 999, true);
+    const r1 = report.rows[0];
+    expect(r1.actualDeduction).toBeCloseTo(599, 2);
+    expect(r1.expectedFees).toBeCloseTo(fees.nonRefundableOnRto + 2 * fees.typicalShipping.light, 2);
+    expect(r1.flagged).toBe(true);
+    expect(report.rows[1].flagged).toBe(false);
+    expect(report.flaggedReturnCount).toBe(1);
   });
 });

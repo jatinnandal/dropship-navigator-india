@@ -58,7 +58,11 @@ export default async function ReconReportPage({ params }: { params: Params }) {
         </p>
         <EstimateDisclaimer
           meta={MARKETPLACE_FEES_META}
-          note="Expected fees exclude shipping/weight handling (not in the CSV). Deltas near your shipping cost are usually courier charges - investigate the big ones, not the small ones."
+          note={
+            (s.shippingAllowancePerOrder ?? 0) > 0
+              ? `Expected deductions include a ${formatINR(s.shippingAllowancePerOrder ?? 0)}/order shipping allowance (lightest slab - your file doesn't carry weights). Heavier parcels can still show small positive deltas; investigate the big ones.`
+              : "Expected fees exclude shipping/weight handling (not in the CSV). Deltas near your shipping cost are usually courier charges - investigate the big ones, not the small ones."
+          }
         />
         {rowsPurged ? (
           <p className="text-muted mt-3 rounded-xl border border-white/[0.1] bg-white/[0.02] px-4 py-3 text-xs leading-5">
@@ -73,13 +77,25 @@ export default async function ReconReportPage({ params }: { params: Params }) {
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile label="Gross sales (delivered)" value={formatINR(s.grossSales)} />
         <StatTile label="Actually settled" value={formatINR(s.totalSettled)} />
-        <StatTile label="Expected fees" value={formatINR(s.totalExpectedFees)} />
+        <StatTile label="Expected deductions" value={formatINR(s.totalExpectedFees)} />
         <StatTile
           label="Unexplained delta"
           value={formatINR(s.totalDelta)}
           tone={s.totalDelta > Math.max(50, s.grossSales * 0.01) ? "danger" : "success"}
         />
       </section>
+
+      {/* Pending settlements */}
+      {(s.pendingCount ?? 0) > 0 ? (
+        <section className="panel mt-4 rounded-2xl p-4">
+          <p className="text-sm text-[var(--body-text)]">
+            <strong className="text-white">{s.pendingCount} order{(s.pendingCount ?? 0) > 1 ? "s" : ""} pending settlement</strong>{" "}
+            ({formatINR(s.pendingSales ?? 0)} in sales) - the payout hasn&apos;t posted yet, so they&apos;re
+            excluded from every number above instead of being counted as money the marketplace kept.
+            Re-upload a newer settlement file once they pay out.
+          </p>
+        </section>
+      ) : null}
 
       {/* TCS card */}
       <section className="panel-raised mt-5 rounded-2xl p-5">
@@ -200,9 +216,18 @@ export default async function ReconReportPage({ params }: { params: Params }) {
                 (negative settlements = return shipping and non-refundable fees).
               </p>
               <p className="text-muted mt-2 text-xs leading-5">
-                On a return you should lose at most the non-refundable fees plus round-trip shipping.
-                Commission/referral should be reversed - if a returned order shows commission still
-                deducted, that's a ticket.
+                Each return is auto-checked: you should lose at most the non-refundable fees
+                {(s.shippingAllowancePerOrder ?? 0) > 0 ? " plus the shipping allowance" : ""} - commission/referral
+                should be reversed.{" "}
+                {(s.flaggedReturnCount ?? 0) > 0 ? (
+                  <strong className="text-white">
+                    {s.flaggedReturnCount} return{(s.flaggedReturnCount ?? 0) > 1 ? "s" : ""} exceeded that and appear
+                    {(s.flaggedReturnCount ?? 0) > 1 ? "" : "s"} in the flagged table above - each one is a Seller
+                    Support ticket.
+                  </strong>
+                ) : (
+                  "None exceeded that in this file."
+                )}
               </p>
             </>
           )}

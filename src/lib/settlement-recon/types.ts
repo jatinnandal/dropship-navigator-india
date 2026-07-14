@@ -10,6 +10,13 @@ export type CanonicalRow = {
   settledAmount: number;
   status?: string;
   isReturn: boolean;
+  /**
+   * The settled-amount cell was blank/unparseable - payout not posted yet.
+   * These rows are excluded from delta math instead of being treated as
+   * "marketplace kept 100%" (an explicit 0 is NOT pending - that's suspicious
+   * and stays in scope).
+   */
+  settlementPending: boolean;
 };
 
 export type AdapterResult = {
@@ -37,12 +44,24 @@ export type ReconReport = {
   rowCount: number;
   deliveredCount: number;
   returnCount: number;
+  /** Orders whose payout hasn't posted yet - excluded from all money math. */
+  pendingCount: number;
+  pendingSales: number;
+  /**
+   * Per-order shipping folded into the expected deduction where the channel
+   * settles shipping inside the payout (amazon/flipkart). Lightest-bracket
+   * rate - a conservative floor, so heavier parcels can still show small
+   * positive deltas. 0 where shipping is billed outside the settlement.
+   */
+  shippingAllowancePerOrder: number;
   grossSales: number;
   totalSettled: number;
   totalExpectedFees: number;
   totalActualDeductions: number;
   totalDelta: number;
   flaggedCount: number;
+  /** Returns whose deduction exceeded non-refundable fees + shipping allowance. */
+  flaggedReturnCount: number;
   tcsEstimate: number;
   unmappedHeaders: string[];
   rows: ReconciledRow[];
