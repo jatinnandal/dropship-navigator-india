@@ -146,7 +146,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
         ) : flagged.length === 0 ? (
           <div className="panel mt-3 rounded-2xl p-6">
             <p className="text-sm text-[var(--success)]">
-              Nothing flagged - every delivered order's deduction is within the expected band. That's
+              Nothing flagged - every delivered order&apos;s deduction is within the expected band. That&apos;s
               what a clean settlement looks like.
             </p>
           </div>
@@ -237,7 +237,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
       {/* Drift notice */}
       {s.unmappedHeaders.length > 0 ? (
         <p className="text-muted mt-6 px-1 text-xs leading-5">
-          Columns in your file we didn't use: {s.unmappedHeaders.slice(0, 8).join(", ")}
+          Columns in your file we didn&apos;t use: {s.unmappedHeaders.slice(0, 8).join(", ")}
           {s.unmappedHeaders.length > 8 ? "…" : ""}. If the report looks off, the export format may
           have changed - tell us.
         </p>
