@@ -1,3 +1,13 @@
+/**
+ * Supplier vetting as verifiable evidence, not a 0-10 gut rating.
+ *
+ * Every check is a discrete fact a first-time seller can actually establish
+ * (verify a GSTIN, ask one question, inspect a sample) - never "rate quality
+ * 0-10". Checks are staged by WHEN they become knowable, so the tool doubles
+ * as a to-do list. Not answering a check counts as "still to verify", never as
+ * a failing score. A few checks are dealbreakers: a bad answer there means
+ * "do not pay yet" regardless of everything else.
+ */
 export type ScoreCategory =
   | "legitimacy"
   | "quality"
@@ -5,269 +15,390 @@ export type ScoreCategory =
   | "pricing"
   | "communication";
 
+export type CheckStage = "before-contact" | "first-talk" | "after-sample";
+
+export type OptionStatus = "good" | "ok" | "bad";
+
+export type CriterionOption = {
+  value: string;
+  label: string;
+  status: OptionStatus;
+};
+
 export type ScorecardCriterion = {
   id: string;
   category: ScoreCategory;
+  stage: CheckStage;
+  /** The thing you are establishing, phrased as what to check. */
   question: string;
-  weight: number; // 1-5 importance
-  redFlags: string[];
-  greenFlags: string[];
-  tip: string;
+  /** Exact action - site, panel path, or the question to ask - to answer it. */
+  howToVerify: string;
+  /** A bad answer here is a dealbreaker: verdict becomes "avoid". */
+  critical?: boolean;
+  options: CriterionOption[];
 };
 
-export type SupplierScore = {
-  category: ScoreCategory;
-  score: number; // 0-10
-  maxScore: number;
-  verdict: "pass" | "caution" | "fail";
+export const CATEGORY_META: Record<ScoreCategory, { label: string }> = {
+  legitimacy: { label: "Legitimacy" },
+  quality: { label: "Quality" },
+  reliability: { label: "Reliability" },
+  pricing: { label: "Pricing & terms" },
+  communication: { label: "Communication" },
 };
 
-export const CATEGORY_META: Record<
-  ScoreCategory,
-  { label: string; maxWeight: number }
-> = {
-  legitimacy: { label: "Legitimacy", maxWeight: 5 },
-  quality: { label: "Quality", maxWeight: 4 },
-  reliability: { label: "Reliability", maxWeight: 4 },
-  pricing: { label: "Pricing", maxWeight: 3 },
-  communication: { label: "Communication", maxWeight: 3 },
+export const STAGE_META: Record<CheckStage, { label: string; caption: string }> = {
+  "before-contact": {
+    label: "Before you contact them",
+    caption: "Public checks you can do right now from the listing.",
+  },
+  "first-talk": {
+    label: "In your first conversation",
+    caption: "Ask these directly - the answers separate real suppliers from resellers and scams.",
+  },
+  "after-sample": {
+    label: "After the sample / first order",
+    caption: "Only knowable once you have the product in hand.",
+  },
 };
 
 export const SCORECARD_CRITERIA: ScorecardCriterion[] = [
-  // ── Legitimacy (weight 5) ──
+  // ── Before contact (public) ──
   {
     id: "legit-gstin",
     category: "legitimacy",
-    question: "Tax legitimacy - active, verifiable GSTIN",
-    weight: 5,
-    redFlags: ["No GST", "GST shows inactive/cancelled"],
-    greenFlags: ["Active GST, verify on gst.gov.in"],
-    tip: "Check GST status at services.gst.gov.in/services/searchtp - inactive GST = illegal invoices.",
-  },
-  {
-    id: "legit-age",
-    category: "legitimacy",
-    question: "Business track record / age",
-    weight: 5,
-    redFlags: ["New registration <6 months"],
-    greenFlags: [">3 years active"],
-    tip: "Check incorporation date on MCA portal (mca.gov.in) using CIN number.",
+    stage: "before-contact",
+    question: "GST registration is real and active",
+    howToVerify:
+      "Copy their GSTIN and check it at services.gst.gov.in/services/searchtp - status must read Active.",
+    critical: true,
+    options: [
+      { value: "verified", label: "Verified Active on the GST portal", status: "good" },
+      { value: "given", label: "GSTIN given, not yet checked", status: "ok" },
+      { value: "none", label: "No GSTIN, or shows cancelled/inactive", status: "bad" },
+    ],
   },
   {
     id: "legit-address",
     category: "legitimacy",
-    question: "Verifiable physical address",
-    weight: 5,
-    redFlags: ["Only virtual office", "PO Box"],
-    greenFlags: ["Factory/warehouse address on Google Maps"],
-    tip: "Drop the address into Google Maps Street View. Real factories show loading bays, signage.",
+    stage: "before-contact",
+    question: "Physical address is a real place",
+    howToVerify:
+      "Drop the address into Google Maps Street View - a real supplier shows a shop/warehouse with signage, not an empty plot or house.",
+    options: [
+      { value: "real", label: "Real premises visible on Maps", status: "good" },
+      { value: "unchecked", label: "Address given, not checked", status: "ok" },
+      { value: "virtual", label: "Only a virtual office / PO box / no address", status: "bad" },
+    ],
   },
   {
-    id: "legit-references",
+    id: "legit-age",
     category: "legitimacy",
-    question: "Availability of client references",
-    weight: 4,
-    redFlags: ["Refuses references", "Only testimonials, no contacts"],
-    greenFlags: ["Provides 2-3 verifiable buyers"],
-    tip: "Ask for 2 buyer phone numbers. Legitimate suppliers share this willingly.",
-  },
-
-  // ── Quality (weight 4) ──
-  {
-    id: "quality-samples",
-    category: "quality",
-    question: "Willingness to provide samples before bulk",
-    weight: 4,
-    redFlags: ["Refuses samples", "Charges >3x for samples"],
-    greenFlags: ["Free samples for orders >MOQ"],
-    tip: "Always pay for samples rather than skip them - it's the cheapest insurance you'll buy.",
-  },
-  {
-    id: "quality-certs",
-    category: "quality",
-    question: "Product certifications (BIS/FSSAI/ISI where required)",
-    weight: 4,
-    redFlags: ["No certification for regulated product"],
-    greenFlags: ["Shows certificates with lot numbers"],
-    tip: "Selling uncertified products in regulated categories can get your listings removed AND attract legal action.",
+    stage: "before-contact",
+    question: "Business has a track record",
+    howToVerify:
+      "Check the IndiaMART/JustDial member-since date, response rate, and review count - and search the name for complaints.",
+    options: [
+      { value: "established", label: "3+ years, reviews present", status: "good" },
+      { value: "some", label: "6 months to 3 years", status: "ok" },
+      { value: "new", label: "Brand new or can't tell", status: "bad" },
+    ],
   },
   {
     id: "quality-images",
     category: "quality",
-    question: "Authenticity of product images (real vs stock)",
-    weight: 3,
-    redFlags: ["Stock photos", "Watermarked images"],
-    greenFlags: ["Multiple angles, factory photos"],
-    tip: "Reverse image search on Google. Stock photos = they don't have the product.",
+    stage: "before-contact",
+    question: "Product photos are their own",
+    howToVerify:
+      "Right-click a listing image → Search image with Google. Stock or watermarked photos mean they may not hold the stock.",
+    options: [
+      { value: "own", label: "Own photos, multiple real angles", status: "good" },
+      { value: "mixed", label: "Mix of own and stock", status: "ok" },
+      { value: "stock", label: "Stock / watermarked (reverse-image match)", status: "bad" },
+    ],
   },
+
+  // ── First conversation (ask) ──
   {
-    id: "quality-consistency",
+    id: "quality-samples",
     category: "quality",
-    question: "Quality-control process maturity",
-    weight: 3,
-    redFlags: ["No QC mentioned", "Ships without inspection"],
-    greenFlags: ["Shares QC checklist", "Allows third-party inspection"],
-    tip: "Ask for their defect rate. Honest suppliers know it; scammers dodge the question.",
-  },
-
-  // ── Reliability (weight 4) ──
-  {
-    id: "reliable-leadtime",
-    category: "reliability",
-    question: "Lead time (shorter, tracked = better)",
-    weight: 4,
-    redFlags: [">21 days", "Vague 'depends on order'"],
-    greenFlags: ["7-14 days with tracking"],
-    tip: "Add 5-7 days buffer to stated lead time - Indian logistics routinely slips.",
-  },
-  {
-    id: "reliable-defects",
-    category: "reliability",
-    question: "Defect / replacement policy strength",
-    weight: 4,
-    redFlags: ["No returns policy", "Only 24hr window"],
-    greenFlags: ["7-day replacement, written in contract"],
-    tip: "Get replacement policy IN WRITING before first order. WhatsApp promises mean nothing.",
-  },
-  {
-    id: "reliable-scale",
-    category: "reliability",
-    question: "Ability to scale with order volume",
-    weight: 3,
-    redFlags: ["Can't do >100 units"],
-    greenFlags: ["Scales to 500+ with 1 week notice"],
-    tip: "Test with small order first (50 units), then ramp. Don't promise volumes you can't guarantee.",
-  },
-  {
-    id: "reliable-packaging",
-    category: "reliability",
-    question: "Marketplace-compliant packaging",
-    weight: 3,
-    redFlags: ["No branded packaging", "Uses newspaper wrapping"],
-    greenFlags: ["Branded boxes", "Offers white-label packaging"],
-    tip: "Amazon/Flipkart penalize poorly packaged items. Factor packaging cost into landed cost.",
-  },
-
-  // ── Pricing (weight 3) ──
-  {
-    id: "pricing-market",
-    category: "pricing",
-    question: "Pricing realism (not too-good-to-be-true)",
-    weight: 3,
-    redFlags: ["50%+ below market = likely fake/counterfeit"],
-    greenFlags: ["10-20% below with clear explanation"],
-    tip: "If a deal seems too good to be true in Indian wholesale, it is. Always.",
+    stage: "first-talk",
+    question: "Willing to send a sample before bulk",
+    howToVerify:
+      "Ask: \"Can I buy one sample before a bulk order?\" A fair supplier says yes at roughly unit price (plus courier).",
+    critical: true,
+    options: [
+      { value: "yes", label: "Yes, sample at a fair price", status: "good" },
+      { value: "conditions", label: "Yes but with conditions / high sample cost", status: "ok" },
+      { value: "refuses", label: "Refuses samples, or charges many times unit price", status: "bad" },
+    ],
   },
   {
     id: "pricing-terms",
     category: "pricing",
-    question: "Fairness of payment terms",
-    weight: 3,
-    redFlags: ["100% advance, no escrow", "Only cryptocurrency"],
-    greenFlags: ["50% advance + 50% on dispatch", "Accepts trade assurance"],
-    tip: "Never pay 100% advance to a new supplier. Use IndiaMART PayAssured or bank escrow.",
+    stage: "first-talk",
+    question: "Payment terms for a first order",
+    howToVerify:
+      "Ask how they want payment. Safe: part-advance + balance on dispatch, or a protected rail (IndiaMART PayAssured / escrow).",
+    critical: true,
+    options: [
+      { value: "protected", label: "Part-advance + balance, or PayAssured/escrow", status: "good" },
+      { value: "full-protected", label: "Full advance but via a protected rail", status: "ok" },
+      { value: "full-direct", label: "100% advance to a bank/UPI, or crypto only", status: "bad" },
+    ],
   },
   {
-    id: "pricing-hidden",
+    id: "pricing-market",
     category: "pricing",
-    question: "Cost transparency (clear landed-cost quote)",
-    weight: 2,
-    redFlags: ["Price is 'ex-factory' without mention of other costs"],
-    greenFlags: ["All-inclusive landed cost quote", "Transparent breakup provided"],
-    tip: "Always ask for LANDED cost (product + GST + packaging + transport to your city).",
+    stage: "first-talk",
+    question: "Price passes the sanity check",
+    howToVerify:
+      "Compare the quoted landed cost against the retail price of the same item. A price far below market usually means fake, seconds, or counterfeit.",
+    options: [
+      { value: "reasonable", label: "Below retail with a clear reason", status: "good" },
+      { value: "market", label: "Roughly in line with market", status: "ok" },
+      { value: "toolow", label: "Far too low to be genuine", status: "bad" },
+    ],
   },
-
-  // ── Communication (weight 3) ──
+  {
+    id: "quality-certs",
+    category: "quality",
+    stage: "first-talk",
+    question: "Certification for regulated products",
+    howToVerify:
+      "If you sell electronics (BIS), food/cosmetics (FSSAI), or toys/ISI items, ask for the certificate with its licence number. Unregulated product? Mark this as fine.",
+    options: [
+      { value: "shown", label: "Valid certificate shown (or product unregulated)", status: "good" },
+      { value: "claimed", label: "Says certified, hasn't shown proof", status: "ok" },
+      { value: "none", label: "No certificate for a regulated product", status: "bad" },
+    ],
+  },
+  {
+    id: "reliable-leadtime",
+    category: "reliability",
+    stage: "first-talk",
+    question: "Lead time is workable",
+    howToVerify:
+      "Ask dispatch time for your order size, and whether they share a tracking/dispatch confirmation.",
+    options: [
+      { value: "fast", label: "7-14 days with tracking", status: "good" },
+      { value: "medium", label: "15-21 days", status: "ok" },
+      { value: "slow", label: "Over 21 days or a vague answer", status: "bad" },
+    ],
+  },
+  {
+    id: "reliable-defects",
+    category: "reliability",
+    stage: "first-talk",
+    question: "Replacement policy is on record",
+    howToVerify:
+      "Ask what happens if a batch arrives defective, and get the answer in writing (chat counts).",
+    options: [
+      { value: "written", label: "Clear replacement terms, in writing", status: "good" },
+      { value: "verbal", label: "Verbal promise only", status: "ok" },
+      { value: "none", label: "No policy, or won't commit", status: "bad" },
+    ],
+  },
   {
     id: "comm-response",
     category: "communication",
-    question: "Response speed & specificity",
-    weight: 3,
-    redFlags: [">48 hours", "Copy-paste responses"],
-    greenFlags: ["<12 hours", "Detailed, specific answers"],
-    tip: "Ask a specific technical question. Copy-paste replies = sales team, not actual manufacturer.",
+    stage: "first-talk",
+    question: "Answers are fast and specific",
+    howToVerify:
+      "Ask one specific technical question (material, dimensions, packaging). A real manufacturer answers precisely; a reseller sends copy-paste.",
+    options: [
+      { value: "specific", label: "Quick and specific answers", status: "good" },
+      { value: "slowish", label: "Same-day but generic", status: "ok" },
+      { value: "poor", label: "Over 48h or copy-paste replies", status: "bad" },
+    ],
   },
   {
     id: "comm-contract",
     category: "communication",
-    question: "Willingness to sign a supply agreement",
-    weight: 3,
-    redFlags: ["Refuses written contract"],
-    greenFlags: ["Has standard supply agreement template"],
-    tip: "No contract = no legal recourse when things go wrong (and they will).",
+    stage: "first-talk",
+    question: "Willing to put terms in writing",
+    howToVerify:
+      "Ask for a simple written agreement (price, MOQ, lead time, defect terms). Refusal to write anything down = no recourse later.",
+    options: [
+      { value: "agreement", label: "Has or accepts a written agreement", status: "good" },
+      { value: "chat", label: "Informal but on record (chat)", status: "ok" },
+      { value: "refuses", label: "Refuses anything in writing", status: "bad" },
+    ],
+  },
+  {
+    id: "legit-references",
+    category: "legitimacy",
+    stage: "first-talk",
+    question: "Can point to real buyers",
+    howToVerify:
+      "Ask for 2 current buyers you can contact. Legitimate suppliers share this; scammers deflect to testimonials.",
+    options: [
+      { value: "given", label: "Gave 2+ contactable buyers", status: "good" },
+      { value: "testimonials", label: "Testimonials only, no contacts", status: "ok" },
+      { value: "refuses", label: "Refuses references", status: "bad" },
+    ],
+  },
+
+  // ── After sample / first order ──
+  {
+    id: "quality-consistency",
+    category: "quality",
+    stage: "after-sample",
+    question: "Sample matches the listing",
+    howToVerify:
+      "Compare the sample against the photos and your spec: material, finish, sizing, defects.",
+    critical: true,
+    options: [
+      { value: "matches", label: "Matches or beats the listing", status: "good" },
+      { value: "minor", label: "Minor differences, acceptable", status: "ok" },
+      { value: "worse", label: "Worse than photos / defective", status: "bad" },
+    ],
+  },
+  {
+    id: "reliable-packaging",
+    category: "reliability",
+    stage: "after-sample",
+    question: "Packaging survives marketplace shipping",
+    howToVerify:
+      "Check the sample's packaging - marketplaces penalise damaged deliveries, so it must protect the product in transit.",
+    options: [
+      { value: "ready", label: "Sturdy / branded, marketplace-ready", status: "good" },
+      { value: "plain", label: "Plain but protective", status: "ok" },
+      { value: "poor", label: "Loose / newspaper - would fail in transit", status: "bad" },
+    ],
   },
   {
     id: "comm-transparency",
     category: "communication",
-    question: "Proactive production updates",
-    weight: 2,
-    redFlags: ["Goes silent after payment", "Only responds when chased"],
-    greenFlags: ["Sends progress photos", "WhatsApp updates at each stage"],
-    tip: "Good suppliers treat you as a partner. Silence after payment is the biggest red flag.",
+    stage: "after-sample",
+    question: "Stayed reachable through the order",
+    howToVerify:
+      "Did they update you through dispatch, or go quiet after payment?",
+    options: [
+      { value: "proactive", label: "Proactive updates / photos", status: "good" },
+      { value: "reactive", label: "Replied only when chased", status: "ok" },
+      { value: "silent", label: "Went silent after payment", status: "bad" },
+    ],
   },
 ];
 
-export function calculateSupplierScore(answers: Record<string, number>): {
-  categories: SupplierScore[];
-  totalScore: number;
-  maxTotal: number;
-  overallVerdict: "recommended" | "proceed-with-caution" | "avoid";
-  criticalRedFlags: string[];
-} {
-  const categoryScores: Record<ScoreCategory, { weighted: number; maxWeighted: number }> = {
-    legitimacy: { weighted: 0, maxWeighted: 0 },
-    quality: { weighted: 0, maxWeighted: 0 },
-    reliability: { weighted: 0, maxWeighted: 0 },
-    pricing: { weighted: 0, maxWeighted: 0 },
-    communication: { weighted: 0, maxWeighted: 0 },
-  };
+export const STAGE_ORDER: CheckStage[] = ["before-contact", "first-talk", "after-sample"];
 
-  const criticalRedFlags: string[] = [];
+export type SupplierVerdict =
+  | "unrated"
+  | "avoid"
+  | "keep-verifying"
+  | "caution"
+  | "recommended";
 
-  for (const criterion of SCORECARD_CRITERIA) {
-    const score = answers[criterion.id] ?? 0;
-    const weighted = score * criterion.weight;
-    const maxWeighted = 10 * criterion.weight;
+export type SupplierEvaluation = {
+  verdict: SupplierVerdict;
+  answeredCount: number;
+  totalCount: number;
+  goodCount: number;
+  okCount: number;
+  badCount: number;
+  criticalCleared: number;
+  criticalTotal: number;
+  /** Bad answers found - the actual red flags, with the criterion + choice. */
+  redFlags: { id: string; question: string; label: string; critical: boolean }[];
+  /** Unanswered checks, in stage order - the "still to verify" to-do list. */
+  toVerify: { id: string; stage: CheckStage; question: string; howToVerify: string }[];
+};
 
-    categoryScores[criterion.category].weighted += weighted;
-    categoryScores[criterion.category].maxWeighted += maxWeighted;
+/**
+ * `answers` maps criterion id -> chosen option value. An id absent from the map
+ * is "not verified yet" and is treated as a to-do, never as a failure.
+ */
+export function evaluateSupplier(answers: Record<string, string>): SupplierEvaluation {
+  const criticalTotal = SCORECARD_CRITERIA.filter((c) => c.critical).length;
+  let goodCount = 0;
+  let okCount = 0;
+  let badCount = 0;
+  let criticalCleared = 0;
+  let criticalBad = 0;
+  let criticalUnknown = 0;
+  const redFlags: SupplierEvaluation["redFlags"] = [];
+  const toVerify: SupplierEvaluation["toVerify"] = [];
 
-    // Flag critical items (weight >= 4) scoring below 5
-    if (criterion.weight >= 4 && score < 5) {
-      criticalRedFlags.push(criterion.question);
+  for (const c of SCORECARD_CRITERIA) {
+    const chosen = answers[c.id];
+    const opt = c.options.find((o) => o.value === chosen);
+
+    if (!opt) {
+      toVerify.push({ id: c.id, stage: c.stage, question: c.question, howToVerify: c.howToVerify });
+      if (c.critical) criticalUnknown++;
+      continue;
+    }
+
+    if (opt.status === "good") goodCount++;
+    else if (opt.status === "ok") okCount++;
+    else badCount++;
+
+    if (opt.status === "bad") {
+      redFlags.push({ id: c.id, question: c.question, label: opt.label, critical: Boolean(c.critical) });
+    }
+    if (c.critical) {
+      if (opt.status === "bad") criticalBad++;
+      else criticalCleared++;
     }
   }
 
-  const categories: SupplierScore[] = (
-    Object.keys(categoryScores) as ScoreCategory[]
-  ).map((cat) => {
-    const { weighted, maxWeighted } = categoryScores[cat];
-    const normalized = maxWeighted > 0 ? (weighted / maxWeighted) * 10 : 0;
-    let verdict: "pass" | "caution" | "fail";
-    if (normalized >= 7) verdict = "pass";
-    else if (normalized >= 4) verdict = "caution";
-    else verdict = "fail";
-    return {
-      category: cat,
-      score: Math.round(normalized * 10) / 10,
-      maxScore: 10,
-      verdict,
-    };
-  });
+  const answeredCount = goodCount + okCount + badCount;
+  // "Looks solid" has to mean real verification depth, not just clearing the 4
+  // gates - require most checks actually done before we say a supplier is safe.
+  const enoughDone = answeredCount >= Math.ceil(SCORECARD_CRITERIA.length * 0.7);
 
-  // Total weighted score (normalized to 100)
-  const totalWeighted = Object.values(categoryScores).reduce((s, c) => s + c.weighted, 0);
-  const totalMax = Object.values(categoryScores).reduce((s, c) => s + c.maxWeighted, 0);
-  const totalScore = totalMax > 0 ? Math.round((totalWeighted / totalMax) * 100) : 0;
+  let verdict: SupplierVerdict;
+  if (answeredCount === 0) verdict = "unrated";
+  else if (criticalBad > 0) verdict = "avoid";
+  else if (criticalUnknown > 0 || !enoughDone) verdict = "keep-verifying";
+  else if (badCount > 0) verdict = "caution";
+  else verdict = "recommended";
 
-  let overallVerdict: "recommended" | "proceed-with-caution" | "avoid";
-  if (totalScore >= 70 && criticalRedFlags.length === 0) {
-    overallVerdict = "recommended";
-  } else if (totalScore >= 40 && criticalRedFlags.length <= 2) {
-    overallVerdict = "proceed-with-caution";
-  } else {
-    overallVerdict = "avoid";
-  }
+  // Keep the to-do list in stage order.
+  toVerify.sort((a, b) => STAGE_ORDER.indexOf(a.stage) - STAGE_ORDER.indexOf(b.stage));
 
-  return { categories, totalScore, maxTotal: 100, overallVerdict, criticalRedFlags };
+  return {
+    verdict,
+    answeredCount,
+    totalCount: SCORECARD_CRITERIA.length,
+    goodCount,
+    okCount,
+    badCount,
+    criticalCleared,
+    criticalTotal,
+    redFlags,
+    toVerify,
+  };
 }
+
+export const VERDICT_META: Record<
+  SupplierVerdict,
+  { label: string; blurb: string; tone: "neutral" | "good" | "warn" | "bad" }
+> = {
+  unrated: {
+    label: "Start verifying",
+    blurb: "Answer the checks below - start with the public ones you can do right now.",
+    tone: "neutral",
+  },
+  avoid: {
+    label: "Do not pay yet",
+    blurb: "A dealbreaker check failed. Fix it or walk away before sending any money.",
+    tone: "bad",
+  },
+  "keep-verifying": {
+    label: "Not enough to trust yet",
+    blurb: "Clear every must-pass check and finish most of the rest before you pay an advance.",
+    tone: "warn",
+  },
+  caution: {
+    label: "Proceed with caution",
+    blurb: "No dealbreakers, but some weak spots. Cover them in writing and start with a small order.",
+    tone: "warn",
+  },
+  recommended: {
+    label: "Looks solid",
+    blurb: "Every check you've done passed. Still start with a sample and a small first order.",
+    tone: "good",
+  },
+};

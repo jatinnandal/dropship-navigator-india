@@ -1,231 +1,189 @@
 "use client";
 
-import { useMemo, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useMemo, useState, useCallback, useEffect } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  ShieldCheck,
-  Award,
-  Clock,
-  BadgeDollarSign,
-  MessageSquare,
   ChevronDown,
   ChevronUp,
   AlertTriangle,
-  CheckCircle2,
   Save,
   Check,
-  Info,
+  ShieldAlert,
+  ListChecks,
+  Trash2,
 } from "lucide-react";
 import {
   SCORECARD_CRITERIA,
-  CATEGORY_META,
-  calculateSupplierScore,
-  type ScoreCategory,
+  STAGE_META,
+  STAGE_ORDER,
+  VERDICT_META,
+  evaluateSupplier,
+  type CheckStage,
   type ScorecardCriterion,
+  type SupplierEvaluation,
+  type OptionStatus,
 } from "@/lib/supplier-scorecard-data";
 
-/* ── constants ── */
-const SCORE_OPTIONS = [
-  { value: 0, label: "Fail" },
-  { value: 2.5, label: "Poor" },
-  { value: 5, label: "OK" },
-  { value: 7.5, label: "Good" },
-  { value: 10, label: "Excellent" },
-] as const;
+const LS_KEY = "dni-supplier-scorecards-v2";
 
-const CATEGORY_ICONS: Record<ScoreCategory, typeof ShieldCheck> = {
-  legitimacy: ShieldCheck,
-  quality: Award,
-  reliability: Clock,
-  pricing: BadgeDollarSign,
-  communication: MessageSquare,
+type SavedSupplier = {
+  name: string;
+  answers: Record<string, string>;
+  verdict: SupplierEvaluation["verdict"];
+  criticalCleared: number;
+  criticalTotal: number;
+  answeredCount: number;
+  totalCount: number;
+  savedAt: string;
 };
 
-const CATEGORY_ORDER: ScoreCategory[] = [
-  "legitimacy",
-  "quality",
-  "reliability",
-  "pricing",
-  "communication",
-];
+function optionClass(status: OptionStatus, selected: boolean): string {
+  if (!selected) {
+    return "border-white/10 bg-white/[0.03] text-[var(--muted)] hover:border-white/20 hover:text-[var(--body-text)]";
+  }
+  if (status === "good") return "border-[var(--success)]/45 bg-[var(--success)]/15 text-[var(--success)]";
+  if (status === "bad") return "border-[var(--danger)]/45 bg-[var(--danger)]/15 text-[var(--danger)]";
+  return "border-white/25 bg-white/[0.08] text-white";
+}
 
-const LS_KEY = "dni-supplier-scorecards";
+const TONE_CLASS = {
+  neutral: "border-white/[0.14] bg-white/[0.03] text-[var(--muted)]",
+  good: "border-[var(--success)]/40 bg-[var(--success)]/10 text-[var(--success)]",
+  warn: "border-white/[0.18] bg-white/[0.06] text-white",
+  bad: "border-[var(--danger)]/45 bg-[var(--danger)]/12 text-[var(--danger)]",
+} as const;
 
-/* ── component ── */
 export function SupplierScorecard() {
   const [supplierName, setSupplierName] = useState("");
-  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [answers, setAnswers] = useState<Record<string, string>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState<SavedSupplier[]>([]);
+  const [justSaved, setJustSaved] = useState(false);
 
-  const setScore = useCallback((id: string, value: number) => {
-    setAnswers((prev) => ({ ...prev, [id]: value }));
+  useEffect(() => {
+    // Deferred so the setState lands after commit (matches the codebase's
+    // localStorage-hydration pattern and keeps SSR markup stable).
+    const t = setTimeout(() => {
+      try {
+        const raw = localStorage.getItem(LS_KEY);
+        if (raw) setSaved(JSON.parse(raw) as SavedSupplier[]);
+      } catch {
+        // localStorage unavailable - comparison list stays empty
+      }
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  const setAnswer = useCallback((id: string, value: string) => {
+    setAnswers((prev) => {
+      // Tapping the selected option again clears it back to "not verified".
+      if (prev[id] === value) {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      }
+      return { ...prev, [id]: value };
+    });
   }, []);
 
   const toggleExpand = useCallback((id: string) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   }, []);
 
-  const result = useMemo(() => calculateSupplierScore(answers), [answers]);
-  const answeredCount = Object.keys(answers).length;
+  const evaln = useMemo(() => evaluateSupplier(answers), [answers]);
 
-  const handleSave = () => {
+  const persist = useCallback((list: SavedSupplier[]) => {
+    setSaved(list);
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify(list));
+    } catch {
+      // ignore - stays in memory for this session
+    }
+  }, []);
+
+  const handleSave = useCallback(() => {
     if (!supplierName.trim()) return;
-    const existing = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
-    existing.push({
-      name: supplierName,
+    const entry: SavedSupplier = {
+      name: supplierName.trim(),
       answers,
-      result,
+      verdict: evaln.verdict,
+      criticalCleared: evaln.criticalCleared,
+      criticalTotal: evaln.criticalTotal,
+      answeredCount: evaln.answeredCount,
+      totalCount: evaln.totalCount,
       savedAt: new Date().toISOString(),
-    });
-    localStorage.setItem(LS_KEY, JSON.stringify(existing));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
+    };
+    // Replace an existing card for the same name, else append.
+    const rest = saved.filter((s) => s.name.toLowerCase() !== entry.name.toLowerCase());
+    persist([...rest, entry].slice(-8));
+    setJustSaved(true);
+    setTimeout(() => setJustSaved(false), 1800);
+  }, [supplierName, answers, evaln, saved, persist]);
 
-  // Neutral until the user has actually scored something - an unanswered
-  // scorecard is not an "Avoid This Supplier" verdict.
-  const verdictColor =
-    answeredCount === 0
-      ? "text-[var(--muted)] border-white/[0.14] bg-white/[0.03]"
-      : result.overallVerdict === "recommended"
-        ? "text-[var(--success)] border-[var(--success)]/40 bg-[var(--success)]/10"
-        : result.overallVerdict === "proceed-with-caution"
-          ? "text-white border-white/[0.16] bg-white/[0.06]"
-          : "text-[var(--danger)] border-[var(--danger)]/40 bg-[var(--danger)]/10";
+  const loadSaved = useCallback((s: SavedSupplier) => {
+    setSupplierName(s.name);
+    setAnswers(s.answers);
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
 
-  const verdictLabel =
-    answeredCount === 0
-      ? "Score at least one criterion to get a verdict"
-      : result.overallVerdict === "recommended"
-        ? "Recommended"
-        : result.overallVerdict === "proceed-with-caution"
-          ? "Proceed with Caution"
-          : "Avoid This Supplier";
-
-  const scoreColor =
-    answeredCount === 0
-      ? "text-[var(--text-faint)]"
-      : result.totalScore >= 70
-        ? "text-[var(--success)]"
-        : result.totalScore >= 40
-          ? "text-white"
-          : "text-[var(--danger)]";
+  const removeSaved = useCallback(
+    (name: string) => persist(saved.filter((s) => s.name !== name)),
+    [saved, persist],
+  );
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-      {/* ── Main scoring area ── */}
+    <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      {/* ── Checks ── */}
       <div className="space-y-6">
-        {/* Supplier name input */}
         <div className="glass-panel grain rounded-xl border p-4">
-          <label className="text-sm font-medium text-[var(--body-text)]">
-            Supplier Name
-          </label>
+          <label className="text-sm font-medium text-[var(--body-text)]">Supplier name</label>
           <input
             type="text"
             value={supplierName}
             onChange={(e) => setSupplierName(e.target.value)}
-            placeholder="e.g., Rajesh Textiles, Surat"
+            placeholder="e.g. Rajesh Textiles, Surat"
             className="mt-2 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-[var(--text-faint)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
           />
+          <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
+            Work top to bottom - you can only answer the later stages once you&apos;ve talked to
+            them and seen a sample. Skipped checks become your to-do list, not a low score.
+          </p>
         </div>
 
-        {/* Category sections */}
-        {CATEGORY_ORDER.map((cat) => {
-          const Icon = CATEGORY_ICONS[cat];
-          const criteria = SCORECARD_CRITERIA.filter((c) => c.category === cat);
-          const catResult = result.categories.find((c) => c.category === cat);
+        {STAGE_ORDER.map((stage) => (
+          <StageSection
+            key={stage}
+            stage={stage}
+            answers={answers}
+            expanded={expanded}
+            onAnswer={setAnswer}
+            onToggle={toggleExpand}
+          />
+        ))}
 
-          return (
-            <div key={cat} className="glass-panel grain rounded-xl border p-5">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="inline-flex rounded-lg border border-white/10 bg-white/[0.03] p-2">
-                  <Icon className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <h2 className="font-display text-base font-semibold text-white">
-                    {CATEGORY_META[cat].label}
-                  </h2>
-                  {catResult && (
-                    <span
-                      className={`text-xs font-medium ${
-                        catResult.verdict === "pass"
-                          ? "text-[var(--success)]"
-                          : catResult.verdict === "caution"
-                            ? "text-white"
-                            : "text-[var(--danger)]"
-                      }`}
-                    >
-                      {catResult.score.toFixed(1)}/10
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                {criteria.map((criterion) => (
-                  <CriterionRow
-                    key={criterion.id}
-                    criterion={criterion}
-                    score={answers[criterion.id]}
-                    isExpanded={expanded[criterion.id] || false}
-                    onScore={setScore}
-                    onToggle={toggleExpand}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-
-        {/* Key insight box */}
-        <div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger)]/10 p-5">
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-[var(--danger)] mt-0.5 shrink-0" />
-            <div className="space-y-2 text-sm text-[var(--body-text)]">
-              <p className="font-medium text-[var(--danger)]">Critical Context</p>
-              <ul className="list-disc pl-4 space-y-1">
-                <li>
-                  IndiaMART has been on the USTR &quot;Notorious Markets&quot; list since 2018
-                </li>
-                <li>
-                  Supplier issues are among the most common reasons early sellers fail
-                </li>
-                <li className="font-medium text-white">
-                  ALWAYS order samples before committing to bulk - no exceptions
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Final verdict (mobile/bottom) */}
+        {/* Mobile verdict */}
         <div className="lg:hidden">
           <VerdictCard
-            answeredCount={answeredCount}
-            result={result}
-            verdictColor={verdictColor}
-            verdictLabel={verdictLabel}
-            scoreColor={scoreColor}
+            evaln={evaln}
             supplierName={supplierName}
             onSave={handleSave}
-            saved={saved}
+            justSaved={justSaved}
           />
         </div>
+
+        {saved.length > 0 && (
+          <CompareTable saved={saved} onLoad={loadSaved} onRemove={removeSaved} />
+        )}
       </div>
 
-      {/* ── Sticky sidebar (desktop) ── */}
+      {/* ── Sticky verdict (desktop) ── */}
       <div className="hidden lg:block">
-        <div className="sticky top-6 space-y-4">
+        <div className="sticky top-6">
           <VerdictCard
-            answeredCount={answeredCount}
-            result={result}
-            verdictColor={verdictColor}
-            verdictLabel={verdictLabel}
-            scoreColor={scoreColor}
+            evaln={evaln}
             supplierName={supplierName}
             onSave={handleSave}
-            saved={saved}
+            justSaved={justSaved}
           />
         </div>
       </div>
@@ -233,130 +191,101 @@ export function SupplierScorecard() {
   );
 }
 
-/* ── Criterion Row ── */
+function StageSection({
+  stage,
+  answers,
+  expanded,
+  onAnswer,
+  onToggle,
+}: {
+  stage: CheckStage;
+  answers: Record<string, string>;
+  expanded: Record<string, boolean>;
+  onAnswer: (id: string, value: string) => void;
+  onToggle: (id: string) => void;
+}) {
+  const criteria = SCORECARD_CRITERIA.filter((c) => c.stage === stage);
+  const meta = STAGE_META[stage];
+  return (
+    <div className="glass-panel grain rounded-xl border p-5">
+      <div className="mb-4">
+        <h2 className="font-display text-base font-semibold text-white">{meta.label}</h2>
+        <p className="mt-0.5 text-xs text-[var(--muted)]">{meta.caption}</p>
+      </div>
+      <div className="space-y-3">
+        {criteria.map((c) => (
+          <CriterionRow
+            key={c.id}
+            criterion={c}
+            selected={answers[c.id]}
+            isExpanded={expanded[c.id] || false}
+            onAnswer={onAnswer}
+            onToggle={onToggle}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function CriterionRow({
   criterion,
-  score,
+  selected,
   isExpanded,
-  onScore,
+  onAnswer,
   onToggle,
 }: {
   criterion: ScorecardCriterion;
-  score: number | undefined;
+  selected: string | undefined;
   isExpanded: boolean;
-  onScore: (id: string, value: number) => void;
+  onAnswer: (id: string, value: string) => void;
   onToggle: (id: string) => void;
 }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/[0.03] p-3">
       <div className="flex items-start justify-between gap-2">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-[var(--body-text)]">
-            {criterion.question}
-          </p>
-          <div className="mt-1 flex items-center gap-1">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <span
-                key={i}
-                className={`h-1.5 w-1.5 rounded-full ${
-                  i < criterion.weight ? "bg-white" : "bg-white/[0.06]"
-                }`}
-              />
-            ))}
-            <span className="ml-1.5 text-[10px] text-[var(--text-faint)]">
-              weight {criterion.weight}
+        <p className="flex-1 text-sm font-medium text-[var(--body-text)]">
+          {criterion.question}
+          {criterion.critical && (
+            <span className="ml-2 inline-flex items-center gap-1 align-middle text-[10px] font-semibold uppercase tracking-wider text-[var(--danger)]">
+              <ShieldAlert className="h-3 w-3" /> must pass
             </span>
-          </div>
-        </div>
+          )}
+        </p>
         <button
           onClick={() => onToggle(criterion.id)}
-          className="shrink-0 rounded p-1 text-[var(--text-faint)] hover:text-[var(--body-text)] transition-colors"
-          aria-label="Toggle details"
+          className="shrink-0 rounded p-1 text-[var(--text-faint)] transition-colors hover:text-[var(--body-text)]"
+          aria-label="How to check this"
         >
-          {isExpanded ? (
-            <ChevronUp className="h-4 w-4" />
-          ) : (
-            <ChevronDown className="h-4 w-4" />
-          )}
+          {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
         </button>
       </div>
 
-      {/* Score selector */}
-      <div className="mt-3 flex flex-wrap gap-1.5">
-        {SCORE_OPTIONS.map((opt) => {
-          const isSelected = score === opt.value;
-          return (
-            <button
-              key={opt.value}
-              onClick={() => onScore(criterion.id, opt.value)}
-              className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-all ${
-                isSelected
-                  ? opt.value >= 7.5
-                    ? "border-[var(--success)]/40 bg-[var(--success)]/20 text-[var(--success)]"
-                    : opt.value >= 5
-                      ? "border-white/[0.16] bg-white/[0.06] text-white"
-                      : "border-[var(--danger)]/40 bg-[var(--danger)]/20 text-[var(--danger)]"
-                  : "border-white/10 bg-white/[0.03] text-[var(--muted)] hover:border-white/10 hover:text-[var(--body-text)]"
-              }`}
-            >
-              {opt.label}
-            </button>
-          );
-        })}
+      <div className="mt-2.5 flex flex-wrap gap-1.5">
+        {criterion.options.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => onAnswer(criterion.id, opt.value)}
+            className={`rounded-md border px-2.5 py-1 text-xs font-medium transition-all ${optionClass(opt.status, selected === opt.value)}`}
+          >
+            {opt.label}
+          </button>
+        ))}
       </div>
 
-      {/* Expanded flags */}
       <AnimatePresence>
         {isExpanded && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.18 }}
             className="overflow-hidden"
           >
-            <div className="mt-3 space-y-2 border-t border-white/10 pt-3">
-              {criterion.redFlags.length > 0 && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--danger)] font-medium mb-1">
-                    Red Flags
-                  </p>
-                  <ul className="space-y-0.5">
-                    {criterion.redFlags.map((flag, i) => (
-                      <li
-                        key={i}
-                        className="text-xs text-[var(--danger)] flex items-start gap-1.5"
-                      >
-                        <span className="mt-1.5 h-1 w-1 rounded-full bg-[var(--danger)] shrink-0" />
-                        {flag}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {criterion.greenFlags.length > 0 && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-[var(--success)] font-medium mb-1">
-                    Green Flags
-                  </p>
-                  <ul className="space-y-0.5">
-                    {criterion.greenFlags.map((flag, i) => (
-                      <li
-                        key={i}
-                        className="text-xs text-[var(--success)]/80 flex items-start gap-1.5"
-                      >
-                        <CheckCircle2 className="mt-0.5 h-3 w-3 text-[var(--success)] shrink-0" />
-                        {flag}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              <div className="flex items-start gap-1.5 pt-1">
-                <Info className="h-3 w-3 text-[var(--muted)] mt-0.5 shrink-0" />
-                <p className="text-xs text-[var(--muted)]">{criterion.tip}</p>
-              </div>
-            </div>
+            <p className="mt-3 border-t border-white/10 pt-3 text-xs leading-5 text-[var(--muted)]">
+              <span className="font-medium text-[var(--body-text)]">How to check: </span>
+              {criterion.howToVerify}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -364,116 +293,177 @@ function CriterionRow({
   );
 }
 
-/* ── Verdict Card (shared sidebar/mobile) ── */
 function VerdictCard({
-  result,
-  verdictColor,
-  verdictLabel,
-  scoreColor,
+  evaln,
   supplierName,
   onSave,
-  saved,
-  answeredCount = 1,
+  justSaved,
 }: {
-  result: ReturnType<typeof calculateSupplierScore>;
-  verdictColor: string;
-  verdictLabel: string;
-  scoreColor: string;
+  evaln: SupplierEvaluation;
   supplierName: string;
   onSave: () => void;
-  saved: boolean;
-  answeredCount?: number;
+  justSaved: boolean;
 }) {
+  const v = VERDICT_META[evaln.verdict];
   return (
-    <div className="glass-panel grain rounded-xl border p-5 space-y-4">
-      {/* Overall score */}
-      <div className="text-center">
-        <p className="text-xs text-[var(--text-faint)] uppercase tracking-wider mb-1">
-          Overall Score
-        </p>
-        <motion.p
-          className={`font-display text-4xl font-bold ${scoreColor}`}
-          key={result.totalScore}
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 200 }}
-        >
-          {answeredCount === 0 ? "-" : result.totalScore}
-          <span className="text-lg text-[var(--text-faint)]">/100</span>
-        </motion.p>
+    <div className="glass-panel grain space-y-4 rounded-xl border p-5">
+      <div className={`rounded-lg border p-4 text-center ${TONE_CLASS[v.tone]}`}>
+        <p className="text-base font-semibold">{v.label}</p>
+        <p className="mt-1 text-xs leading-5 opacity-90">{v.blurb}</p>
       </div>
 
-      {/* Verdict badge */}
-      <div className={`rounded-lg border p-3 text-center ${verdictColor}`}>
-        <p className="text-sm font-semibold">{verdictLabel}</p>
+      {/* Progress: checks done + critical cleared */}
+      <div className="grid grid-cols-2 gap-2 text-center">
+        <div className="rounded-lg border border-white/10 bg-white/[0.02] p-2.5">
+          <p className="text-lg font-semibold text-white">
+            {evaln.answeredCount}
+            <span className="text-sm text-[var(--text-faint)]">/{evaln.totalCount}</span>
+          </p>
+          <p className="text-[10px] uppercase tracking-wider text-[var(--text-faint)]">checks done</p>
+        </div>
+        <div className="rounded-lg border border-white/10 bg-white/[0.02] p-2.5">
+          <p
+            className={`text-lg font-semibold ${
+              evaln.criticalCleared === evaln.criticalTotal
+                ? "text-[var(--success)]"
+                : "text-white"
+            }`}
+          >
+            {evaln.criticalCleared}
+            <span className="text-sm text-[var(--text-faint)]">/{evaln.criticalTotal}</span>
+          </p>
+          <p className="text-[10px] uppercase tracking-wider text-[var(--text-faint)]">must-pass cleared</p>
+        </div>
       </div>
 
-      {/* Per-category bars */}
-      <div className="space-y-2">
-        <p className="text-xs text-[var(--text-faint)] uppercase tracking-wider">
-          By Category
-        </p>
-        {result.categories.map((cat) => {
-          const barColor =
-            cat.verdict === "pass"
-              ? "bg-[var(--success)]"
-              : cat.verdict === "caution"
-                ? "bg-white"
-                : "bg-[var(--danger)]";
-          return (
-            <div key={cat.category} className="flex items-center gap-2">
-              <span className="text-xs text-[var(--muted)] w-24 truncate capitalize">
-                {cat.category}
-              </span>
-              <div className="flex-1 h-2 rounded-full bg-white/[0.03]">
-                <motion.div
-                  className={`h-2 rounded-full ${barColor}`}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${(cat.score / 10) * 100}%` }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
-                />
-              </div>
-              <span className="text-xs text-[var(--text-faint)] w-8 text-right">
-                {cat.score.toFixed(1)}
-              </span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Critical red flags */}
-      {result.criticalRedFlags.length > 0 && (
+      {/* Red flags */}
+      {evaln.redFlags.length > 0 && (
         <div className="rounded-lg border border-[var(--danger)]/30 bg-[var(--danger)]/10 p-3">
-          <p className="text-xs font-medium text-[var(--danger)] mb-1.5">
-            Critical Concerns ({result.criticalRedFlags.length})
+          <p className="mb-1.5 text-xs font-medium text-[var(--danger)]">
+            Red flags ({evaln.redFlags.length})
           </p>
           <ul className="space-y-1">
-            {result.criticalRedFlags.map((flag, i) => (
-              <li key={i} className="text-xs text-[var(--danger)] flex items-start gap-1.5">
-                <AlertTriangle className="h-3 w-3 mt-0.5 shrink-0 text-[var(--danger)]" />
-                {flag}
+            {evaln.redFlags.map((f) => (
+              <li key={f.id} className="flex items-start gap-1.5 text-xs text-[var(--danger)]">
+                <AlertTriangle className="mt-0.5 h-3 w-3 shrink-0" />
+                <span>
+                  {f.question}
+                  {f.critical && <span className="font-semibold"> (dealbreaker)</span>}
+                </span>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Save button */}
+      {/* Still to verify - the to-do list */}
+      {evaln.toVerify.length > 0 && (
+        <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
+          <p className="mb-1.5 flex items-center gap-1.5 text-xs font-medium text-[var(--body-text)]">
+            <ListChecks className="h-3.5 w-3.5" /> Still to verify ({evaln.toVerify.length})
+          </p>
+          <ul className="space-y-1">
+            {evaln.toVerify.slice(0, 6).map((t) => (
+              <li key={t.id} className="flex items-start gap-1.5 text-xs text-[var(--muted)]">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-white/25" />
+                {t.question}
+              </li>
+            ))}
+            {evaln.toVerify.length > 6 && (
+              <li className="text-[11px] text-[var(--text-faint)]">
+                +{evaln.toVerify.length - 6} more below
+              </li>
+            )}
+          </ul>
+        </div>
+      )}
+
       <button
         onClick={onSave}
-        disabled={!supplierName.trim() || saved}
-        className="btn-primary w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        disabled={!supplierName.trim() || justSaved}
+        className="btn-primary flex w-full items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {saved ? (
+        {justSaved ? (
           <>
             <Check className="h-4 w-4" /> Saved
           </>
         ) : (
           <>
-            <Save className="h-4 w-4" /> Save Scorecard
+            <Save className="h-4 w-4" /> Save to compare
           </>
         )}
       </button>
+    </div>
+  );
+}
+
+function CompareTable({
+  saved,
+  onLoad,
+  onRemove,
+}: {
+  saved: SavedSupplier[];
+  onLoad: (s: SavedSupplier) => void;
+  onRemove: (name: string) => void;
+}) {
+  return (
+    <div className="glass-panel grain rounded-xl border p-5">
+      <h2 className="font-display text-base font-semibold text-white">Compare suppliers</h2>
+      <p className="mt-0.5 text-xs text-[var(--muted)]">
+        Vet a few, then pick the one with the most must-pass checks cleared and no dealbreakers.
+      </p>
+      <div className="mt-4 overflow-x-auto">
+        <table className="w-full text-left text-sm">
+          <thead>
+            <tr className="border-b border-white/10 text-[10px] uppercase tracking-wider text-[var(--text-faint)]">
+              <th className="pb-2 pr-3 font-medium">Supplier</th>
+              <th className="pb-2 pr-3 font-medium">Verdict</th>
+              <th className="pb-2 pr-3 font-medium">Must-pass</th>
+              <th className="pb-2 pr-3 font-medium">Checks</th>
+              <th className="pb-2 font-medium"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {saved.map((s) => {
+              const v = VERDICT_META[s.verdict];
+              return (
+                <tr key={s.name} className="border-b border-white/[0.06]">
+                  <td className="py-2.5 pr-3">
+                    <button
+                      onClick={() => onLoad(s)}
+                      className="font-medium text-white hover:underline"
+                    >
+                      {s.name}
+                    </button>
+                  </td>
+                  <td className="py-2.5 pr-3">
+                    <span
+                      className={`rounded-md border px-2 py-0.5 text-xs font-medium ${TONE_CLASS[v.tone]}`}
+                    >
+                      {v.label}
+                    </span>
+                  </td>
+                  <td className="py-2.5 pr-3 text-[var(--muted)]">
+                    {s.criticalCleared}/{s.criticalTotal}
+                  </td>
+                  <td className="py-2.5 pr-3 text-[var(--muted)]">
+                    {s.answeredCount}/{s.totalCount}
+                  </td>
+                  <td className="py-2.5 text-right">
+                    <button
+                      onClick={() => onRemove(s.name)}
+                      className="rounded p-1 text-[var(--text-faint)] transition-colors hover:text-[var(--danger)]"
+                      aria-label={`Remove ${s.name}`}
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
