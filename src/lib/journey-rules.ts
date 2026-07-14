@@ -343,7 +343,7 @@ const BASE_MODULE_TOOLS: Record<TaskModuleId, string[]> = {
   "supplier-sourcing": ["IndiaMART", "TradeIndia", "Drpshippr"],
   "channel-launch": ["Amazon Seller Central", "Flipkart Seller Hub", "Meesho Supplier Panel"],
   "ads-growth": ["Amazon Ads", "Meta Ads", "Canva"],
-  "tracking-analytics": ["eVanik", "TrackEcom", "eCominess"],
+  "tracking-analytics": ["eVanik", "eCominess"],
 };
 
 function productComplianceHint(facts: ProfileFacts): string {

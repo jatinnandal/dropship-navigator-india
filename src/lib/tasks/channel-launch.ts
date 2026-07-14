@@ -536,7 +536,7 @@ export function buildChannelLaunchTask(
         {
           id: "zero-pg-mobile-checkout",
           title: "Mobile-first checkout setup",
-          why: "90%+ India buyers are on mobile. Checkout must capture phone number first - for COD confirmation.",
+          why: "The vast majority of India buyers shop on mobile. Checkout must capture the phone number first - for COD confirmation.",
           how: [
             "In Shopify admin: Settings → Checkout → Customer information - set the phone number field to Required so every COD order arrives with a callable number.",
             "Settings → Payments: keep card/online methods off until your PG is approved, and enable Cash on Delivery under Manual payment methods as the default.",
@@ -700,7 +700,7 @@ export function buildChannelLaunchTask(
     {
       id: "shipping-sla-targets",
       title: "Hit channel dispatch SLAs",
-      why: "Dispatch SLA is the #1 suspension trigger for new sellers.",
+      why: "Dispatch SLA breaches are a top suspension trigger for new sellers.",
       how: shippingSlaForChannel(profile.primaryChannel),
       trap: "Promising 1-day dispatch when supplier needs 3 days = guaranteed SLA breach.",
     },

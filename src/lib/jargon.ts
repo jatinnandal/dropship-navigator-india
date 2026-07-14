@@ -136,6 +136,50 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
     term: "AliExpress",
     short: "China cross-border marketplace. 2-4 week shipping - impractical for India COD dropshipping.",
   },
+  {
+    term: "SLA",
+    short: "Service Level Agreement - a promise in writing of exactly how fast something happens (e.g. dispatch within 48 hours, replacement within 24 hours).",
+  },
+  {
+    term: "pro-forma invoice",
+    short: "A written price quote listing every cost (unit price, GST, packaging, shipping) BEFORE you pay - not the final tax invoice.",
+  },
+  {
+    term: "landed cost",
+    short: "Your all-in cost to get one unit to the buyer's door: product price + shipping (+ customs duty if imported).",
+  },
+  {
+    term: "input credit",
+    short: "The GST you already paid on business purchases, set off against the GST you collect on sales (also called Input Tax Credit / ITC).",
+  },
+  {
+    term: "ITC",
+    short: "Input Tax Credit - the GST you paid on purchases, subtracted from the GST you owe on sales.",
+  },
+  {
+    term: "IGST",
+    short: "Integrated GST - the GST on inter-state sales and on imports; claimable back as input credit.",
+  },
+  {
+    term: "Bill of Entry",
+    short: "The customs document filed when goods are imported - proof of the IGST/duty you paid, needed to claim input credit.",
+  },
+  {
+    term: "NEFT",
+    short: "A standard bank-to-bank transfer in India - the safe way to pay a supplier, versus a personal UPI number.",
+  },
+  {
+    term: "RTGS",
+    short: "A bank transfer for larger amounts, settled in real time - like NEFT, a safe supplier-payment method.",
+  },
+  {
+    term: "cancelled cheque",
+    short: "A cheque with 'CANCELLED' written across it - used as proof of your bank account name and IFSC. You don't sign or fill it.",
+  },
+  {
+    term: "NOC",
+    short: "No Objection Certificate - a signed letter from a property owner allowing you to run a business / register GST at their address.",
+  },
 ];
 
 const SORTED_TERMS = [...JARGON_DICTIONARY].sort((a, b) => b.term.length - a.term.length);

@@ -270,7 +270,7 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
   },
   "gstr8-reviewed": {
     hint: "Match operator TCS to GSTR-2A monthly.",
-    why: "Ignoring TCS mismatches means you overpay tax by 1% on every sale - silent margin bleed.",
+    why: "Ignoring TCS mismatches means you overpay tax by 0.5% on every sale - silent margin bleed.",
     howToSteps: [
       "Download TCS report from marketplace.",
       "Check GSTR-2A on GST portal for credits.",

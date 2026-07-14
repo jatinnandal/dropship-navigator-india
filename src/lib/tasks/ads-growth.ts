@@ -83,7 +83,7 @@ export function buildAdsTask(
     {
       id: "ads-readiness",
       title: "Are you ready for ads? (honest check)",
-      why: "Running ads before product-market fit is the #2 money burner after RTO. Most beginners lose their entire ad budget in week 1.",
+      why: "Running ads before product-market fit is one of the fastest ways to burn cash. Many beginners lose their entire first ad budget in week 1.",
       how: [
         listingLiveCheck(profile.primaryChannel),
         "Do you know your net margin per order after ALL costs (fees, shipping, RTO)? If not, run the margin calculator in the product selection module first - the break-even ROAS step below reuses that number.",
@@ -119,24 +119,24 @@ export function buildAdsTask(
   steps.push({
     id: "breakeven-roas",
     title: "Calculate your break-even ROAS before spending ₹1",
-    why: "Break-even ROAS = 1 / net margin. If margin is 20%, you need 5x ROAS just to break even. Below that, every sale loses money.",
+    why: "Break-even ROAS is the ad revenue per rupee you must earn just to cover every cost - marketplace fees, shipping, RTO, and product. Below it, each ad sale loses money. The calculator below computes the exact figure for your product.",
     how: [
       "Use the calculator below with your actual product costs.",
-      "Note your break-even ROAS number - this is your floor.",
-      "Target 1.5-2x above break-even for sustainable profit.",
+      "Read the break-even ROAS it prints - that is your floor.",
+      "Aim 1.5-2x above that floor for sustainable profit.",
     ],
-    trap: "Celebrating 2x ROAS while your break-even is 3x means you're losing money on every sale and calling it success.",
+    trap: "Celebrating 2x ROAS while your break-even is higher means you're losing money on every sale and calling it success.",
     kind: "calculator",
     calculator: { kind: "breakeven_roas" },
-    mentorNote: workspace.netMarginPercent
-      ? `Your saved margin is ${workspace.netMarginPercent.toFixed(1)}%. Break-even ROAS ≈ ${(100 / Math.max(workspace.netMarginPercent, 1)).toFixed(1)}x.`
+    mentorNote: workspace.breakEvenRoas
+      ? `Your saved break-even ROAS is ${workspace.breakEvenRoas.toFixed(1)}x - that's your floor, not your target. Aim 1.5-2x above it.`
       : "Run the margin calculator in product selection first - I'll remember the result here.",
   });
 
   steps.push({
     id: "cod-prepaid-mix",
     title: "Model your COD vs prepaid mix",
-    why: "COD RTO ~20-26%. Prepaid returns <2%. Your payment mix is a core unit-economics driver - especially on Shopify and Meesho.",
+    why: "COD returns commonly run around 20-35%, while prepaid orders rarely come back. Your payment mix is a core unit-economics driver - especially on Shopify and Meesho.",
     how: ["Adjust COD % and see how blended margin changes vs 100% prepaid."],
     kind: "simulator",
     simulator: { kind: "cod_prepaid_mix" },
@@ -217,7 +217,7 @@ export function buildAdsTask(
     steps.push({
       id: "meta-setup",
       title: "Set up Meta Business Manager correctly",
-      why: "Running ads from a personal Facebook profile is the #1 cause of ad account bans in India. Business Manager is mandatory.",
+      why: "Running ads from a personal Facebook profile is a leading cause of ad account bans in India. Business Manager is mandatory.",
       how: [
         "Go to business.facebook.com → Create account. You sign in with your personal Facebook login, but the Business Manager is a separate business asset - ads never show your profile.",
         "Create the ad account inside it: Business Settings (gear icon) → Accounts → Ad accounts → Add → Create a new ad account. Set currency to INR and time zone to Kolkata - both are permanent for that ad account.",
@@ -243,7 +243,7 @@ export function buildAdsTask(
         "Day 7 read: add the Purchase ROAS column (Columns → Customize columns) and compare each ad set against the break-even ROAS you calculated above. Below break-even = kill it. At or above = scale toward ₹700-1000/day.",
         "Never increase budget more than 30% per day - sharp jumps reset Meta's learning phase.",
       ],
-      trap: "Chargebacks against Meta payments cause permanent bans in 80%+ of cases. Always resolve billing through Help Center, never your bank.",
+      trap: "Chargebacks against Meta payments frequently trigger permanent bans. Always resolve billing through the Help Center, never through your bank.",
       tools: [
         {
           name: "Meta Ads Manager",

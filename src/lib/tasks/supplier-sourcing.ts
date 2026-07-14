@@ -66,7 +66,7 @@ export function buildSourcingTask(
         "Always have a backup supplier for your top SKU.",
       ],
       mentorNote:
-        "The #1 complaint on Shopify India forums: 'Nobody tells me how to find reliable suppliers.' That's what we're fixing now.",
+        "A constant refrain from new Indian sellers: 'nobody tells me how to actually find a reliable supplier.' That's what this module fixes.",
     },
     {
       id: "where-to-find",
@@ -99,8 +99,8 @@ export function buildSourcingTask(
     {
       id: "sourcing-origin-game",
       title: "Spot the viable supplier (swipe game)",
-      why: "Outdated YouTube advice says AliExpress. In India COD, 25-day shipping = near 100% RTO. Learn to spot domestic suppliers.",
-      how: ["Swipe right on India suppliers with 3-5 day delivery. Left on China/cross-border traps."],
+      why: "Outdated YouTube advice says AliExpress. In India COD, 25-day shipping means the buyer often forgets and refuses at the door. Learn to spot domestic suppliers.",
+      how: ["Mark each card 'Use this supplier' if it's a viable India option, or 'Trap' if not. On a phone you can also swipe right (use) or left (trap). Read the reason before moving on."],
       kind: "simulator",
       simulator: { kind: "sourcing_swipe" },
     },
@@ -159,7 +159,7 @@ export function buildSourcingTask(
       ],
       trap: "The most expensive mistake: trusting a supplier based on their IndiaMART catalogue alone.",
       mentorNote:
-        "Score every reply on the Supplier scorecard: 70+ with no critical red flags = sample-worthy, under 40 = drop them without a second message.",
+        "Run every reply through the Supplier scorecard: it turns your answers into a verdict. Sample only the suppliers it clears, and drop any it flags to avoid - no second message needed.",
       question: {
         id: "supplier-type",
         prompt: "Have you confirmed your supplier is a manufacturer?",

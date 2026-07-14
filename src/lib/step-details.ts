@@ -717,11 +717,6 @@ export function getStepDetail(moduleId: string, profile: OnboardingProfile): Ste
             whatToAsk: "Ask for SKU-level profitability and reconciliation workflows.",
           },
           {
-            name: "TrackEcom",
-            whenToUse: "If returns/RTO tracking is becoming hard manually.",
-            whatToAsk: "Ask for return reason and channel-wise breakdowns.",
-          },
-          {
             name: "Bookkeeping support",
             whenToUse: "If weekly reconciliation is slipping and errors are growing.",
             whatToAsk: "Ask for monthly close process and issue escalation path.",

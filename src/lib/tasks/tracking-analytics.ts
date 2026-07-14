@@ -176,11 +176,6 @@ export function buildTrackingTask(
           whenToUse: "If manual spreadsheets become too painful.",
           why: "Auto-imports Amazon/Flipkart settlement data into SKU-level P&L views.",
         },
-        {
-          name: "TrackEcom",
-          whenToUse: "For return/RTO tracking across channels.",
-          why: "Shows return reasons and channel-wise breakdowns - helps you fix root causes.",
-        },
       ],
     },
     {
@@ -323,7 +318,6 @@ export function buildTrackingTask(
         "Already built into this app - don't pay another tool for these: settlement checking (Tools → Payout Reconciliation), the Monday summary (Weekly review card), margin and break-even math (margin calculator).",
         "eVanik: multi-marketplace SKU-level P&L auto-import - the layer this app doesn't automate. Worth it at 2+ channels or 20+ SKUs.",
         "eCominess: generates GSTR-1 from marketplace reports - saves CA hours at filing time.",
-        "TrackEcom: return-reason analytics across channels - for when your RTO log outgrows a sheet.",
         "Rule of thumb: stay manual plus the built-in tools until the Monday ritual takes over an hour - then automate the slowest piece first.",
       ],
       tools: [

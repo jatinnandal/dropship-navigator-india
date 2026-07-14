@@ -43,7 +43,7 @@ export function CodPrepaidMix({ channel, sellingPrice = 899, onComplete }: Props
     <div className="mt-4 space-y-5 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
       <p className="text-sm font-semibold text-white">COD vs prepaid mix simulator</p>
       <p className="text-muted text-xs">
-        COD RTO ~20-26%. Prepaid returns &lt;2%. Your payment mix changes blended unit economics.
+        COD returns commonly run ~20-35%; prepaid orders rarely come back. Your payment mix changes blended unit economics.
       </p>
 
       <label className="block text-sm">

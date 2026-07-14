@@ -576,6 +576,7 @@ export function TaskRunner({
                 <ProfitCalculator
                   kind={currentStep.calculator.kind}
                   channel={profile.primaryChannel}
+                  showBeginnerHelp={taskId === "product-selection"}
                   initialValues={{
                     sellingPrice: workspace.targetSellingPrice,
                     productCost: workspace.productCost,

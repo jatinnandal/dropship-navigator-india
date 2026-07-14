@@ -8,6 +8,9 @@ import type { CalculatorKind } from "@/lib/tasks/types";
 type Props = {
   kind: CalculatorKind;
   channel: PrimaryChannel;
+  /** Show the first-launch, no-numbers-yet field help. Only true in product
+   * selection - in data-in-hand modules (e.g. tracking) that advice is wrong. */
+  showBeginnerHelp?: boolean;
   initialValues?: {
     sellingPrice?: number;
     productCost?: number;
@@ -112,7 +115,7 @@ const FIELD_HELP = {
     "No supplier yet? Enter the ballpark 'per piece' price you found on IndiaMART or Meesho - a rough guess you will replace with a real supplier quote in the next module.",
 };
 
-export function ProfitCalculator({ kind, channel, initialValues, onApply }: Props) {
+export function ProfitCalculator({ kind, channel, showBeginnerHelp = false, initialValues, onApply }: Props) {
   const [sellingPrice, setSellingPrice] = useState(String(initialValues?.sellingPrice ?? 999));
   const [productCost, setProductCost] = useState(String(initialValues?.productCost ?? 350));
   const [shippingCost, setShippingCost] = useState(String(initialValues?.shippingCost ?? 60));
@@ -223,11 +226,13 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       </p>
       <p className="text-muted mt-1 text-xs">{CHANNEL_LABELS[channel]} + 18% GST on fees + 0.5% TCS</p>
 
-      <p className="mt-3 rounded-md border border-cyan-400/20 bg-cyan-400/[0.06] px-3 py-2 text-xs leading-5 text-cyan-100/90">
-        First launch and unsure of the numbers? That is normal. Start with the pre-filled values, adjust
-        selling price and product cost to your product, and treat the rest as estimates you refine once
-        real orders come in.
-      </p>
+      {showBeginnerHelp ? (
+        <p className="mt-3 rounded-md border border-cyan-400/20 bg-cyan-400/[0.06] px-3 py-2 text-xs leading-5 text-cyan-100/90">
+          First launch and unsure of the numbers? That is normal. Start with the pre-filled values, adjust
+          selling price and product cost to your product, and treat the rest as estimates you refine once
+          real orders come in.
+        </p>
+      ) : null}
 
       {result.netMarginPercent < 15 && result.netMarginPercent > 0 ? (
         <div className="banner-deadline mt-4 rounded-lg p-3">
@@ -246,7 +251,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
           max={4999}
           step={10}
           onChange={(v) => setSellingPrice(String(v))}
-          help={kind === "margin" ? FIELD_HELP.sellingPrice : undefined}
+          help={showBeginnerHelp ? FIELD_HELP.sellingPrice : undefined}
         />
         <SliderField
           label="Ad cost per order (₹)"
@@ -255,7 +260,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
           max={300}
           step={5}
           onChange={(v) => setAdCost(String(v))}
-          help={kind === "margin" ? FIELD_HELP.adCost : undefined}
+          help={showBeginnerHelp ? FIELD_HELP.adCost : undefined}
         />
         <SliderField
           label="Expected RTO rate (%)"
@@ -277,7 +282,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             onChange={(e) => setProductCost(e.target.value)}
             className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
-          {kind === "margin" ? (
+          {showBeginnerHelp ? (
             <span className="mt-1 block text-xs leading-5 text-cyan-100/70">{FIELD_HELP.productCost}</span>
           ) : null}
         </label>

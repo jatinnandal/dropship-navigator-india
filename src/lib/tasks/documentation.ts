@@ -215,7 +215,7 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
         "Verify the IFSC by searching it on your bank's website or the RBI's IFSC directory - the code printed on an old cheque book can be stale after a bank merger.",
         "Exact match = proceed to marketplace onboarding. Any difference at all = stop and fix the bank name (or open a matching account) first - automated verification will not forgive it.",
       ],
-      trap: "A savings account in your personal name while GST is in a business name is the #1 mismatch. Fix the name or use a matching account before onboarding.",
+      trap: "A savings account in your personal name while GST is in a business name is the most common mismatch. Fix the name or use a matching account before onboarding.",
       kind: "input",
       input: {
         id: "bank-name-input",
@@ -272,7 +272,7 @@ function buildRegistrationTrack(
   steps.push({
     id: "premises",
     title: "Tell me about your business address",
-    why: "Address proof is the single biggest reason GST applications get a clarification notice. The exact documents you need depend on who owns the place.",
+    why: "Address proof is a leading reason GST applications get a clarification notice. The exact documents you need depend on who owns the place.",
     how: ["Pick the option that matches where you will run the business from."],
     question: {
       id: "premises",
@@ -311,8 +311,8 @@ function buildRegistrationTrack(
     trap: "Selling on a marketplace without a valid GSTIN can get your account suspended and TCS recovered. Do not list first and register later.",
     mentorNote:
       profile.primaryChannel === "meesho"
-        ? "Most beginners think GST is optional under ₹20L turnover. On Amazon/Flipkart it is mandatory from day one. Meesho has one legal carve-out - the Enrolment ID for intra-state sellers - covered in the next step."
-        : "Most beginners think GST is optional under ₹20L turnover. On marketplaces, it is mandatory from day one - no exceptions.",
+        ? "Most beginners think GST is optional under the turnover threshold (₹40L for goods, ₹20L in special-category states). On Amazon/Flipkart it is mandatory from day one regardless. Meesho has one legal carve-out - the Enrolment ID for intra-state sellers - covered in the next step."
+        : "Most beginners think GST is optional under the turnover threshold (₹40L for goods, ₹20L in special-category states). On marketplaces it is mandatory from day one regardless - no exceptions.",
   });
 
   if (profile.primaryChannel === "meesho") {
@@ -356,7 +356,7 @@ function buildRegistrationTrack(
   steps.push({
     id: "scan-quality",
     title: "Scan documents the right way (most rejections start here)",
-    why: "Blurry phone photos in bad lighting are the #1 reason Meesho/Flipkart reject KYC in the first attempt - before anyone even reads your details.",
+    why: "Blurry phone photos in bad lighting are a top reason Meesho/Flipkart reject KYC in the first attempt - before anyone even reads your details.",
     how: [
       "Use a scanner app or good daylight - not a dark room photo.",
       "All four corners visible, no fingers, no glare.",
@@ -580,7 +580,7 @@ function buildRegistrationTrack(
       "Zero sales in a period changes nothing - NIL returns are still mandatory from month 1. File them.",
       "Plan who files: you, ClearTax, or a CA - but YOU stay liable regardless of who presses submit.",
     ],
-    trap: "New sellers forget first filing and get suspended within 90 days - before they even scale.",
+    trap: "New sellers forget the first filing and get their GSTIN suspended for non-filing - before they even scale.",
   });
 
   return steps;
@@ -615,7 +615,7 @@ function buildBaseDocsSteps(profile: OnboardingProfile): TaskStep[] {
     {
       id: "bank-setup",
       title: "Open or verify your business bank account",
-      why: "Marketplaces pay you via NEFT to this account. Name mismatch is the #1 payout failure.",
+      why: "Marketplaces pay you via NEFT to this account. Name mismatch is the most common payout failure.",
       how: [
         "Open a current account in your exact legal business name - or read your existing account's holder name off netbanking/a cancelled cheque and confirm it matches character for character.",
         "Get a cancelled cheque or stamped bank statement showing name + IFSC; scan it once, clearly, into your Seller-Docs/Bank folder.",
