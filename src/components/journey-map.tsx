@@ -116,11 +116,11 @@ export function JourneyMap({
     ? SUBTASK_TIME_ESTIMATES[nextIncomplete.id] ?? "~30-45 mins"
     : "Stage complete";
 
-  /* Compute selection details */
+  /* Compute selection details. selPct mirrors the guided walkthrough's step
+     progress (set on the node upstream) so the ring matches what the seller
+     sees inside the module. selDone still drives the milestone checklist. */
   const selDone = selected.subTasks.filter((st) => st.done).length;
-  const selPct = selected.subTasks.length > 0
-    ? Math.round((selDone / selected.subTasks.length) * 100)
-    : 0;
+  const selPct = selected.progressPercent;
 
   const statusColor =
     selected.status === "done"
@@ -328,6 +328,11 @@ export function JourneyMap({
             </div>
           ) : (
             <div className="mt-[18px] flex flex-col gap-2">
+              {selected.subTasks.length > 0 ? (
+                <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--text-faintest)]">
+                  Milestones &middot; {selDone}/{selected.subTasks.length} done
+                </p>
+              ) : null}
               {selected.subTasks.map((st) => {
                 const done = st.done;
                 const bg = done ? "oklch(0.72 0.13 165 / 0.05)" : "rgba(255,255,255,0.03)";

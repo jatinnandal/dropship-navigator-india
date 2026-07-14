@@ -24,15 +24,19 @@ export async function persistWorkspaceField(
 
   if (workspaceKey === "shortlistedSkus") {
     const currentWorkspace = await getWorkspaceForCurrentVisitor();
-    const current = currentWorkspace.shortlistedSkus ?? [];
-    const name = String(value).trim();
-    if (name.length > 0) {
-      const next: SkuShortlistItem[] = [...current];
+    const next: SkuShortlistItem[] = [...(currentWorkspace.shortlistedSkus ?? [])];
+    // Accept several candidates at once (comma-separated), so "compare 3" in the
+    // copy matches what the single input actually captures.
+    const names = String(value)
+      .split(",")
+      .map((n) => n.trim())
+      .filter((n) => n.length > 0);
+    for (const name of names) {
       if (!next.some((sku) => sku.name.toLowerCase() === name.toLowerCase())) {
         next.push({ name });
       }
-      patch.shortlistedSkus = next.slice(0, 5);
     }
+    patch.shortlistedSkus = next.slice(0, 5);
   } else if (workspaceKey === "estimatedRtoRate") {
     patch.estimatedRtoRate = Number(value);
   } else if (workspaceKey === "netMarginPercent") {

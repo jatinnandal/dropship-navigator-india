@@ -15,6 +15,14 @@ Please reply YES to confirm delivery or CANCEL to cancel.
 
 Delivery address: {{address}}`;
 
+export const RTO_RESEARCH_PROMPT = `I am a first-time online seller in India. I plan to sell [WRITE YOUR PRODUCT HERE, e.g. cotton kurtis / silicone kitchen organizers / phone cases] mostly as Cash on Delivery (COD, where the buyer pays the courier on delivery) on [Meesho / Amazon.in / Flipkart / my own website].
+
+What is a realistic expected RTO rate for this product category in India? (RTO means Return to Origin: the share of COD orders that come back undelivered.)
+
+Please give me a rough percentage range, explain what pushes it higher or lower (size or fit issues, fragility, price, delivery region), and roughly how much lower it usually runs for prepaid orders (paid online in advance).
+
+Important: treat this as a rough starting estimate only. Remind me to confirm the real number from my own marketplace seller dashboard's returns/RTO report after my first ~20 orders, and do not present any figure as exact.`;
+
 export const SUPPLIER_SLA_TEMPLATE = `Supplier SLA Agreement (WhatsApp/email - get written confirmation)
 
 1. Dispatch timeline: All orders placed before 2 PM will be dispatched within {{hours}} hours.

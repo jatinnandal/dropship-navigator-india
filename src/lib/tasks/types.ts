@@ -14,6 +14,8 @@ export type ToolRec = {
   whenToUse: string;
   why: string;
   affiliateSlug?: string;
+  /** External URL the tool opens - renders the pill and title as a real link. */
+  href?: string;
 };
 
 export type WorkspaceFieldKey =

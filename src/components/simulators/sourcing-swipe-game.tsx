@@ -137,41 +137,45 @@ const CARDS: SupplierCard[] = [
   },
 ];
 
+type Feedback = { correct: boolean; explanation: string; wasViable: boolean };
+
 type Props = {
   onComplete?: () => void;
 };
 
 export function SourcingSwipeGame({ onComplete }: Props) {
   const [index, setIndex] = useState(0);
-  const [feedback, setFeedback] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
   const [done, setDone] = useState(false);
 
   const card = CARDS[index];
+  const isLastCard = index >= CARDS.length - 1;
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-12, 12]);
 
-  function swipe(direction: "left" | "right") {
-    if (feedback || !card) return;
-    const choseViable = direction === "right";
+  function choose(choseViable: boolean) {
+    if (feedback || !card) return; // answered - wait for Next
     const correct = choseViable === card.isViable;
-    setFeedback(card.explanation);
+    setFeedback({ correct, explanation: card.explanation, wasViable: card.isViable });
     if (correct) setCorrectCount((c) => c + 1);
+    x.set(0);
+  }
 
-    setTimeout(() => {
-      if (index < CARDS.length - 1) {
-        setIndex((i) => i + 1);
-        setFeedback(null);
-        x.set(0);
-      } else {
-        setDone(true);
-      }
-    }, 2000);
+  function next() {
+    if (isLastCard) {
+      setDone(true);
+      return;
+    }
+    setIndex((i) => i + 1);
+    setFeedback(null);
+    x.set(0);
   }
 
   function handleDragEnd(_: unknown, info: PanInfo) {
-    if (info.offset.x > 100) swipe("right");
-    else if (info.offset.x < -100) swipe("left");
+    if (feedback) return;
+    if (info.offset.x > 100) choose(true);
+    else if (info.offset.x < -100) choose(false);
   }
 
   if (done) {
@@ -195,15 +199,18 @@ export function SourcingSwipeGame({ onComplete }: Props) {
   return (
     <div className="mt-4 space-y-4">
       <p className="text-muted text-xs">
-        Swipe right on viable India suppliers. Left on traps. ({index + 1}/{CARDS.length})
+        Tap <span className="font-semibold text-emerald-300">Use this supplier</span> if it is a viable
+        India supplier, or <span className="font-semibold text-rose-300">Trap</span> to avoid. On a phone
+        you can also swipe the card right (use) or left (trap). ({index + 1}/{CARDS.length})
       </p>
 
       <motion.div
         style={{ x, rotate }}
-        drag="x"
+        drag={feedback ? false : "x"}
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={handleDragEnd}
-        className="cursor-grab rounded-xl border border-slate-600/50 bg-slate-800/60 p-6 active:cursor-grabbing"
+        className="rounded-xl border border-slate-600/50 bg-slate-800/60 p-6 data-[locked=false]:cursor-grab data-[locked=false]:active:cursor-grabbing"
+        data-locked={feedback ? "true" : "false"}
       >
         <p className="text-xs uppercase tracking-wide text-amber-200">{card.origin}</p>
         <h3 className="mt-2 text-xl font-bold text-slate-100">{card.name}</h3>
@@ -213,26 +220,43 @@ export function SourcingSwipeGame({ onComplete }: Props) {
       <div className="flex justify-center gap-4">
         <button
           type="button"
-          onClick={() => swipe("left")}
+          onClick={() => choose(false)}
           disabled={!!feedback}
-          className="btn-ghost rounded-md px-6 py-2 text-sm font-semibold text-rose-300"
+          className="btn-ghost rounded-md px-6 py-2 text-sm font-semibold text-rose-300 disabled:opacity-40"
         >
-          Skip (trap)
+          Trap - skip it
         </button>
         <button
           type="button"
-          onClick={() => swipe("right")}
+          onClick={() => choose(true)}
           disabled={!!feedback}
-          className="btn-ghost rounded-md px-6 py-2 text-sm font-semibold text-emerald-300"
+          className="btn-ghost rounded-md px-6 py-2 text-sm font-semibold text-emerald-300 disabled:opacity-40"
         >
           Use this supplier
         </button>
       </div>
 
       {feedback ? (
-        <p className={`text-sm ${card.isViable ? "text-emerald-200" : "text-rose-200"}`}>
-          <JargonText text={feedback} />
-        </p>
+        <div
+          className={`rounded-lg border p-4 ${
+            feedback.correct ? "border-emerald-400/40 bg-emerald-400/10" : "border-rose-400/40 bg-rose-400/10"
+          }`}
+        >
+          <p className={`text-sm font-semibold ${feedback.correct ? "text-emerald-200" : "text-rose-200"}`}>
+            {feedback.correct ? "Correct" : "Not quite"} - this supplier is a{" "}
+            {feedback.wasViable ? "viable option" : "trap"}.
+          </p>
+          <p className="text-muted mt-1 text-sm leading-6">
+            <JargonText text={feedback.explanation} />
+          </p>
+          <button
+            type="button"
+            onClick={next}
+            className="btn-primary mt-3 rounded-md px-4 py-2 text-sm font-semibold"
+          >
+            {isLastCard ? "See my score" : "Next supplier"}
+          </button>
+        </div>
       ) : null}
     </div>
   );

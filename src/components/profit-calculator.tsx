@@ -65,6 +65,7 @@ function SliderField({
   step,
   onChange,
   suffix = "",
+  help,
 }: {
   label: string;
   value: number;
@@ -73,6 +74,7 @@ function SliderField({
   step: number;
   onChange: (v: number) => void;
   suffix?: string;
+  help?: string;
 }) {
   return (
     <label className="block text-sm">
@@ -93,9 +95,22 @@ function SliderField({
         onChange={(e) => onChange(Number(e.target.value))}
         className="mt-2 w-full accent-white"
       />
+      {help ? <span className="mt-1 block text-xs leading-5 text-cyan-100/70">{help}</span> : null}
     </label>
   );
 }
+
+// Plain-language help for a first-timer who has no real numbers yet. Shown only
+// in the product-selection margin calculator, where the wording (demand step,
+// next module) is accurate.
+const FIELD_HELP = {
+  sellingPrice:
+    "Set this from the first-page competitor prices you saw in the demand step - aim near the middle of that band, not the lowest. Adjust it later once your supplier cost is confirmed.",
+  adCost:
+    "First launch with no ad data? Leave the ₹80 default as a placeholder. Your real cost to win one order only becomes clear after about 20 orders - then come back and update this.",
+  productCost:
+    "No supplier yet? Enter the ballpark 'per piece' price you found on IndiaMART or Meesho - a rough guess you will replace with a real supplier quote in the next module.",
+};
 
 export function ProfitCalculator({ kind, channel, initialValues, onApply }: Props) {
   const [sellingPrice, setSellingPrice] = useState(String(initialValues?.sellingPrice ?? 999));
@@ -141,7 +156,8 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       <div className="mt-4 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
         <p className="text-sm font-semibold text-white">RTO impact estimator</p>
         <p className="text-muted mt-1 text-xs">
-          COD confirmation within 30 minutes typically cuts RTO from ~26% to ~12-14%.
+          Confirming COD orders quickly (a WhatsApp message before dispatch) is widely reported to cut
+          RTO. The figures below are an illustrative estimate - your real numbers will vary.
         </p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
@@ -207,6 +223,12 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
       </p>
       <p className="text-muted mt-1 text-xs">{CHANNEL_LABELS[channel]} + 18% GST on fees + 0.5% TCS</p>
 
+      <p className="mt-3 rounded-md border border-cyan-400/20 bg-cyan-400/[0.06] px-3 py-2 text-xs leading-5 text-cyan-100/90">
+        First launch and unsure of the numbers? That is normal. Start with the pre-filled values, adjust
+        selling price and product cost to your product, and treat the rest as estimates you refine once
+        real orders come in.
+      </p>
+
       {result.netMarginPercent < 15 && result.netMarginPercent > 0 ? (
         <div className="banner-deadline mt-4 rounded-lg p-3">
           <p className="text-sm font-medium text-rose-100">
@@ -224,6 +246,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
           max={4999}
           step={10}
           onChange={(v) => setSellingPrice(String(v))}
+          help={kind === "margin" ? FIELD_HELP.sellingPrice : undefined}
         />
         <SliderField
           label="Ad cost per order (₹)"
@@ -232,6 +255,7 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
           max={300}
           step={5}
           onChange={(v) => setAdCost(String(v))}
+          help={kind === "margin" ? FIELD_HELP.adCost : undefined}
         />
         <SliderField
           label="Expected RTO rate (%)"
@@ -253,6 +277,9 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             onChange={(e) => setProductCost(e.target.value)}
             className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
+          {kind === "margin" ? (
+            <span className="mt-1 block text-xs leading-5 text-cyan-100/70">{FIELD_HELP.productCost}</span>
+          ) : null}
         </label>
         <label className="block text-sm">
           <span className="text-muted">Shipping per order (₹)</span>
@@ -262,32 +289,6 @@ export function ProfitCalculator({ kind, channel, initialValues, onApply }: Prop
             onChange={(e) => setShippingCost(e.target.value)}
             className="mt-1 w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
           />
-        </label>
-        <label className="block text-sm sm:col-span-2">
-          <span className="text-muted">Fine-tune: selling price / ad cost / RTO (number input)</span>
-          <div className="mt-2 grid gap-2 sm:grid-cols-3">
-            <input
-              type="number"
-              value={sellingPrice}
-              onChange={(e) => setSellingPrice(e.target.value)}
-              placeholder="Selling ₹"
-              className="w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
-            />
-            <input
-              type="number"
-              value={adCost}
-              onChange={(e) => setAdCost(e.target.value)}
-              placeholder="Ad ₹"
-              className="w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
-            />
-            <input
-              type="number"
-              value={rtoRate}
-              onChange={(e) => setRtoRate(e.target.value)}
-              placeholder="RTO %"
-              className="w-full rounded-md border border-white/[0.2] bg-white/[0.03] px-3 py-2 text-white"
-            />
-          </div>
         </label>
         {kind === "margin" ? (
           <label className="block text-sm sm:col-span-2">

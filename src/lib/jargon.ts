@@ -13,7 +13,7 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
   {
     term: "RTO",
     short: "Return to Origin. Customer refused the COD parcel - you lose forward + reverse shipping.",
-    example: "COD RTO of 20-35% is industry-typical in India; fashion runs at the high end.",
+    example: "COD RTO commonly runs around 20-35% in India (varies by category and region); fashion sits at the high end.",
   },
   {
     term: "NDR",
@@ -38,8 +38,12 @@ export const JARGON_DICTIONARY: JargonEntry[] = [
     short: "Harmonized System code for your product. Wrong HSN = wrong tax on listings.",
   },
   {
+    term: "GST",
+    short: "Goods and Services Tax - India's sales tax. Marketplaces charge 18% GST on their fees, and you charge GST on your sales.",
+  },
+  {
     term: "TCS",
-    short: "Tax Collected at Source. Marketplaces deduct 1% and credit it to your GSTIN.",
+    short: "Tax Collected at Source. Marketplaces deduct a small percentage (0.5% under current GST rules) and credit it to your GSTIN.",
   },
   {
     term: "MOQ",

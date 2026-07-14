@@ -35,7 +35,7 @@ const CARDS: ProductCard[] = [
     price: 899,
     category: "Fashion",
     isWinner: false,
-    explanation: "Size issues drive 30-40% RTO on fashion. Avoid as a beginner.",
+    explanation: "Six sizes means size and fit returns, which run high on fashion. Hard for a beginner to win.",
   },
   {
     id: "organizer",
@@ -55,13 +55,15 @@ const CARDS: ProductCard[] = [
   },
 ];
 
+type Feedback = { correct: boolean; pickedWinner: boolean; explanation: string };
+
 type Props = {
   onComplete?: () => void;
 };
 
 export function ProductSwipeGame({ onComplete }: Props) {
   const [index, setIndex] = useState(0);
-  const [lastFeedback, setLastFeedback] = useState<string | null>(null);
+  const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [score, setScore] = useState(0);
   const [finished, setFinished] = useState(false);
 
@@ -70,32 +72,31 @@ export function ProductSwipeGame({ onComplete }: Props) {
   const opacity = useTransform(x, [-200, -80, 0, 80, 200], [0.5, 1, 1, 1, 0.5]);
 
   const card = CARDS[index];
+  const isLastCard = index >= CARDS.length - 1;
 
-  function handleSwipe(direction: "left" | "right") {
-    if (!card) return;
-    const pickedWinner = direction === "right";
+  function choose(pickedWinner: boolean) {
+    if (!card || feedback) return; // already answered this card - wait for Next
     const correct = pickedWinner === card.isWinner;
     if (correct) setScore((s) => s + 1);
-    setLastFeedback(
-      correct
-        ? `Correct! ${card.explanation}`
-        : `Not quite. ${card.explanation}`,
-    );
+    setFeedback({ correct, pickedWinner, explanation: card.explanation });
+    // Snap the card back to centre; feedback stays until the user taps Next.
+    x.set(0);
+  }
 
-    setTimeout(() => {
-      if (index >= CARDS.length - 1) {
-        setFinished(true);
-      } else {
-        setIndex((i) => i + 1);
-        setLastFeedback(null);
-        x.set(0);
-      }
-    }, 1200);
+  function next() {
+    if (isLastCard) {
+      setFinished(true);
+      return;
+    }
+    setIndex((i) => i + 1);
+    setFeedback(null);
+    x.set(0);
   }
 
   function onDragEnd(_: unknown, info: PanInfo) {
-    if (info.offset.x > 100) handleSwipe("right");
-    else if (info.offset.x < -100) handleSwipe("left");
+    if (feedback) return;
+    if (info.offset.x > 100) choose(true);
+    else if (info.offset.x < -100) choose(false);
   }
 
   if (finished) {
@@ -119,15 +120,18 @@ export function ProductSwipeGame({ onComplete }: Props) {
   return (
     <div className="mt-4 space-y-4">
       <p className="text-sm text-slate-200">
-        Swipe right if this is a good beginner product for India COD. Left if it is a trap.
+        Tap <span className="font-semibold text-emerald-300">Good pick</span> if this is a smart
+        beginner product for India COD, or <span className="font-semibold text-slate-300">Trap</span> if
+        it is one to avoid. On a phone you can also swipe the card right (good) or left (trap).
       </p>
 
       <motion.div
         style={{ x, rotate, opacity }}
-        drag="x"
+        drag={feedback ? false : "x"}
         dragConstraints={{ left: 0, right: 0 }}
         onDragEnd={onDragEnd}
-        className="glass-panel cursor-grab touch-none rounded-xl border border-amber-300/30 p-6 active:cursor-grabbing"
+        className="glass-panel touch-none rounded-xl border border-amber-300/30 p-6 data-[locked=false]:cursor-grab data-[locked=false]:active:cursor-grabbing"
+        data-locked={feedback ? "true" : "false"}
       >
         <p className="text-xs uppercase tracking-wide text-amber-200">{card.category}</p>
         <h3 className="mt-2 text-xl font-bold text-slate-100">{card.name}</h3>
@@ -137,21 +141,45 @@ export function ProductSwipeGame({ onComplete }: Props) {
       <div className="flex justify-center gap-4">
         <button
           type="button"
-          onClick={() => handleSwipe("left")}
-          className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold"
+          onClick={() => choose(false)}
+          disabled={!!feedback}
+          className="btn-ghost rounded-md px-5 py-2 text-sm font-semibold disabled:opacity-40"
         >
-          Skip (trap)
+          Trap - skip it
         </button>
         <button
           type="button"
-          onClick={() => handleSwipe("right")}
-          className="btn-emerald rounded-md px-4 py-2 text-sm font-semibold"
+          onClick={() => choose(true)}
+          disabled={!!feedback}
+          className="btn-emerald rounded-md px-5 py-2 text-sm font-semibold disabled:opacity-40"
         >
-          Winner
+          Good pick
         </button>
       </div>
 
-      {lastFeedback ? <p className="text-sm text-amber-200">{lastFeedback}</p> : null}
+      {feedback ? (
+        <div
+          className={`rounded-lg border p-4 ${
+            feedback.correct
+              ? "border-emerald-400/40 bg-emerald-400/10"
+              : "border-amber-400/40 bg-amber-400/10"
+          }`}
+        >
+          <p className={`text-sm font-semibold ${feedback.correct ? "text-emerald-200" : "text-amber-200"}`}>
+            {feedback.correct ? "Correct" : "Not quite"} - this one is a{" "}
+            {card.isWinner ? "good pick" : "trap"}.
+          </p>
+          <p className="text-muted mt-1 text-sm leading-6">{feedback.explanation}</p>
+          <button
+            type="button"
+            onClick={next}
+            className="btn-primary mt-3 rounded-md px-4 py-2 text-sm font-semibold"
+          >
+            {isLastCard ? "See my score" : "Next product"}
+          </button>
+        </div>
+      ) : null}
+
       <p className="text-muted text-center text-xs">
         {index + 1} / {CARDS.length}
       </p>

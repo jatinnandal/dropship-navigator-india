@@ -46,6 +46,40 @@ function MentorBubble({ children, tone = "default" }: { children: ReactNode; ton
   );
 }
 
+/**
+ * Renders mentor text with any inline https:// URL turned into a real link, so
+ * "Open Amazon Best Sellers (https://www.amazon.in/gp/bestsellers)" is clickable.
+ * Non-URL segments still flow through JargonText for the term glossary.
+ */
+function LinkifiedText({ text }: { text: string }) {
+  const segments = text.split(/(https?:\/\/[^\s)]+)/g);
+  return (
+    <>
+      {segments.map((segment, i) => {
+        if (/^https?:\/\//.test(segment)) {
+          const match = segment.match(/^(.*?)([.,;:!?]*)$/);
+          const url = match?.[1] ?? segment;
+          const trailing = match?.[2] ?? "";
+          return (
+            <span key={i}>
+              <a
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-cyan-300 underline decoration-cyan-400/40 underline-offset-2 hover:text-cyan-200"
+              >
+                {url.replace(/^https?:\/\/(www\.)?/, "")}
+              </a>
+              {trailing}
+            </span>
+          );
+        }
+        return <JargonText key={i} text={segment} />;
+      })}
+    </>
+  );
+}
+
 function ProgressiveHow({ items }: { items: string[] }) {
   const [visible, setVisible] = useState(1);
 
@@ -57,7 +91,7 @@ function ProgressiveHow({ items }: { items: string[] }) {
         <MentorBubble key={item}>
           <p className="text-xs uppercase tracking-wide text-neutral-500">Step {index + 1}</p>
           <p className="mt-1">
-            <JargonText text={item} />
+            <LinkifiedText text={item} />
           </p>
         </MentorBubble>
       ))}
@@ -178,20 +212,44 @@ export function MentorStepContent({ step, stepIndex, totalSteps, isLoading }: Pr
         <div className="mt-2">
           <p className="mb-3 text-sm font-semibold text-white">Recommended tools</p>
           <div className="flex flex-wrap gap-2">
-            {step.tools.map((tool) => (
-              <div
-                key={tool.name}
-                className="group inline-flex items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-1.5 text-xs font-medium text-neutral-200 transition hover:border-neutral-500 hover:bg-neutral-800"
-              >
-                <span>{tool.name}</span>
-                <ExternalLink className="h-3 w-3 flex-none text-neutral-500 transition group-hover:text-neutral-300" aria-hidden="true" />
-              </div>
-            ))}
+            {step.tools.map((tool) => {
+              const pillClass =
+                "group inline-flex items-center gap-1.5 rounded-full border border-neutral-700 bg-neutral-900/80 px-3 py-1.5 text-xs font-medium text-neutral-200 transition hover:border-neutral-500 hover:bg-neutral-800";
+              return tool.href ? (
+                <a
+                  key={tool.name}
+                  href={tool.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={pillClass}
+                >
+                  <span>{tool.name}</span>
+                  <ExternalLink className="h-3 w-3 flex-none text-neutral-500 transition group-hover:text-neutral-300" aria-hidden="true" />
+                </a>
+              ) : (
+                <div key={tool.name} className={pillClass}>
+                  <span>{tool.name}</span>
+                  <ExternalLink className="h-3 w-3 flex-none text-neutral-500 transition group-hover:text-neutral-300" aria-hidden="true" />
+                </div>
+              );
+            })}
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-2">
             {step.tools.map((tool) => (
               <div key={tool.name} className="rounded-lg border border-neutral-800 bg-neutral-950 p-3">
-                <p className="text-xs font-semibold text-white">{tool.name}</p>
+                {tool.href ? (
+                  <a
+                    href={tool.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-cyan-300 underline decoration-cyan-400/40 underline-offset-2 hover:text-cyan-200"
+                  >
+                    {tool.name}
+                    <ExternalLink className="h-3 w-3 flex-none" aria-hidden="true" />
+                  </a>
+                ) : (
+                  <p className="text-xs font-semibold text-white">{tool.name}</p>
+                )}
                 <p className="text-muted mt-1 text-xs">
                   <JargonText text={tool.whenToUse} />
                 </p>

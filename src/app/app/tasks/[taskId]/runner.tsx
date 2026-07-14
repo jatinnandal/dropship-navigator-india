@@ -27,6 +27,7 @@ import {
   MARKETPLACE_APPEAL_TICKET,
   PAOS_APPEAL_TEMPLATE,
   RETURN_POLICY_SNIPPET,
+  RTO_RESEARCH_PROMPT,
   SIZE_CHART_CHECKLIST,
   SUPPLIER_SLA_TEMPLATE,
 } from "@/lib/mentor-templates";
@@ -539,6 +540,13 @@ export function TaskRunner({
                 </div>
               ) : null}
 
+              {currentStep.id === "rto-default" || currentStep.id === "rto-warning" ? (
+                <CopyTemplate
+                  title="Not sure? Paste this into ChatGPT or Google for a category estimate"
+                  text={RTO_RESEARCH_PROMPT}
+                  className="mt-4"
+                />
+              ) : null}
               {currentStep.id === "fashion-size-chart" ? (
                 <CopyTemplate title="Size chart template" text={SIZE_CHART_CHECKLIST} className="mt-4" />
               ) : null}

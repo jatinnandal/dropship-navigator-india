@@ -1,7 +1,7 @@
 "use client";
 
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, Compass } from "lucide-react";
 import CountUp from "@/components/CountUp";
@@ -85,13 +85,8 @@ export function OnboardingWizard({
     values.primaryChannel !== originalChannel &&
     !channelWarningAcked;
 
-  useEffect(() => {
-    if (!ackMessage) return;
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) return;
-    const t = setTimeout(() => setAckMessage(null), 3500);
-    return () => clearTimeout(t);
-  }, [ackMessage, stepIndex]);
+  // The acknowledgement stays visible until the seller changes their answer or
+  // moves to the next step - it used to auto-dismiss after 3.5s, too fast to read.
 
   function setField(field: OnboardingField, value: string) {
     if (isLocked(field)) return; // read-only this cycle (change cap reached)
