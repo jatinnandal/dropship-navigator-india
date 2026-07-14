@@ -62,6 +62,17 @@ export function quarterlyGstr3bDueDay(operatingState?: string): 22 | 24 {
   return 22;
 }
 
+/**
+ * Whether missing this filing costs money. IFF (optional) and TCS
+ * reconciliation (you lose credit, not a fine) carry no late fee, so they must
+ * not appear in "file now to avoid late fees" warnings, and they can drop off
+ * once past due. Statutory returns (GSTR-1/3B, NIL) do carry a fee and must
+ * stay visible while overdue.
+ */
+export function filingCarriesLateFee(filing: GstFiling): boolean {
+  return !/^no\b/i.test(filing.lateFeePenalty.trim());
+}
+
 const GST_FILINGS: GstFiling[] = [
   {
     id: "gstr1-monthly",
@@ -294,7 +305,11 @@ export function getUpcomingGstEvents(
     );
 
     for (const evt of monthEvents) {
-      if (evt.daysUntilDue >= -7 && evt.daysUntilDue <= 90) {
+      // Penalty-bearing returns stay visible up to 45 days overdue (the fee is
+      // still accruing and must not disappear); no-penalty items drop after a
+      // week since nothing is at stake once the window passes.
+      const overdueFloor = filingCarriesLateFee(evt.filing) ? -45 : -7;
+      if (evt.daysUntilDue >= overdueFloor && evt.daysUntilDue <= 90) {
         // Mark completed events
         if (completedIds.has(evt.id)) {
           evt.status = "done";

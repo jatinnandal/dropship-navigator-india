@@ -14,8 +14,10 @@ import {
   getUpcomingGstEvents,
   getEventsForDate,
   quarterlyGstr3bDueDay,
+  filingCarriesLateFee,
   type GstEvent,
 } from "@/lib/gst-calendar-data";
+import { JargonText } from "@/components/jargon-text";
 
 const STORAGE_KEY = "dni-gst-completed";
 const SCHEME_KEY = "dni-gst-scheme";
@@ -130,6 +132,24 @@ export function GstCalendar({
     [upcomingEvents, completedIds],
   );
 
+  // Only penalty-bearing returns belong in a "file now to avoid late fees"
+  // warning; IFF/TCS carry no fine and get a neutral note instead.
+  const overduePenalty = useMemo(
+    () => overdueEvents.filter((e) => filingCarriesLateFee(e.filing)),
+    [overdueEvents],
+  );
+  const overdueOptional = useMemo(
+    () => overdueEvents.filter((e) => !filingCarriesLateFee(e.filing)),
+    [overdueEvents],
+  );
+
+  // The single most urgent thing to do next: soonest overdue, else soonest
+  // upcoming that isn't done. Drives the top "your next action" panel.
+  const nextAction = useMemo(
+    () => upcomingEvents.find((e) => e.status !== "done"),
+    [upcomingEvents],
+  );
+
   const selectedDayEvents = useMemo(() => {
     if (selectedDay === null) return [];
     return getEventsForDate(currentYear, currentMonth, selectedDay, isQrmp, operatingState);
@@ -215,20 +235,73 @@ export function GstCalendar({
         </div>
       )}
 
-      {/* Overdue warning */}
-      {hasGstin && overdueEvents.length > 0 && (
+      {/* What this is + your single next action */}
+      {hasGstin && (
+        <div className="rounded-lg border border-white/[0.12] bg-white/[0.03] p-4">
+          <p className="text-muted text-[11px] font-medium uppercase tracking-wider">
+            What this is
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[var(--muted)]">
+            <JargonText text="Once your GSTIN is active you must file GST returns every period even with zero sales - miss a deadline and a per-day late fee starts. This shows only the deadlines that apply to your scheme and state, with a prep checklist for each." />
+          </p>
+          {nextAction ? (
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 rounded-md border border-white/[0.1] bg-white/[0.02] p-3">
+              <div>
+                <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--text-faint)]">
+                  Your next filing
+                </p>
+                <p className="mt-0.5 text-sm font-semibold text-white">
+                  <JargonText text={nextAction.filing.name} />
+                  <span className={`ml-2 text-xs font-medium ${statusTextClass(nextAction.status)}`}>
+                    {nextAction.dueDate.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
+                    {" · "}
+                    {daysLabel(nextAction.daysUntilDue, nextAction.status)}
+                  </span>
+                </p>
+              </div>
+              <button
+                onClick={() => {
+                  setCurrentYear(nextAction.dueDate.getFullYear());
+                  setCurrentMonth(nextAction.dueDate.getMonth());
+                  setExpandedEvent(nextAction.id);
+                }}
+                className="rounded-md bg-white/[0.08] px-3 py-1.5 text-xs font-medium text-white ring-1 ring-white/15 transition-colors hover:bg-white/[0.12]"
+              >
+                Show prep steps
+              </button>
+            </div>
+          ) : (
+            <p className="mt-3 text-xs text-[var(--muted)]">
+              Nothing due in the next 90 days for your scheme. Check back near the start of each month.
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Overdue - only penalty-bearing returns get the late-fee warning */}
+      {hasGstin && overduePenalty.length > 0 && (
         <div className="banner-deadline flex items-start gap-3 rounded-lg p-4">
           <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-[var(--danger)]" />
           <div>
             <p className="text-sm font-semibold text-[var(--danger)]">
-              {overdueEvents.length} overdue filing
-              {overdueEvents.length > 1 ? "s" : ""}
+              {overduePenalty.length} overdue filing
+              {overduePenalty.length > 1 ? "s" : ""}
             </p>
             <p className="text-muted mt-1 text-xs">
-              {overdueEvents.map((e) => e.filing.name).join(", ")} - file
-              immediately to minimize late fees.
+              <JargonText text={overduePenalty.map((e) => e.filing.name).join(", ")} /> - a per-day
+              late fee is accruing. File as soon as possible to stop it growing.
             </p>
           </div>
+        </div>
+      )}
+
+      {/* Overdue optional items (IFF/TCS) - no fine, so no alarm */}
+      {hasGstin && overdueOptional.length > 0 && (
+        <div className="rounded-lg border border-white/[0.1] bg-white/[0.02] p-3">
+          <p className="text-muted text-xs leading-5">
+            <JargonText text={overdueOptional.map((e) => e.filing.name).join(", ")} /> is past its
+            usual date. No late fee applies, but doing it keeps your credit and buyer ITC current.
+          </p>
         </div>
       )}
 
@@ -421,7 +494,7 @@ export function GstCalendar({
                           done ? "text-safe line-through" : "text-[var(--body-text)]"
                         }
                       >
-                        {evt.filing.name}
+                        <JargonText text={evt.filing.name} />
                       </span>
                       {!done && (
                         <button
@@ -466,7 +539,7 @@ export function GstCalendar({
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-sm font-medium text-white">
-                        {evt.filing.name}
+                        <JargonText text={evt.filing.name} />
                       </span>
                       <span className="text-muted rounded bg-white/[0.06] px-1.5 py-0.5 text-xs font-mono">
                         {evt.filing.form}
@@ -531,7 +604,7 @@ export function GstCalendar({
                           className="text-muted flex items-start gap-2 text-xs"
                         >
                           <span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-white/20" />
-                          {item}
+                          <JargonText text={item} />
                         </li>
                       ))}
                     </motion.ul>
