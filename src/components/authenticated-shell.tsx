@@ -8,6 +8,7 @@ type Props = {
   profiles?: SellerProfileSummary[];
   activeProfileId?: string | null;
   plan?: Plan;
+  notificationCount?: number;
   children: React.ReactNode;
 };
 
@@ -17,6 +18,7 @@ export function AuthenticatedShell({
   profiles = [],
   activeProfileId = null,
   plan = "free",
+  notificationCount = 0,
   children,
 }: Props) {
   return (
@@ -26,6 +28,7 @@ export function AuthenticatedShell({
       profiles={profiles}
       activeProfileId={activeProfileId}
       plan={plan}
+      notificationCount={notificationCount}
     >
       {children}
     </AppShellClient>

@@ -5,6 +5,7 @@ import { resolveActiveProfileIdFromIds } from "@/lib/active-profile";
 import { getCurrentUserEmail, getCurrentUserId } from "@/lib/current-user";
 import { getCurrentPlan } from "@/lib/plan";
 import { listSellerProfileSummaries } from "@/lib/seller-profile-store";
+import { getVisitorNotifications } from "@/lib/notifications-store";
 
 export default async function AppLayout({
   children,
@@ -23,10 +24,12 @@ export default async function AppLayout({
     getCurrentPlan(),
   ]);
   const hasProfile = profiles.length > 0;
-  const activeProfileId = await resolveActiveProfileIdFromIds(
-    userId,
-    profiles.map((p) => p.id),
-  );
+  // Notifications derive from the visitor's own numbers - only meaningful once a
+  // profile exists, so profile-less users skip that fetch entirely.
+  const [activeProfileId, notifications] = await Promise.all([
+    resolveActiveProfileIdFromIds(userId, profiles.map((p) => p.id)),
+    hasProfile ? getVisitorNotifications() : Promise.resolve([]),
+  ]);
 
   return (
     <JargonProvider>
@@ -36,6 +39,7 @@ export default async function AppLayout({
         profiles={profiles}
         activeProfileId={activeProfileId}
         plan={plan}
+        notificationCount={notifications.length}
       >
         {children}
       </AuthenticatedShell>

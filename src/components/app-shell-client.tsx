@@ -12,6 +12,7 @@ type Props = {
   profiles: SellerProfileSummary[];
   activeProfileId: string | null;
   plan: Plan;
+  notificationCount?: number;
   children: ReactNode;
 };
 
@@ -21,6 +22,7 @@ export function AppShellClient({
   profiles,
   activeProfileId,
   plan,
+  notificationCount = 0,
   children,
 }: Props) {
   return (
@@ -34,12 +36,17 @@ export function AppShellClient({
         profiles={profiles}
         activeProfileId={activeProfileId}
         plan={plan}
+        notificationCount={notificationCount}
         collapsed={false}
         onToggleCollapsed={() => {}}
       />
 
       <div className="app-main-with-sidebar relative z-[1] min-h-screen">
-        <AppMobileTopBar hasProfile={hasProfile} activeProfile={profiles.find((p) => p.id === activeProfileId)} />
+        <AppMobileTopBar
+          hasProfile={hasProfile}
+          activeProfile={profiles.find((p) => p.id === activeProfileId)}
+          notificationCount={notificationCount}
+        />
         <div className="page-reveal pb-20 md:pb-0">{children}</div>
       </div>
     </div>

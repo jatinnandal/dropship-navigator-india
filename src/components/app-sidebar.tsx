@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Flame } from "lucide-react";
+import { Flame, Bell } from "lucide-react";
 import { AppLogo } from "@/components/app-logo";
 import { ProfileSwitcher } from "@/components/profile-switcher";
 import { signOut } from "@/app/login/actions";
@@ -16,6 +16,7 @@ type Props = {
   profiles: SellerProfileSummary[];
   activeProfileId: string | null;
   plan?: Plan;
+  notificationCount?: number;
   collapsed: boolean;
   onToggleCollapsed: () => void;
 };
@@ -26,6 +27,7 @@ export function AppSidebar({
   profiles,
   activeProfileId,
   plan = "free",
+  notificationCount = 0,
 }: Props) {
   const pathname = usePathname();
   const navItems = getAppNavItems(hasProfile);
@@ -84,6 +86,26 @@ export function AppSidebar({
 
         {/* Footer */}
         <div className="border-t border-white/[0.08] pt-3">
+          {hasProfile && (
+            <Link
+              href="/app/notifications"
+              className={`mb-2 mx-1 flex items-center gap-[11px] rounded-[10px] px-3 py-2.5 text-[13.5px] font-medium transition-colors ${
+                isNavItemActive(pathname, "/app/notifications")
+                  ? "text-white bg-white/[0.07] border border-white/[0.16]"
+                  : "text-[var(--text-faint)] border border-transparent hover:text-white"
+              }`}
+            >
+              <span className="relative">
+                <Bell className="h-[18px] w-[18px] shrink-0" aria-hidden="true" />
+                {notificationCount > 0 && (
+                  <span className="absolute -right-1.5 -top-1.5 grid h-4 min-w-4 place-items-center rounded-full bg-[var(--danger)] px-1 text-[9px] font-semibold leading-none text-white">
+                    {notificationCount > 9 ? "9+" : notificationCount}
+                  </span>
+                )}
+              </span>
+              <span>Notifications</span>
+            </Link>
+          )}
           <Link
             href="/app/plans"
             className="mb-2 mx-1 flex items-center justify-between rounded-[9px] px-2 py-1.5 no-underline hover:bg-white/[0.04] transition-colors"
