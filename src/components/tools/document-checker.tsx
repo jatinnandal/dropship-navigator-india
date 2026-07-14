@@ -21,23 +21,108 @@ import {
   type DocumentCategory,
   type DocumentItem,
 } from "@/lib/document-checker-data";
+import { matchGstinPan, validateGSTIN, validatePAN } from "@/lib/validators";
 
 const STORAGE_KEY = "dni-doc-checker";
 
 type Marketplace = "amazon" | "flipkart" | "meesho" | "shopify";
 
+type IdentityState = {
+  gstin: string;
+  pan: string;
+  namePan: string;
+  nameGst: string;
+  nameBank: string;
+};
+
+const EMPTY_IDENTITY: IdentityState = { gstin: "", pan: "", namePan: "", nameGst: "", nameBank: "" };
+
 type CheckedState = {
   marketplaces: Marketplace[];
   documents: Record<string, boolean>;
+  identity: IdentityState;
 };
 
 function loadState(): CheckedState {
-  if (typeof window === "undefined") return { marketplaces: [], documents: {} };
+  if (typeof window === "undefined") return { marketplaces: [], documents: {}, identity: EMPTY_IDENTITY };
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      return { marketplaces: [], documents: {}, ...parsed, identity: { ...EMPTY_IDENTITY, ...(parsed.identity ?? {}) } };
+    }
   } catch {}
-  return { marketplaces: [], documents: {} };
+  return { marketplaces: [], documents: {}, identity: EMPTY_IDENTITY };
+}
+
+/* ── Identity verification (the checks marketplaces actually run) ── */
+
+const normSpace = (s: string) => s.trim().replace(/\s+/g, " ");
+
+type NameCompare = "match" | "case-only" | "mismatch" | "incomplete";
+
+function compareNames(a: string, b: string): NameCompare {
+  const na = normSpace(a);
+  const nb = normSpace(b);
+  if (!na || !nb) return "incomplete";
+  if (na === nb) return "match";
+  if (na.toLowerCase() === nb.toLowerCase()) return "case-only";
+  return "mismatch";
+}
+
+export type IdentityVerification = {
+  gstin: ReturnType<typeof validateGSTIN> | null;
+  pan: ReturnType<typeof validatePAN> | null;
+  /** PAN characters embedded inside the GSTIN match the entered PAN. */
+  panInGstin: boolean | null;
+  panGstName: NameCompare;
+  panBankName: NameCompare;
+};
+
+function verifyIdentity(id: IdentityState): IdentityVerification {
+  const gstin = id.gstin ? validateGSTIN(id.gstin.toUpperCase()) : null;
+  const pan = id.pan ? validatePAN(id.pan.toUpperCase()) : null;
+  const panInGstin =
+    gstin?.valid && pan?.valid ? matchGstinPan(id.gstin.toUpperCase(), id.pan.toUpperCase()) : null;
+  return {
+    gstin,
+    pan,
+    panInGstin,
+    panGstName: compareNames(id.namePan, id.nameGst),
+    panBankName: compareNames(id.namePan, id.nameBank),
+  };
+}
+
+/** First point of divergence highlighted on both strings. */
+function NameDiff({ a, b }: { a: string; b: string }) {
+  const na = normSpace(a);
+  const nb = normSpace(b);
+  let prefix = 0;
+  while (prefix < na.length && prefix < nb.length && na[prefix] === nb[prefix]) prefix++;
+  let suffix = 0;
+  while (
+    suffix < na.length - prefix &&
+    suffix < nb.length - prefix &&
+    na[na.length - 1 - suffix] === nb[nb.length - 1 - suffix]
+  )
+    suffix++;
+
+  const render = (s: string) => (
+    <span className="font-mono text-[11px]">
+      <span className="text-[var(--body-text)]">{s.slice(0, prefix)}</span>
+      <span className="rounded-sm bg-[var(--danger)]/25 px-0.5 text-[var(--danger)]">
+        {s.slice(prefix, s.length - suffix) || "∅"}
+      </span>
+      <span className="text-[var(--body-text)]">{s.slice(s.length - suffix)}</span>
+    </span>
+  );
+
+  return (
+    <div className="mt-1 space-y-0.5 pl-4">
+      <div>{render(na)}</div>
+      <div>{render(nb)}</div>
+    </div>
+  );
 }
 
 function saveState(state: CheckedState) {
@@ -228,8 +313,222 @@ function DocumentCard({
   );
 }
 
+/* ── Identity verifier panel ── */
+function IdentityField({
+  label,
+  value,
+  placeholder,
+  onChange,
+  mono,
+  status,
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  onChange: (v: string) => void;
+  mono?: boolean;
+  status?: { ok: boolean; text: string } | null;
+}) {
+  return (
+    <div>
+      <label className="text-xs font-medium text-[var(--body-text)]">{label}</label>
+      <input
+        type="text"
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        className={`mt-1.5 w-full min-h-[40px] rounded-md border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-[var(--body-text)] transition-colors focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25 ${
+          mono ? "font-mono uppercase tracking-wide" : ""
+        }`}
+      />
+      {status && (
+        <p className={`mt-1 flex items-center gap-1 text-[11px] ${status.ok ? "text-[var(--success)]" : "text-[var(--danger)]"}`}>
+          {status.ok ? <Check className="h-3 w-3 shrink-0" /> : <X className="h-3 w-3 shrink-0" />}
+          {status.text}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function nameStatusLine(cmp: NameCompare): { ok: boolean; text: string } | null {
+  switch (cmp) {
+    case "match":
+      return { ok: true, text: "Matches character-for-character" };
+    case "case-only":
+      return { ok: false, text: "Differs only in casing/spacing - marketplaces can still reject this, make them identical" };
+    case "mismatch":
+      return { ok: false, text: "Names differ - the highlighted part is where they diverge" };
+    default:
+      return null;
+  }
+}
+
+function IdentityVerifier({
+  identity,
+  verification,
+  onChange,
+}: {
+  identity: IdentityState;
+  verification: IdentityVerification;
+  onChange: (next: IdentityState) => void;
+}) {
+  const set = (field: keyof IdentityState) => (v: string) => onChange({ ...identity, [field]: v });
+  const v = verification;
+
+  return (
+    <div className="panel rounded-lg p-4">
+      <h3 className="text-sm font-semibold text-white mb-1">Verify your identity block</h3>
+      <p className="text-muted mb-4 text-xs leading-relaxed">
+        This is the check the marketplace KYC actually runs. Type the values exactly as printed on
+        each document - we validate the numbers and diff the names character by character. Nothing
+        you type here leaves your browser.
+      </p>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <IdentityField
+          label="PAN"
+          value={identity.pan}
+          placeholder="ABCDE1234F"
+          onChange={set("pan")}
+          mono
+          status={
+            v.pan === null
+              ? null
+              : v.pan.valid
+                ? { ok: true, text: "Valid PAN format" }
+                : { ok: false, text: v.pan.error ?? "Invalid PAN" }
+          }
+        />
+        <IdentityField
+          label="GSTIN (skip if you don't have one yet)"
+          value={identity.gstin}
+          placeholder="27ABCDE1234F1Z5"
+          onChange={set("gstin")}
+          mono
+          status={
+            v.gstin === null
+              ? null
+              : !v.gstin.valid
+                ? { ok: false, text: v.gstin.error ?? "Invalid GSTIN" }
+                : v.panInGstin === null
+                  ? { ok: true, text: "Valid GSTIN (enter PAN to cross-check)" }
+                  : v.panInGstin
+                    ? { ok: true, text: "Valid - and characters 3-12 match your PAN" }
+                    : { ok: false, text: "Valid format, but this GSTIN embeds a DIFFERENT PAN - one of the two has a typo" }
+          }
+        />
+        <IdentityField
+          label="Name as printed on PAN"
+          value={identity.namePan}
+          placeholder="RAHUL KUMAR SHARMA"
+          onChange={set("namePan")}
+        />
+        <IdentityField
+          label="Legal name on GST certificate"
+          value={identity.nameGst}
+          placeholder="RAHUL KUMAR SHARMA"
+          onChange={set("nameGst")}
+          status={nameStatusLine(v.panGstName)}
+        />
+        <IdentityField
+          label="Bank account holder name"
+          value={identity.nameBank}
+          placeholder="RAHUL KUMAR SHARMA"
+          onChange={set("nameBank")}
+          status={nameStatusLine(v.panBankName)}
+        />
+      </div>
+
+      {v.panGstName === "mismatch" && <NameDiff a={identity.namePan} b={identity.nameGst} />}
+      {v.panBankName === "mismatch" && <NameDiff a={identity.namePan} b={identity.nameBank} />}
+    </div>
+  );
+}
+
 /* ── Cross-Check Matrix ── */
-function CrossCheckMatrix({ allChecked }: { allChecked: Record<string, boolean> }) {
+type MatrixStatus = {
+  tone: "verified" | "failed" | "unverified" | "manual";
+  note: string;
+};
+
+/**
+ * Green ONLY on a verified match - never on document possession alone.
+ * Possessing a PAN and a GST certificate proves nothing about whether the
+ * names on them agree, which is the thing marketplaces reject on.
+ */
+function matrixStatus(
+  checkId: string,
+  allChecked: Record<string, boolean>,
+  v: IdentityVerification,
+): MatrixStatus {
+  const docsPossessed = getRelatedDocIds(checkId).every((id) => allChecked[id]);
+
+  switch (checkId) {
+    case "pan-gst-name": {
+      if (v.panInGstin === false)
+        return { tone: "failed", note: "The PAN embedded in your GSTIN is different from the PAN you entered - fix the typo before anything else." };
+      if (v.panGstName === "mismatch")
+        return { tone: "failed", note: "Names on PAN and GST certificate differ - this is the #1 KYC rejection. Fix via a GST amendment (core field) before applying." };
+      if (v.panGstName === "case-only")
+        return { tone: "failed", note: "Names differ only in casing/spacing - still risky, make them identical." };
+      if (v.panGstName === "match" && v.panInGstin === true)
+        return { tone: "verified", note: "Verified: names match character-for-character and the GSTIN embeds this PAN." };
+      if (v.panGstName === "match")
+        return { tone: "verified", note: "Names match character-for-character. Enter your GSTIN above to also cross-check the embedded PAN." };
+      return { tone: "unverified", note: "Not verified yet - enter both names in the identity block above. Ticking the checkboxes doesn't prove the names match." };
+    }
+    case "pan-bank-name": {
+      if (v.panBankName === "mismatch")
+        return { tone: "failed", note: "Bank account holder name differs from PAN - payouts and KYC will bounce. Fix the bank record or use the matching account." };
+      if (v.panBankName === "case-only")
+        return { tone: "failed", note: "Differs only in casing/spacing - align them to be safe." };
+      if (v.panBankName === "match")
+        return { tone: "verified", note: "Verified: bank account holder name matches your PAN name exactly." };
+      return { tone: "unverified", note: "Not verified yet - enter your PAN name and bank account holder name above." };
+    }
+    default:
+      // Address/brand consistency can't be auto-verified from typed fields.
+      return docsPossessed
+        ? { tone: "manual", note: "We can't verify this automatically - compare the two documents side by side before you submit." }
+        : { tone: "unverified", note: "Mark the related documents ready, then compare them manually - this one can't be auto-verified." };
+  }
+}
+
+const MATRIX_TONE_STYLES: Record<MatrixStatus["tone"], { box: string; icon: string; chip: string; chipText: string }> = {
+  verified: {
+    box: "border-[var(--success)]/30 bg-[var(--success)]/10",
+    icon: "text-[var(--success)]",
+    chip: "bg-[var(--success)]/20 text-[var(--success)]",
+    chipText: "verified",
+  },
+  failed: {
+    box: "border-[var(--danger)]/30 bg-[var(--danger)]/10",
+    icon: "text-[var(--danger)]",
+    chip: "bg-[var(--danger)]/20 text-[var(--danger)]",
+    chipText: "mismatch",
+  },
+  unverified: {
+    box: "border-white/[0.12] bg-white/[0.03]",
+    icon: "text-[var(--muted)]",
+    chip: "bg-white/[0.06] text-[var(--muted)]",
+    chipText: "not verified",
+  },
+  manual: {
+    box: "border-white/[0.16] bg-white/[0.04]",
+    icon: "text-white",
+    chip: "bg-white/[0.08] text-white",
+    chipText: "manual check",
+  },
+};
+
+function CrossCheckMatrix({
+  allChecked,
+  verification,
+}: {
+  allChecked: Record<string, boolean>;
+  verification: IdentityVerification;
+}) {
   return (
     <div className="panel rounded-lg p-4">
       <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
@@ -238,52 +537,24 @@ function CrossCheckMatrix({ allChecked }: { allChecked: Record<string, boolean> 
       </h3>
       <div className="space-y-2">
         {CROSS_VALIDATION_CHECKS.map((check) => {
-          // Determine if related docs are checked
-          const relatedDocIds = getRelatedDocIds(check.id);
-          const allRelatedChecked = relatedDocIds.every((id) => allChecked[id]);
-          const someRelatedChecked =
-            relatedDocIds.some((id) => allChecked[id]) && !allRelatedChecked;
-
+          const status = matrixStatus(check.id, allChecked, verification);
+          const t = MATRIX_TONE_STYLES[status.tone];
           return (
-            <div
-              key={check.id}
-              className={`rounded-md border px-3 py-2 ${
-                allRelatedChecked
-                  ? "border-[var(--success)]/30 bg-[var(--success)]/10"
-                  : someRelatedChecked
-                  ? "border-white/[0.16] bg-white/[0.04]"
-                  : "border-[var(--danger)]/30 bg-[var(--danger)]/10"
-              }`}
-            >
+            <div key={check.id} className={`rounded-md border px-3 py-2 ${t.box}`}>
               <div className="flex items-center gap-2">
-                {check.severity === "critical" ? (
-                  <AlertTriangle
-                    className={`h-3.5 w-3.5 shrink-0 ${
-                      allRelatedChecked ? "text-[var(--success)]" : "text-[var(--danger)]"
-                    }`}
-                  />
+                {status.tone === "verified" ? (
+                  <ShieldCheck className={`h-3.5 w-3.5 shrink-0 ${t.icon}`} />
                 ) : (
-                  <AlertTriangle
-                    className={`h-3.5 w-3.5 shrink-0 ${
-                      allRelatedChecked ? "text-[var(--success)]" : "text-white"
-                    }`}
-                  />
+                  <AlertTriangle className={`h-3.5 w-3.5 shrink-0 ${t.icon}`} />
                 )}
-                <span className="text-xs font-medium text-white">
-                  {check.label}
-                </span>
-                <span
-                  className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-medium ${
-                    check.severity === "critical"
-                      ? "bg-[var(--danger)]/20 text-[var(--danger)]"
-                      : "bg-white/[0.06] text-white"
-                  }`}
-                >
-                  {check.severity}
+                <span className="text-xs font-medium text-white">{check.label}</span>
+                <span className={`ml-auto rounded px-1.5 py-0.5 text-[10px] font-medium ${t.chip}`}>
+                  {t.chipText}
                 </span>
               </div>
-              <p className="text-muted mt-1 text-[11px] leading-relaxed pl-5">
-                {check.description}
+              <p className="text-muted mt-1 text-[11px] leading-relaxed pl-5">{check.description}</p>
+              <p className={`mt-1 pl-5 text-[11px] leading-relaxed ${status.tone === "failed" ? "text-[var(--danger)]" : status.tone === "verified" ? "text-[var(--success)]" : "text-[var(--muted)]"}`}>
+                {status.note}
               </p>
             </div>
           );
@@ -314,12 +585,18 @@ export function DocumentChecker() {
   const [state, setState] = useState<CheckedState>({
     marketplaces: [],
     documents: {},
+    identity: EMPTY_IDENTITY,
   });
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setState(loadState());
-    setMounted(true);
+    // Deferred so SSR markup and first client render match (localStorage is
+    // client-only); the skeleton below covers the single pre-hydration frame.
+    const frame = requestAnimationFrame(() => {
+      setState(loadState());
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   const persist = useCallback((next: CheckedState) => {
@@ -351,6 +628,13 @@ export function DocumentChecker() {
     [state, persist]
   );
 
+  const setIdentity = useCallback(
+    (identity: IdentityState) => persist({ ...state, identity }),
+    [state, persist]
+  );
+
+  const verification = useMemo(() => verifyIdentity(state.identity), [state.identity]);
+
   // Filter documents by selected marketplaces
   const filteredDocs = useMemo(() => {
     if (state.marketplaces.length === 0) return DOCUMENTS;
@@ -380,7 +664,7 @@ export function DocumentChecker() {
   ).length;
   const progress = totalDocs > 0 ? (checkedCount / totalDocs) * 100 : 0;
 
-  // Cross-check warnings
+  // Cross-check warnings (possession gaps + verified identity mismatches)
   const crossCheckWarnings = useMemo(() => {
     const warnings: string[] = [];
     for (const doc of filteredDocs) {
@@ -397,11 +681,17 @@ export function DocumentChecker() {
         }
       }
     }
+    if (verification.panInGstin === false)
+      warnings.push("Your GSTIN embeds a different PAN than the one entered - typo in one of them");
+    if (verification.panGstName === "mismatch" || verification.panGstName === "case-only")
+      warnings.push("PAN name and GST legal name don't match exactly");
+    if (verification.panBankName === "mismatch" || verification.panBankName === "case-only")
+      warnings.push("PAN name and bank account holder name don't match exactly");
     // Deduplicate
     return [...new Set(warnings)];
-  }, [filteredDocs, state.documents]);
+  }, [filteredDocs, state.documents, verification]);
 
-  // Verdict
+  // Verdict - a verified identity mismatch blocks "ready" regardless of ticks.
   const verdict = useMemo(() => {
     if (checkedCount === 0) return "not-ready" as const;
     if (checkedCount === totalDocs && crossCheckWarnings.length === 0)
@@ -453,6 +743,13 @@ export function DocumentChecker() {
           </p>
         )}
       </div>
+
+      {/* Identity verification */}
+      <IdentityVerifier
+        identity={state.identity}
+        verification={verification}
+        onChange={setIdentity}
+      />
 
       {/* Validation Status Panel */}
       <div className="panel rounded-lg p-4 sticky top-4 z-10">
@@ -551,7 +848,7 @@ export function DocumentChecker() {
       </div>
 
       {/* Cross-Check Matrix */}
-      <CrossCheckMatrix allChecked={state.documents} />
+      <CrossCheckMatrix allChecked={state.documents} verification={verification} />
     </div>
   );
 }
