@@ -22,6 +22,7 @@ import { buildTask } from "@/lib/tasks";
 import type { TaskStep } from "@/lib/tasks/types";
 import { defaultRtoForProductType } from "@/lib/profit-math";
 import {
+  COMPLIANCE_PACK_TEMPLATE,
   COURIER_BENCHMARK_CHECKLIST,
   ESCALATION_LETTER,
   MARKETPLACE_APPEAL_TICKET,
@@ -556,6 +557,9 @@ export function TaskRunner({
               ) : null}
               {currentStep.id === "pnl-setup" ? (
                 <CopyTemplate title="Weekly P&L tracker template" text={PNL_TRACKER_TEMPLATE} className="mt-4" />
+              ) : null}
+              {currentStep.id === "compliance-pack" ? (
+                <CopyTemplate title="Per-SKU compliance record" text={COMPLIANCE_PACK_TEMPLATE} className="mt-4" />
               ) : null}
               {currentStep.id === "rto-tracking" ? (
                 <CopyTemplate title="RTO / returns log template" text={RTO_RETURNS_LOG_TEMPLATE} className="mt-4" />

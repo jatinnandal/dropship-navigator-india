@@ -23,6 +23,16 @@ Please give me a rough percentage range, explain what pushes it higher or lower 
 
 Important: treat this as a rough starting estimate only. Remind me to confirm the real number from my own marketplace seller dashboard's returns/RTO report after my first ~20 orders, and do not present any figure as exact.`;
 
+export const COMPLIANCE_PACK_TEMPLATE = `Per-SKU compliance record - one row per product you list
+
+Columns:
+SKU / product name | HSN code | GST rate (5/12/18/28%) | Category certificate (FSSAI no. / BIS R-number / CDSCO - if applicable) | Certificate expiry | Legal Metrology label photo on file (Y/N) | Marketplace category approval (Approved / Pending / N/A) | Status (GREEN = ready / RED = blocked)
+
+How to use it:
+- A SKU is GREEN only when every applicable box is filled - no blank HSN, no missing certificate.
+- Review monthly: FSSAI/BIS/CDSCO certificates expire, and an expired number takes a live listing down.
+- Keep the actual PDFs and label photos in one folder next to this sheet, named by SKU, so a marketplace audit or a customer complaint is answered in seconds, not days.`;
+
 export const PNL_TRACKER_TEMPLATE = `Weekly SKU-level P&L tracker - one row per SKU, per week
 
 Columns (make these your spreadsheet header):
