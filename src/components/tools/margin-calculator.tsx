@@ -10,8 +10,6 @@ import {
   Truck,
   Megaphone,
   RotateCcw,
-  Save,
-  Check,
   Info,
   BarChart3,
 } from "lucide-react";
@@ -31,20 +29,6 @@ import {
 } from "@/lib/marketplace-fees";
 import { DataFreshness } from "@/components/data-freshness";
 import CountUp from "@/components/CountUp";
-
-/* ── types ── */
-type Scenario = {
-  sellingPrice: number;
-  productCost: number;
-  weightBracket: WeightBracket;
-  shippingOverride: number | null;
-  adCostPerOrder: number;
-  rtoRate: number;
-  codPercent: number;
-  productCategory: ProductType;
-  monthlyOrders: number;
-  savedAt: string;
-};
 
 const PRODUCT_CATEGORIES: { value: ProductType; label: string }[] = [
   { value: "fashion", label: "Fashion & Apparel" },
@@ -94,7 +78,6 @@ export function MarginCalculator({
   const [codPercent, setCodPercent] = useState(60);
   const [monthlyOrders, setMonthlyOrders] = useState(100);
   const [activeTab, setActiveTab] = useState<PrimaryChannel>(defaultChannel ?? "amazon");
-  const [saved, setSaved] = useState(false);
 
   /* when category changes, update RTO default */
   function handleCategoryChange(cat: ProductType) {
@@ -134,26 +117,6 @@ export function MarginCalculator({
 
   const activeResult = allResults.find((r) => r.ch.channel === activeTab)!;
 
-  /* save scenario */
-  function handleSave() {
-    const scenario: Scenario = {
-      sellingPrice,
-      productCost,
-      weightBracket,
-      shippingOverride,
-      adCostPerOrder,
-      rtoRate,
-      codPercent,
-      productCategory,
-      monthlyOrders,
-      savedAt: new Date().toISOString(),
-    };
-    const existing = JSON.parse(localStorage.getItem("dni-margin-scenarios") || "[]");
-    existing.push(scenario);
-    localStorage.setItem("dni-margin-scenarios", JSON.stringify(existing));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  }
 
   return (
     <div className="space-y-6">
@@ -266,21 +229,6 @@ export function MarginCalculator({
             />
           </div>
 
-          <button
-            type="button"
-            onClick={handleSave}
-            className="btn-primary mt-5 flex w-full items-center justify-center gap-2 min-h-[44px] rounded-md px-4 py-2.5 text-sm font-medium"
-          >
-            {saved ? (
-              <>
-                <Check className="h-4 w-4" /> Scenario Saved
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4" /> Save Scenario
-              </>
-            )}
-          </button>
         </div>
 
         {/* right: marketplace tabs + active detail */}
