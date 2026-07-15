@@ -722,7 +722,7 @@ export function DocumentChecker() {
             <p className="text-muted mt-1 text-xs leading-relaxed">
               Your name must match <strong className="text-white">CHARACTER-FOR-CHARACTER</strong> across
               PAN, GST certificate, and bank statement. Even &quot;KUMAR&quot; vs
-              &quot;Kumar&quot; can trigger rejection.
+              &quot;Kumar&quot;, or &quot;Pvt Ltd&quot; vs &quot;Private Limited&quot;, can trigger rejection.
             </p>
           </div>
         </div>

@@ -336,13 +336,6 @@ export default async function ToolsIndexPage() {
             status="open"
           />
           <GatedToolCard
-            href="/app/tools/product-scorecard"
-            title="Product scorecard"
-            description="Score products on competition, margins, fragility, and returns."
-            icon="Target"
-            status="open"
-          />
-          <GatedToolCard
             href="/app/tools/breakeven-roas"
             title="Break-even ROAS"
             description="Your ad-spend floor, computed from real unit economics."
@@ -478,13 +471,6 @@ export default async function ToolsIndexPage() {
             status="open"
           />
           <GatedToolCard
-            href="/app/tools/verification-checklist"
-            title="Verification checklist"
-            description="GSTIN and PAN format checks, cross-document name matching."
-            icon="ClipboardCheck"
-            status="open"
-          />
-          <GatedToolCard
             href="/app/tools/document-checker"
             title="Document checker"
             description="Pre-submission validation - the #1 cause of KYC rejection."
@@ -537,7 +523,7 @@ export default async function ToolsIndexPage() {
           <GatedToolCard
             href="/app/tools/seasonal-calendar"
             title="Seasonal calendar"
-            description="21 Indian sale events with prep timelines and budget multipliers."
+            description="21 Indian sale events with prep timelines and deal-submission deadlines."
             icon="CalendarDays"
             status="open"
           />

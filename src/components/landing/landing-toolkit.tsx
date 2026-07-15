@@ -169,7 +169,7 @@ export function LandingToolkit() {
               marginRight: 10,
             }}
           />
-          The toolkit · 4 of 17 tools
+          The toolkit · free to try
         </p>
         <h2
           style={{
@@ -194,9 +194,9 @@ export function LandingToolkit() {
             maxWidth: 520,
           }}
         >
-          Three of the 17 are free to start - the margin calculator, verification
-          checklist and seasonal calendar. The simulators and scorecards below
-          unlock on a paid plan.
+          Start free - run your real margins and map your busiest sale weeks
+          before you risk a rupee. The simulators, scorecards and payout
+          reconciliation unlock when you&apos;re ready to launch.
         </p>
       </div>
 
@@ -226,7 +226,7 @@ export function LandingToolkit() {
           Get started - free
         </a>
         <p className="font-mono" style={{ fontSize: 12, color: "#5a5a5a", marginTop: 14 }}>
-          3 tools free to start · simulators &amp; scorecards unlock on a paid plan
+          Free tools to start · the full toolkit unlocks on a paid plan
         </p>
       </div>
     </section>

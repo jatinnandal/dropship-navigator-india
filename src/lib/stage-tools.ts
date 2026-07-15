@@ -5,13 +5,11 @@ export type StageTool = { label: string; href: string; emoji: string };
 /** In-app tools most relevant to each journey module, shown on the dashboard rail. */
 export const STAGE_TOOLS: Record<TaskModuleId, StageTool[]> = {
   "common-documentation": [
-    { label: "Verification checklist", href: "/app/tools/verification-checklist", emoji: "✅" },
     { label: "Document checker", href: "/app/tools/document-checker", emoji: "📁" },
     { label: "GST filing calendar", href: "/app/tools/gst-calendar", emoji: "📅" },
   ],
   "product-selection": [
     { label: "Margin calculator", href: "/app/tools/margin-calculator", emoji: "🧮" },
-    { label: "Product scorecard", href: "/app/tools/product-scorecard", emoji: "🎯" },
     { label: "Shipping estimator", href: "/app/tools/shipping-estimator", emoji: "📦" },
   ],
   "compliance-by-product": [
