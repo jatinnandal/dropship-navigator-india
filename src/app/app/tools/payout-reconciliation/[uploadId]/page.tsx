@@ -53,8 +53,7 @@ export default async function ReconReportPage({ params }: { params: Params }) {
         <h1 className="headline-gradient mt-2 text-3xl font-bold">Where your payout went</h1>
         <p className="text-muted mt-3 max-w-2xl text-sm leading-6">
           {upload.filename ?? "Settlement file"} ·{" "}
-          {new Date(upload.uploadedAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}{" "}
-          · adapter {upload.adapterVersion}
+          {new Date(upload.uploadedAt).toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
         </p>
         <EstimateDisclaimer
           meta={MARKETPLACE_FEES_META}

@@ -9,7 +9,6 @@ import {
   Truck,
   AlertTriangle,
   MessageSquare,
-  Star,
 } from "lucide-react";
 import {
   COD_SCENARIOS,
@@ -351,8 +350,6 @@ export function CodSimulator() {
       {state.phase === "outcome" && (
         <OutcomeCard
           scenario={scenario}
-          score={state.score}
-          maxScore={state.maxScore}
           shipped={shipped}
           onRestart={() => startScenario(scenario)}
           onExit={reset}
@@ -494,21 +491,16 @@ function ChatBubble({ message, lang }: { message: ChatMessage; lang: ScenarioLan
 
 function OutcomeCard({
   scenario,
-  score,
-  maxScore,
   shipped,
   onRestart,
   onExit,
 }: {
   scenario: Scenario;
-  score: number;
-  maxScore: number;
   shipped: boolean;
   onRestart: () => void;
   onExit: () => void;
 }) {
   const rtoCost = scenario.shippingCost * 2;
-  const stars = Math.round((score / maxScore) * 5);
 
   return (
     <div className="space-y-4">
@@ -561,25 +553,6 @@ function OutcomeCard({
                 : `RTO cost: ₹${rtoCost} round-trip shipping lost`}
             </p>
           </div>
-        </div>
-
-        {/* Score */}
-        <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 16 }}>
-          <div style={{ display: "flex", gap: 3 }}>
-            {[1, 2, 3, 4, 5].map((s) => (
-              <Star
-                key={s}
-                size={16}
-                fill={s <= stars ? (shipped ? "oklch(0.8 0.14 85)" : "oklch(0.72 0.17 20)") : "transparent"}
-                style={{
-                  color: s <= stars ? (shipped ? "oklch(0.8 0.14 85)" : "oklch(0.72 0.17 20)") : "rgba(255,255,255,0.15)",
-                }}
-              />
-            ))}
-          </div>
-          <span className="font-mono" style={{ fontSize: 11, color: "var(--text-faint)" }}>
-            {score}/{maxScore} points
-          </span>
         </div>
 
         {/* Debrief */}

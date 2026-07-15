@@ -44,7 +44,8 @@ export function CodPrepaidSimulator() {
   const [channel, setChannel] = useState<PrimaryChannel>("meesho");
   const [codPercent, setCodPercent] = useState(60);
   const [codRtoPercent, setCodRtoPercent] = useState(25);
-  const [prepaidReturnPercent, setPrepaidReturnPercent] = useState(5);
+  // Prepaid returns run low and stable (~5%); fixed so beginners have one less knob.
+  const prepaidReturnPercent = 5;
   const [ordersPerMonth, setOrdersPerMonth] = useState(150);
 
   const currentScenario = useMemo(() => {
@@ -59,7 +60,7 @@ export function CodPrepaidSimulator() {
       channel,
     };
     return calculateBlendedUnitEconomics(inputs);
-  }, [sellingPrice, productCost, shippingCost, adCostPerOrder, codPercent, codRtoPercent, prepaidReturnPercent, channel]);
+  }, [sellingPrice, productCost, shippingCost, adCostPerOrder, codPercent, codRtoPercent, channel]);
 
   const prepaidScenario = useMemo(() => {
     const inputs: BlendedEconomicsInputs = {
@@ -91,7 +92,7 @@ export function CodPrepaidSimulator() {
       channel,
     });
     return shifted.netProfit - currentScenario.netProfit;
-  }, [sellingPrice, productCost, shippingCost, adCostPerOrder, codPercent, codRtoPercent, prepaidReturnPercent, channel, currentScenario.netProfit]);
+  }, [sellingPrice, productCost, shippingCost, adCostPerOrder, codPercent, codRtoPercent, channel, currentScenario.netProfit]);
 
   const totalLossPercent = (codPercent / 100) * (codRtoPercent / 100) * 100;
 
@@ -214,23 +215,6 @@ export function CodPrepaidSimulator() {
               <span className="text-[var(--muted)]">0%</span>
               <span className="text-[var(--danger)] font-semibold">{codRtoPercent}%</span>
               <span className="text-[var(--muted)]">50%</span>
-            </div>
-          </label>
-          <label className="block text-xs">
-            <span className="text-muted">Prepaid return rate</span>
-            <input
-              type="range"
-              min={0}
-              max={20}
-              step={1}
-              value={prepaidReturnPercent}
-              onChange={(e) => setPrepaidReturnPercent(Number(e.target.value))}
-              className="mt-2 w-full accent-white"
-            />
-            <div className="flex justify-between mt-1">
-              <span className="text-[var(--muted)]">0%</span>
-              <span className="text-[var(--muted)] font-semibold">{prepaidReturnPercent}%</span>
-              <span className="text-[var(--muted)]">20%</span>
             </div>
           </label>
         </div>

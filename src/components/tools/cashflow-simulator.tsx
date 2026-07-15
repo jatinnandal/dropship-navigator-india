@@ -12,15 +12,12 @@ import {
   ChevronDown,
   ChevronUp,
   Zap,
-  IndianRupee,
 } from "lucide-react";
 import type { PrimaryChannel } from "@/lib/mvp-data";
 import {
   simulate90DayCashFlow,
   type CashFlowInputs,
-  type DayCashFlow,
 } from "@/lib/cashflow-engine";
-import CountUp from "@/components/CountUp";
 
 /* ── helpers ── */
 const CHANNELS: { value: PrimaryChannel; label: string }[] = [
@@ -44,9 +41,11 @@ export function CashflowSimulator() {
   const [rtoPercent, setRtoPercent] = useState(25);
   const [startingCapital, setStartingCapital] = useState(50000);
   const [festivalEnabled, setFestivalEnabled] = useState(false);
-  const [festivalStartDay, setFestivalStartDay] = useState(45);
-  const [festivalMultiplier, setFestivalMultiplier] = useState(2.5);
-  const [festivalDuration, setFestivalDuration] = useState(10);
+  // Fixed preset - a beginner can't meaningfully calibrate start day/multiplier/duration.
+  // The lesson is simply "a surge needs MORE capital upfront", shown with one realistic spike.
+  const festivalStartDay = 45;
+  const festivalMultiplier = 2.5;
+  const festivalDuration = 10;
   const [showTable, setShowTable] = useState(false);
 
   const inputs: CashFlowInputs = useMemo(
@@ -64,7 +63,7 @@ export function CashflowSimulator() {
         ? { startDay: festivalStartDay, multiplier: festivalMultiplier, duration: festivalDuration }
         : undefined,
     }),
-    [channel, sellingPrice, productCost, shippingCost, adSpendPerDay, ordersPerDay, codPercent, rtoPercent, startingCapital, festivalEnabled, festivalStartDay, festivalMultiplier, festivalDuration]
+    [channel, sellingPrice, productCost, shippingCost, adSpendPerDay, ordersPerDay, codPercent, rtoPercent, startingCapital, festivalEnabled]
   );
 
   const result = useMemo(() => simulate90DayCashFlow(inputs), [inputs]);
@@ -207,11 +206,11 @@ export function CashflowSimulator() {
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden"
               >
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                  <InputField label="Start Day" value={festivalStartDay} onChange={setFestivalStartDay} min={1} max={80} />
-                  <InputField label="Multiplier" value={festivalMultiplier} onChange={setFestivalMultiplier} min={1.5} max={5} step={0.5} suffix="x" />
-                  <InputField label="Duration (days)" value={festivalDuration} onChange={setFestivalDuration} min={3} max={20} />
-                </div>
+                <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
+                  Models a 10-day festival spike at 2.5× your daily orders (around day 45).
+                  The point: a surge needs <span className="font-semibold text-[var(--body-text)]">more</span> capital
+                  upfront, not less — watch Peak Capital jump.
+                </p>
               </motion.div>
             )}
           </AnimatePresence>

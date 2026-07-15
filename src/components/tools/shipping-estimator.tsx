@@ -6,7 +6,6 @@ import { Truck, AlertTriangle, Clock, Package } from "lucide-react";
 import CountUp from "@/components/CountUp";
 import {
   CARRIERS,
-  ZONE_LABELS,
   calculateShippingCost,
   type ShippingZone,
   type CarrierRate,
@@ -67,8 +66,16 @@ export function ShippingEstimator() {
   const shiprocketBase = shiprocketResult?.carrier.baseRate[zone] ?? 0;
   const shiprocketActual = shiprocketResult?.result.totalCost ?? 0;
 
-  /* ── RTO cost insight ── */
-  const rtoAmount = cheapestTotal * 2;
+  /* ── RTO cost insight: honor the cheapest carrier's own RTO billing model ── */
+  const rtoCarrier = rankable[0];
+  const rtoForward = rtoCarrier?.result.totalCost ?? cheapestTotal;
+  const rtoModel = rtoCarrier?.carrier.rtoCharges ?? "full-round-trip";
+  const rtoAmount =
+    rtoModel === "full-round-trip"
+      ? rtoForward * 2
+      : rtoModel === "one-way-return"
+        ? rtoForward
+        : 0;
 
   return (
     <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
@@ -234,25 +241,58 @@ export function ShippingEstimator() {
           </motion.div>
         )}
 
-        {/* RTO insight */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="glass-panel grain rounded-xl border-[var(--danger)]/30 border p-4"
-        >
-          <div className="flex items-start gap-3">
-            <AlertTriangle className="h-5 w-5 text-[var(--danger)] shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-[var(--danger)]">RTO costs 2x shipping</p>
-              <p className="text-sm text-[var(--body-text)] mt-1">
-                Forward AND return journey ={" "}
-                <span className="text-[var(--danger)] font-semibold">₹{rtoAmount.toFixed(0)}</span>{" "}
-                lost per failed delivery (cheapest carrier)
-              </p>
+        {/* RTO insight - reflects the cheapest carrier's actual RTO billing */}
+        {rtoCarrier && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className={`glass-panel grain rounded-xl border p-4 ${
+              rtoModel === "free-return" ? "border-white/10" : "border-[var(--danger)]/30"
+            }`}
+          >
+            <div className="flex items-start gap-3">
+              <AlertTriangle
+                className={`h-5 w-5 shrink-0 mt-0.5 ${
+                  rtoModel === "free-return" ? "text-[var(--muted)]" : "text-[var(--danger)]"
+                }`}
+              />
+              <div>
+                <p
+                  className={`text-sm font-semibold ${
+                    rtoModel === "free-return" ? "text-[var(--body-text)]" : "text-[var(--danger)]"
+                  }`}
+                >
+                  {rtoModel === "full-round-trip"
+                    ? "RTO costs 2x shipping"
+                    : rtoModel === "one-way-return"
+                      ? "RTO costs 1x return shipping"
+                      : "Free return on RTO"}
+                </p>
+                <p className="text-sm text-[var(--body-text)] mt-1">
+                  {rtoModel === "free-return" ? (
+                    <>
+                      Your cheapest option ({rtoCarrier.carrier.carrier}) waives return freight on a
+                      failed delivery - but the product is still stuck in transit for days.
+                    </>
+                  ) : (
+                    <>
+                      On {rtoCarrier.carrier.carrier} (your cheapest option),{" "}
+                      {rtoModel === "full-round-trip"
+                        ? "you pay both the forward and return legs"
+                        : "the return leg is billed on top of the forward you already spent"}{" "}
+                      ={" "}
+                      <span className="text-[var(--danger)] font-semibold">
+                        ₹{rtoAmount.toFixed(0)}
+                      </span>{" "}
+                      lost per failed delivery.
+                    </>
+                  )}
+                </p>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

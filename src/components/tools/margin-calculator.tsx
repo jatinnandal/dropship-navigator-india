@@ -413,39 +413,6 @@ export function MarginCalculator({
         </div>
       </div>
 
-      {/* ── KEY INSIGHT ── */}
-      <div className="glass-panel rounded-xl border-l-4 border-l-white/25 p-5 sm:p-6">
-        <div className="flex gap-3">
-          <Info className="h-5 w-5 shrink-0 text-[var(--muted)] mt-0.5" />
-          <div>
-            <p className="text-sm font-semibold text-white">The Real Margin Story</p>
-            <p className="text-muted mt-1.5 text-sm leading-relaxed">
-              A{" "}
-              <span className="font-semibold text-[var(--body-text)]">
-                {formatINR(sellingPrice)}
-              </span>{" "}
-              product with{" "}
-              <span className="font-semibold text-[var(--body-text)]">
-                {((sellingPrice - productCost) / sellingPrice * 100).toFixed(0)}%
-              </span>{" "}
-              gross margin actually yields{" "}
-              <span className={`font-bold ${marginColor(allResults[bestIdx].result.netMarginPercent)}`}>
-                {allResults[bestIdx].result.netMarginPercent.toFixed(1)}%
-              </span>{" "}
-              net on{" "}
-              <span className="font-semibold text-[var(--body-text)]">
-                {allResults[bestIdx].ch.name}
-              </span>{" "}
-              after all marketplace fees, shipping, and RTO losses. That is{" "}
-              <span className="font-bold text-white">
-                {formatINR(allResults[bestIdx].result.netProfit)}
-              </span>{" "}
-              per order in your pocket.
-            </p>
-          </div>
-        </div>
-      </div>
-
       {/* ── DATA FRESHNESS ── */}
       <div className="flex justify-end px-1">
         <DataFreshness meta={MARKETPLACE_FEES_META} />
