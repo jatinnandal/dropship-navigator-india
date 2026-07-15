@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import type { PrimaryChannel } from "@/lib/mvp-data";
 
 type DayRow = {
   day: number;
@@ -12,10 +13,16 @@ type DayRow = {
 };
 
 type Props = {
+  channel?: PrimaryChannel;
   onComplete?: () => void;
 };
 
-export function CashflowTimeline({ onComplete }: Props) {
+export function CashflowTimeline({ channel, onComplete }: Props) {
+  const isMarketplace = channel != null && channel !== "shopify";
+  // Marketplace money arrives as a settlement 7-15 days after delivery; an
+  // own-store seller gets courier COD remittance a bit sooner (~day 5-7).
+  const firstPayoutDay = isMarketplace ? 8 : 6;
+
   const [budget, setBudget] = useState(10000);
   const [dailyAdSpend, setDailyAdSpend] = useState(800);
   const [ordersPerDay, setOrdersPerDay] = useState(3);
@@ -31,18 +38,21 @@ export function CashflowTimeline({ onComplete }: Props) {
     for (let day = 1; day <= 14; day += 1) {
       const adSpend = dailyAdSpend;
       balance -= adSpend;
-      const codIn = day >= 6 && (day - 6) % 2 === 0 ? ordersPerDay * codPayoutPerOrder : 0;
+      const codIn =
+        day >= firstPayoutDay && (day - firstPayoutDay) % 2 === 0
+          ? ordersPerDay * codPayoutPerOrder
+          : 0;
       balance += codIn;
       rows.push({
         day,
         adSpend,
         codIn,
         balance,
-        isDeadZone: balance < budget * 0.3 && day <= 7,
+        isDeadZone: balance < budget * 0.3 && day <= firstPayoutDay + 1,
       });
     }
     return rows;
-  }, [budget, dailyAdSpend, ordersPerDay, avgOrderValue]);
+  }, [budget, dailyAdSpend, ordersPerDay, avgOrderValue, firstPayoutDay]);
 
   const minBalance = Math.min(...days.map((d) => d.balance));
   const activeRow = days[activeDay - 1];
@@ -67,8 +77,9 @@ export function CashflowTimeline({ onComplete }: Props) {
     <div className="mt-4 space-y-4 rounded-lg border border-white/[0.12]/60 bg-white/[0.06]/40 p-4">
       <p className="text-sm font-semibold text-white">Cashflow timeline - the dead zone</p>
       <p className="text-muted text-xs">
-        Meta bills daily. COD remittance arrives day 5-7. Marketplace settlements can take 7-14 days. Plan
-        float accordingly.
+        {isMarketplace
+          ? "Your ads bill daily, but marketplace settlements land ~7-15 days after delivery. Plan float to cover that gap."
+          : "Ads bill daily. COD remittance from your courier arrives ~day 5-7. Plan float accordingly."}
       </p>
 
       <div className="grid gap-3 sm:grid-cols-2">
@@ -139,7 +150,11 @@ export function CashflowTimeline({ onComplete }: Props) {
           <p className="text-lg font-bold text-white">Day {activeDay}</p>
           <p className="text-muted mt-1 text-sm">
             -₹{activeRow?.adSpend} ads
-            {activeRow && activeRow.codIn > 0 ? ` · +₹${activeRow.codIn.toFixed(0)} COD in` : " · no COD yet"}
+            {activeRow && activeRow.codIn > 0
+              ? ` · +₹${activeRow.codIn.toFixed(0)} ${isMarketplace ? "settlement in" : "COD in"}`
+              : isMarketplace
+                ? " · no settlement yet"
+                : " · no COD yet"}
           </p>
           <motion.p
             className={`mt-2 text-3xl font-bold ${activeRow && activeRow.balance < 0 ? "text-rose-300" : "text-emerald-300"}`}

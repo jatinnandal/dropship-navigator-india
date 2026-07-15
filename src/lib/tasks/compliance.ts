@@ -147,7 +147,7 @@ export function buildComplianceTask(
     title: "Configure GST for your product categories",
     why: "Wrong HSN code or GST rate on a listing causes suppression, wrong tax collection, and filing mismatches.",
     how: [
-      "Look up each launch SKU on the official CBIC search at services.gst.gov.in/services/searchhsnsac - type the product name, note the HSN code and the GST rate (5%, 12%, 18%, or 28%) the portal shows.",
+      "Look up each launch SKU on the official CBIC search at https://services.gst.gov.in/services/searchhsnsac - type the product name, note the HSN code and the GST rate (5%, 12%, 18%, or 28%) the portal shows.",
       "Cross-check against your supplier's GST invoice: the HSN they bill you under for the same goods should match your code. If it differs, ask the supplier why before listing - one of you is wrong.",
       ...HSN_PANEL_STEPS[profile.primaryChannel],
       "Write the mapping into a one-page sheet (SKU → HSN → GST rate) and file it in your compliance pack - every new SKU gets a row before it gets a listing.",
@@ -159,11 +159,13 @@ export function buildComplianceTask(
         name: "GST HSN/SAC Search (services.gst.gov.in)",
         whenToUse: "First stop for every new SKU.",
         why: "Official CBIC lookup - the code and rate shown here are what any audit compares your filings against.",
+        href: "https://services.gst.gov.in/services/searchhsnsac",
       },
       {
         name: "ClearTax HSN Finder",
         whenToUse: "When the official search is ambiguous between two near-identical codes.",
         why: "Plain-language descriptions help you pick the right entry - prevents the most common tax mapping error.",
+        href: "https://cleartax.in/s/hsn-code-finder",
       },
     ],
   });
@@ -174,7 +176,7 @@ export function buildComplianceTask(
       title: "FSSAI registration for food products",
       why: "Selling food on any Indian marketplace requires FSSAI registration or license. No exceptions for e-commerce.",
       how: [
-        "Open foscos.fssai.gov.in → Apply for License/Registration → select your state. The eligibility questionnaire derives whether you need Basic Registration (turnover under ₹12L) or a State/Central License - answer honestly and trust its result over forum advice.",
+        "Open https://foscos.fssai.gov.in → Apply for License/Registration → select your state. The eligibility questionnaire derives whether you need Basic Registration (turnover under ₹12L) or a State/Central License - answer honestly and trust its result over forum advice.",
         "Upload business address proof and product category details, and pick the kind of business that matches how you actually operate - trading/retail if you only resell, not manufacturing.",
         "Once granted: the FSSAI logo and your 14-digit license/registration number go on every food label AND into the marketplace's food category approval form - listings without the number get rejected.",
         "Physical check before dispatch: your sample's label must carry the FSSAI number plus the standard food label details (ingredients, dates, net quantity, MRP) - photograph it for your compliance pack.",
@@ -190,6 +192,7 @@ export function buildComplianceTask(
           name: "IndiaFilings FSSAI",
           whenToUse: "If FSSAI application process feels confusing.",
           why: "Handles registration end-to-end with document prep - typically 7-15 days.",
+          href: "https://www.indiafilings.com/fssai-registration",
         },
       ],
     });
@@ -201,7 +204,7 @@ export function buildComplianceTask(
       title: "BIS/CRS compliance check for electronics",
       why: "Many electronics categories require BIS certification before sale in India. Selling without it risks seizure and account suspension.",
       how: [
-        "On bis.gov.in open the Product Certification section and find the list of products under the Compulsory Registration Scheme (CRS). Search for your exact product type - entries are specific ('power banks', 'adapters', 'LED lights'), so check every plausible entry, not a general phrase like 'mobile accessories'.",
+        "On https://www.bis.gov.in open the Product Certification section and find the list of products under the Compulsory Registration Scheme (CRS). Search for your exact product type - entries are specific ('power banks', 'adapters', 'LED lights'), so check every plausible entry, not a general phrase like 'mobile accessories'.",
         "On the CRS list: ask your supplier for their BIS registration number (starts with R-) and the certificate itself. The certificate must name the factory that actually manufactures your product - a trader's paperwork for a different factory covers nothing.",
         "Physical check on your sample: the BIS Standard Mark with the R-number must be printed on the product or its packaging. A certificate in a drawer with no mark on the product is not compliance.",
         "Not on the CRS list: take a dated screenshot of your search and file it in your compliance pack - marketplaces ask for proof either way during electronics category approval.",
@@ -224,8 +227,8 @@ export function buildComplianceTask(
         title: "Verify BIS requirement before listing",
         why: "Amazon and Flipkart increasingly enforce BIS checks during category approval for electronics.",
         how: [
-          "Do the CRS list check on bis.gov.in NOW, before creating a single listing - this is the one compliance check that can get shipments seized, not just listings blocked.",
-          "If listed: get the supplier's BIS certificate and verify the R-number covers YOUR product's actual manufacturer and model - OR apply yourself (a weeks-long, costly process - current timelines and fees are on manakonline.in), which rarely makes sense for a first SKU.",
+          "Do the CRS list check on https://www.bis.gov.in NOW, before creating a single listing - this is the one compliance check that can get shipments seized, not just listings blocked.",
+          "If listed: get the supplier's BIS certificate and verify the R-number covers YOUR product's actual manufacturer and model - OR apply yourself (a weeks-long, costly process - current timelines and fees are on https://www.manakonline.in), which rarely makes sense for a first SKU.",
           "If the supplier cannot produce a matching certificate, change the supplier or the product - do not list and hope.",
           "If not listed: document your check (dated screenshot) and keep it ready for marketplace category approval.",
         ],
@@ -242,7 +245,7 @@ export function buildComplianceTask(
       how: [
         "Put your actual sample on the desk and check the label carries: ingredient list, name and address of the manufacturer (and importer, if imported), manufacturing date, use-before/expiry date, batch number, net content, and MRP. Photograph the label for your compliance pack.",
         "Imported cosmetics: ask the importer for their CDSCO import registration certificate number BEFORE you buy stock - no certificate, no deal; the liability lands on you, not them.",
-        "Check CDSCO's banned/restricted ingredient lists (cdsco.gov.in) against your product's ingredient list - if anything on your label appears there, drop the SKU.",
+        "Check CDSCO's banned/restricted ingredient lists (https://cdsco.gov.in) against your product's ingredient list - if anything on your label appears there, drop the SKU.",
         profile.primaryChannel === "shopify"
           ? "Copy the ingredient list and manufacturer/importer details onto your product page yourself - on your own store there is no marketplace field forcing you, but the labeling rules apply all the same."
           : `Copy the ingredient list and manufacturer/importer details into the listing fields on ${channelLabel(profile.primaryChannel)} - beauty listings missing these fields get rejected at creation or taken down at audit.`,
@@ -258,7 +261,7 @@ export function buildComplianceTask(
       why: "Fashion has lighter regulatory burden than food/electronics, but marketplaces enforce brand authorization and return policies strictly.",
       how: [
         "Branded goods: get a signed authorization letter that names the brand, YOUR exact legal business name (as on your GST), and a validity period - from the brand or an authorized distributor - and keep GST purchase invoices showing the brand name. No letter and no invoices = sell own-label instead.",
-        "Own-label/unbranded: run your product title's words through the trademark search on ipindia.gov.in - a registered word mark in your title is an IP strike even when the product itself is generic.",
+        "Own-label/unbranded: run your product title's words through the trademark search on https://ipindia.gov.in - a registered word mark in your title is an IP strike even when the product itself is generic.",
         "Size chart mandatory on every listing, measured from your actual samples in cm and inches - reduces 'wrong size' returns (the Product selection walkthrough has the template).",
         "Return/exchange policy visible on listing and store page; accurate color and fabric description - 'not as described' is the top return reason after size.",
         "7-day return window is standard; shorter windows reduce trust on unknown stores.",
@@ -281,7 +284,7 @@ export function buildComplianceTask(
         lmListingLine(profile.primaryChannel),
         "MRP on the package must match your listing price policy, and multi-packs need the unit sale price visible.",
         "Anything missing on the package = stop. Ask the supplier for corrected packaging or a compliant sticker carrying the missing declarations before dispatch - a properly affixed label is acceptable; a bare poly bag is not.",
-        "Exact letter heights and formats are set in the rules' tables - read the Legal Metrology (Packaged Commodities) Rules on the Department of Consumer Affairs site (consumeraffairs.nic.in) rather than guessing.",
+        "Exact letter heights and formats are set in the rules' tables - read the Legal Metrology (Packaged Commodities) Rules on the Department of Consumer Affairs site (https://consumeraffairs.nic.in) rather than guessing.",
         "Photograph the compliant label of every launch SKU and file it in your compliance pack (last step).",
       ],
       trap: "Dropshipped products from suppliers often lack proper labeling. Do not list until packaging meets Legal Metrology rules.",
@@ -298,7 +301,7 @@ export function buildComplianceTask(
       title: "Import labeling and customs compliance",
       why: "As the importer of record, YOU are responsible for correct labeling, HSN classification, and duty payment - not your supplier.",
       how: [
-        "One-time setup: get an IEC (Importer Exporter Code) on dgft.gov.in against your PAN - customs will not clear commercial imports without it.",
+        "One-time setup: get an IEC (Importer Exporter Code) on https://www.dgft.gov.in against your PAN - customs will not clear commercial imports without it.",
         "Confirm the customs HSN classification with your customs broker and check it matches the HSN you mapped in the GST step - the Bill of Entry, your invoices, and your listings must tell one story.",
         "Add 'Imported by: [Your Business Name, Address]' and the country of origin on every retail package - agree with the supplier BEFORE production on who prints this, or budget your own compliant stickers.",
         "Calculate IGST + customs duty into your landed cost (calculator step in Product selection) - duty surprises kill thin margins.",

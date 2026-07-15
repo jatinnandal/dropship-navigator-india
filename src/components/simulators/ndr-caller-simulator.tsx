@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Truck } from "lucide-react";
+import type { PrimaryChannel } from "@/lib/mvp-data";
+import { channelLabel } from "@/lib/tasks/shared";
 import { JargonText } from "@/components/jargon-text";
 import { CopyTemplate } from "@/components/copy-template";
 import { WHATSAPP_ADDRESS_VERIFY } from "@/lib/mentor-templates";
@@ -32,7 +34,7 @@ const SCENARIOS: Scenario[] = [
         id: "ship",
         label: "Ship anyway - any sale is good",
         correct: false,
-        feedback: "Wrong. Incomplete addresses fail delivery 70%+ of the time.",
+        feedback: "Wrong. Incomplete addresses very often fail delivery.",
         showLossAnimation: true,
       },
       {
@@ -57,13 +59,13 @@ const SCENARIOS: Scenario[] = [
         id: "wait",
         label: "Wait - they'll probably accept",
         correct: false,
-        feedback: "Wrong. After 30 min, confirmation rates drop 40%. Message NOW.",
+        feedback: "Wrong. After 30 minutes, confirmation rates drop sharply. Message NOW.",
       },
       {
         id: "whatsapp",
         label: "Send WhatsApp confirmation within 30 min",
         correct: true,
-        feedback: "Correct. This cuts RTO from ~26% to ~14% for many stores.",
+        feedback: "Correct. Quick confirmation meaningfully cuts RTO for many stores.",
       },
       {
         id: "ship",
@@ -88,7 +90,7 @@ const SCENARIOS: Scenario[] = [
         id: "call",
         label: "Call + WhatsApp to verify address and delivery window",
         correct: true,
-        feedback: "Correct. NDR follow-up saves 30-50% of would-be RTO orders.",
+        feedback: "Correct. NDR follow-up rescues many would-be RTO orders.",
       },
       {
         id: "cancel",
@@ -153,10 +155,12 @@ const SCENARIOS: Scenario[] = [
 ];
 
 type Props = {
+  channel?: PrimaryChannel;
   onComplete?: () => void;
 };
 
-export function NdrCallerSimulator({ onComplete }: Props) {
+export function NdrCallerSimulator({ channel, onComplete }: Props) {
+  const isMarketplace = channel != null && channel !== "shopify";
   const [scenarioIndex, setScenarioIndex] = useState(0);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [showLoss, setShowLoss] = useState(false);
@@ -203,6 +207,14 @@ export function NdrCallerSimulator({ onComplete }: Props) {
   return (
     <div className="mt-4 space-y-4 rounded-lg border border-slate-700/60 bg-slate-800/40 p-4">
       <p className="text-sm font-semibold text-slate-100">NDR / COD confirmation practice</p>
+
+      {isMarketplace ? (
+        <div className="rounded-md border border-amber-300/25 bg-amber-300/5 px-3 py-2 text-xs leading-5 text-amber-100/90">
+          On {channelLabel(channel!)} the courier handles delivery contact and the buyer&apos;s number is
+          masked - you can&apos;t WhatsApp or call them yourself. Play these to learn WHY COD orders fail at
+          the door; that&apos;s what your listing accuracy and on-time dispatch have to defend against.
+        </div>
+      ) : null}
 
       <div className="rounded-lg border border-cyan-400/30 bg-cyan-400/5 p-3">
         <p className="text-xs text-cyan-200">

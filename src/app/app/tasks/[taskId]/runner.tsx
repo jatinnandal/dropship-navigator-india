@@ -498,13 +498,19 @@ export function TaskRunner({
 
               {currentStep.simulator?.kind === "cashflow_timeline" ? (
                 <div className="mt-6">
-                  <CashflowTimeline onComplete={() => applySimulator(currentStep)} />
+                  <CashflowTimeline
+                    channel={profile.primaryChannel}
+                    onComplete={() => applySimulator(currentStep)}
+                  />
                 </div>
               ) : null}
 
               {currentStep.simulator?.kind === "ndr_caller" ? (
                 <div className="mt-6">
-                  <NdrCallerSimulator onComplete={() => applySimulator(currentStep)} />
+                  <NdrCallerSimulator
+                    channel={profile.primaryChannel}
+                    onComplete={() => applySimulator(currentStep)}
+                  />
                 </div>
               ) : null}
 

@@ -57,7 +57,7 @@ function gstTaxPanelSteps(channel: OnboardingProfile["primaryChannel"]): string[
         "Log in at sellercentral.amazon.in, click the Settings gear (top right) -> Account Info, and open the tax information section. Enter your GSTIN with no spaces and save.",
         "Still under Settings, open Tax Settings and set the default Product Tax Code (PTC) matching your main category's GST rate - listings without their own code fall back to this default, so get it right.",
         "Enter the correct HSN code on every listing as you create it. When Amazon generates tax invoices on your behalf (FBA and Easy Ship do; pure self-ship sellers print their own), the HSN drives the tax - wrong code means wrong tax on every order.",
-        "Proceed when Account Info shows your GSTIN accepted. If a freshly issued GSTIN keeps failing, wait 24-72h for government data to sync and re-check it on gst.gov.in (Search Taxpayer) before contacting Seller Support.",
+        "Proceed when Account Info shows your GSTIN accepted. If a freshly issued GSTIN keeps failing, wait 24-72h for government data to sync and re-check it on https://www.gst.gov.in (Search Taxpayer) before contacting Seller Support.",
       ];
     case "flipkart":
       return [
@@ -76,7 +76,7 @@ function gstTaxPanelSteps(channel: OnboardingProfile["primaryChannel"]): string[
     default:
       return [
         "Log in at supplier.meesho.com, open Settings from the menu, and find the business/GST details section. Enter your GSTIN with no spaces and save.",
-        "Meesho checks the GSTIN against government records - it must show Active on gst.gov.in (Search Taxpayer -> Search by GSTIN/UIN) or the panel rejects it.",
+        "Meesho checks the GSTIN against government records - it must show Active on https://www.gst.gov.in (Search Taxpayer -> Search by GSTIN/UIN) or the panel rejects it.",
         "Enter the correct HSN code on each catalog you upload - Meesho uses it for the GST rate on your order invoices.",
         "Proceed when the panel accepts the GSTIN without error. A fresh GSTIN can take 24-72h to sync - wait and retry, never create a second account.",
       ];
@@ -174,7 +174,7 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       why: "Marketplaces reject onboarding instantly if your GSTIN is suspended, cancelled, or still syncing. Most beginners never check this first.",
       needs: ["Your 15-digit GSTIN"],
       how: [
-        "Open gst.gov.in.",
+        "Open https://www.gst.gov.in.",
         "Go to Search Taxpayer -> Search by GSTIN/UIN.",
         "Enter your GSTIN with NO spaces or dashes.",
         "Confirm Status shows Active and the legal/trade name is correct.",
@@ -198,7 +198,7 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       title: `Confirm your GSTIN state code matches ${stateLabel(profile.operatingState)}`,
       why: "Amazon/Flipkart/Meesho require your pickup/dispatch address to be in the same state as your GSTIN. A mismatch here is a very common silent rejection.",
       how: [
-        `You told us you operate from ${stateLabel(profile.operatingState)}, so the first 2 digits of your GSTIN should be that state's code. Not sure of the code? The Search Taxpayer result on gst.gov.in shows your state jurisdiction on the same screen - that settles it.`,
+        `You told us you operate from ${stateLabel(profile.operatingState)}, so the first 2 digits of your GSTIN should be that state's code. Not sure of the code? The Search Taxpayer result on https://www.gst.gov.in shows your state jurisdiction on the same screen - that settles it.`,
         pickupAddressPath(profile.primaryChannel),
         "Both in the same state = proceed. If your real dispatch state and GSTIN state differ, stop here and fix it before onboarding - the marketplace check is automated and the rejection message rarely names the cause.",
       ],
@@ -210,7 +210,7 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
       why: "Automated verification fails on tiny differences. Rahul S. Sharma vs Rahul Sharma, or Street vs St., is enough to get rejected.",
       needs: ["Bank account proof (cancelled cheque or stamped statement)"],
       how: [
-        "Open gst.gov.in -> Search Taxpayer -> Search by GSTIN/UIN and copy the Legal Name of Business exactly as shown there into a note - that string is your master record.",
+        "Open https://www.gst.gov.in -> Search Taxpayer -> Search by GSTIN/UIN and copy the Legal Name of Business exactly as shown there into a note - that string is your master record.",
         "Compare it with your bank account holder name read off a cancelled cheque or your netbanking profile page - character for character, including initials, dots, and spacing. Never compare from memory.",
         "Verify the IFSC by searching it on your bank's website or the RBI's IFSC directory - the code printed on an old cheque book can be stale after a bank merger.",
         "Exact match = proceed to marketplace onboarding. Any difference at all = stop and fix the bank name (or open a matching account) first - automated verification will not forgive it.",
@@ -250,11 +250,13 @@ function buildValidationTrack(profile: OnboardingProfile, workspace: Workspace):
           name: "ClearTax",
           whenToUse: "If you want guided GSTR-1/3B filing with marketplace import.",
           why: "Reduces manual errors - vendor-neutral option alongside any CA.",
+          href: "https://cleartax.in",
         },
         {
           name: "Taxbuddy",
           whenToUse: "If you want affordable assisted filing for small sellers.",
           why: "Good for beginners who find the GST portal overwhelming.",
+          href: "https://www.taxbuddy.com",
         },
       ],
       mentorNote: "Mark the sub-task 'GST filing calendar understood' on your journey when you've set reminders.",
@@ -321,7 +323,7 @@ function buildRegistrationTrack(
       title: "Start selling on Meesho NOW with an Enrolment ID (no GSTIN wait)",
       why: "Meesho onboards non-GST sellers with a free Enrolment ID (intra-state only, under the turnover threshold) - you don't have to spend the 3-5 GSTIN-processing days doing nothing.",
       how: [
-        "On gst.gov.in choose Registration → Generate User ID for Unregistered Applicant → e-commerce enrolment.",
+        "On https://www.gst.gov.in choose Registration → Generate User ID for Unregistered Applicant → e-commerce enrolment.",
         "Verify PAN + Aadhaar OTP and note the 15-digit Enrolment ID.",
         "Enter it in Meesho seller signup - you can list and sell within your own state immediately.",
         "Keep the GSTIN application below moving in parallel; switch to it before selling inter-state or crossing the threshold.",
@@ -443,7 +445,7 @@ function buildRegistrationTrack(
     why: "This is the actual start of registration. Getting Part A clean avoids OTP and email headaches later.",
     needs: ["PAN", "Mobile number (Aadhaar-linked, DND off)", "Email you control"],
     how: [
-      "Open gst.gov.in -> Services -> Registration -> New Registration.",
+      "Open https://www.gst.gov.in -> Services -> Registration -> New Registration.",
       "In the 'I am a' dropdown pick Taxpayer, then select your state and district, enter your legal name exactly as per PAN, then PAN, email and mobile.",
       "Enter the OTPs sent to mobile and email to generate your TRN (Temporary Reference Number).",
       "Note the TRN AND the expiry date the portal shows with it - Part B must be finished inside that window or the TRN lapses and you start over.",
@@ -511,7 +513,7 @@ function buildRegistrationTrack(
     title: "Track your ARN and watch for a clarification notice",
     why: "An officer reviews within a few working days. If they want clarity, they issue REG-03. Most beginners miss it and get auto-rejected.",
     how: [
-      "Go to gst.gov.in -> Services -> Registration -> Track Application Status, enter your ARN, and check it every day for the first week.",
+      "Go to https://www.gst.gov.in -> Services -> Registration -> Track Application Status, enter your ARN, and check it every day for the first week.",
       "'Pending for Processing' = your application is in the officer's queue. No action needed - keep checking.",
       "'Validation Error' = your PAN/Aadhaar data didn't match government records. Reopen the application and fix the exact field the error names.",
       "'Pending for Clarification' = a REG-03 notice has been issued. Act the same day - the next step shows exactly how to reply.",
@@ -543,7 +545,7 @@ function buildRegistrationTrack(
     title: "Get your GSTIN and prepare for marketplace sync",
     why: "Approval gives you a GSTIN, but marketplaces may still not see it for 24-72 hours.",
     how: [
-      "Check the email on your application: approval brings your GSTIN plus a temporary username/password for your first gst.gov.in login. Log in and set your own credentials.",
+      "Check the email on your application: approval brings your GSTIN plus a temporary username/password for your first https://www.gst.gov.in login. Log in and set your own credentials.",
       "Download the certificate: Services -> User Services -> View/Download Certificates -> REG-06. Save the PDF with all annexures into your Seller-Docs/GST folder.",
       "Re-confirm the legal name and address printed on the certificate - this is now your master record for every marketplace form.",
       "When you enter the GSTIN on a marketplace and verification fails, wait 24-72h and retry before panicking - marketplace databases lag the GST portal for fresh registrations.",
@@ -561,11 +563,13 @@ function buildRegistrationTrack(
         name: "ClearTax",
         whenToUse: "If you want assisted GST registration with filing support.",
         why: "Handles REG-03 responses and ongoing GSTR filing - good if compliance feels overwhelming.",
+        href: "https://cleartax.in",
       },
       {
         name: "TheGSTCo",
         whenToUse: "If you want marketplace-focused GST setup help.",
         why: "Specializes in seller onboarding tax configuration, not just registration.",
+        href: "https://thegstco.com",
       },
     ],
   });
@@ -576,7 +580,7 @@ function buildRegistrationTrack(
     why: "Your GSTIN is only useful if you keep it active. Filings start the month after registration.",
     how: [
       "Mark GSTR-1 and GSTR-3B due dates on your phone calendar with reminders 3 days before each.",
-      "Turnover under ₹5 crore? You can opt into QRMP for quarterly returns: gst.gov.in -> Services -> Returns -> Opt-in for Quarterly Return. Fewer filings, but tax is still paid monthly.",
+      "Turnover under ₹5 crore? You can opt into QRMP for quarterly returns: https://www.gst.gov.in -> Services -> Returns -> Opt-in for Quarterly Return. Fewer filings, but tax is still paid monthly.",
       "Zero sales in a period changes nothing - NIL returns are still mandatory from month 1. File them.",
       "Plan who files: you, ClearTax, or a CA - but YOU stay liable regardless of who presses submit.",
     ],

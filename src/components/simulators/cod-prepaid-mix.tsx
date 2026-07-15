@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { PrimaryChannel } from "@/lib/mvp-data";
+import { channelLabel } from "@/lib/tasks/shared";
 import { calculateBlendedUnitEconomics } from "@/lib/profit-math";
 
 type Props = {
@@ -45,6 +46,13 @@ export function CodPrepaidMix({ channel, sellingPrice = 899, onComplete }: Props
       <p className="text-muted text-xs">
         COD returns commonly run ~20-35%; prepaid orders rarely come back. Your payment mix changes blended unit economics.
       </p>
+      {channel !== "shopify" ? (
+        <div className="rounded-md border border-amber-300/25 bg-amber-300/5 px-3 py-2 text-xs leading-5 text-amber-100/90">
+          On {channelLabel(channel)} the buyer chooses COD or prepaid at checkout - you can&apos;t shift the
+          mix directly. Use this to see WHY prepaid matters, then work the levers you do control: accurate
+          listings and on-time dispatch to cut COD refusals.
+        </div>
+      ) : null}
 
       <label className="block text-sm">
         <span className="text-muted">COD orders (%): {codPercent}</span>

@@ -52,7 +52,7 @@ function pauseListingPathForChannel(channel: PrimaryChannel): string {
 
 export function buildSourcingTask(
   profile: OnboardingProfile,
-  answers: Record<string, string>,
+  _answers: Record<string, string>,
   _workspace: Workspace,
 ): Task {
   const steps: TaskStep[] = [
@@ -73,9 +73,9 @@ export function buildSourcingTask(
       title: "Where to find suppliers in India",
       why: "India has strong domestic manufacturing. Local suppliers mean faster delivery, lower RTO, and GST-compliant invoices. AliExpress/CJ = 2-3 week delivery = COD death.",
       how: [
-        "On indiamart.com, search your exact product plus the word 'manufacturer' (e.g. 'silicone kitchen organizer manufacturer'). In the results filter panel set Business Type to Manufacturer, and filter to a hub city if your category has one - real clusters exist: Surat sarees, Tirupur knitwear, Moradabad brass, Jaipur pottery, Delhi kitchenware.",
+        "On https://www.indiamart.com, search your exact product plus the word 'manufacturer' (e.g. 'silicone kitchen organizer manufacturer'). In the results filter panel set Business Type to Manufacturer, and filter to a hub city if your category has one - real clusters exist: Surat sarees, Tirupur knitwear, Moradabad brass, Jaipur pottery, Delhi kitchenware.",
         "Open each supplier's profile page BEFORE messaging: look for the TrustSEAL badge, a GST number shown on the profile, year of establishment, and real factory photos (not just product shots). No GST shown, or only watermarked stock images = skip without messaging.",
-        "Repeat the same search on tradeindia.com - a different supplier pool, useful for niche categories and for lining up a backup later.",
+        "Repeat the same search on https://www.tradeindia.com - a different supplier pool, useful for niche categories and for lining up a backup later.",
         "Dropship-ready alternative: Roposo Clout / GlowRoad / BaapStore hold the stock and dispatch in 3-5 days - thinner margin, zero inventory risk.",
         sourcingModelNoteForChannel(profile.primaryChannel),
         "Proceed when at least 5 suppliers pass this profile screen - you'll message all of them next and sample from the top 2-3. Fewer than 5? Widen your search terms or drop the city filter. Still avoid AliExpress/CJ for COD - the customer refuses after a 25-day wait.",
@@ -88,11 +88,13 @@ export function buildSourcingTask(
           name: "IndiaMART",
           whenToUse: "First stop for supplier discovery in any category.",
           why: "Largest B2B network in India - filter by manufacturer, location, and TrustSEAL verification.",
+          href: "https://www.indiamart.com",
         },
         {
           name: "BaapStore",
           whenToUse: "If you want done-for-you sourcing + fulfillment.",
-          why: "150K+ SKUs, handles shipping and COD - good for beginners who want zero inventory risk.",
+          why: "Handles sourcing, shipping and COD - an option for beginners who want zero inventory risk.",
+          href: "https://www.baapstore.com",
         },
       ],
     },
@@ -111,34 +113,36 @@ export function buildSourcingTask(
       how: ["Answer honestly about your supplier interactions so far."],
       question: {
         id: "red-flags",
-        prompt: "Has any supplier you've contacted shown these warning signs?",
+        prompt: "These are the warning signs to watch for. Where are you right now?",
         options: [
-          { value: "none", label: "No red flags - they look legitimate" },
+          { value: "not-yet", label: "Haven't contacted any suppliers yet" },
+          { value: "none", label: "Contacted some - no red flags so far" },
           { value: "some", label: "Some concerns (price too low, vague answers, no GST)" },
           { value: "major", label: "Major red flags (100% advance, off-platform payment, no address)" },
         ],
       },
-      trap: "Price 40-50% below market rate is almost always a scam. Legitimate manufacturers cannot sustain those prices.",
+      trap: "A price 40-50% below every other supplier is almost always a scam. Legitimate manufacturers cannot sustain those prices.",
     },
   ];
 
-  const flags = answers["red-flags"] ?? "";
-  if (flags === "some" || flags === "major") {
+  // Everyone gets the verify-before-you-pay checklist - it is the core scam
+  // protection, and a beginner who hasn't messaged anyone yet needs it most.
+  {
     steps.push({
       id: "red-flag-detail",
-      title: "Verify before you pay anything",
-      why: "Advance payment to an unverified supplier is the most common sourcing scam in India.",
+      title: "Verify before you pay anyone - always",
+      why: "Advance payment to an unverified supplier is the most common sourcing scam in India. Run this checklist on every supplier before a single rupee moves.",
       how: [
-        "Verify GSTIN on gst.gov.in - active status, matching business name.",
+        "Verify their GSTIN: open https://www.gst.gov.in, go to Search Taxpayer, Search by GSTIN/UIN, and enter their number with no spaces. Status must read Active (not Suspended/Cancelled) and the legal name must match who you're dealing with. A supplier who won't share a GSTIN is an instant no.",
         "Ask for factory photos/video walkthrough (not catalogue images).",
         "Check physical address on Google Maps - does it exist?",
-        "Request pro-forma invoice with unit cost, packaging, handling, dispatch timeline.",
+        "Request a pro-forma invoice with unit cost, packaging, handling, dispatch timeline.",
         "NEVER pay 100% advance - standard is 30-50% with balance on delivery/inspection.",
         "Keep ALL communication in writing (WhatsApp/email, not just calls).",
       ],
       trap: "Pressure to pay outside the platform (direct bank transfer for 'discount') = walk away immediately.",
       stuck: [
-        "If scammed: call 1930 immediately to freeze funds, file at cybercrime.gov.in.",
+        "If scammed: call 1930 immediately to freeze funds, file at https://cybercrime.gov.in.",
         "Report fraudulent supplier on IndiaMART complaint page with evidence.",
       ],
     });
@@ -252,6 +256,7 @@ export function buildSourcingTask(
           name: "TradeIndia",
           whenToUse: "To find backup suppliers beyond IndiaMART.",
           why: "Different supplier pool - useful when primary supplier fails.",
+          href: "https://www.tradeindia.com",
         },
       ],
     },
