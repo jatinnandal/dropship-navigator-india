@@ -119,7 +119,7 @@ export function canUseJourneyModule(plan: Plan, moduleId: string): boolean {
  * taste-of-correctness tools; everything else needs Starter; the money-
  * recovery suite needs Growth.
  */
-const FREE_TOOLS = new Set(["margin-calculator", "seasonal-calendar"]);
+const FREE_TOOLS = new Set(["margin-calculator", "shipping-estimator", "seasonal-calendar"]);
 
 export function requiredPlanForTool(toolSlug: string): Plan {
   if (FREE_TOOLS.has(toolSlug)) return "free";

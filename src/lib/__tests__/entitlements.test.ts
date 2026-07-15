@@ -41,6 +41,7 @@ describe("entitlements", () => {
 
   it("tool tiers: scout set free, rest starter", () => {
     expect(requiredPlanForTool("margin-calculator")).toBe("free");
+    expect(requiredPlanForTool("shipping-estimator")).toBe("free");
     expect(requiredPlanForTool("seasonal-calendar")).toBe("free");
     expect(requiredPlanForTool("cashflow-simulator")).toBe("starter");
     expect(requiredPlanForTool("payout-reconciliation")).toBe("starter");
