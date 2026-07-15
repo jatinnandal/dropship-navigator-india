@@ -732,15 +732,14 @@ export function buildChannelLaunchTask(
     },
     {
       id: "paos-appeal",
-      title: "Plan of Action (POA) if suspended",
-      why: "When suspended, speed and structure matter. A generic apology gets rejected.",
+      title: "If your account is ever suspended",
+      why: "Suspension is rare if you follow the steps above - but if it happens, speed and structure beat panic.",
       how: [
-        "Identify root cause: dispatch, IP, quality, or policy violation.",
-        "Document corrective actions already taken (not planned).",
-        "Attach evidence: updated listings, supplier SLA, dispatch logs.",
-        "Use the POA template below - customize every section.",
+        "Don't send a generic apology - that gets rejected. You need a Plan of Action (POA) naming the root cause and the fixes you've already made.",
+        "Open the Crisis playbook in this app (Crisis in the sidebar) - it has the full POA editor and appeal protocol ready to fill in, so you don't write it from scratch under pressure.",
+        "Keep your appeal pack ready now (GST certificate, bank proof, return policy, sample invoices) - assembling it calmly today beats scrambling on suspension day.",
       ],
-      trap: "Submitting POA without fixing root cause leads to permanent suspension on second offense.",
+      trap: "Submitting a POA without actually fixing the root cause leads to permanent suspension on a second offense.",
     },
     {
       id: "prepaid-incentive-tactics",

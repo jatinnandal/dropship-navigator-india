@@ -25,9 +25,10 @@ import {
   COURIER_BENCHMARK_CHECKLIST,
   ESCALATION_LETTER,
   MARKETPLACE_APPEAL_TICKET,
-  PAOS_APPEAL_TEMPLATE,
+  PNL_TRACKER_TEMPLATE,
   RETURN_POLICY_SNIPPET,
   RTO_RESEARCH_PROMPT,
+  RTO_RETURNS_LOG_TEMPLATE,
   SIZE_CHART_CHECKLIST,
   SUPPLIER_SLA_TEMPLATE,
 } from "@/lib/mentor-templates";
@@ -553,6 +554,12 @@ export function TaskRunner({
                   className="mt-4"
                 />
               ) : null}
+              {currentStep.id === "pnl-setup" ? (
+                <CopyTemplate title="Weekly P&L tracker template" text={PNL_TRACKER_TEMPLATE} className="mt-4" />
+              ) : null}
+              {currentStep.id === "rto-tracking" ? (
+                <CopyTemplate title="RTO / returns log template" text={RTO_RETURNS_LOG_TEMPLATE} className="mt-4" />
+              ) : null}
               {currentStep.id === "fashion-size-chart" ? (
                 <CopyTemplate title="Size chart template" text={SIZE_CHART_CHECKLIST} className="mt-4" />
               ) : null}
@@ -570,9 +577,6 @@ export function TaskRunner({
                   <CopyTemplate title="Marketplace support ticket" text={MARKETPLACE_APPEAL_TICKET} />
                   <CopyTemplate title="Formal escalation letter" text={ESCALATION_LETTER} />
                 </div>
-              ) : null}
-              {currentStep.id === "paos-appeal" ? (
-                <CopyTemplate title="Plan of Action (POA) template" text={PAOS_APPEAL_TEMPLATE} className="mt-4" />
               ) : null}
               {currentStep.id === "tcs-recovery" || currentStep.id === "settlement-reconciliation" ? (
                 <SettlementBreakdown channel={profile.primaryChannel} />

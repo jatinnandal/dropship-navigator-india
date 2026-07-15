@@ -269,12 +269,12 @@ export const SUBTASK_GUIDES: Record<string, SubTaskGuide> = {
     walkthroughHref: "/app/tasks/tracking-analytics",
   },
   "gstr8-reviewed": {
-    hint: "Match operator TCS to GSTR-2A monthly.",
+    hint: "Match operator TCS in 'TDS and TCS Credit Received' monthly.",
     why: "Ignoring TCS mismatches means you overpay tax by 0.5% on every sale - silent margin bleed.",
     howToSteps: [
       "Download TCS report from marketplace.",
-      "Check GSTR-2A on GST portal for credits.",
-      "Claim in GSTR-3B filing.",
+      "On the GST portal, open Returns Dashboard -> 'TDS and TCS Credit Received' and accept the entries.",
+      "Use the accepted credit in your cash ledger to pay down GSTR-3B.",
     ],
     walkthroughHref: "/app/tasks/tracking-analytics",
   },

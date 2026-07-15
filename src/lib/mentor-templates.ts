@@ -23,6 +23,41 @@ Please give me a rough percentage range, explain what pushes it higher or lower 
 
 Important: treat this as a rough starting estimate only. Remind me to confirm the real number from my own marketplace seller dashboard's returns/RTO report after my first ~20 orders, and do not present any figure as exact.`;
 
+export const PNL_TRACKER_TEMPLATE = `Weekly SKU-level P&L tracker - one row per SKU, per week
+
+Columns (make these your spreadsheet header):
+SKU | Units sold | Revenue (from settlement file) | Product cost | Shipping | Marketplace fees + GST | Ad spend | Returns/RTO loss | Net profit
+
+Net margin % = Net profit / Revenue x 100
+
+Worked example (1 SKU, 1 week - illustrative numbers):
+Silicone organizer | 40 | 19,960 | 7,000 | 2,400 | 3,600 | 3,200 | 1,800 | 1,960
+Net margin = 1,960 / 19,960 = ~9.8%  (TIGHT - can't comfortably fund ads yet)
+
+How to read a row:
+GOOD row - net margin 20%+ with stable RTO: a SKU to scale.
+BAD row - net margin negative, or under ~10% for two weeks running: pause or fix it before spending another rupee on ads.
+
+Rule: build every number from your SETTLEMENT file, never the orders screen - the orders screen counts cancelled and RTO parcels as income.`;
+
+export const RTO_RETURNS_LOG_TEMPLATE = `Weekly RTO / returns log - find the pattern, fix the root cause
+
+Two separate problems, tracked in separate columns (never lump them):
+Date | Order ID | Pincode | Product/SKU | Type (RTO or Return) | Reason | Cost to you
+
+RTO reason (buyer never paid): refused at door / wrong or incomplete address / cash not ready / courier could not reach.
+Return reason (buyer paid, then returned): wrong size / not as described / changed mind / arrived damaged.
+
+Every week, compute:
+RTO rate = RTO orders / total COD orders
+Return rate = returned orders / delivered orders
+
+Then act on the top reason in EACH column - the fixes are different:
+- Most RTO from incomplete addresses or one pincode cluster? Tighten address quality and expectations.
+- Most returns from wrong size or "not as described"? Fix the size chart, photos, and description.
+
+A ₹200 refusal and a ₹2,000 refusal need different responses - don't treat all returns the same.`;
+
 export const SUPPLIER_SLA_TEMPLATE = `Supplier SLA Agreement (WhatsApp/email - get written confirmation)
 
 1. Dispatch timeline: All orders placed before 2 PM will be dispatched within {{hours}} hours.
