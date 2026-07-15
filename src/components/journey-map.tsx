@@ -74,6 +74,7 @@ export function JourneyMap({
   const planLockedSet = new Set(planLockedModuleIds);
   const router = useRouter();
   const warningsRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLElement>(null);
   const [selectedId, setSelectedId] = useState<TaskModuleId>(
     () => nodes.find((n) => n.status === "in_progress")?.id ?? nodes[0]?.id ?? "product-selection",
   );
@@ -84,11 +85,18 @@ export function JourneyMap({
 
   function handleSelect(id: TaskModuleId) {
     setSelectedId(id);
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      // On mobile the detail panel sits below the timeline, so a tap would
+      // otherwise change content off-screen - bring the panel into view. Called
+      // directly (not via rAF), which is the only variant that actually scrolls
+      // on these pages.
+      const el = detailRef.current ?? document.querySelector("article");
+      el?.scrollIntoView({ behavior: "instant", block: "start" });
+      return;
+    }
     const node = nodes.find((n) => n.id === id);
     if (node?.softWarnings.length) {
-      requestAnimationFrame(() => {
-        warningsRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-      });
+      warningsRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   }
 
@@ -228,11 +236,13 @@ export function JourneyMap({
       <section className="mt-[18px] grid grid-cols-1 items-start gap-3.5 lg:[grid-template-columns:1.5fr_1fr]">
         {/* Detail panel */}
         <article
+          ref={detailRef}
           className="panel"
           style={{
             borderRadius: "20px",
             padding: "26px 28px",
             borderColor: borderColor,
+            scrollMarginTop: 72,
           }}
         >
           <div className="flex items-center justify-between gap-3">

@@ -195,10 +195,9 @@ export function TaskRunner({
     setMobileStepsOpen(false);
     // On mobile the step list lives in a drawer / below, so bring the freshly
     // selected step's content into view instead of leaving the user scrolled down.
+    // Direct call (not rAF) - the rAF variant silently fails to scroll here.
     if (typeof window !== "undefined" && window.innerWidth < 1024) {
-      requestAnimationFrame(() => {
-        contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
+      contentRef.current?.scrollIntoView({ behavior: "instant", block: "start" });
     }
   }
 
