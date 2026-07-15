@@ -404,40 +404,11 @@ function buildRegistrationTrack(
     });
   }
 
-  steps.push({
-    id: "gather-identity",
-    title: "Gather your identity + constitution documents",
-    why: `Your business type is "${profile.businessType}", which has a specific document set. Missing one of these triggers a clarification notice.`,
-    needs: identityDocsForBusiness(profile),
-    how: [
-      "Scan each document as a clear, full-page colour scan (not a dark phone photo).",
-      "Keep photos in JPEG under 100 KB; documents as clear PDF/JPEG.",
-      "Name every file clearly so you can find it fast during the form.",
-    ],
-    trap: "Blurry, cropped, or black-and-white uploads are read as suspicious and get rejected. Full colour, all four corners visible.",
-  });
-
+  // Identity docs and bank proof are already gathered up front in the base steps
+  // (business-type-docs, bank-setup), so the registration flow reuses those
+  // rather than asking for them a second time. Only the premises-dependent
+  // address proof is collected here, since it depends on the premises answer above.
   steps.push(addressProofStep(premises, profile));
-
-  steps.push({
-    id: "gather-bank",
-    title: "Prepare bank proof in a matching name",
-    why: "Bank name mismatch and wrong IFSC are top rejection causes at both GST and marketplace stages.",
-    needs: ["Cancelled cheque OR bank statement/passbook first page showing name + IFSC"],
-    how: [
-      "Read the account holder name off the cancelled cheque or your netbanking profile page and compare with your locked legal name character for character - never from memory.",
-      "Verify the IFSC by searching it on your bank's website or the RBI's IFSC directory - the code printed on an old cheque book can be stale after a bank merger.",
-      "Prefer a current account in the business name; a stamped physical statement is trusted more for new sellers.",
-      bankPanelPath(profile.primaryChannel),
-    ],
-    trap: "A personal savings account while GST is in a business name will fail later marketplace checks even if GST accepts it.",
-    kind: "input",
-    input: {
-      id: "bank-name-reg",
-      label: "Bank account holder name",
-      workspaceKey: "bankAccountName",
-    },
-  });
 
   steps.push({
     id: "create-trn",

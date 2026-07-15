@@ -233,10 +233,9 @@ export function buildTrackingTask(
       why: "E-commerce operators file GSTR-8 monthly with TCS collected on your sales. Mismatches block credits and cash.",
       how: [
         "GSTR-8 is filed by the marketplace (the e-commerce operator), not by you. It declares the TCS collected on your sales against your GSTIN.",
-        "Your monthly match is three numbers: (1) TCS in your marketplace tax report, (2) the TCS estimate on your latest Payout Reconciliation report in this app, (3) the credit showing on the GST portal.",
-        "GST portal path: gst.gov.in → Returns Dashboard → 'TDS and TCS credit received' → accept the entries. The credit reaches your cash ledger only after you accept it - unaccepted TCS is your money parked with the government.",
-        "Use the cash ledger balance to pay your GSTR-3B liability - that is how the credit turns back into cash.",
-        "Match = done in minutes. Mismatch for 2+ months in a row = involve a CA with your settlement files and TCS reports - that reconciliation sheet is exactly what a GST notice would demand anyway.",
+        "Your monthly match is three numbers: (1) TCS in your marketplace tax report, (2) the TCS estimate on your latest Payout Reconciliation report in this app, (3) the credit showing on the GST portal under 'TDS and TCS Credit Received'.",
+        "If all three line up, you're done here - the very next step (Track TCS and get it back) walks you through accepting that credit on the portal so it turns into cash.",
+        "Mismatch for 2+ months in a row = involve a CA with your settlement files and TCS reports - that reconciliation sheet is exactly what a GST notice would demand anyway.",
       ],
       trap: "Ignoring GSTR-8 mismatches means you overpay tax and leave credit unclaimed - a silent bleed on every order.",
       tools: [

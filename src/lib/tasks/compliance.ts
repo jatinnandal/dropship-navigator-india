@@ -64,7 +64,7 @@ function lmListingLine(channel: PrimaryChannel): string {
 
 export function buildComplianceTask(
   profile: OnboardingProfile,
-  answers: Record<string, string>,
+  _answers: Record<string, string>,
   workspace: Workspace,
 ): Task {
   const productTypeLine =
@@ -206,6 +206,7 @@ export function buildComplianceTask(
       how: [
         "On https://www.bis.gov.in open the Product Certification section and find the list of products under the Compulsory Registration Scheme (CRS). Search for your exact product type - entries are specific ('power banks', 'adapters', 'LED lights'), so check every plausible entry, not a general phrase like 'mobile accessories'.",
         "On the CRS list: ask your supplier for their BIS registration number (starts with R-) and the certificate itself. The certificate must name the factory that actually manufactures your product - a trader's paperwork for a different factory covers nothing.",
+        "If the supplier cannot produce a certificate whose R-number matches your product's actual manufacturer and model, change the supplier or the product - do not list and hope. Applying for BIS yourself is a weeks-long, costly process (timelines and fees on https://www.manakonline.in) that rarely makes sense for a first SKU.",
         "Physical check on your sample: the BIS Standard Mark with the R-number must be printed on the product or its packaging. A certificate in a drawer with no mark on the product is not compliance.",
         "Not on the CRS list: take a dated screenshot of your search and file it in your compliance pack - marketplaces ask for proof either way during electronics category approval.",
       ],
@@ -220,21 +221,6 @@ export function buildComplianceTask(
         ],
       },
     });
-
-    if (answers["bis-needed"] === "no" || answers["bis-needed"] === "yes-needed") {
-      steps.push({
-        id: "bis-action",
-        title: "Verify BIS requirement before listing",
-        why: "Amazon and Flipkart increasingly enforce BIS checks during category approval for electronics.",
-        how: [
-          "Do the CRS list check on https://www.bis.gov.in NOW, before creating a single listing - this is the one compliance check that can get shipments seized, not just listings blocked.",
-          "If listed: get the supplier's BIS certificate and verify the R-number covers YOUR product's actual manufacturer and model - OR apply yourself (a weeks-long, costly process - current timelines and fees are on https://www.manakonline.in), which rarely makes sense for a first SKU.",
-          "If the supplier cannot produce a matching certificate, change the supplier or the product - do not list and hope.",
-          "If not listed: document your check (dated screenshot) and keep it ready for marketplace category approval.",
-        ],
-        trap: "Assuming small accessories are exempt - many cables, chargers, and power banks require BIS.",
-      });
-    }
   }
 
   if (profile.productType === "beauty") {

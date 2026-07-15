@@ -356,7 +356,7 @@ const PINCODE_STRATEGY: Record<
     title: "Pincode blacklist strategy",
     why: "RTO varies wildly by pincode - a handful of bad pincodes can quietly eat the margin the rest of the country earns. On your own store you control serviceability, so block the worst ones early.",
     how: [
-      "Run the pincode pilot (50-100 orders in controlled pincodes) before national shipping - the planner is in the supplier-sourcing walkthrough.",
+      "Run the pincode pilot (50-100 orders in controlled pincodes) before national shipping - the planner is the pincode-pilot step further down this walkthrough.",
       "Blacklist pincodes whose RTO runs far above your average once you have 20+ orders there (rule of thumb: roughly double your overall rate).",
       "Your courier aggregator's NDR data shows WHERE refusals and bad addresses cluster - export it monthly and look for pincode patterns.",
       "Enforce the blacklist where you actually can: your courier aggregator's COD serviceability settings, or a Shopify pincode-check app on the product page - check each tool's own rules screen for how granular it goes.",
@@ -756,6 +756,36 @@ export function buildChannelLaunchTask(
       trap: pincodeStrategy.trap,
     },
   );
+
+  // Courier choice and a pincode pilot are own-store powers - on marketplaces
+  // the platform assigns logistics and controls serviceability, so these only
+  // apply to Shopify. (They also need stock in hand, which is why they moved
+  // here from supplier sourcing.)
+  if (profile.primaryChannel === "shopify") {
+    steps.push(
+      {
+        id: "courier-benchmark",
+        title: "Courier benchmarking checklist",
+        why: "On your own store you pick the courier - and the same product on a different courier means different RTO cost and remittance speed. Benchmark before you commit volume.",
+        how: [
+          "Pick your top 2 courier aggregators (e.g. Shiprocket vs Delhivery).",
+          "Test the same pincode pair: your home state -> one metro pincode.",
+          "Compare: forward rate, RTO reverse charge, COD remittance days, and pickup SLA (the promised pickup window).",
+          "Run about 5 test shipments each before scaling.",
+          "Use the copy-paste benchmark template in this step.",
+        ],
+        trap: "Choosing a courier on forward price alone ignores RTO reverse charges that can exceed the forward shipping.",
+      },
+      {
+        id: "pincode-pilot",
+        title: "Plan your pincode pilot",
+        why: "Don't ship all-India on day 1. On your own store you control serviceability, so run 50-100 orders in a few controlled pincodes before scaling ads nationally.",
+        how: ["Set 3 pilot pincodes, an RTO cutoff %, and a pre-flight checklist."],
+        kind: "simulator",
+        simulator: { kind: "pincode_pilot" },
+      },
+    );
+  }
 
   steps.push({
     id: "launch-checklist",

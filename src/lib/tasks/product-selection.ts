@@ -145,7 +145,7 @@ export function buildProductSelectionTask(
       title: "Returns vs RTO - know the difference",
       why: "These two words get mixed up, and they cost you differently. RTO means the buyer never paid and refused the parcel. A return means they paid, got it, then sent it back. Knowing which one is hurting you tells you what to fix.",
       how: [
-        "RTO (Return to Origin): the courier could not deliver your COD (Cash on Delivery) order, so it comes back to you. You pay shipping both ways, roughly ₹60-90, and earn nothing. On COD this commonly runs around 20-35%, varying a lot by category and region - treat it as a rough benchmark and confirm your real number from your seller dashboard.",
+        "RTO (Return to Origin): the courier could not deliver your COD (Cash on Delivery) order, so it comes back to you. You pay shipping both ways, roughly ₹60-130 depending on weight and distance, and earn nothing. On COD this commonly runs around 20-35%, varying a lot by category and region - treat it as a rough benchmark and confirm your real number from your seller dashboard.",
         "Return (after delivery): the buyer received it, then sent it back for a refund. You refund the money and pay the reverse shipping. This is most common in fashion, where size and fit issues push it to the high end.",
         "What to actually do: for RTO, confirm shaky COD orders on WhatsApp before you ship. For returns, use clear photos, accurate sizes, and an honest description so fewer buyers are surprised.",
         "Build a small cushion into your price for expected returns rather than hoping for zero - most sellers add a few percent, more for fashion.",

@@ -193,19 +193,6 @@ export function buildSourcingTask(
       mentorNote: "₹200 on a sample saves you from a ₹20,000 inventory mistake. No exceptions.",
     },
     {
-      id: "courier-benchmark",
-      title: "Courier benchmarking checklist",
-      why: "Same product, different courier = different RTO cost and remittance speed. Benchmark before committing volume.",
-      how: [
-        "Pick your top 2 courier aggregators (e.g. Shiprocket vs another).",
-        "Test same pincode pair: home state → 1 metro pincode.",
-        "Compare: forward rate, RTO reverse charge, COD remittance days, pickup SLA.",
-        "Run 5 test shipments each before scaling.",
-        "Use the copy-paste benchmark template in this step.",
-      ],
-      trap: "Choosing courier on price alone ignores RTO reverse charges that can exceed forward shipping.",
-    },
-    {
       id: "negotiate-terms",
       title: "Lock terms in writing before you sell",
       why: "Verbal agreements mean nothing when a customer gets a damaged product and your supplier refuses replacement.",
@@ -218,14 +205,6 @@ export function buildSourcingTask(
         "Ask the dropship question in plain words: 'Will you pack and ship single units directly to my customers?' Most manufacturers only do bulk - know the answer BEFORE you list.",
       ],
       trap: "No written replacement terms = you eat every return cost yourself.",
-    },
-    {
-      id: "pincode-pilot",
-      title: "Plan your pincode pilot",
-      why: "Don't ship all-India on day 1. Run 50-100 orders in controlled pincodes before scaling ads nationally.",
-      how: ["Set 3 pilot pincodes, RTO cutoff %, and pre-flight checklist."],
-      kind: "simulator",
-      simulator: { kind: "pincode_pilot" },
     },
     {
       id: "save-supplier",
