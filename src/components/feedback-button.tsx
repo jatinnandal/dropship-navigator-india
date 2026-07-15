@@ -16,10 +16,13 @@ export function FeedbackButton({
   source,
   label = "Feedback",
   className = "",
+  openUp = false,
 }: {
   source: string;
   label?: string;
   className?: string;
+  /** Open the popover above the button (for buttons pinned to the bottom). */
+  openUp?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState<"up" | "down" | null>(null);
@@ -73,7 +76,11 @@ export function FeedbackButton({
         <>
           {/* click-away backdrop */}
           <div className="fixed inset-0 z-40" onClick={close} aria-hidden="true" />
-          <div className="absolute right-0 z-50 mt-2 w-72 rounded-xl border border-neutral-800 bg-neutral-950 p-4 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)]">
+          <div
+            className={`absolute right-0 z-50 w-72 rounded-xl border border-neutral-800 bg-neutral-950 p-4 shadow-[0_20px_60px_-20px_rgba(0,0,0,0.9)] ${
+              openUp ? "bottom-full mb-2" : "mt-2"
+            }`}
+          >
             {state === "done" ? (
               <div className="flex items-center gap-2 py-2 text-sm text-emerald-300">
                 <Check className="h-4 w-4" /> Thanks - this helps us improve.

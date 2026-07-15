@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { AppMobileTopBar } from "@/components/app-mobile-top-bar";
 import { AppSidebar } from "@/components/app-sidebar";
+import { FloatingFeedback } from "@/components/floating-feedback";
 import type { Plan } from "@/lib/entitlements";
 import type { SellerProfileSummary } from "@/lib/seller-profile-types";
 
@@ -49,6 +50,8 @@ export function AppShellClient({
         />
         <div className="page-reveal pb-20 md:pb-0">{children}</div>
       </div>
+
+      <FloatingFeedback />
     </div>
   );
 }

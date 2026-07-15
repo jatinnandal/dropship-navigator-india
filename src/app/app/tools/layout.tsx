@@ -2,7 +2,6 @@ import { headers } from "next/headers";
 import { PLAN_LABELS, planCovers, requiredPlanForTool } from "@/lib/entitlements";
 import { getCurrentPlan } from "@/lib/plan";
 import { UpgradePanel } from "@/components/plan/upgrade-panel";
-import { FeedbackButton } from "@/components/feedback-button";
 
 const TOOL_GATE_COPY: Record<string, { title: string; bullets: string[] }> = {
   "payout-reconciliation": {
@@ -54,14 +53,5 @@ export default async function ToolsLayout({
     }
   }
 
-  return (
-    <>
-      {children}
-      {toolSlug ? (
-        <div className="mx-auto flex w-full max-w-5xl justify-end px-4 pb-10 sm:px-6">
-          <FeedbackButton source={`tool:${toolSlug}`} label="Feedback on this tool" />
-        </div>
-      ) : null}
-    </>
-  );
+  return <>{children}</>;
 }
