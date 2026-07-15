@@ -66,13 +66,15 @@ export default function TermsPage() {
         products, effort, market conditions, and many factors outside our control.
       </p>
 
-      <h2>5. Plans, billing &amp; payments</h2>
+      <h2 id="refunds">5. Plans, billing, cancellation &amp; refunds</h2>
       <ul>
-        <li>Navigator offers a free tier and paid subscription plans. Paid features are described at the time of purchase.</li>
+        <li>Navigator offers a free tier and paid subscription plans, billed either monthly or yearly. Paid features are described at the time of purchase.</li>
         <li>Payments are processed by our third-party payment provider (Razorpay). We do not store your full card or bank details.</li>
-        <li>Paid subscriptions renew automatically for the chosen billing period until cancelled. You can cancel from within the app; cancellation stops future renewals and access continues until the end of the current paid period.</li>
-        <li>Prices are in Indian Rupees and may include applicable taxes. We may change prices with reasonable notice; changes do not affect the period you have already paid for.</li>
-        <li>Except where required by law, payments are <strong>non-refundable</strong>. If you believe you were charged in error, contact us and we will review it in good faith.</li>
+        <li><strong>Yearly plans are charged in full, once, upfront</strong> at the start of the 12-month period; monthly plans are charged each month. All paid plans renew automatically for the same period until you cancel.</li>
+        <li><strong>You can cancel anytime</strong> from within the app. Cancellation stops future renewals; your access continues until the end of the period you have already paid for. There is no cancellation fee.</li>
+        <li>Prices are in Indian Rupees and may include applicable taxes. We may change prices with reasonable notice; a change never affects a period you have already paid for.</li>
+        <li><strong>Payments are non-refundable.</strong> This includes the unused portion of a yearly plan if you cancel mid-term - you keep full access until the paid period ends, but the remaining months are not refunded. Our free tier lets you evaluate the Service before you pay.</li>
+        <li>We do refund genuine errors, as required by law: a duplicate or wrong-amount charge, a charge taken after a valid cancellation, or a failure on our side to deliver the paid Service. Email us at <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> and we will review and, where due, refund in good faith.</li>
       </ul>
 
       <h2>6. Acceptable use</h2>

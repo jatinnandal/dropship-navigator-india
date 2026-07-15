@@ -49,7 +49,7 @@ export function UpgradePanel({
           Unlock with {PLAN_LABELS[requiredPlan]} - ₹{price.monthly}/mo
         </Link>
         <span className="font-mono text-[11px] text-[var(--text-faint)]">
-          or ₹{price.yearly}/year
+          or ₹{price.yearly}/year, billed upfront
         </span>
       </div>
     </div>

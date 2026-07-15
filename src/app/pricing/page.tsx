@@ -44,7 +44,7 @@ function TierCard({ card, children }: { card: PlanCard; children: React.ReactNod
       </p>
       {card.priceYearly ? (
         <p className="font-mono" style={{ margin: "6px 0 0", fontSize: 11, color: "#6e6e6e" }}>
-          or ₹{card.priceYearly}/year - save {Math.round((1 - card.priceYearly / (card.priceMonthly * 12)) * 100)}%
+          or ₹{card.priceYearly}/year, billed once upfront - save {Math.round((1 - card.priceYearly / (card.priceMonthly * 12)) * 100)}%
         </p>
       ) : null}
       <p style={{ margin: "10px 0 0", fontSize: "13.5px", lineHeight: 1.65, color: "#8a8a8a" }}>{card.tagline}</p>

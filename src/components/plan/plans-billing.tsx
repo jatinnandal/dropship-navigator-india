@@ -213,11 +213,6 @@ export function PlansBilling({
 
           const price =
             card.plan === "free" ? null : PLAN_PRICES[card.plan as "starter" | "growth"];
-          const displayPrice = price
-            ? billing === "yearly"
-              ? Math.round(price.yearly / 12)
-              : price.monthly
-            : 0;
 
           const busy =
             (state === "creating" || state === "checkout_open") && activePlan === card.plan;
@@ -251,18 +246,18 @@ export function PlansBilling({
                 {card.name}
               </p>
               <p className="mt-3.5 text-[42px] font-bold tracking-[-0.04em] text-white">
-                ₹{displayPrice}
+                ₹{card.plan === "free" ? 0 : billing === "yearly" ? price!.yearly : price!.monthly}
                 <span className="text-[15px] font-medium text-[var(--text-faint)]">
-                  {card.priceMonthly === 0 ? " / forever" : " / month"}
+                  {card.plan === "free" ? " / forever" : billing === "yearly" ? " / year" : " / month"}
                 </span>
               </p>
               {price && billing === "yearly" ? (
-                <p className="font-mono mt-1.5 text-[11px] text-[var(--text-faint)]">
-                  billed ₹{price.yearly}/year
+                <p className="mt-1.5 text-[11px] leading-[1.5] text-[oklch(0.78_0.12_165)]">
+                  charged ₹{price.yearly} once, upfront for 12 months (≈ ₹{Math.round(price.yearly / 12)}/mo)
                 </p>
               ) : (
                 <p className="font-mono mt-1.5 text-[11px] text-[var(--text-faint)]">
-                  {card.priceYearly ? `or ₹${card.priceYearly}/year` : " "}
+                  {card.priceYearly ? `billed monthly · or ₹${card.priceYearly}/year (save ~32%)` : " "}
                 </p>
               )}
               <p className="mt-2.5 text-[13.5px] leading-[1.65] text-[var(--muted)]">{card.tagline}</p>
