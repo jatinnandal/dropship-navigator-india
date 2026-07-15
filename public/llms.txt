@@ -1,0 +1,22 @@
+# Dropship Navigator India
+
+> An India-first mentor for new e-commerce and dropshipping sellers. It turns "I want to sell online in India" into a step-by-step launch plan across Meesho, Amazon.in, Flipkart, and Shopify - covering GST registration, supplier sourcing and scam-avoidance, product margins, RTO (Return to Origin) losses, ads, and payout reconciliation.
+
+## What it is
+- A guided, personalized launch journey (7 modules) plus calculators and simulators, tailored to the seller's channel, product type, GST status, and state.
+- Vendor-neutral: not affiliated with any marketplace, payment gateway, or the GST department. Guidance is best-effort and not legal, tax, or financial advice.
+
+## Who it is for
+- First-time and early-stage Indian online sellers who find the process (GST, KYC, sourcing, fees, RTO) confusing and expensive to learn by trial and error.
+
+## Key topics covered
+- GST registration on the government portal (TRN, Part A/B, REG-03 clarification), the Meesho Enrolment ID fast-path, and the monthly filing calendar (GSTR-1, GSTR-3B, GSTR-8/TCS).
+- Finding and vetting Indian suppliers (IndiaMART, TradeIndia), spotting scams, sampling, and locking terms.
+- Product selection with real margin math: marketplace fees, TCS, shipping, and RTO weighting.
+- Channel launch (seller onboarding, listings), ads without burning budget, and weekly profit tracking / settlement reconciliation.
+
+## Pages
+- Home: /
+- Pricing: /pricing  (free tier, plus paid plans from ₹49/month)
+- Terms: /terms
+- Privacy: /privacy

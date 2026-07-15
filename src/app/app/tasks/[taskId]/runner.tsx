@@ -7,6 +7,7 @@ import { PersonalizePlanButton } from "@/components/personalized-plan-controls";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { ProfitCalculator } from "@/components/profit-calculator";
 import { MentorStepContent } from "@/components/mentor-step-content";
+import { FeedbackButton } from "@/components/feedback-button";
 import { JargonText } from "@/components/jargon-text";
 import { RtoRealitySlider } from "@/components/simulators/rto-reality-slider";
 import { CashflowTimeline } from "@/components/simulators/cashflow-timeline";
@@ -708,13 +709,14 @@ export function TaskRunner({
             </article>
           ) : null}
 
-          <footer className="mt-6 flex flex-wrap gap-3">
+          <footer className="mt-6 flex flex-wrap items-center gap-3">
             <Link href="/app/journey" className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
               Back to journey
             </Link>
             <Link href={editProfileHref} className="btn-ghost rounded-md px-4 py-2 text-sm font-semibold">
               Update profile inputs
             </Link>
+            <FeedbackButton source={`module:${taskId}`} label="Feedback on this module" className="ml-auto" />
           </footer>
         </section>
       </div>
