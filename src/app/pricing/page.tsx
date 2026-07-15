@@ -68,7 +68,7 @@ export default function PricingPage() {
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0, background: "radial-gradient(ellipse 55% 45% at 50% -10%, rgba(255,255,255,0.07), transparent 60%)" }} />
 
       {/* Header */}
-      <header style={{ position: "sticky", top: 16, zIndex: 50, display: "flex", justifyContent: "center", padding: "0 24px" }}>
+      <header style={{ position: "sticky", top: 16, zIndex: 50, display: "flex", justifyContent: "center", padding: "0 16px" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, width: "100%", maxWidth: "68rem", padding: "10px 12px 10px 20px", borderRadius: 16, background: "rgba(5,5,5,0.6)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(20px)" }}>
           <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 11, textDecoration: "none" }}>
             <span style={{ display: "grid", placeItems: "center", height: 32, width: 32, borderRadius: 9, background: "#0c0c0c", border: "1px solid rgba(255,255,255,0.18)", boxShadow: "0 0 20px -4px rgba(255,255,255,0.2)" }}>
@@ -77,7 +77,7 @@ export default function PricingPage() {
             <span style={{ fontSize: 15, fontWeight: 600, letterSpacing: "-0.01em", color: "#ffffff" }}>Navigator <span style={{ fontWeight: 500, color: "#6e6e6e" }}>India</span></span>
           </Link>
           <nav style={{ display: "flex", alignItems: "center", gap: 4, fontSize: "13.5px", fontWeight: 500 }}>
-            <Link href="/" className="hover:text-white transition-colors" style={{ color: "#8a8a8a", textDecoration: "none", padding: "8px 12px" }}>Home</Link>
+            <Link href="/" className="hidden hover:text-white transition-colors sm:inline-block" style={{ color: "#8a8a8a", textDecoration: "none", padding: "8px 12px" }}>Home</Link>
             <Link href="/login" className="hover:border-white/35 transition-colors" style={{ color: "#d6d6d6", textDecoration: "none", padding: "8px 14px", borderRadius: 10, border: "1px solid rgba(255,255,255,0.14)", whiteSpace: "nowrap" }}>Log in</Link>
             <Link href="/signup" style={{ color: "#000", textDecoration: "none", padding: "9px 16px", borderRadius: 10, fontWeight: 600, background: "#ffffff", boxShadow: "0 0 30px -6px rgba(255,255,255,0.4)", whiteSpace: "nowrap" }}>Start free</Link>
           </nav>

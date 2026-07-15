@@ -38,10 +38,7 @@ export function LandingHero() {
 
   return (
     <section className="relative z-[1]">
-      <div
-        className="mx-auto box-border grid min-h-[88vh] max-w-[76rem] items-center gap-14 px-10 pb-10 pt-[84px]"
-        style={{ gridTemplateColumns: "1.02fr 0.98fr" }}
-      >
+      <div className="mx-auto box-border grid min-h-[88vh] max-w-[76rem] grid-cols-1 items-center gap-10 px-5 pb-10 pt-[84px] sm:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:gap-14 lg:px-10">
         {/* Left column */}
         <div>
           {/* Eyebrow */}
@@ -125,7 +122,7 @@ export function LandingHero() {
           {/* Stats row */}
           <div
             data-reveal
-            className="mt-11 flex items-stretch gap-9"
+            className="mt-11 flex items-stretch gap-5 sm:gap-9"
           >
             <div>
               <p className="font-mono m-0 text-[25px] font-medium text-white">
@@ -163,8 +160,8 @@ export function LandingHero() {
           </div>
         </div>
 
-        {/* Right column - 3D hero card */}
-        <div style={{ perspective: "1400px", position: "relative" }}>
+        {/* Right column - 3D hero card (desktop only; its floating chips can't fit narrow screens) */}
+        <div className="hidden lg:block" style={{ perspective: "1400px", position: "relative" }}>
           <div
             ref={heroCardRef}
             style={{
@@ -441,7 +438,7 @@ export function LandingHero() {
       </div>
 
       {/* Trust band */}
-      <div className="mx-auto max-w-[64rem] px-10 pb-2">
+      <div className="mx-auto max-w-[64rem] px-5 pb-2 sm:px-10">
         <p className="text-center text-[14px] leading-[1.7] text-[var(--muted)]">
           Fee math built on a real, dated 2026 marketplace rate card - not a
           guru&apos;s guesstimate. Vendor-neutral: no supplier kickbacks, and your
@@ -450,7 +447,7 @@ export function LandingHero() {
       </div>
 
       {/* Marquee */}
-      <div className="mx-auto max-w-[76rem] px-10 pb-[72px]">
+      <div className="mx-auto max-w-[76rem] px-5 pb-[72px] sm:px-10">
         <p className="mono-label-sm mb-3.5 text-center" style={{ letterSpacing: "0.18em" }}>
           Guidance for every major Indian channel
         </p>

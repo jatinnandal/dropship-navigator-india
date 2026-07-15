@@ -95,7 +95,35 @@ export function LandingRouteMap() {
         </p>
       </div>
 
+      {/* Mobile: a clean vertical stage list instead of the tilted 3D map, which
+          clips its right-hand nodes on narrow screens. */}
+      <div className="flex flex-col gap-2.5 sm:hidden">
+        {STOPS.map((stop) => (
+          <div
+            key={stop.label}
+            style={{
+              background: "#0a0a0a",
+              border: `1px solid ${stop.border}`,
+              borderRadius: 12,
+              padding: "13px 16px",
+              boxShadow: stop.glow ? `0 0 16px ${stop.glow}` : undefined,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <span style={{ fontSize: 14.5, fontWeight: 600, color: stop.labelColor, fontFamily: "var(--font-sans)" }}>
+              {stop.label}
+            </span>
+            <span className="mono-label-sm" style={{ fontSize: 10, color: stop.labelColor, opacity: 0.7 }}>
+              {stop.sub}
+            </span>
+          </div>
+        ))}
+      </div>
+
       <div
+        className="hidden sm:block"
         style={{
           perspective: 900,
           perspectiveOrigin: "50% 30%",

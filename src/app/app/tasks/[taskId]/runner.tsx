@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState, useTransition } from "react";
+import { useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { applyStepCopy, type PersonalizedModulePlan } from "@/lib/llm/plan-generator";
 import { PersonalizePlanButton } from "@/components/personalized-plan-controls";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, ListOrdered, Sparkles, X } from "lucide-react";
 import { ProfitCalculator } from "@/components/profit-calculator";
 import { MentorStepContent } from "@/components/mentor-step-content";
 import { JargonText } from "@/components/jargon-text";
@@ -76,6 +76,55 @@ function CheckIcon() {
   );
 }
 
+function StepList({
+  steps,
+  completed,
+  currentStepId,
+  onSelect,
+}: {
+  steps: TaskStep[];
+  completed: Set<string>;
+  currentStepId: string;
+  onSelect: (id: string) => void;
+}) {
+  return (
+    <ol className="space-y-1">
+      {steps.map((step, index) => {
+        const isDone = completed.has(step.id);
+        const isCurrent = step.id === currentStepId;
+        return (
+          <li key={step.id}>
+            <button
+              type="button"
+              onClick={() => onSelect(step.id)}
+              className={`flex w-full items-start gap-3 rounded-lg px-2 py-2 text-left text-sm transition ${
+                isCurrent
+                  ? "bg-neutral-800 text-white"
+                  : isDone
+                    ? "text-emerald-400/70 hover:bg-neutral-900"
+                    : "text-neutral-500 hover:bg-neutral-900 hover:text-neutral-300"
+              }`}
+            >
+              <span
+                className={`mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border text-[11px] ${
+                  isDone
+                    ? "border-emerald-500 bg-emerald-500 text-black"
+                    : isCurrent
+                      ? "border-amber-500 text-amber-500"
+                      : "border-neutral-600 text-neutral-500"
+                }`}
+              >
+                {isDone ? <CheckIcon /> : index + 1}
+              </span>
+              <span className={isDone ? "line-through" : ""}>{step.title}</span>
+            </button>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export function TaskRunner({
   taskId,
   profile,
@@ -94,6 +143,8 @@ export function TaskRunner({
   const [isSaving, startSaving] = useTransition();
   const [showStuck, setShowStuck] = useState(false);
   const [showRecap, setShowRecap] = useState(true);
+  const [mobileStepsOpen, setMobileStepsOpen] = useState(false);
+  const contentRef = useRef<HTMLElement>(null);
 
   const task = useMemo(() => {
     const built = buildTask(taskId, profile, answers, workspace);
@@ -141,6 +192,14 @@ export function TaskRunner({
   function goTo(stepId: string) {
     setShowStuck(false);
     setCurrentId(stepId);
+    setMobileStepsOpen(false);
+    // On mobile the step list lives in a drawer / below, so bring the freshly
+    // selected step's content into view instead of leaving the user scrolled down.
+    if (typeof window !== "undefined" && window.innerWidth < 1024) {
+      requestAnimationFrame(() => {
+        contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
   }
 
   function advanceFrom(stepId: string, nextCompleted: Set<string>, nextSteps: TaskStep[]) {
@@ -295,7 +354,7 @@ export function TaskRunner({
       ) : null}
 
       <div className="mt-6 flex flex-col gap-6 lg:grid lg:grid-cols-[minmax(0,260px)_1fr]">
-        <aside className="order-2 space-y-4 lg:order-1">
+        <aside className="hidden space-y-4 lg:order-1 lg:block">
           {recapItems.length > 0 ? (
             <div className="rounded-xl border border-neutral-800 bg-neutral-950 p-4">
               <button
@@ -335,44 +394,38 @@ export function TaskRunner({
                 }}
               />
             </div>
-            <ol className="mt-3 max-h-[50vh] space-y-1 overflow-y-auto lg:max-h-none">
-              {steps.map((step, index) => {
-                const isDone = completed.has(step.id);
-                const isCurrent = step.id === currentStep?.id;
-                return (
-                  <li key={step.id}>
-                    <button
-                      type="button"
-                      onClick={() => goTo(step.id)}
-                      className={`flex w-full items-start gap-3 rounded-lg px-2 py-2 text-left text-sm transition ${
-                        isCurrent
-                          ? "bg-neutral-800 text-white"
-                          : isDone
-                            ? "text-emerald-400/70 hover:bg-neutral-900"
-                            : "text-neutral-500 hover:bg-neutral-900 hover:text-neutral-300"
-                      }`}
-                    >
-                      <span
-                        className={`mt-0.5 flex h-5 w-5 flex-none items-center justify-center rounded-full border text-[11px] ${
-                          isDone
-                            ? "border-emerald-500 bg-emerald-500 text-black"
-                            : isCurrent
-                              ? "border-amber-500 text-amber-500"
-                              : "border-neutral-600 text-neutral-500"
-                        }`}
-                      >
-                        {isDone ? <CheckIcon /> : index + 1}
-                      </span>
-                      <span className={isDone ? "line-through" : ""}>{step.title}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ol>
+            <div className="mt-3 max-h-[50vh] overflow-y-auto lg:max-h-none">
+              <StepList
+                steps={steps}
+                completed={completed}
+                currentStepId={currentStep?.id ?? ""}
+                onSelect={goTo}
+              />
+            </div>
           </nav>
         </aside>
 
-        <section className="order-1 min-w-0 lg:order-2">
+        <section ref={contentRef} className="order-1 min-w-0 scroll-mt-16 lg:order-2">
+          {/* Mobile step control - steps live in a drawer, not crammed below the content */}
+          <div className="mb-4 lg:hidden">
+            <button
+              type="button"
+              onClick={() => setMobileStepsOpen(true)}
+              className="flex w-full items-center justify-between gap-3 rounded-xl border border-neutral-800 bg-neutral-950 px-4 py-3"
+            >
+              <span className="flex min-w-0 items-center gap-2 text-sm">
+                <ListOrdered className="h-4 w-4 flex-none text-neutral-400" aria-hidden="true" />
+                <span className="flex-none font-semibold text-white">
+                  Step {currentIndex + 1}/{steps.length}
+                </span>
+                <span className="text-muted truncate">{currentStep?.title}</span>
+              </span>
+              <span className="flex-none text-xs text-neutral-500">{progressPct}%</span>
+            </button>
+            <div className="progress-track mt-2 h-1">
+              <div className="progress-fill" style={{ width: `${progressPct}%` }} />
+            </div>
+          </div>
           {allDone ? (
             <div className="relative overflow-hidden rounded-xl border border-emerald-500/30 bg-neutral-950 p-6 text-center sm:p-8">
               {/* Celebration particles */}
@@ -718,6 +771,39 @@ export function TaskRunner({
           </footer>
         </section>
       </div>
+
+      {mobileStepsOpen ? (
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          <div
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+            onClick={() => setMobileStepsOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="absolute left-0 top-0 flex h-full w-[86%] max-w-xs flex-col border-r border-neutral-800 bg-neutral-950">
+            <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
+              <p className="text-xs uppercase tracking-wide text-neutral-500">
+                Your path &middot; {progressPct}%
+              </p>
+              <button
+                type="button"
+                onClick={() => setMobileStepsOpen(false)}
+                aria-label="Close steps"
+                className="text-neutral-500 hover:text-white"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-3">
+              <StepList
+                steps={steps}
+                completed={completed}
+                currentStepId={currentStep?.id ?? ""}
+                onSelect={goTo}
+              />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </main>
   );
 }
