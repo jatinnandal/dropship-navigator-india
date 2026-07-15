@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Copy, Check, Clock, Lightbulb, Search } from "lucide-react";
+import { Copy, Check, Clock, Lightbulb } from "lucide-react";
 import {
   WHATSAPP_TEMPLATES,
   WHATSAPP_CATEGORIES,
@@ -72,37 +72,14 @@ export function WhatsAppTemplateViewer() {
   const [activeCategory, setActiveCategory] = useState<
     WhatsAppTemplate["category"]
   >("order-confirm");
-  const [search, setSearch] = useState("");
 
-  const filtered = useMemo(() => {
-    let templates = WHATSAPP_TEMPLATES.filter(
-      (t) => t.category === activeCategory
-    );
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      templates = templates.filter(
-        (t) =>
-          t.title.toLowerCase().includes(q) ||
-          t.message.toLowerCase().includes(q)
-      );
-    }
-    return templates;
-  }, [activeCategory, search]);
+  const filtered = useMemo(
+    () => WHATSAPP_TEMPLATES.filter((t) => t.category === activeCategory),
+    [activeCategory]
+  );
 
   return (
     <div className="space-y-6">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--text-faint)]" />
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search templates..."
-          className="w-full rounded-lg border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm text-[var(--body-text)] placeholder:text-[var(--text-faint)] focus:border-white/[0.16] focus:outline-none focus:ring-1 focus:ring-white/25"
-        />
-      </div>
-
       {/* Category tabs */}
       <div className="flex flex-wrap gap-2">
         {WHATSAPP_CATEGORIES.map((cat) => (
@@ -127,7 +104,7 @@ export function WhatsAppTemplateViewer() {
         ))}
         {filtered.length === 0 && (
           <p className="text-sm text-[var(--text-faint)] col-span-full py-8 text-center">
-            No templates match your search.
+            No templates in this category.
           </p>
         )}
       </div>

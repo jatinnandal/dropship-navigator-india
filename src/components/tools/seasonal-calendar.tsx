@@ -5,14 +5,12 @@ import {
   Calendar,
   ChevronRight,
   Clock,
-  TrendingUp,
   Filter,
   AlertTriangle,
 } from "lucide-react";
 import {
   getUpcomingEvents,
   getEventsForMonth,
-  SALE_EVENTS,
   type SaleEvent,
 } from "@/lib/seasonal-calendar-data";
 
@@ -186,14 +184,6 @@ export function SeasonalCalendar() {
                             <Clock className="h-3.5 w-3.5 text-[var(--text-faint)]" />
                             <span className="text-xs text-[var(--body-text)]">
                               {event.prepWeeks} weeks prep time · {event.durationDays} day event
-                            </span>
-                          </div>
-
-                          {/* Ad budget */}
-                          <div className="flex items-center gap-2">
-                            <TrendingUp className="h-3.5 w-3.5 text-[var(--text-faint)]" />
-                            <span className="text-xs text-[var(--body-text)]">
-                              Ad budget: <span className={`font-semibold ${style.text}`}>{event.adBudgetMultiplier}x</span> normal
                             </span>
                           </div>
 

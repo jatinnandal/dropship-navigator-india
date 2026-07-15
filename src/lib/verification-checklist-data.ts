@@ -38,16 +38,6 @@ export const VERIFICATION_STEPS: VerificationStep[] = [
       "If your bank account name doesn't exactly match your PAN name, settlements will bounce. Even 'Pvt Ltd' vs 'Private Limited' can cause failures.",
   },
   {
-    id: "bank-account",
-    label: "Enter bank account number",
-    verificationType: "text-input",
-    placeholder: "e.g. 1234567890123456",
-    validationHint: "9-18 digits, no spaces or dashes",
-    category: "banking",
-    whyItMatters:
-      "This is where your marketplace earnings land. Double-check - one wrong digit means your first settlement goes into the void and takes 7-14 days to reverse.",
-  },
-  {
     id: "listing-url",
     label: "Paste your first product listing URL",
     verificationType: "url-input",
@@ -72,16 +62,6 @@ export const VERIFICATION_STEPS: VerificationStep[] = [
     category: "compliance",
     whyItMatters:
       "Missing GST filings can get your marketplace account suspended without warning. Marketplaces cross-check GSTN compliance status monthly.",
-  },
-  {
-    id: "tcs-amount",
-    label: "Enter TCS amount from last settlement",
-    verificationType: "text-input",
-    placeholder: "e.g. 1250.00",
-    validationHint: "Numeric amount in rupees (check your settlement report)",
-    category: "compliance",
-    whyItMatters:
-      "TCS (Tax Collected at Source) by marketplaces counts as advance tax. Track it to claim credit in your ITR - otherwise you're paying double tax.",
   },
 ];
 

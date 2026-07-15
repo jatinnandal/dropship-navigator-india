@@ -98,9 +98,6 @@ export function CodPrepaidSimulator() {
   const currentVerdict = getVerdict(currentScenario.netMarginPercent);
   const prepaidVerdict = getVerdict(prepaidScenario.netMarginPercent);
 
-  const codBarWidth = Math.max(0, Math.min(100, ((currentScenario.codOnlyMargin + 50) / 100) * 100));
-  const prepaidBarWidth = Math.max(0, Math.min(100, ((currentScenario.prepaidOnlyMargin + 50) / 100) * 100));
-
   return (
     <div className="space-y-6">
       {/* Scenario Inputs */}
@@ -316,68 +313,6 @@ export function CodPrepaidSimulator() {
           </p>
         </motion.div>
       )}
-
-      {/* Blended Results Panel */}
-      <motion.div
-        className="glass-panel rounded-xl p-5"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-      >
-        <h3 className="text-sm font-semibold text-white mb-4">Blended Results</h3>
-        <div className="grid gap-3 sm:grid-cols-3 mb-5">
-          <div className="rounded-lg bg-white/[0.03] p-3 text-center">
-            <p className="text-xs text-muted">Blended Margin</p>
-            <p className="text-xl font-bold text-white mt-1">
-              {currentScenario.netMarginPercent.toFixed(1)}%
-            </p>
-          </div>
-          <div className="rounded-lg bg-white/[0.03] p-3 text-center">
-            <p className="text-xs text-muted">Blended RTO</p>
-            <p className="text-xl font-bold text-white mt-1">
-              {currentScenario.blendedRtoPercent.toFixed(1)}%
-            </p>
-          </div>
-          <div className="rounded-lg bg-white/[0.03] p-3 text-center">
-            <p className="text-xs text-muted">Profit / Order</p>
-            <p className="text-xl font-bold text-white mt-1">
-              ₹{Math.round(currentScenario.netProfit).toLocaleString("en-IN")}
-            </p>
-          </div>
-        </div>
-
-        {/* COD vs Prepaid margin bars */}
-        <div className="space-y-3">
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-[var(--danger)]">COD-only margin</span>
-              <span className="text-[var(--body-text)]">{currentScenario.codOnlyMargin.toFixed(1)}%</span>
-            </div>
-            <div className="h-2.5 rounded-full bg-white/[0.03] overflow-hidden">
-              <motion.div
-                className="h-full rounded-full bg-[var(--danger)]/70"
-                initial={{ width: 0 }}
-                animate={{ width: `${codBarWidth}%` }}
-                transition={{ duration: 0.6, delay: 0.3 }}
-              />
-            </div>
-          </div>
-          <div>
-            <div className="flex justify-between text-xs mb-1">
-              <span className="text-[var(--success)]">Prepaid-only margin</span>
-              <span className="text-[var(--body-text)]">{currentScenario.prepaidOnlyMargin.toFixed(1)}%</span>
-            </div>
-            <div className="h-2.5 rounded-full bg-white/[0.03] overflow-hidden">
-              <motion.div
-                className="h-full rounded-full bg-[var(--success)]/70"
-                initial={{ width: 0 }}
-                animate={{ width: `${prepaidBarWidth}%` }}
-                transition={{ duration: 0.6, delay: 0.35 }}
-              />
-            </div>
-          </div>
-        </div>
-      </motion.div>
 
       {/* Monthly Impact at Scale */}
       <motion.div

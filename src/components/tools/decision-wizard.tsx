@@ -10,7 +10,7 @@ function useReducedMotion() {
   return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-type HistoryEntry = { nodeId: string; chosenLabel: string };
+type HistoryEntry = { nodeId: string };
 
 export function DecisionWizard({ tree }: { tree: DecisionTree }) {
   const [currentNodeId, setCurrentNodeId] = useState(tree.startNodeId);
@@ -37,7 +37,7 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
   const handleChoice = useCallback(
     (option: { label: string; nextId: string | null; recommendation?: string }) => {
       setDirection(1);
-      setHistory((h) => [...h, { nodeId: currentNodeId, chosenLabel: option.label }]);
+      setHistory((h) => [...h, { nodeId: currentNodeId }]);
 
       if (option.nextId === null) {
         setRecommendation(option.recommendation ?? "No specific recommendation available.");
@@ -114,29 +114,6 @@ export function DecisionWizard({ tree }: { tree: DecisionTree }) {
                   </p>
                 </div>
               </div>
-            </div>
-
-            {/* Journey summary */}
-            <div className="mt-6 rounded-lg border border-white/10 bg-white/[0.03] p-4">
-              <h4 className="text-xs font-medium uppercase tracking-wider text-[var(--muted)]">
-                Your path
-              </h4>
-              <ol className="mt-3 space-y-2">
-                {history.map((entry, i) => {
-                  const node = tree.nodes.find((n) => n.id === entry.nodeId);
-                  return (
-                    <li key={i} className="flex items-start gap-2 text-sm">
-                      <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/[0.06] text-xs font-medium text-[var(--body-text)]">
-                        {i + 1}
-                      </span>
-                      <span className="text-[var(--muted)]">
-                        {node?.question}{" "}
-                        <span className="font-medium text-white">→ {entry.chosenLabel}</span>
-                      </span>
-                    </li>
-                  );
-                })}
-              </ol>
             </div>
 
             {/* Actions */}

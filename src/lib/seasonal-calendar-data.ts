@@ -8,7 +8,6 @@ export type SaleEvent = {
   prepWeeks: number;
   category: "mega" | "major" | "moderate" | "niche";
   tips: string[];
-  adBudgetMultiplier: number;
 };
 
 export const SALE_EVENTS: SaleEvent[] = [
@@ -29,7 +28,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Pre-list deals in platform deal portals by submission deadline",
       "Ensure all listings have 5+ images and A+ content",
     ],
-    adBudgetMultiplier: 4,
   },
   {
     id: "great-indian-festival",
@@ -47,7 +45,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Set up coupons and Subscribe & Save offers",
       "Monitor competitor pricing daily during the event",
     ],
-    adBudgetMultiplier: 4,
   },
   {
     id: "republic-day-sale",
@@ -64,7 +61,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Create patriotic themed bundles",
       "Bid aggressively on category keywords",
     ],
-    adBudgetMultiplier: 3,
   },
   {
     id: "independence-day-sale",
@@ -81,7 +77,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Freedom-themed messaging works well in creatives",
       "Back-to-school adjacent - stationery and bags move fast",
     ],
-    adBudgetMultiplier: 3,
   },
   // Major
   {
@@ -98,7 +93,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Register for Flipkart's deal portal early",
       "Maintain good SLA scores for visibility boost",
     ],
-    adBudgetMultiplier: 2.5,
   },
   {
     id: "flipkart-big-saving-q3",
@@ -114,7 +108,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Good time to test new listings before Diwali rush",
       "Focus on home decor and electronics",
     ],
-    adBudgetMultiplier: 2.5,
   },
   {
     id: "amazon-prime-day",
@@ -131,7 +124,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Focus on high-margin products - deep discounts expected",
       "Increase PPC budget 2-3x for these 48 hours",
     ],
-    adBudgetMultiplier: 3,
   },
   {
     id: "navratri-sale",
@@ -147,7 +139,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Color-of-the-day campaigns drive engagement",
       "Gift hampers and combo packs sell well",
     ],
-    adBudgetMultiplier: 2,
   },
   {
     id: "holi-sale",
@@ -163,7 +154,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Skin and hair care products see a spike",
       "Gift packs and organic colors trending",
     ],
-    adBudgetMultiplier: 2,
   },
   {
     id: "raksha-bandhan",
@@ -179,7 +169,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Rakhi + gift combos are top sellers",
       "Express delivery is a must - last-minute buyers dominate",
     ],
-    adBudgetMultiplier: 2,
   },
   // Moderate
   {
@@ -196,7 +185,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Personalized products have higher margins",
       "Start ads from Feb 7 for the full week build-up",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "mothers-day",
@@ -212,7 +200,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Gift wrapping option boosts conversion",
       "Emotional messaging in creatives converts better",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "fathers-day",
@@ -228,7 +215,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Bundle deals work well for gifting",
       "Target last-minute shoppers with express delivery",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "back-to-school",
@@ -244,7 +230,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Bulk/value packs convert well",
       "Target parent demographics in ads",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "monsoon-sale",
@@ -260,7 +245,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Waterproofing products and umbrellas spike",
       "Apparel: raincoats, waterproof shoes",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "summer-sale",
@@ -276,7 +260,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Outdoor and travel accessories move",
       "Clearance of winter inventory at deep discounts",
     ],
-    adBudgetMultiplier: 1.5,
   },
   // Niche
   {
@@ -293,7 +276,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Women-owned brand angle resonates",
       "Self-care bundles and subscription boxes",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "onam",
@@ -309,7 +291,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Regional targeting in ads is essential",
       "Festive home decor and kitchen items",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "pongal",
@@ -325,7 +306,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Regional language listings improve conversion",
       "Traditional items and modern gifting combos",
     ],
-    adBudgetMultiplier: 1.5,
   },
   {
     id: "christmas-newyear",
@@ -341,7 +321,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "New Year resolution products: fitness, planners",
       "Year-end clearance drives volume",
     ],
-    adBudgetMultiplier: 2,
   },
   {
     id: "karwa-chauth",
@@ -357,7 +336,6 @@ export const SALE_EVENTS: SaleEvent[] = [
       "Gift sets and couple combos",
       "North India focused - target accordingly",
     ],
-    adBudgetMultiplier: 1.5,
   },
 ];
 

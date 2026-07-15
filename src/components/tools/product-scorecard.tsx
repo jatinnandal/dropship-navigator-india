@@ -14,8 +14,6 @@ import {
   scoreProduct,
   type ScorecardInputs,
   type ScorecardResult,
-  type CompetitionLevel,
-  type FragilityLevel,
   type SeasonalityLevel,
 } from "@/lib/product-scoring";
 
@@ -25,19 +23,6 @@ const PRODUCT_CATEGORIES: { value: ProductType; label: string }[] = [
   { value: "beauty", label: "Beauty & Personal Care" },
   { value: "food", label: "Food & Grocery" },
   { value: "general", label: "General / Other" },
-];
-
-const COMPETITION_OPTIONS: { value: CompetitionLevel; label: string }[] = [
-  { value: "low", label: "Low" },
-  { value: "medium", label: "Medium" },
-  { value: "high", label: "High" },
-  { value: "saturated", label: "Saturated" },
-];
-
-const FRAGILITY_OPTIONS: { value: FragilityLevel; label: string }[] = [
-  { value: "sturdy", label: "Sturdy" },
-  { value: "normal", label: "Normal" },
-  { value: "fragile", label: "Fragile" },
 ];
 
 const SEASONALITY_OPTIONS: { value: SeasonalityLevel; label: string }[] = [
@@ -61,8 +46,6 @@ function defaultInputs(): ScorecardInputs {
     channel: "amazon",
     category: "general",
     weightBracket: "light",
-    competition: "medium",
-    fragility: "normal",
     seasonality: "year_round",
     moq: 50,
   };
@@ -222,13 +205,10 @@ function ProductForm({
           onChange={(v) => onChange({ weightBracket: v as WeightBracket })}
         />
 
-        <div className="grid grid-cols-3 gap-3">
-          <Select label="Competition" value={inputs.competition} options={COMPETITION_OPTIONS} onChange={(v) => onChange({ competition: v as CompetitionLevel })} />
-          <Select label="Fragility" value={inputs.fragility} options={FRAGILITY_OPTIONS} onChange={(v) => onChange({ fragility: v as FragilityLevel })} />
+        <div className="grid grid-cols-2 gap-3">
           <Select label="Seasonality" value={inputs.seasonality} options={SEASONALITY_OPTIONS} onChange={(v) => onChange({ seasonality: v as SeasonalityLevel })} />
+          <Field label="MOQ (min order qty)" value={inputs.moq} onChange={(v) => onChange({ moq: Number(v) })} />
         </div>
-
-        <Field label="MOQ (min order qty)" value={inputs.moq} onChange={(v) => onChange({ moq: Number(v) })} />
       </div>
     </div>
   );

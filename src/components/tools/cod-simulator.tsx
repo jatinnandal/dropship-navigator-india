@@ -5,7 +5,6 @@ import {
   Phone,
   RotateCcw,
   ChevronRight,
-  Check,
   X,
   Truck,
   AlertTriangle,
@@ -55,15 +54,6 @@ function difficultyColor(d: number) {
 
 export function CodSimulator() {
   const [state, setState] = useState<ScenarioState | null>(null);
-  const [completedIds, setCompletedIds] = useState<Set<string>>(() => {
-    if (typeof window === "undefined") return new Set();
-    try {
-      const saved = localStorage.getItem("dni-cod-completed");
-      return saved ? new Set(JSON.parse(saved)) : new Set();
-    } catch {
-      return new Set();
-    }
-  });
   const [lang, setLang] = useState<ScenarioLanguage>(() => {
     if (typeof window === "undefined") return "en";
     try {
@@ -165,15 +155,6 @@ export function CodSimulator() {
                   }
                 : null,
             );
-            setCompletedIds((prev) => {
-              const next = new Set(prev);
-              next.add(scenario.id);
-              localStorage.setItem(
-                "dni-cod-completed",
-                JSON.stringify([...next]),
-              );
-              return next;
-            });
           }, 800);
         }
 
@@ -191,7 +172,6 @@ export function CodSimulator() {
     return (
       <ScenarioSelector
         onSelect={startScenario}
-        completedIds={completedIds}
         lang={lang}
         onLangChange={changeLang}
       />
@@ -729,17 +709,13 @@ function OutcomeCard({
 
 function ScenarioSelector({
   onSelect,
-  completedIds,
   lang,
   onLangChange,
 }: {
   onSelect: (s: Scenario) => void;
-  completedIds: Set<string>;
   lang: ScenarioLanguage;
   onLangChange: (l: ScenarioLanguage) => void;
 }) {
-  const totalCompleted = COD_SCENARIOS.filter((s) => completedIds.has(s.id)).length;
-
   return (
     <div className="space-y-5">
       {/* Why this exists + language */}
@@ -773,44 +749,6 @@ function ScenarioSelector({
         <LangToggle lang={lang} onChange={onLangChange} />
       </div>
 
-      {/* Progress bar */}
-      {totalCompleted > 0 && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 12,
-            padding: "12px 18px",
-            borderRadius: 12,
-            background: "#060606",
-            border: "1px solid rgba(255,255,255,0.1)",
-          }}
-        >
-          <div
-            style={{
-              flex: 1,
-              height: 5,
-              borderRadius: 999,
-              background: "rgba(255,255,255,0.08)",
-              overflow: "hidden",
-            }}
-          >
-            <div
-              style={{
-                height: "100%",
-                borderRadius: 999,
-                background: "white",
-                width: `${(totalCompleted / COD_SCENARIOS.length) * 100}%`,
-                transition: "width 0.4s ease",
-              }}
-            />
-          </div>
-          <span className="font-mono" style={{ fontSize: 11, color: "var(--muted)" }}>
-            {totalCompleted}/{COD_SCENARIOS.length}
-          </span>
-        </div>
-      )}
-
       {/* Scenario cards */}
       <div
         style={{
@@ -820,7 +758,6 @@ function ScenarioSelector({
         }}
       >
         {COD_SCENARIOS.map((scenario) => {
-          const done = completedIds.has(scenario.id);
           return (
             <button
               key={scenario.id}
@@ -830,7 +767,7 @@ function ScenarioSelector({
                 padding: "20px",
                 borderRadius: 16,
                 background: "#060606",
-                border: `1px solid ${done ? "oklch(0.72 0.13 165 / 0.25)" : "rgba(255,255,255,0.1)"}`,
+                border: "1px solid rgba(255,255,255,0.1)",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
                 cursor: "pointer",
                 transition: "border-color 200ms, transform 200ms",
@@ -841,9 +778,7 @@ function ScenarioSelector({
                 e.currentTarget.style.transform = "translateY(-2px)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = done
-                  ? "oklch(0.72 0.13 165 / 0.25)"
-                  : "rgba(255,255,255,0.1)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
                 e.currentTarget.style.transform = "none";
               }}
             >
@@ -862,7 +797,6 @@ function ScenarioSelector({
                   <Phone size={16} className="text-white" />
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  {done && <Check size={14} style={{ color: "oklch(0.72 0.13 165)" }} />}
                   <span
                     className="font-mono"
                     style={{

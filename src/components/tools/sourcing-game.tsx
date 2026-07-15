@@ -240,7 +240,7 @@ function MenuScreen({ onStart }: { onStart: () => void }) {
           trap? Build a streak to prove your eye.
         </p>
 
-        <div className="mt-5 grid grid-cols-3 gap-3">
+        <div className="mt-5 grid grid-cols-2 gap-3">
           <div className="rounded-lg border border-white/10 p-3">
             <p className="font-mono text-lg font-bold text-white">20</p>
             <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Cards</p>
@@ -248,10 +248,6 @@ function MenuScreen({ onStart }: { onStart: () => void }) {
           <div className="rounded-lg border border-white/10 p-3">
             <p className="font-mono text-lg font-bold text-white">~5</p>
             <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Minutes</p>
-          </div>
-          <div className="rounded-lg border border-white/10 p-3">
-            <p className="font-mono text-lg font-bold text-[var(--success)]">?</p>
-            <p className="text-[10px] text-[var(--text-faint)] uppercase tracking-wider">Traps</p>
           </div>
         </div>
 

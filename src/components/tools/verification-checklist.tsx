@@ -50,14 +50,6 @@ function validateURL(val: string): boolean {
   }
 }
 
-function validateBankAccount(val: string): boolean {
-  return /^[0-9]{9,18}$/.test(val.replace(/\s/g, ""));
-}
-
-function validateNumeric(val: string): boolean {
-  return /^[0-9]+(\.[0-9]{1,2})?$/.test(val.trim());
-}
-
 function validateStep(step: VerificationStep, value: string): "valid" | "invalid" | "pending" {
   if (!value.trim()) return "pending";
   switch (step.id) {
@@ -65,12 +57,8 @@ function validateStep(step: VerificationStep, value: string): "valid" | "invalid
       return validateGSTIN(value) ? "valid" : "invalid";
     case "pan":
       return validatePAN(value) ? "valid" : "invalid";
-    case "bank-account":
-      return validateBankAccount(value) ? "valid" : "invalid";
     case "listing-url":
       return validateURL(value) ? "valid" : "invalid";
-    case "tcs-amount":
-      return validateNumeric(value) ? "valid" : "invalid";
     default:
       return "valid";
   }

@@ -4,8 +4,6 @@ import { getShippingForWeight } from "@/lib/marketplace-fees";
 import { calculateProfit, CATEGORY_RTO } from "@/lib/profit-math";
 import { SETTLEMENT_TIMELINES } from "@/lib/settlement-data";
 
-export type CompetitionLevel = "low" | "medium" | "high" | "saturated";
-export type FragilityLevel = "sturdy" | "normal" | "fragile";
 export type SeasonalityLevel = "year_round" | "moderate" | "highly_seasonal";
 
 export type ScorecardInputs = {
@@ -15,8 +13,6 @@ export type ScorecardInputs = {
   channel: PrimaryChannel;
   category: ProductType;
   weightBracket: WeightBracket;
-  competition: CompetitionLevel;
-  fragility: FragilityLevel;
   seasonality: SeasonalityLevel;
   moq: number;
 };
@@ -35,19 +31,6 @@ export type ScorecardResult = {
   verdict: "excellent" | "good" | "risky" | "avoid";
   axes: AxisScore[];
   topRisks: string[];
-};
-
-const COMPETITION_SCORES: Record<CompetitionLevel, number> = {
-  low: 90,
-  medium: 65,
-  high: 35,
-  saturated: 10,
-};
-
-const FRAGILITY_SCORES: Record<FragilityLevel, number> = {
-  sturdy: 90,
-  normal: 65,
-  fragile: 25,
 };
 
 const SEASONALITY_SCORES: Record<SeasonalityLevel, number> = {
@@ -70,10 +53,9 @@ function marginScore(netMarginPercent: number): number {
   return clamp(Math.round((netMarginPercent + 5) * (100 / 35)), 0, 100);
 }
 
-function weightScore(bracket: WeightBracket, fragility: FragilityLevel): number {
+function weightScore(bracket: WeightBracket): number {
   const base: Record<WeightBracket, number> = { light: 90, medium: 60, heavy: 30 };
-  const fragilityPenalty = FRAGILITY_SCORES[fragility];
-  return Math.round((base[bracket] + fragilityPenalty) / 2);
+  return base[bracket];
 }
 
 function returnRateScore(category: ProductType): number {
@@ -94,7 +76,7 @@ function capitalScore(moq: number, productCost: number, settlementDays: number):
 }
 
 export function scoreProduct(inputs: ScorecardInputs): ScorecardResult {
-  const { sellingPrice, productCost, channel, category, weightBracket, fragility } = inputs;
+  const { sellingPrice, productCost, channel, category, weightBracket } = inputs;
 
   const shipping = getShippingForWeight(channel, weightBracket);
   const rtoRate = CATEGORY_RTO[category];
@@ -112,42 +94,35 @@ export function scoreProduct(inputs: ScorecardInputs): ScorecardResult {
     {
       name: "Margin headroom",
       score: marginScore(netMarginPercent),
-      weight: 25,
+      weight: 31,
       weighted: 0,
       detail: `${netMarginPercent.toFixed(1)}% net margin on ${channel}`,
     },
     {
-      name: "Competition density",
-      score: COMPETITION_SCORES[inputs.competition],
-      weight: 20,
+      name: "Shipping weight",
+      score: weightScore(weightBracket),
+      weight: 19,
       weighted: 0,
-      detail: `${inputs.competition} competition`,
-    },
-    {
-      name: "Weight & fragility",
-      score: weightScore(weightBracket, fragility),
-      weight: 15,
-      weighted: 0,
-      detail: `${weightBracket} weight, ${fragility}`,
+      detail: `${weightBracket} weight bracket`,
     },
     {
       name: "Category return rate",
       score: returnRateScore(category),
-      weight: 15,
+      weight: 19,
       weighted: 0,
       detail: `${category}: ~${rtoRate}% avg RTO`,
     },
     {
       name: "Seasonality",
       score: SEASONALITY_SCORES[inputs.seasonality],
-      weight: 10,
+      weight: 12,
       weighted: 0,
       detail: `${inputs.seasonality.replace("_", " ")} demand`,
     },
     {
       name: "Capital need",
       score: capitalScore(inputs.moq, productCost, settlementDays(channel)),
-      weight: 15,
+      weight: 19,
       weighted: 0,
       detail: `MOQ ${inputs.moq} × ₹${productCost} + ${settlementDays(channel)}d settlement`,
     },
