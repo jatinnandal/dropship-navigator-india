@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 import { formatINR } from "@/lib/format";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -29,6 +30,7 @@ import {
 } from "@/lib/marketplace-fees";
 import { DataFreshness } from "@/components/data-freshness";
 import CountUp from "@/components/CountUp";
+import { MARGIN_TO_ROAS_HANDOFF_KEY } from "@/lib/roas";
 
 const PRODUCT_CATEGORIES: { value: ProductType; label: string }[] = [
   { value: "fashion", label: "Fashion & Apparel" },
@@ -116,6 +118,28 @@ export function MarginCalculator({
   }, [allResults]);
 
   const activeResult = allResults.find((r) => r.ch.channel === activeTab)!;
+
+  const router = useRouter();
+  /** Carry the current inputs into the Break-even ROAS tool (no re-typing). */
+  function goToBreakeven() {
+    try {
+      sessionStorage.setItem(
+        MARGIN_TO_ROAS_HANDOFF_KEY,
+        JSON.stringify({
+          sellingPrice,
+          productCost,
+          channel: activeTab,
+          category: productCategory,
+          weightBracket,
+          codMix: codPercent,
+          rtoRate,
+        }),
+      );
+    } catch {
+      // sessionStorage unavailable - the ROAS tool still opens, just without prefill
+    }
+    router.push("/app/tools/breakeven-roas");
+  }
 
 
   return (
@@ -412,6 +436,27 @@ export function MarginCalculator({
           })}
         </div>
       </div>
+
+      {/* ── AD BREAK-EVEN HANDOFF ── */}
+      <button
+        type="button"
+        onClick={goToBreakeven}
+        className="group flex w-full items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-5 text-left transition-colors hover:border-white/25 sm:p-6"
+      >
+        <div className="flex items-start gap-3">
+          <TrendingUp className="mt-0.5 h-5 w-5 shrink-0 text-[var(--muted)]" />
+          <div>
+            <p className="text-sm font-semibold text-white">Planning to run ads on this product?</p>
+            <p className="text-muted mt-0.5 text-xs leading-relaxed">
+              Carry these numbers into the Break-even ROAS tool - it shows the minimum
+              return every ₹100 of ad spend must make before you lose money.
+            </p>
+          </div>
+        </div>
+        <span className="shrink-0 text-lg text-[var(--muted)] transition-transform group-hover:translate-x-0.5">
+          →
+        </span>
+      </button>
 
       {/* ── DATA FRESHNESS ── */}
       <div className="flex justify-end px-1">

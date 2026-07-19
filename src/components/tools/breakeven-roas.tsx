@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { TrendingUp, AlertTriangle } from "lucide-react";
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 import {
@@ -10,7 +10,7 @@ import {
   getShippingForWeight,
   type WeightBracket,
 } from "@/lib/marketplace-fees";
-import { computeRoas as computeRoasShared } from "@/lib/roas";
+import { computeRoas as computeRoasShared, MARGIN_TO_ROAS_HANDOFF_KEY } from "@/lib/roas";
 import { DataFreshness } from "@/components/data-freshness";
 
 const PRODUCT_CATEGORIES: { value: ProductType; label: string }[] = [
@@ -91,6 +91,37 @@ export function BreakevenRoas() {
   const [weightBracket, setWeightBracket] = useState<WeightBracket>("light");
   const [codMix, setCodMix] = useState(60);
   const [rtoRate, setRtoRate] = useState(25);
+  const [prefilledFromMargin, setPrefilledFromMargin] = useState(false);
+
+  // One-shot prefill when arriving from the margin calculator's handoff: read
+  // sessionStorage once on mount and seed local state (SSR-safe hydrate; there is
+  // no derive-during-render option without a hydration mismatch, so the
+  // set-state-in-effect rule is a false positive here).
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    let raw: string | null = null;
+    try {
+      raw = sessionStorage.getItem(MARGIN_TO_ROAS_HANDOFF_KEY);
+      if (raw) sessionStorage.removeItem(MARGIN_TO_ROAS_HANDOFF_KEY);
+    } catch {
+      return;
+    }
+    if (!raw) return;
+    try {
+      const h = JSON.parse(raw) as Record<string, unknown>;
+      if (typeof h.sellingPrice === "number" && Number.isFinite(h.sellingPrice)) setSellingPrice(h.sellingPrice);
+      if (typeof h.productCost === "number" && Number.isFinite(h.productCost)) setProductCost(h.productCost);
+      if (typeof h.channel === "string" && CHANNELS.some((c) => c.channel === h.channel)) setChannel(h.channel as PrimaryChannel);
+      if (typeof h.category === "string" && PRODUCT_CATEGORIES.some((c) => c.value === h.category)) setCategory(h.category as ProductType);
+      if (typeof h.weightBracket === "string" && h.weightBracket in WEIGHT_BRACKET_LABELS) setWeightBracket(h.weightBracket as WeightBracket);
+      if (typeof h.codMix === "number" && Number.isFinite(h.codMix)) setCodMix(Math.max(0, Math.min(100, h.codMix)));
+      if (typeof h.rtoRate === "number" && Number.isFinite(h.rtoRate)) setRtoRate(Math.max(0, Math.min(50, h.rtoRate)));
+      setPrefilledFromMargin(true);
+    } catch {
+      // malformed handoff - ignore, keep defaults
+    }
+  }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const primary = useMemo(
     () => computeRoas(sellingPrice, productCost, channel, category, weightBracket, codMix, rtoRate),
@@ -112,6 +143,11 @@ export function BreakevenRoas() {
         <div className="glass-panel grain rounded-xl p-5 sm:p-6">
           <h2 className="font-display text-lg font-bold text-white">Unit Economics</h2>
           <p className="text-muted mt-1 text-xs">Your product numbers</p>
+          {prefilledFromMargin && (
+            <p className="mt-2 inline-flex w-fit items-center gap-1.5 rounded-md border border-[var(--success)]/30 bg-[var(--success)]/10 px-2 py-1 text-[11px] font-medium text-[var(--success)]">
+              Prefilled from your margin calculator
+            </p>
+          )}
 
           <div className="mt-5 space-y-4">
             <Field label="Selling Price" prefix="₹" value={sellingPrice} onChange={setSellingPrice} />

@@ -1,6 +1,14 @@
 import type { PrimaryChannel, ProductType } from "@/lib/mvp-data";
 import { calculateProfit } from "@/lib/profit-math";
 
+/**
+ * sessionStorage key for the margin-calculator → break-even ROAS input handoff.
+ * Shape: { sellingPrice, productCost, channel, category, weightBracket, codMix, rtoRate }.
+ * Written on the margin calculator's "check ad break-even" action, consumed +
+ * cleared once on the ROAS tool's mount.
+ */
+export const MARGIN_TO_ROAS_HANDOFF_KEY = "dni-margin-to-roas";
+
 export type RoasInputs = {
   sellingPrice: number;
   productCost: number;
