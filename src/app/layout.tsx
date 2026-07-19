@@ -72,7 +72,7 @@ const STRUCTURED_DATA = {
     "@type": "AggregateOffer",
     priceCurrency: "INR",
     lowPrice: "0",
-    highPrice: "199",
+    highPrice: "149",
     offerCount: "3",
   },
 };

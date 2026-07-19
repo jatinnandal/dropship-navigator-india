@@ -20,7 +20,7 @@ export const PLAN_CARDS: PlanCard[] = [
     features: [
       "Journey module 1: pick your product with real margin math",
       "Profit margin calculator (verified 2026 rate card)",
-      "GSTIN & PAN verification checklist",
+      "Shipping cost estimator - real courier rates",
       "Seasonal sale calendar",
       "1 seller profile",
     ],
